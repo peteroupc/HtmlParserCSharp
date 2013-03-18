@@ -470,7 +470,7 @@ public sealed class HeaderParser {
 		for(int i=index;i<length && j<token.Length;i++,j++){
 			char c=str[i];
 			char cj=token[j];
-			if(c!=j && c!=(cj>='a' && cj<='z' ? cj-0x20 : cj))
+			if(c!=cj && c!=(cj>='a' && cj<='z' ? cj-0x20 : cj))
 				return startIndex;
 		}
 		index+=token.Length;
@@ -508,7 +508,7 @@ public sealed class HeaderParser {
 		for(int i=index;i<length && j<token.Length;i++,j++){
 			char c=str[i];
 			char cj=token[j];
-			if(c!=j && c!=(cj>='a' && cj<='z' ? cj-0x20 : cj))
+			if(c!=cj && c!=(cj>='a' && cj<='z' ? cj-0x20 : cj))
 				return startIndex;
 		}
 		index+=token.Length;

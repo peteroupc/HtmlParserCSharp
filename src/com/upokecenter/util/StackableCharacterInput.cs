@@ -245,7 +245,7 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 			//Console.WriteLine(this);
 			// No room, read next character and put it in buffer
 			int c=readInternal();
-      if(c<0)return c;
+			if(c<0)return c;
 			if(pos>=buffer.Length){
 				int[] newBuffer=new int[buffer.Length*2];
 				Array.Copy(buffer,0,newBuffer,0,buffer.Length);

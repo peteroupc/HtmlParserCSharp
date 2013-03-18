@@ -53,23 +53,22 @@ public sealed class StringUtility {
 		bool first=true;
 		List<string> strings=null;
 		int delimLength=delimiter.Length;
-		if(delimLength==0)return new string[]{s};
+		if(delimLength==0)return emptyStringArray;
 		while(true){
 			int index2=s.IndexOf(delimiter,index,StringComparison.Ordinal);
 			if(index2<0){
-				if(first)return new string[]{s};
+				if(first)return emptyStringArray;
 				strings.Add(s.Substring(index));
 				break;
 			} else {
 				if(first) {
 					strings=new List<string>();
+					first=false;
 				}
 				strings.Add(s.Substring(index,(index2)-(index)));
 				index=index2+delimLength;
-				first=false;
 			}
 		}
-		if(strings==null)return emptyStringArray;
 		return strings.ToArray();
 	}
 

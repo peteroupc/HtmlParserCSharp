@@ -198,7 +198,7 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 			return (buffer[pos++]&0xFF);
 		// No room, read next byte and put it in buffer
 		int c=stream.ReadByte();
-    if(c<0)return c;
+		if(c<0)return c;
 		if(pos>=buffer.Length){
 			byte[] newBuffer=new byte[buffer.Length*2];
 			Array.Copy(buffer,0,newBuffer,0,buffer.Length);
