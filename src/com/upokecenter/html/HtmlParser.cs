@@ -3713,6 +3713,7 @@ sealed class HtmlParser {
 						haveHex=true;
 					} else {
 						if(number>=0) {
+							// move back character (except if it's EOF)
 							charInput.moveBack(1);
 						}
 						break;
@@ -3746,6 +3747,7 @@ sealed class HtmlParser {
 						haveHex=true;
 					} else {
 						if(number>=0) {
+							// move back character (except if it's EOF)
 							charInput.moveBack(1);
 						}
 						break;
@@ -3764,7 +3766,10 @@ sealed class HtmlParser {
 			c1=charInput.read();
 			if(c1!=0x3B){ // semicolon
 				error=true;
-				charInput.moveBack(1); // parse error
+				if(c1>=0)
+				{
+					charInput.moveBack(1); // parse error
+				}
 			}
 			if(value>0x10FFFF || (value>=0xD800 && value<=0xDFFF)){
 				error=true;
@@ -3867,7 +3872,9 @@ sealed class HtmlParser {
 								charInput.setMarkPosition(markStart);
 								return 0x26; // return ampersand rather than entity
 							} else {
-								charInput.moveBack(1);
+								if(ch2>=0) {
+									charInput.moveBack(1);
+								}
 								if(entity[entity.Length-1]!=';'){
 									error=true;
 								}

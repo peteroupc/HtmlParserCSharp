@@ -5,11 +5,12 @@ using com.upokecenter.util;
 
 
 
+
 public sealed class HeaderParser {
 
 	private HeaderParser(){}
 	public static string formatHttpDate(long date){
-		int[] components=PeterO.Support.DateTimeImpl.getDateComponents(date);
+		int[] components=DateTimeUtility.getGmtDateComponents(date);
 		int dow=components[7]; // 1 to 7
 		int month=components[1]; // 1 to 12
 		string dayofweek=null;
@@ -184,7 +185,7 @@ public sealed class HeaderParser {
 			index+=2;
 			if(index<length && v[index]!=' ')return defaultValue;
 			index++;
-			year=PeterO.Support.DateTimeImpl.convertYear(year);
+			year=DateTimeUtility.convertYear(year);
 		} else if(com.upokecenter.util.StringUtility.startsWith(v,",",index)){
 			index+=2;
 			day=parse2Digit(v,index);
@@ -241,7 +242,7 @@ public sealed class HeaderParser {
 		}
 		if(index!=length)return defaultValue;
 		// NOTE: Month is one-based
-		return PeterO.Support.DateTimeImpl.toDate(year,month,day,hour,minute,second);
+		return DateTimeUtility.toGmtDate(year,month,day,hour,minute,second);
 	}
 
 	private static int skipQuotedString(string v, int index){
@@ -654,7 +655,7 @@ public sealed class HeaderParser {
 		return -1;
 	}
 
-	static int skipAndAppendQuoted(
+	private static int skipAndAppendQuoted(
 			string str, int index, System.Text.StringBuilder builder){
 		int i=index;
 		bool slash=false;

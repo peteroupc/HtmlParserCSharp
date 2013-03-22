@@ -17,6 +17,7 @@ using System.Collections.Generic;
 
 using com.upokecenter.util;
 
+
 internal class CacheControl {
 
 	public override string ToString() {
@@ -62,7 +63,7 @@ internal class CacheControl {
 	}
 
 	private long getAge(){
-		long now=PeterO.Support.DateTimeImpl.getPersistentCurrentDate();
+		long now=DateTimeUtility.getCurrentDate();
 		long age=Math.Max(0,Math.Max(now-date,this.age));
 		age+=(responseTime-requestTime);
 		age+=(now-responseTime);
@@ -150,7 +151,7 @@ internal class CacheControl {
 			//Console.WriteLine("returning early because it saw pragma no-cache");
 			return null;
 		}
-		long now=PeterO.Support.DateTimeImpl.getPersistentCurrentDate();
+		long now=DateTimeUtility.getCurrentDate();
 		cc.code=headers.getResponseCode();
 		cc.date=now;
 		cc.responseTime=now;

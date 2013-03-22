@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Created by SharpDevelop.
  * User: Peter
  * Date: 3/16/2013
@@ -10,11 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using com.upokecenter.net;
+using com.upokecenter.util;
 using System.Net;
 
-namespace PeterO.Support
+namespace com.upokecenter.net
 {
-	public sealed class HttpHeaders : com.upokecenter.net.IHttpHeaders {
+	internal sealed class HttpHeaders : IHttpHeaders {
 		
 		public WebResponse response;
 		public HttpHeaders(WebResponse response){
@@ -41,14 +42,14 @@ namespace PeterO.Support
 			return this.response.Headers.Get(name);
 		}
 		
-		private string GetStatusLine(HttpWebResponse resp){
+		private static string GetStatusLine(HttpWebResponse resp){
 			Version vers=resp.ProtocolVersion;
 			if(vers==HttpVersion.Version10)
 				return "HTTP/1.0 "+Convert.ToString(
-					resp.StatusCode,System.Globalization.CultureInfo.InvariantCulture)+" "+resp.StatusDescription;
+					(int)resp.StatusCode,System.Globalization.CultureInfo.InvariantCulture)+" "+resp.StatusDescription;
 			else
 				return "HTTP/1.1 "+Convert.ToString(
-					resp.StatusCode,System.Globalization.CultureInfo.InvariantCulture)+" "+resp.StatusDescription;				
+					(int)resp.StatusCode,System.Globalization.CultureInfo.InvariantCulture)+" "+resp.StatusDescription;				
 		}
 		
 		public string getHeaderField(int name)
@@ -91,13 +92,13 @@ namespace PeterO.Support
 		
 		public IDictionary<string, IList<string>> getHeaderFields()
 		{
-			IDictionary<string, IList<string>> map=new LenientDictionary<string, IList<string>>();
+			IDictionary<string, IList<string>> map=new PeterO.Support.LenientDictionary<string, IList<string>>();
 			if(this.response is HttpWebResponse)
-				map.Add(null,Collections.UnmodifiableList(new String[]{GetStatusLine((HttpWebResponse)this.response)}));
+				map.Add(null,PeterO.Support.Collections.UnmodifiableList(new String[]{GetStatusLine((HttpWebResponse)this.response)}));
 			foreach(String k in this.response.Headers.AllKeys){
-				map.Add(k,Collections.UnmodifiableList(this.response.Headers.GetValues(k)));
+				map.Add(StringUtility.toLowerCaseAscii(k),PeterO.Support.Collections.UnmodifiableList(this.response.Headers.GetValues(k)));
 			}
-			return Collections.UnmodifiableMap(map);
+			return PeterO.Support.Collections.UnmodifiableMap(map);
 		}
 	}
 }

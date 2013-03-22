@@ -19,6 +19,7 @@ using com.upokecenter.util;
 
 
 
+
 public sealed class DownloadHelper {
 
 	private DownloadHelper(){}
@@ -69,7 +70,7 @@ public sealed class DownloadHelper {
 		string urlString;
 
 		public FileBasedHeaders(string urlString, long length){
-			date=PeterO.Support.DateTimeImpl.getPersistentCurrentDate();
+			date=DateTimeUtility.getCurrentDate();
 			this.length=length;
 			this.urlString=urlString;
 		}
@@ -163,7 +164,7 @@ public sealed class DownloadHelper {
 				}
 			}
 			if(count<=1||!exceeded)return;
-			long threshold=oldest+Math.Abs(oldest-PeterO.Support.DateTimeImpl.getPersistentCurrentDate())/2;
+			long threshold=oldest+Math.Abs(oldest-DateTimeUtility.getCurrentDate())/2;
 			count=0;
 			foreach(PeterO.Support.File file in files){
 				if(file.lastModified()<threshold){
@@ -189,7 +190,7 @@ public sealed class DownloadHelper {
 
 
 	public static Object getLegacyResponseCache(PeterO.Support.File cachePath){
-		return PeterO.Support.DownloadHelperImpl.newResponseCache(cachePath);
+		return DownloadHelperImpl.newResponseCache(cachePath);
 	}
 
 
@@ -257,7 +258,7 @@ public sealed class DownloadHelper {
 						}
 					} else {
 						long maxAgeMillis=24L*3600L*1000L;
-						long timeDiff=Math.Abs(cacheFile.lastModified()-(PeterO.Support.DateTimeImpl.getPersistentCurrentDate()));
+						long timeDiff=Math.Abs(cacheFile.lastModified()-(DateTimeUtility.getCurrentDate()));
 						fresh=(timeDiff<=maxAgeMillis);
 						headers=new FileBasedHeaders(urlString,cacheFile.length());
 					}
@@ -273,7 +274,7 @@ public sealed class DownloadHelper {
 						PeterO.Support.InputStream stream=null;
 						try {
 							stream=new PeterO.Support.BufferedInputStream(new PeterO.Support.WrappedInputStream(new FileStream(cacheFile.ToString(),FileMode.Open)),8192);
-							crinfo.cr=PeterO.Support.DownloadHelperImpl.newCacheResponse(stream,
+							crinfo.cr=DownloadHelperImpl.newCacheResponse(stream,
 									headers);
 							//Console.WriteLine("headerfields: %s",headers.getHeaderFields());
 						} catch(IOException){
@@ -628,7 +629,7 @@ public sealed class DownloadHelper {
 		//
 		// Other URLs
 		//
-		return PeterO.Support.DownloadHelperImpl.downloadUrl(urlString, callback, handleErrorResponses);
+		return DownloadHelperImpl.downloadUrl(urlString, callback, handleErrorResponses);
 	}
 
 }

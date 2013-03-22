@@ -46,6 +46,16 @@ public sealed class StringUtility {
 
 	private static readonly string[] emptyStringArray=new string[0];
 
+	/**
+	 * 
+	 * Splits a _string by a delimiter.  If the _string ends
+	 * with the delimiter, the trailing _string does not
+	 * appear in the result.
+	 * 
+	 * @param s
+	 * @param delimiter
+	 * 
+	 */
 	public static string[] splitAt(string s, string delimiter){
 		if(delimiter==null)throw new ArgumentException();
 		if(s==null || s.Length==0)return emptyStringArray;
@@ -54,18 +64,22 @@ public sealed class StringUtility {
 		List<string> strings=null;
 		int delimLength=delimiter.Length;
 		if(delimLength==0)return emptyStringArray;
+		int sLength=s.Length;
 		while(true){
 			int index2=s.IndexOf(delimiter,index,StringComparison.Ordinal);
 			if(index2<0){
 				if(first)return emptyStringArray;
-				strings.Add(s.Substring(index));
+				if(index!=sLength) {
+					strings.Add(s.Substring(index));
+				}
 				break;
 			} else {
 				if(first) {
 					strings=new List<string>();
 					first=false;
 				}
-				strings.Add(s.Substring(index,(index2)-(index)));
+				string newstr=s.Substring(index,(index2)-(index));
+				strings.Add(newstr);
 				index=index2+delimLength;
 			}
 		}
