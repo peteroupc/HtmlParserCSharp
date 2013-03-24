@@ -52,8 +52,8 @@ sealed class Utf8Encoding : ITextEncoder, ITextDecoder {
 					stream.mark(4);
 					lower=(b==0xf0) ? 0x90 : 0x80;
 					upper=(b==0xf4) ? 0x8f : 0xbf;
-					bytesNeeded=2;
-					cp=b-0xe0;
+					bytesNeeded=3;
+					cp=b-0xf0;
 				} else {
 					if(error.Equals(TextEncoding.ENCODING_ERROR_REPLACE))
 						return 0xFFFD;
@@ -140,8 +140,8 @@ sealed class Utf8Encoding : ITextEncoder, ITextDecoder {
 					stream.mark(4);
 					lower=(b==0xf0) ? 0x90 : 0x80;
 					upper=(b==0xf4) ? 0x8f : 0xbf;
-					bytesNeeded=2;
-					cp=b-0xe0;
+					bytesNeeded=3;
+					cp=b-0xf0;
 				} else {
 					int o=error.emitDecoderError(buffer,offset,length);
 					offset+=o;

@@ -34,9 +34,10 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 
 		public int read(int[] buf, int offset, int unitCount)
 				 {
-			if(buf==null)throw new ArgumentException();
-			if(offset<0 || unitCount<0 || offset+unitCount>buf.Length)
-				throw new ArgumentOutOfRangeException();
+			if((buf)==null)throw new ArgumentNullException("buf");
+if((offset)<0)throw new ArgumentOutOfRangeException("offset not greater or equal to 0 ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")");
+if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount not greater or equal to 0 ("+Convert.ToString(unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
+if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount not less or equal to "+Convert.ToString(buf.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
 			if(unitCount==0)return 0;
 			int count=0;
 			if(charInput!=null){
@@ -94,8 +95,7 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 	}
 
 	public void pushInput(ICharacterInput input){
-		if(input==null)
-			throw new ArgumentException();
+		if((input)==null)throw new ArgumentNullException("input");
 		// Move unread characters in buffer, since this new
 		// input sits on top of the existing input
 		stack.Add(new InputAndBuffer(input,buffer,pos,endpos-pos));
@@ -138,6 +138,18 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 
 	private int readInternal(int[] buf, int offset, int unitCount)  {
 		if(this.stack.Count==0)return -1;
+		#if DEBUG
+if(!(((buf)!=null) ))throw new InvalidOperationException("buf");
+#endif
+		#if DEBUG
+if(!(((offset)>=0) ))throw new InvalidOperationException(("offset not greater or equal to 0 ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")"));
+#endif
+		#if DEBUG
+if(!(((unitCount)>=0) ))throw new InvalidOperationException(("unitCount not greater or equal to 0 ("+Convert.ToString(unitCount,System.Globalization.CultureInfo.InvariantCulture)+")"));
+#endif
+		#if DEBUG
+if(!(((offset+unitCount)<=buf.Length) ))throw new InvalidOperationException(("offset+unitCount not less or equal to "+Convert.ToString(buf.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,System.Globalization.CultureInfo.InvariantCulture)+")"));
+#endif
 		if(unitCount==0)return 0;
 		int count=0;
 		while(this.stack.Count>0 && unitCount>0){
@@ -173,9 +185,10 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 
 	public int read(int[] buf, int offset, int unitCount)  {
 		if(haveMark){
-			if(buf==null)throw new ArgumentException();
-			if(offset<0 || unitCount<0 || offset+unitCount>buf.Length)
-				throw new ArgumentOutOfRangeException();
+			if((buf)==null)throw new ArgumentNullException("buf");
+			if((offset)<0)throw new ArgumentOutOfRangeException("offset not greater or equal to 0 ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")");
+			if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount not greater or equal to 0 ("+Convert.ToString(unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
+			if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount not less or equal to "+Convert.ToString(buf.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
 			if(unitCount==0)return 0;
 			// Read from buffer
 			if(pos+unitCount<=endpos){
@@ -260,6 +273,7 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 	}
 
 	public void moveBack(int count)  {
+		if((count)<0)throw new ArgumentOutOfRangeException("count not greater or equal to 0 ("+Convert.ToString(count,System.Globalization.CultureInfo.InvariantCulture)+")");
 		if(haveMark && pos>=count){
 			pos-=count;
 			return;
