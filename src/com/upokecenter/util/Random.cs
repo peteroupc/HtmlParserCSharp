@@ -32,7 +32,7 @@ public sealed class Random {
 	 * 
 	 */
 	public Random(){
-		long ct=System.currentTimeMillis();
+		long ct=Environment.TickCount;
 		x=123456789^((int)ct&0xFFFFFFFF);
 		if(x==0) {
 			x=123456789;
@@ -41,7 +41,7 @@ public sealed class Random {
 		if(y==0) {
 			y=987654321;
 		}
-		ct=System.nanoTime();
+		ct=DateTime.Now.Ticks;
 		z=43219876^((int)ct&0xFFFFFFFF);
 		if(z==0) {
 			z=43219876;

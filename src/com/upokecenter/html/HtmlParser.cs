@@ -633,7 +633,7 @@ sealed class HtmlParser {
 		return ret;
 	}
 
-	private bool isMathMLIntegrationPoint(Element element) {
+	private bool isMathMLTextIntegrationPoint(Element element) {
 		string name=element.getLocalName();
 		return MATHML_NAMESPACE.Equals(element.getNamespaceURI()) && (
 				name.Equals("mi") ||
@@ -657,14 +657,15 @@ sealed class HtmlParser {
 
 	private bool isForeignContext(int token){
 		if(hasForeignContent && token!=TOKEN_EOF){
-			Element element=getCurrentNode();
+			Element element=(context!=null && openElements.Count==1) ?
+					context : getCurrentNode(); // adjusted current node
 			if(element==null)return false;
 			if(element.getNamespaceURI().Equals(HTML_NAMESPACE))
 				return false;
 			if((token&TOKEN_TYPE_MASK)==TOKEN_START_TAG){
 				StartTagToken tag=(StartTagToken)getToken(token);
 				string name=element.getLocalName();
-				if(isMathMLIntegrationPoint(element)){
+				if(isMathMLTextIntegrationPoint(element)){
 					string tokenName=tag.getName();
 					if(!"mglyph".Equals(tokenName) &&
 							!"malignmark".Equals(tokenName))
@@ -678,7 +679,7 @@ sealed class HtmlParser {
 					return false;
 				return true;
 			} else if((token&TOKEN_TYPE_MASK)==TOKEN_CHARACTER){
-				if(isMathMLIntegrationPoint(element) ||
+				if(isMathMLTextIntegrationPoint(element) ||
 						isHtmlIntegrationPoint(element))
 					return false;
 				return true;
@@ -882,7 +883,7 @@ sealed class HtmlParser {
 						popCurrentNode();
 						Element node=getCurrentNode();
 						if(node.getNamespaceURI().Equals(HTML_NAMESPACE) ||
-								isMathMLIntegrationPoint(node) ||
+								isMathMLTextIntegrationPoint(node) ||
 								isHtmlIntegrationPoint(node)){
 							break;
 						}
@@ -902,11 +903,17 @@ sealed class HtmlParser {
 					name.Equals("sub") || name.Equals("sup") || name.Equals("table") || name.Equals("tt") ||
 					name.Equals("u") || name.Equals("ul") || name.Equals("var")){
 				error=true;
+				if(!hasNativeElementInScope()){
+					noforeign=true;
+					bool ret=applyInsertionMode(token,InsertionMode.InBody);
+					noforeign=false;
+					return ret;
+				}
 				while(true){
 					popCurrentNode();
 					Element node=getCurrentNode();
 					if(node.getNamespaceURI().Equals(HTML_NAMESPACE) ||
-							isMathMLIntegrationPoint(node) ||
+							isMathMLTextIntegrationPoint(node) ||
 							isHtmlIntegrationPoint(node)){
 						break;
 					}
@@ -1034,6 +1041,9 @@ sealed class HtmlParser {
 				}
 				int originalSize=openElements.Count;
 				for(int i1=originalSize-1;i1>=0;i1--){
+					if(i1==0){
+						return true;
+					}
 					Element node=openElements[i1];
 					if(i1<originalSize-1 &&
 							HTML_NAMESPACE.Equals(node.getNamespaceURI())){
@@ -1056,6 +1066,36 @@ sealed class HtmlParser {
 		} else if(token==TOKEN_EOF)
 			return applyInsertionMode(token,null);
 		return true;
+	}
+
+	private bool hasNativeElementInScope() {
+		for(int i=openElements.Count-1;i>=0;i--){
+			Element e=openElements[i];
+			if(e.getNamespaceURI().Equals(HTML_NAMESPACE) ||
+					isMathMLTextIntegrationPoint(e) ||
+					isHtmlIntegrationPoint(e))
+				return true;
+			if(e.isHtmlElement("applet")||
+					e.isHtmlElement("caption")||
+					e.isHtmlElement("html")||
+					e.isHtmlElement("table")||
+					e.isHtmlElement("td")||
+					e.isHtmlElement("th")||
+					e.isHtmlElement("marquee")||
+					e.isHtmlElement("object")||
+					e.isMathMLElement("mi")||
+					e.isMathMLElement("mo")||
+					e.isMathMLElement("mn")||
+					e.isMathMLElement("ms")||
+					e.isMathMLElement("mtext")||
+					e.isMathMLElement("annotation-xml")||
+					e.isSvgElement("foreignObject")||
+					e.isSvgElement("desc")||
+					e.isSvgElement("title")
+					)
+				return false;
+		}
+		return false;
 	}
 
 	private bool applyInsertionMode(int token, InsertionMode? insMode) {
@@ -1901,7 +1941,7 @@ sealed class HtmlParser {
 					addHtmlElement(tag);
 				} else if("applet".Equals(name) ||
 						"marquee".Equals(name) ||
-						"_object".Equals(name)){
+						"object".Equals(name)){
 					reconstructFormatting();
 					Element e=addHtmlElement(tag);
 					insertFormattingMarker(tag,e);
@@ -2156,7 +2196,7 @@ sealed class HtmlParser {
 					}
 				} else if("applet".Equals(name) ||
 						"marquee".Equals(name) ||
-						"_object".Equals(name)){
+						"object".Equals(name)){
 					if(!hasHtmlElementInScope(name)){
 						error=true;
 						return false;
@@ -3471,7 +3511,7 @@ sealed class HtmlParser {
 						thisName.Equals("td")||
 						thisName.Equals("th")||
 						thisName.Equals("marquee")||
-						thisName.Equals("_object")||
+						thisName.Equals("object")||
 						thisName.Equals("button"))
 					//Console.WriteLine("not in scope: %s",thisName);
 					return false;
@@ -3508,7 +3548,7 @@ sealed class HtmlParser {
 					e.isHtmlElement("ol")||
 					e.isHtmlElement("ul")||
 					e.isHtmlElement("marquee")||
-					e.isHtmlElement("_object")||
+					e.isHtmlElement("object")||
 					e.isMathMLElement("mi")||
 					e.isMathMLElement("mo")||
 					e.isMathMLElement("mn")||
@@ -3535,7 +3575,7 @@ sealed class HtmlParser {
 					e.isHtmlElement("td")||
 					e.isHtmlElement("th")||
 					e.isHtmlElement("marquee")||
-					e.isHtmlElement("_object")||
+					e.isHtmlElement("object")||
 					e.isMathMLElement("mi")||
 					e.isMathMLElement("mo")||
 					e.isMathMLElement("mn")||
@@ -3563,7 +3603,7 @@ sealed class HtmlParser {
 					e.isHtmlElement("td")||
 					e.isHtmlElement("th")||
 					e.isHtmlElement("marquee")||
-					e.isHtmlElement("_object")||
+					e.isHtmlElement("object")||
 					e.isMathMLElement("mi")||
 					e.isMathMLElement("mo")||
 					e.isMathMLElement("mn")||
@@ -3623,7 +3663,7 @@ sealed class HtmlParser {
 					e.isHtmlElement("td")||
 					e.isHtmlElement("th")||
 					e.isHtmlElement("marquee")||
-					e.isHtmlElement("_object")||
+					e.isHtmlElement("object")||
 					e.isMathMLElement("mi")||
 					e.isMathMLElement("mo")||
 					e.isMathMLElement("mn")||
@@ -3659,7 +3699,7 @@ sealed class HtmlParser {
 	private bool isSpecialElement(Element node) {
 		if(node.isHtmlElement("address") || node.isHtmlElement("applet") || node.isHtmlElement("area") || node.isHtmlElement("article") || node.isHtmlElement("aside") || node.isHtmlElement("_base") || node.isHtmlElement("basefont") || node.isHtmlElement("bgsound") || node.isHtmlElement("blockquote") || node.isHtmlElement("body") || node.isHtmlElement("br") || node.isHtmlElement("button") || node.isHtmlElement("caption") || node.isHtmlElement("center") || node.isHtmlElement("col") || node.isHtmlElement("colgroup") || node.isHtmlElement("dd") || node.isHtmlElement("details") || node.isHtmlElement("dir") || node.isHtmlElement("div") || node.isHtmlElement("dl") || node.isHtmlElement("dt") || node.isHtmlElement("embed") || node.isHtmlElement("fieldset") || node.isHtmlElement("figcaption") || node.isHtmlElement("figure")
 				|| node.isHtmlElement("footer") || node.isHtmlElement("form") || node.isHtmlElement("frame") || node.isHtmlElement("frameset") || node.isHtmlElement("h1") || node.isHtmlElement("h2") || node.isHtmlElement("h3") || node.isHtmlElement("h4") || node.isHtmlElement("h5") || node.isHtmlElement("h6") || node.isHtmlElement("head") || node.isHtmlElement("header") || node.isHtmlElement("hgroup") || node.isHtmlElement("hr") || node.isHtmlElement("html") || node.isHtmlElement("iframe") || node.isHtmlElement("img") || node.isHtmlElement("input") || node.isHtmlElement("isindex") || node.isHtmlElement("li") || node.isHtmlElement("link") ||
-				node.isHtmlElement("listing") || node.isHtmlElement("main") || node.isHtmlElement("marquee") || node.isHtmlElement("menu") || node.isHtmlElement("menuitem") || node.isHtmlElement("meta") || node.isHtmlElement("nav") || node.isHtmlElement("noembed") || node.isHtmlElement("noframes") || node.isHtmlElement("noscript") || node.isHtmlElement("_object") || node.isHtmlElement("ol") || node.isHtmlElement("p") || node.isHtmlElement("param") || node.isHtmlElement("plaintext") || node.isHtmlElement("pre") || node.isHtmlElement("script") || node.isHtmlElement("section") ||
+				node.isHtmlElement("listing") || node.isHtmlElement("main") || node.isHtmlElement("marquee") || node.isHtmlElement("menu") || node.isHtmlElement("menuitem") || node.isHtmlElement("meta") || node.isHtmlElement("nav") || node.isHtmlElement("noembed") || node.isHtmlElement("noframes") || node.isHtmlElement("noscript") || node.isHtmlElement("object") || node.isHtmlElement("ol") || node.isHtmlElement("p") || node.isHtmlElement("param") || node.isHtmlElement("plaintext") || node.isHtmlElement("pre") || node.isHtmlElement("script") || node.isHtmlElement("section") ||
 				node.isHtmlElement("select") || node.isHtmlElement("source") || node.isHtmlElement("style") || node.isHtmlElement("summary") || node.isHtmlElement("table") || node.isHtmlElement("tbody") || node.isHtmlElement("td") || node.isHtmlElement("textarea") || node.isHtmlElement("tfoot") || node.isHtmlElement("th") || node.isHtmlElement("thead") || node.isHtmlElement("title") || node.isHtmlElement("tr") || node.isHtmlElement("track") || node.isHtmlElement("ul") || node.isHtmlElement("wbr") || node.isHtmlElement("xmp"))
 			return true;
 		if(node.isMathMLElement("mi") || node.isMathMLElement("mo") || node.isMathMLElement("mn") || node.isMathMLElement("ms") || node.isMathMLElement("mtext") || node.isMathMLElement("annotation-xml"))
