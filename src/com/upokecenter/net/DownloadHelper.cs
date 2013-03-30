@@ -497,11 +497,11 @@ public sealed class DownloadHelper {
 	 * @param urlString a URL _string.  All schemes (protocols)
 	 * supported by Java's URLConnection are supported.  Data
 	 * URLs are also supported.
-	 * @param callback an _object to call back on, particularly
+	 * @param callback an object to call back on, particularly
 	 * when the data is ready to be downloaded. Can be null.  If the
-	 * _object also implements IDownloadEventListener, it will also
+	 * object also implements IDownloadEventListener, it will also
 	 * have its onConnecting and onConnected methods called.
-	 * @return the _object returned by the callback's processResponse
+	 * @return the object returned by the callback's processResponse
 	 * method.
 	 * @ if an I/O error occurs, particularly
 	 * network errors.
@@ -521,12 +521,12 @@ public sealed class DownloadHelper {
 	 * @param urlString a URL _string.  All schemes (protocols)
 	 * supported by Java's URLConnection are supported.  Data
 	 * URLs are also supported.
-	 * @param callback an _object to call back on, particularly
+	 * @param callback an object to call back on, particularly
 	 * when the data is ready to be downloaded. Can be null.  If the
-	 * _object also implements IDownloadEventListener, it will also
+	 * object also implements IDownloadEventListener, it will also
 	 * have its onConnecting and onConnected methods called.
 	 * @param handleErrorResponses if true, the processResponse method
-	 * of the supplied callback _object
+	 * of the supplied callback object
 	 * will also be called if an error response is returned. In this
 	 * case, the _stream_ argument of that method will contain the error
 	 * response body, if any, or null otherwise. If false and
@@ -534,7 +534,7 @@ public sealed class DownloadHelper {
 	 * of calling the processResponse method.
 	 * This parameter does not affect whether an exception is thrown
 	 * if the connection fails.
-	 * @return the _object returned by the callback's processResponse
+	 * @return the object returned by the callback's processResponse
 	 * method.
 	 * @ if an I/O error occurs, particularly
 	 * network errors.

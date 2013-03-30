@@ -35,9 +35,9 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 		public int read(int[] buf, int offset, int unitCount)
 				 {
 			if((buf)==null)throw new ArgumentNullException("buf");
-if((offset)<0)throw new ArgumentOutOfRangeException("offset not greater or equal to 0 ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")");
-if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount not greater or equal to 0 ("+Convert.ToString(unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
-if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount not less or equal to "+Convert.ToString(buf.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
+			if((offset)<0)throw new ArgumentOutOfRangeException("offset not greater or equal to 0 ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")");
+			if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount not greater or equal to 0 ("+Convert.ToString(unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
+			if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount not less or equal to "+Convert.ToString(buf.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
 			if(unitCount==0)return 0;
 			int count=0;
 			if(charInput!=null){

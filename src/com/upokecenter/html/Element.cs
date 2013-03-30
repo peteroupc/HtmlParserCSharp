@@ -10,7 +10,9 @@ using com.upokecenter.util;
 internal class Element : Node, IElement {
 	private sealed class AttributeNameComparator : IComparer<HtmlParser.Attrib> {
 		public int Compare(HtmlParser.Attrib arg0, HtmlParser.Attrib arg1) {
-			return arg0.getName().CompareTo(arg1.getName());
+			string a=arg0.getName();
+			string b=arg1.getName();
+			return String.Compare(a,b,StringComparison.Ordinal);
 		}
 	}
 
@@ -138,9 +140,9 @@ internal class Element : Node, IElement {
 					extra1="xml ";
 				}
 				extra1+=attribute.getLocalName();
-				builder.Append("  "+extra1+"=\""+attribute.getValue().ToString()+"\"\n");
+				builder.Append("  "+extra1+"=\""+attribute.getValue().ToString().Replace("\n","~~~~")+"\"\n");
 			} else {
-				builder.Append("  "+attribute.getName().ToString()+"=\""+attribute.getValue().ToString()+"\"\n");
+				builder.Append("  "+attribute.getName().ToString()+"=\""+attribute.getValue().ToString().Replace("\n","~~~~")+"\"\n");
 			}
 		}
 		foreach(Node node in getChildNodesInternal()){

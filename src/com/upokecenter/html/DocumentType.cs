@@ -13,7 +13,13 @@ sealed class DocumentType : Node, IDocumentType {
 	}
 	internal override sealed string toDebugString(){
 		System.Text.StringBuilder builder=new System.Text.StringBuilder();
-		builder.Append("<!DOCTYPE "+name+">\n");
+		builder.Append("<!DOCTYPE "+name);
+		if((publicId!=null && publicId.Length>0) ||
+				(systemId!=null && systemId.Length>0)){
+			builder.Append(publicId!=null && publicId.Length>0 ? " \""+publicId.Replace("\n","~~~~")+"\"" : " \"\"");
+			builder.Append(systemId!=null && systemId.Length>0 ? " \""+systemId.Replace("\n","~~~~")+"\"" : " \"\"");
+		}
+		builder.Append(">\n");
 		return builder.ToString();
 	}
 	public string getName() {

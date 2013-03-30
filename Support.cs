@@ -385,7 +385,7 @@ namespace PeterO.Support
 		}
 
 		public ByteArrayInputStream(byte[] buffer, int index, int length) {
-			if(buffer!=null || index<0 || length<0 || index+length>buffer.Length)
+			if(buffer==null || index<0 || length<0 || index+length>buffer.Length)
 				throw new ArgumentException();
 			this.buffer=buffer;
 			this.pos=index;
@@ -499,6 +499,8 @@ namespace PeterO.Support
 		}
 
 		public BufferedInputStream(Stream input, int buffersize) {
+			if(input==null)
+				throw new ArgumentNullException();
 			if(buffersize<0)
 				throw new ArgumentException();
 			this.buffer=new byte[buffersize];

@@ -123,7 +123,7 @@ public sealed class HtmlDocument {
 		PeterO.Support.InputStream stream=null;
 		try {
 			string fileURL=new PeterO.Support.File(file).toURI().ToString();
-			stream=new PeterO.Support.BufferedInputStream(new FileStream(file,FileMode.Open),8192);
+			stream=new PeterO.Support.BufferedInputStream(new PeterO.Support.WrappedInputStream(new FileStream((file).ToString(),FileMode.Open)),8192);
 			HtmlParser parser=new HtmlParser(stream,fileURL,null);
 			return parser.parse();
 		} finally {

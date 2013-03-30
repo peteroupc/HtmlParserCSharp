@@ -55,54 +55,34 @@ sealed class SingleByteEncoding : ITextEncoder, ITextDecoder {
 
 	public int decode(PeterO.Support.InputStream stream, int[] buffer, int offset, int length, IEncodingError error)
 			 {
-		if(stream==null || buffer==null || offset<0 || length<0 ||
-				offset+length>buffer.Length)
-			throw new ArgumentException();
-		byte[] tmp=new byte[1024];
-		int i=length;
+		if((stream)==null)throw new ArgumentNullException("stream");
+		if((error)==null)throw new ArgumentNullException("error");
+		if((buffer)==null)throw new ArgumentNullException("buffer");
+		if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")");
+		if((length)<0)throw new ArgumentOutOfRangeException("length"+" not greater or equal to "+"0"+" ("+Convert.ToString(length,System.Globalization.CultureInfo.InvariantCulture)+")");
+		if((offset+length)>buffer.Length)throw new ArgumentOutOfRangeException("offset+length"+" not less or equal to "+Convert.ToString(buffer.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+length,System.Globalization.CultureInfo.InvariantCulture)+")");
+		if(length==0)return 0;
 		int total=0;
-		if(TextEncoding.ENCODING_ERROR_REPLACE.Equals(error)){
-			while(i>0){
-				int count=stream.Read(tmp,0,Math.Min(i,buffer.Length));
-				if(count<0) {
-					break;
-				}
-				total+=count;
-				for(int j=0;j<count;j++){
-					int c=(tmp[j]&0xFF);
-					if(c<0x80){
-						buffer[offset++]=(c);
-					} else {
-						int cp=indexes[(c)&0x7F];
-						buffer[offset++]=((cp==0) ? 0xFFFD : cp);
+		for(int i=0;i<length;i++){
+			int c=stream.ReadByte();
+			if(c<0){
+				break;
+			} else if(c<0x80){
+				buffer[offset++]=c;
+				total++;
+			} else {
+				int cp=indexes[(c)&0x7F];
+				if(cp==0){
+					if(error.Equals(TextEncoding.ENCODING_ERROR_REPLACE))
+						cp=0xFFFD;
+					else {
+						int[] data=new int[1];
+						int o=error.emitDecoderError(data,0,1);
+						if(o>0)return data[0];
 					}
 				}
-				i-=count;
-			}
-		} else {
-			int[] data=new int[1];
-			while(length>0){
-				int c=stream.ReadByte();
-				if(c<0) {
-					break;
-				}
-				if(c<0x80){
-					buffer[offset++]=c;
-					total++;
-					length--;
-				} else {
-					int cp=indexes[(c)&0x7F];
-					if(cp==0){
-						int o=error.emitDecoderError(data,offset,length);
-						offset+=o;
-						length-=o;
-						total+=o;
-					} else {
-						buffer[offset++]=cp;
-						length--;
-						total++;
-					}
-				}
+				buffer[offset++]=cp;
+				total++;
 			}
 		}
 		return (total==0) ? -1 : total;
@@ -115,50 +95,35 @@ sealed class SingleByteEncoding : ITextEncoder, ITextDecoder {
 
 	public void encode(Stream stream, int[] array, int offset, int length, IEncodingError error)
 			 {
-		if(stream==null || array==null)throw new ArgumentException();
-		if(offset<0 || length<0 || offset+length>array.Length)
-			throw new ArgumentOutOfRangeException();
-		byte[] buffer=null;
-		int bufferLength=1024;
-		int i=length;
-		while(i>0){
-			int count=Math.Min(i,bufferLength);
-			for(int j=0;j<count;j++){
-				int c=array[offset];
-				if(c<0 || c>maxValue){
+		if((stream)==null)throw new ArgumentNullException("stream");
+		if((error)==null)throw new ArgumentNullException("error");
+		if((array)==null)throw new ArgumentNullException("array");
+		if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")");
+		if((length)<0)throw new ArgumentOutOfRangeException("length"+" not greater or equal to "+"0"+" ("+Convert.ToString(length,System.Globalization.CultureInfo.InvariantCulture)+")");
+		if((offset+length)>array.Length)throw new ArgumentOutOfRangeException("offset+length"+" not less or equal to "+Convert.ToString(array.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+length,System.Globalization.CultureInfo.InvariantCulture)+")");
+		for(int i=0;i<length;i++){
+			int c=array[offset++];
+			if(c<0 || c>=0x110000){
+				error.emitEncoderError(stream, c);
+			} else if(c<0x80){
+				stream.WriteByte(unchecked((byte)((byte)c)));
+			} else {
+				if(c<minValue){
 					error.emitEncoderError(stream, c);
 					continue;
 				}
-				else if(c<0x80){
-					if(buffer==null) {
-						buffer=new byte[1024];
-					}
-					buffer[j]=(byte)(c&0xFF);
-				} else {
-					if(c<minValue){
-						error.emitEncoderError(stream, c);
-						continue;
-					}
-					int pointer=-1;
-					for(int k=0;k<0x80;k++){
-						if(indexes[k]==c){
-							pointer=k+0x80;
-						}
-					}
-					if(pointer>=0){
-						if(buffer==null) {
-							buffer=new byte[1024];
-						}
-						buffer[j]=(byte)(pointer&0xFF);
-					} else {
-						error.emitEncoderError(stream, c);
-						continue;
+				int pointer=-1;
+				for(int k=0;k<0x80;k++){
+					if(indexes[k]==c){
+						pointer=k+0x80;
 					}
 				}
-				offset++;
+				if(pointer>=0){
+					stream.WriteByte(unchecked((byte)((byte)pointer)));
+				} else {
+					error.emitEncoderError(stream, c);
+				}
 			}
-			i-=count;
-			stream.Write(buffer,0,count);
 		}
 	}
 }

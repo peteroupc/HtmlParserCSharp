@@ -14,7 +14,6 @@ using com.upokecenter.util;
 
 
 
-
 sealed class HtmlParser {
 
 	internal class Attrib {
@@ -44,7 +43,7 @@ sealed class HtmlParser {
 			} else {
 				ch-=0x10000;
 				int lead=ch/0x400+0xd800;
-				int trail=ch%0x400+0xdc00;
+				int trail=(ch&0x3FF)+0xdc00;
 				name.Append((char)lead);
 				name.Append((char)trail);
 			}
@@ -70,7 +69,7 @@ sealed class HtmlParser {
 			} else {
 				ch-=0x10000;
 				int lead=ch/0x400+0xd800;
-				int trail=ch%0x400+0xdc00;
+				int trail=(ch&0x3FF)+0xdc00;
 				name.Append((char)lead);
 				name.Append((char)trail);
 			}
@@ -143,7 +142,7 @@ sealed class HtmlParser {
 
 	}
 
-	class CommentToken : IToken {
+	internal class CommentToken : IToken {
 		IntList value;
 		public CommentToken(){
 			value=new IntList();
@@ -162,7 +161,7 @@ sealed class HtmlParser {
 		}
 
 	}
-	class DocTypeToken : IToken {
+	internal class DocTypeToken : IToken {
 		public IntList name;
 		public IntList publicID;
 		public IntList systemID;
@@ -171,7 +170,7 @@ sealed class HtmlParser {
 			return TOKEN_DOCTYPE;
 		}
 	}
-	class EndTagToken : TagToken {
+	internal class EndTagToken : TagToken {
 		public EndTagToken(char c) : base(c) {
 		}
 		public EndTagToken(string name) : base(name) {
@@ -283,7 +282,7 @@ sealed class HtmlParser {
 			} else {
 				ch-=0x10000;
 				int lead=ch/0x400+0xd800;
-				int trail=ch%0x400+0xdc00;
+				int trail=(ch&0x3FF)+0xdc00;
 				builder.Append((char)lead);
 				builder.Append((char)trail);
 			}
@@ -462,18 +461,18 @@ sealed class HtmlParser {
 	public static readonly string SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
 
-	static int TOKEN_EOF= 0x10000000;
+	internal static int TOKEN_EOF= 0x10000000;
 
-	static int TOKEN_START_TAG= 0x20000000;
+	internal static int TOKEN_START_TAG= 0x20000000;
 
-	static int TOKEN_END_TAG= 0x30000000;
+	internal static int TOKEN_END_TAG= 0x30000000;
 
-	static int TOKEN_COMMENT=0x40000000;
+	internal static int TOKEN_COMMENT=0x40000000;
 
-	static int TOKEN_DOCTYPE=0x50000000;
-	static int TOKEN_TYPE_MASK=unchecked((int)0xF0000000);
-	static int TOKEN_CHARACTER=0x00000000;
-	static int TOKEN_INDEX_MASK=0x0FFFFFFF;
+	internal static int TOKEN_DOCTYPE=0x50000000;
+	internal static int TOKEN_TYPE_MASK=unchecked((int)0xF0000000);
+	internal static int TOKEN_CHARACTER=0x00000000;
+	private static int TOKEN_INDEX_MASK=0x0FFFFFFF;
 	public static string HTML_NAMESPACE="http://www.w3.org/1999/xhtml";
 
 	private static string[] quirksModePublicIdPrefixes=new string[]{
@@ -565,7 +564,7 @@ sealed class HtmlParser {
 	private Element inputElement=null;
 	private string baseurl=null;
 	private bool hasForeignContent=false;
-	Document document=null;
+	internal Document document=null;
 	private bool done=false;
 
 	private IntList pendingTableCharacters=new IntList();
@@ -903,7 +902,7 @@ sealed class HtmlParser {
 					name.Equals("sub") || name.Equals("sup") || name.Equals("table") || name.Equals("tt") ||
 					name.Equals("u") || name.Equals("ul") || name.Equals("var")){
 				error=true;
-				if(!hasNativeElementInScope()){
+				if(context!=null && !hasNativeElementInScope()){
 					noforeign=true;
 					bool ret=applyInsertionMode(token,InsertionMode.InBody);
 					noforeign=false;
@@ -1008,7 +1007,7 @@ sealed class HtmlParser {
 					if(encoding!=null){
 						encoding=StringUtility.toLowerCaseAscii(encoding);
 						if(encoding.Equals("text/html") ||
-								encoding.Equals("application/xml")){
+								encoding.Equals("application/xhtml+xml")){
 							integrationElements.Add(e);
 						}
 					}
@@ -1041,9 +1040,8 @@ sealed class HtmlParser {
 				}
 				int originalSize=openElements.Count;
 				for(int i1=originalSize-1;i1>=0;i1--){
-					if(i1==0){
+					if(i1==0)
 						return true;
-					}
 					Element node=openElements[i1];
 					if(i1<originalSize-1 &&
 							HTML_NAMESPACE.Equals(node.getNamespaceURI())){
@@ -1071,6 +1069,7 @@ sealed class HtmlParser {
 	private bool hasNativeElementInScope() {
 		for(int i=openElements.Count-1;i>=0;i--){
 			Element e=openElements[i];
+			//Console.WriteLine("%s %s",e.getLocalName(),e.getNamespaceURI());
 			if(e.getNamespaceURI().Equals(HTML_NAMESPACE) ||
 					isMathMLTextIntegrationPoint(e) ||
 					isHtmlIntegrationPoint(e))
@@ -1098,14 +1097,38 @@ sealed class HtmlParser {
 		return false;
 	}
 
+	private void skipLineFeed()  {
+		int mark=charInput.markIfNeeded();
+		int nextToken=charInput.read();
+		if(nextToken==0x0a)
+			return; // ignore the token if it's 0x0A
+		else if(nextToken==0x26){ // start of character reference
+			int charref=parseCharacterReference(-1);
+			if(charref<0){
+				// more than one character in this reference
+				int index=Math.Abs(charref+1);
+				tokenQueue.Add(entityDoubles[index*2]);
+				tokenQueue.Add(entityDoubles[index*2+1]);
+			} else if(charref==0x0a)
+				return; // ignore the token
+			else {
+				tokenQueue.Add(charref);
+			}
+		} else {
+			// anything else; reset the input stream
+			charInput.setMarkPosition(mark);
+		}
+	}
+
 	private bool applyInsertionMode(int token, InsertionMode? insMode) {
+		//Console.WriteLine("[[%08X %s %s %s(%s)",token,getToken(token),insMode==null ? insertionMode :
+		//insMode,isForeignContext(token),noforeign);
 		if(!noforeign && isForeignContext(token))
 			return applyForeignContext(token);
 		noforeign=false;
 		if(insMode==null) {
 			insMode=insertionMode;
 		}
-		//	Console.WriteLine("[[%08X %s %s",token,getToken(token),insMode);
 		switch(insMode){
 		case InsertionMode.Initial:{
 			if(token==0x09 || token==0x0a ||
@@ -1304,12 +1327,12 @@ sealed class HtmlParser {
 				if("html".Equals(name)){
 					applyInsertionMode(token,InsertionMode.InBody);
 					return true;
-				} else if("_base".Equals(name)||
+				} else if("base".Equals(name)||
 						"bgsound".Equals(name)||
 						"basefont".Equals(name)||
 						"link".Equals(name)){
 					Element e=addHtmlElementNoPush(tag);
-					if(baseurl==null && "_base".Equals(name)){
+					if(baseurl==null && "base".Equals(name)){
 						// Get the document _base URL
 						baseurl=e.getAttribute("href");
 					}
@@ -1433,7 +1456,7 @@ sealed class HtmlParser {
 					addHtmlElement(tag);
 					insertionMode=InsertionMode.InFrameset;
 					return true;
-				} else if("_base".Equals(name)||
+				} else if("base".Equals(name)||
 						"bgsound".Equals(name)||
 						"basefont".Equals(name)||
 						"link".Equals(name)||
@@ -1532,7 +1555,11 @@ sealed class HtmlParser {
 					throw new InvalidOperationException();
 				while(true){
 					// Read multiple characters at once
-					textNode.text.appendInt(ch);
+					if(ch==0){
+						error=true;
+					} else {
+						textNode.text.appendInt(ch);
+					}
 					if(framesetOk && token!=0x20 && token!=0x09 &&
 							token!=0x0a && token!=0x0c && token!=0x0d){
 						framesetOk=false;
@@ -1580,7 +1607,7 @@ sealed class HtmlParser {
 					error=true;
 					openElements[0].mergeAttributes(tag);
 					return true;
-				} else if("_base".Equals(name)||
+				} else if("base".Equals(name)||
 						"bgsound".Equals(name)||
 						"basefont".Equals(name)||
 						"link".Equals(name)||
@@ -1669,19 +1696,7 @@ sealed class HtmlParser {
 						"listing".Equals(name)){
 					closeParagraph(insMode);
 					addHtmlElement(tag);
-					//
-					// For convenience, read the next
-					// character directly rather than
-					// use the tokenizer
-					//
-					int mark=charInput.markIfNeeded();
-					int nextToken=charInput.read();
-					if(nextToken!=0x0a){
-						// ignore the token if it's 0x0A (LF);
-						// otherwise reset the input stream
-						charInput.setMarkPosition(mark);
-					}
-
+					skipLineFeed();
 					framesetOk=false;
 					return true;
 				} else if("form".Equals(name)){
@@ -1876,19 +1891,8 @@ sealed class HtmlParser {
 					applyStartTag("hr",insMode);
 					applyEndTag("form",insMode);
 				} else if("textarea".Equals(name)){
-					addHtmlElement(tag);					//
-					// For convenience, read the next
-					// character directly rather than
-					// use the tokenizer
-					//
-					int mark=charInput.markIfNeeded();
-					int nextToken=charInput.read();
-					if(nextToken!=0x0a){
-						// ignore the token if it's 0x0A (LF);
-						// otherwise reset the input stream
-						charInput.setMarkPosition(mark);
-					}
-
+					addHtmlElement(tag);
+					skipLineFeed();
 					state=TokenizerState.RcData;
 					originalInsertionMode=insertionMode;
 					framesetOk=false;
@@ -1983,6 +1987,7 @@ sealed class HtmlParser {
 					error=true;
 					return false;
 				} else {
+					//Console.WriteLine("ordinary: %s",tag);
 					reconstructFormatting();
 					addHtmlElement(tag);
 				}
@@ -2864,8 +2869,8 @@ sealed class HtmlParser {
 						name.Equals("tfoot")||
 						name.Equals("thead")||
 						name.Equals("tr")){
-					applyEndTag("tr",insMode);
-					return applyInsertionMode(token,null);
+					if(applyEndTag("tr",insMode))
+						return applyInsertionMode(token,null);
 				} else {
 					applyInsertionMode(token,InsertionMode.InTable);
 				}
@@ -3482,7 +3487,7 @@ sealed class HtmlParser {
 		}
 		return null;
 	}
-	IToken getToken(int token){
+	internal IToken getToken(int token){
 		if((token&TOKEN_TYPE_MASK)==TOKEN_CHARACTER ||
 				(token&TOKEN_TYPE_MASK)==TOKEN_EOF)
 			return null;
@@ -3697,7 +3702,7 @@ sealed class HtmlParser {
 	}
 
 	private bool isSpecialElement(Element node) {
-		if(node.isHtmlElement("address") || node.isHtmlElement("applet") || node.isHtmlElement("area") || node.isHtmlElement("article") || node.isHtmlElement("aside") || node.isHtmlElement("_base") || node.isHtmlElement("basefont") || node.isHtmlElement("bgsound") || node.isHtmlElement("blockquote") || node.isHtmlElement("body") || node.isHtmlElement("br") || node.isHtmlElement("button") || node.isHtmlElement("caption") || node.isHtmlElement("center") || node.isHtmlElement("col") || node.isHtmlElement("colgroup") || node.isHtmlElement("dd") || node.isHtmlElement("details") || node.isHtmlElement("dir") || node.isHtmlElement("div") || node.isHtmlElement("dl") || node.isHtmlElement("dt") || node.isHtmlElement("embed") || node.isHtmlElement("fieldset") || node.isHtmlElement("figcaption") || node.isHtmlElement("figure")
+		if(node.isHtmlElement("address") || node.isHtmlElement("applet") || node.isHtmlElement("area") || node.isHtmlElement("article") || node.isHtmlElement("aside") || node.isHtmlElement("base") || node.isHtmlElement("basefont") || node.isHtmlElement("bgsound") || node.isHtmlElement("blockquote") || node.isHtmlElement("body") || node.isHtmlElement("br") || node.isHtmlElement("button") || node.isHtmlElement("caption") || node.isHtmlElement("center") || node.isHtmlElement("col") || node.isHtmlElement("colgroup") || node.isHtmlElement("dd") || node.isHtmlElement("details") || node.isHtmlElement("dir") || node.isHtmlElement("div") || node.isHtmlElement("dl") || node.isHtmlElement("dt") || node.isHtmlElement("embed") || node.isHtmlElement("fieldset") || node.isHtmlElement("figcaption") || node.isHtmlElement("figure")
 				|| node.isHtmlElement("footer") || node.isHtmlElement("form") || node.isHtmlElement("frame") || node.isHtmlElement("frameset") || node.isHtmlElement("h1") || node.isHtmlElement("h2") || node.isHtmlElement("h3") || node.isHtmlElement("h4") || node.isHtmlElement("h5") || node.isHtmlElement("h6") || node.isHtmlElement("head") || node.isHtmlElement("header") || node.isHtmlElement("hgroup") || node.isHtmlElement("hr") || node.isHtmlElement("html") || node.isHtmlElement("iframe") || node.isHtmlElement("img") || node.isHtmlElement("input") || node.isHtmlElement("isindex") || node.isHtmlElement("li") || node.isHtmlElement("link") ||
 				node.isHtmlElement("listing") || node.isHtmlElement("main") || node.isHtmlElement("marquee") || node.isHtmlElement("menu") || node.isHtmlElement("menuitem") || node.isHtmlElement("meta") || node.isHtmlElement("nav") || node.isHtmlElement("noembed") || node.isHtmlElement("noframes") || node.isHtmlElement("noscript") || node.isHtmlElement("object") || node.isHtmlElement("ol") || node.isHtmlElement("p") || node.isHtmlElement("param") || node.isHtmlElement("plaintext") || node.isHtmlElement("pre") || node.isHtmlElement("script") || node.isHtmlElement("section") ||
 				node.isHtmlElement("select") || node.isHtmlElement("source") || node.isHtmlElement("style") || node.isHtmlElement("summary") || node.isHtmlElement("table") || node.isHtmlElement("tbody") || node.isHtmlElement("td") || node.isHtmlElement("textarea") || node.isHtmlElement("tfoot") || node.isHtmlElement("th") || node.isHtmlElement("thead") || node.isHtmlElement("title") || node.isHtmlElement("tr") || node.isHtmlElement("track") || node.isHtmlElement("ul") || node.isHtmlElement("wbr") || node.isHtmlElement("xmp"))
@@ -4046,7 +4051,7 @@ sealed class HtmlParser {
 					){
 				attr.setNamespace(XLINK_NAMESPACE);
 			}
-			else if(name.Equals("xml:_base") ||
+			else if(name.Equals("xml:base") ||
 					name.Equals("xml:lang") ||
 					name.Equals("xml:space")
 					){
@@ -4077,7 +4082,7 @@ sealed class HtmlParser {
 		}
 		return document;
 	}
-	int parserRead() {
+	internal int parserRead() {
 		int token=parserReadInternal();
 		//Console.WriteLine("token=%08X [%c]",token,token&0xFF);
 		if(decoder.isError()) {
@@ -4089,6 +4094,7 @@ sealed class HtmlParser {
 		if(tokenQueue.Count>0)
 			return removeAtIndex(tokenQueue,0);
 		while(true){
+			//Console.WriteLine(state);
 			switch(state){
 			case TokenizerState.Data:
 				int c=charInput.read();
@@ -4464,6 +4470,7 @@ sealed class HtmlParser {
 				if(ch==0x2f){
 					tempBuffer.clearAll();
 					state=TokenizerState.ScriptDataDoubleEscapeEnd;
+					return 0x2f;
 				} else {
 					state=TokenizerState.ScriptDataDoubleEscaped;
 					if(ch>=0) {
@@ -4937,7 +4944,7 @@ sealed class HtmlParser {
 							charInput.read()=='A' &&
 							charInput.read()=='[' &&
 							getCurrentNode()!=null &&
-							HTML_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())
+							!HTML_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())
 							){
 						state=TokenizerState.CData;
 						break;
@@ -5714,16 +5721,16 @@ sealed class HtmlParser {
 		}
 	}
 
-	void setRcData(){
+	internal void setRcData(){
 		state=TokenizerState.RcData;
 	}
-	void setPlainText(){
+	internal void setPlainText(){
 		state=TokenizerState.PlainText;
 	}
-	void setRawText(){
+	internal void setRawText(){
 		state=TokenizerState.RawText;
 	}
-	void setCData(){
+	internal void setCData(){
 		state=TokenizerState.CData;
 	}
 
@@ -5764,7 +5771,7 @@ sealed class HtmlParser {
 
 	////////////////////////////////////////////////////
 
-	string nodesToDebugString(IList<Node> nodes){
+	internal string nodesToDebugString(IList<Node> nodes){
 		System.Text.StringBuilder builder=new System.Text.StringBuilder();
 		foreach(Node node in nodes){
 			string str=node.toDebugString();

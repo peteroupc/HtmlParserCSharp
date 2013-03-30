@@ -36,7 +36,7 @@ public sealed class BEncodeObject {
 	public static readonly int TYPE_DICTIONARY=3;
 
 	public byte[] toByteArray(){
-		MemoryOutputStream os=new MemoryOutputStream();
+		com.upokecenter.util.MemoryOutputStream os=new com.upokecenter.util.MemoryOutputStream();
 		try {
 			write(os);
 		} catch (IOException e) {
@@ -167,7 +167,7 @@ public sealed class BEncodeObject {
 			} else {
 				int ch=ret-0x10000;
 				int lead=ch/0x400+0xd800;
-				int trail=ch%0x400+0xdc00;
+				int trail=(ch&0x3FF)+0xdc00;
 				builder.Append((char)lead);
 				builder.Append((char)trail);
 			}
