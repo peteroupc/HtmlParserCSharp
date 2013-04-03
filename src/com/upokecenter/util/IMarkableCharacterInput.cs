@@ -9,9 +9,9 @@ public interface IMarkableCharacterInput : ICharacterInput {
 
 	 void setMarkPosition(int pos) ;
 
-	 int markIfNeeded();
+	 int setSoftMark();
 
-	 int markToEnd();
+	 int setHardMark();
 
 	 void moveBack(int count) ;
 

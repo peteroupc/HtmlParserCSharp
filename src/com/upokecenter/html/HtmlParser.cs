@@ -148,7 +148,7 @@ sealed class HtmlParser {
 			value=new IntList();
 		}
 
-		public void append(int ch){
+		public void appendChar(int ch){
 			value.appendInt(ch);
 		}
 
@@ -1098,7 +1098,7 @@ sealed class HtmlParser {
 	}
 
 	private void skipLineFeed()  {
-		int mark=charInput.markIfNeeded();
+		int mark=charInput.setSoftMark();
 		int nextToken=charInput.read();
 		if(nextToken==0x0a)
 			return; // ignore the token if it's 0x0A
@@ -3716,7 +3716,7 @@ sealed class HtmlParser {
 	}
 
 	private int parseCharacterReference(int allowedCharacter) {
-		int markStart=charInput.markIfNeeded();
+		int markStart=charInput.setSoftMark();
 		int c1=charInput.read();
 		if(c1<0 || c1==0x09 || c1==0x0a || c1==0x0c ||
 				c1==0x20 || c1==0x3c || c1==0x26 || (allowedCharacter>=0 && c1==allowedCharacter)){
@@ -4112,7 +4112,7 @@ sealed class HtmlParser {
 					// Keep reading characters to
 					// reduce the need to re-call
 					// this method
-					int mark=charInput.markIfNeeded();
+					int mark=charInput.setSoftMark();
 					for(int i=0;i<100;i++){
 						c=charInput.read();
 						if(c>0 && c!=0x26 && c!=0x3c){
@@ -4180,7 +4180,7 @@ sealed class HtmlParser {
 				break;
 			}
 			case TokenizerState.ScriptDataLessThan:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int c11=charInput.read();
 				if(c11==0x2f){
 					tempBuffer.clearAll();
@@ -4200,7 +4200,7 @@ sealed class HtmlParser {
 			}
 			case TokenizerState.ScriptDataEndTagOpen:
 			case TokenizerState.ScriptDataEscapedEndTagOpen:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				if(ch>='A' && ch<='Z'){
 					EndTagToken token=new EndTagToken((char) (ch+0x20));
@@ -4238,7 +4238,7 @@ sealed class HtmlParser {
 			}
 			case TokenizerState.ScriptDataEndTagName:
 			case TokenizerState.ScriptDataEscapedEndTagName:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				if((ch==0x09 || ch==0x0a || ch==0x0c || ch==0x20) &&
 						isAppropriateEndTag()){
@@ -4273,7 +4273,7 @@ sealed class HtmlParser {
 				break;
 			}
 			case TokenizerState.ScriptDataDoubleEscapeStart:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				if(ch==0x09 || ch==0x0a || ch==0x0c || ch==0x20 ||
 						ch==0x2f || ch==0x3e){
@@ -4299,7 +4299,7 @@ sealed class HtmlParser {
 				break;
 			}
 			case TokenizerState.ScriptDataDoubleEscapeEnd:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				if(ch==0x09 || ch==0x0a || ch==0x0c || ch==0x20 ||
 						ch==0x2f || ch==0x3e){
@@ -4326,7 +4326,7 @@ sealed class HtmlParser {
 			}
 			case TokenizerState.ScriptDataEscapeStart:
 			case TokenizerState.ScriptDataEscapeStartDash:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				if(ch==0x2d){
 					if(state==TokenizerState.ScriptDataEscapeStart) {
@@ -4465,7 +4465,7 @@ sealed class HtmlParser {
 				break;
 			}
 			case TokenizerState.ScriptDataDoubleEscapedLessThan:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				if(ch==0x2f){
 					tempBuffer.clearAll();
@@ -4480,7 +4480,7 @@ sealed class HtmlParser {
 				break;
 			}
 			case TokenizerState.ScriptDataEscapedLessThan:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				if(ch==0x2f){
 					tempBuffer.clearAll();
@@ -4518,7 +4518,7 @@ sealed class HtmlParser {
 					return c11;
 			}
 			case TokenizerState.TagOpen:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int c11=charInput.read();
 				if(c11==0x21) {
 					state=TokenizerState.MarkupDeclarationOpen;
@@ -4581,7 +4581,7 @@ sealed class HtmlParser {
 			}
 			case TokenizerState.RcDataEndTagOpen:
 			case TokenizerState.RawTextEndTagOpen:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				if(ch>='A' && ch<='Z'){
 					TagToken token=new EndTagToken((char) (ch+0x20));
@@ -4613,7 +4613,7 @@ sealed class HtmlParser {
 			}
 			case TokenizerState.RcDataEndTagName:
 			case TokenizerState.RawTextEndTagName:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				if((ch==0x09 || ch==0x0a || ch==0x0c || ch==0x20) && isAppropriateEndTag()){
 					state=TokenizerState.BeforeAttributeName;
@@ -4748,7 +4748,7 @@ sealed class HtmlParser {
 				break;
 			}
 			case TokenizerState.BeforeAttributeValue:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				while(ch==0x09 || ch==0x0a || ch==0x0c || ch==0x20){
 					ch=charInput.read();
@@ -4800,7 +4800,7 @@ sealed class HtmlParser {
 					// Keep reading characters to
 					// reduce the need to re-call
 					// this method
-					int mark=charInput.markIfNeeded();
+					int mark=charInput.setSoftMark();
 					for(int i=0;i<100;i++){
 						ch=charInput.read();
 						if(ch>0 && ch!=0x26 && ch!=0x22){
@@ -4836,7 +4836,7 @@ sealed class HtmlParser {
 					// Keep reading characters to
 					// reduce the need to re-call
 					// this method
-					int mark=charInput.markIfNeeded();
+					int mark=charInput.setSoftMark();
 					for(int i=0;i<100;i++){
 						ch=charInput.read();
 						if(ch>0 && ch!=0x26 && ch!=0x27){
@@ -4881,7 +4881,7 @@ sealed class HtmlParser {
 				break;
 			}
 			case TokenizerState.AfterAttributeValueQuoted:{
-				int mark=charInput.markIfNeeded();
+				int mark=charInput.setSoftMark();
 				int ch=charInput.read();
 				if(ch==0x09 || ch==0x0a || ch==0x0c || ch==0x20){
 					state=TokenizerState.BeforeAttributeName;
@@ -4902,7 +4902,7 @@ sealed class HtmlParser {
 				break;
 			}
 			case TokenizerState.SelfClosingStartTag:{
-				int mark=charInput.markIfNeeded();
+				int mark=charInput.setSoftMark();
 				int ch=charInput.read();
 				if(ch==0x3e){
 					currentTag.setSelfClosing(true);
@@ -4919,7 +4919,7 @@ sealed class HtmlParser {
 				break;
 			}
 			case TokenizerState.MarkupDeclarationOpen:{
-				int mark=charInput.markIfNeeded();
+				int mark=charInput.setSoftMark();
 				int ch=charInput.read();
 				if(ch=='-' && charInput.read()=='-'){
 					CommentToken token=new CommentToken();
@@ -4962,7 +4962,7 @@ sealed class HtmlParser {
 					state=TokenizerState.CommentStartDash;
 				} else if(ch==0){
 					error=true;
-					lastComment.append(0xFFFD);
+					lastComment.appendChar(0xFFFD);
 					state=TokenizerState.Comment;
 				} else if(ch==0x3e || ch<0){
 					error=true;
@@ -4971,7 +4971,7 @@ sealed class HtmlParser {
 					tokens.Add(lastComment);
 					return ret;
 				} else {
-					lastComment.append(ch);
+					lastComment.appendChar(ch);
 					state=TokenizerState.Comment;
 				}
 				break;
@@ -4982,8 +4982,8 @@ sealed class HtmlParser {
 					state=TokenizerState.CommentEnd;
 				} else if(ch==0){
 					error=true;
-					lastComment.append('-');
-					lastComment.append(0xFFFD);
+					lastComment.appendChar('-');
+					lastComment.appendChar(0xFFFD);
 					state=TokenizerState.Comment;
 				} else if(ch==0x3e || ch<0){
 					error=true;
@@ -4992,8 +4992,8 @@ sealed class HtmlParser {
 					tokens.Add(lastComment);
 					return ret;
 				} else {
-					lastComment.append('-');
-					lastComment.append(ch);
+					lastComment.appendChar('-');
+					lastComment.appendChar(ch);
 					state=TokenizerState.Comment;
 				}
 				break;
@@ -5004,7 +5004,7 @@ sealed class HtmlParser {
 					state=TokenizerState.CommentEndDash;
 				} else if(ch==0){
 					error=true;
-					lastComment.append(0xFFFD);
+					lastComment.appendChar(0xFFFD);
 				} else if(ch<0){
 					error=true;
 					state=TokenizerState.Data;
@@ -5012,7 +5012,7 @@ sealed class HtmlParser {
 					tokens.Add(lastComment);
 					return ret;
 				} else {
-					lastComment.append(ch);
+					lastComment.appendChar(ch);
 				}
 				break;
 			}
@@ -5022,8 +5022,8 @@ sealed class HtmlParser {
 					state=TokenizerState.CommentEnd;
 				} else if(ch==0){
 					error=true;
-					lastComment.append('-');
-					lastComment.append(0xFFFD);
+					lastComment.appendChar('-');
+					lastComment.appendChar(0xFFFD);
 					state=TokenizerState.Comment;
 				} else if(ch<0){
 					error=true;
@@ -5032,8 +5032,8 @@ sealed class HtmlParser {
 					tokens.Add(lastComment);
 					return ret;
 				} else {
-					lastComment.append('-');
-					lastComment.append(ch);
+					lastComment.appendChar('-');
+					lastComment.appendChar(ch);
 					state=TokenizerState.Comment;
 				}
 				break;
@@ -5047,16 +5047,16 @@ sealed class HtmlParser {
 					return ret;
 				} else if(ch==0){
 					error=true;
-					lastComment.append('-');
-					lastComment.append('-');
-					lastComment.append(0xFFFD);
+					lastComment.appendChar('-');
+					lastComment.appendChar('-');
+					lastComment.appendChar(0xFFFD);
 					state=TokenizerState.Comment;
 				} else if(ch==0x21){ // --!>
 					error=true;
 					state=TokenizerState.CommentEndBang;
 				} else if(ch==0x2D){
 					error=true;
-					lastComment.append('-');
+					lastComment.appendChar('-');
 				} else if(ch<0){
 					error=true;
 					state=TokenizerState.Data;
@@ -5065,9 +5065,9 @@ sealed class HtmlParser {
 					return ret;
 				} else {
 					error=true;
-					lastComment.append('-');
-					lastComment.append('-');
-					lastComment.append(ch);
+					lastComment.appendChar('-');
+					lastComment.appendChar('-');
+					lastComment.appendChar(ch);
 					state=TokenizerState.Comment;
 				}
 				break;
@@ -5081,15 +5081,15 @@ sealed class HtmlParser {
 					return ret;
 				} else if(ch==0){
 					error=true;
-					lastComment.append('-');
-					lastComment.append('-');
-					lastComment.append('!');
-					lastComment.append(0xFFFD);
+					lastComment.appendChar('-');
+					lastComment.appendChar('-');
+					lastComment.appendChar('!');
+					lastComment.appendChar(0xFFFD);
 					state=TokenizerState.Comment;
 				} else if(ch==0x2D){
-					lastComment.append('-');
-					lastComment.append('-');
-					lastComment.append('!');
+					lastComment.appendChar('-');
+					lastComment.appendChar('-');
+					lastComment.appendChar('!');
 					state=TokenizerState.CommentEndDash;
 				} else if(ch<0){
 					error=true;
@@ -5099,10 +5099,10 @@ sealed class HtmlParser {
 					return ret;
 				} else {
 					error=true;
-					lastComment.append('-');
-					lastComment.append('-');
-					lastComment.append('!');
-					lastComment.append(ch);
+					lastComment.appendChar('-');
+					lastComment.appendChar('-');
+					lastComment.appendChar('!');
+					lastComment.appendChar(ch);
 					state=TokenizerState.Comment;
 				}
 				break;
@@ -5151,7 +5151,7 @@ sealed class HtmlParser {
 				break;
 			}
 			case TokenizerState.RawTextLessThan:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				if(ch==0x2f){
 					tempBuffer.clearAll();
@@ -5168,7 +5168,7 @@ sealed class HtmlParser {
 			case TokenizerState.BogusComment:{
 				CommentToken comment=new CommentToken();
 				if(bogusCommentCharacter>=0) {
-					comment.append(bogusCommentCharacter==0 ? 0xFFFD : bogusCommentCharacter);
+					comment.appendChar(bogusCommentCharacter==0 ? 0xFFFD : bogusCommentCharacter);
 				}
 				while(true){
 					int ch=charInput.read();
@@ -5178,7 +5178,7 @@ sealed class HtmlParser {
 					if(ch==0) {
 						ch=0xFFFD;
 					}
-					comment.append(ch);
+					comment.appendChar(ch);
 				}
 				int ret=tokens.Count|comment.getType();
 				tokens.Add(comment);
@@ -5186,7 +5186,7 @@ sealed class HtmlParser {
 				return ret;
 			}
 			case TokenizerState.DocType:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				if(ch==0x09||ch==0x0a||ch==0x0c||ch==0x20){
 					state=TokenizerState.BeforeDocTypeName;
@@ -5280,7 +5280,7 @@ sealed class HtmlParser {
 					return ret;
 				} else {
 					int ch2=0;
-					int pos=charInput.markIfNeeded();
+					int pos=charInput.setSoftMark();
 					if(ch=='P' || ch=='p'){
 						if(((ch2=charInput.read())=='u' || ch2=='U') &&
 								((ch2=charInput.read())=='b' || ch2=='B') &&
@@ -5544,7 +5544,7 @@ sealed class HtmlParser {
 				break;
 			}
 			case TokenizerState.RcDataLessThan:{
-				charInput.markToEnd();
+				charInput.setHardMark();
 				int ch=charInput.read();
 				if(ch==0x2f){
 					tempBuffer.clearAll();

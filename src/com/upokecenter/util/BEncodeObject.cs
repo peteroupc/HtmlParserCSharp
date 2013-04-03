@@ -55,7 +55,7 @@ public sealed class BEncodeObject {
 			string s=(string)obj;
 			long length=getUtf8Length(s);
 			if(length<0)
-				throw new BEncodeException("invalid _string");
+				throw new BEncodeException("invalid string");
 			writeInteger(length,stream);
 			stream.WriteByte(unchecked((byte)((byte)':')));
 			writeUtf8(s,stream);
@@ -65,7 +65,7 @@ public sealed class BEncodeObject {
 			foreach(string key in map.Keys){
 				long length=getUtf8Length(key);
 				if(length<0)
-					throw new BEncodeException("invalid _string");
+					throw new BEncodeException("invalid string");
 				writeInteger(length,stream);
 				stream.WriteByte(unchecked((byte)((byte)':')));
 				writeUtf8(key,stream);

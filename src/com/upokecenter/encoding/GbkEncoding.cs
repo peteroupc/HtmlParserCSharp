@@ -5,6 +5,8 @@ using System.IO;
 
 
 
+using com.upokecenter.util;
+
 sealed class GbkEncoding : ITextEncoder, ITextDecoder {
 
 	bool gb18030=true;

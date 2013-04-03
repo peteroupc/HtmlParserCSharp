@@ -52,7 +52,8 @@ if((offset+length)>array.Length)throw new ArgumentOutOfRangeException("offset+le
 			} else if(c<0x80){
 				stream.WriteByte(unchecked((byte)((byte)c)));
 			} else if(c>=0xF780 && c<=0xF7FF){
-				stream.WriteByte(unchecked((byte)((byte)))(c-0xF780+0x80));
+				c=(c-0xf780+0x80)&0xFF;
+				stream.WriteByte(unchecked((byte)((byte)c)));
 			} else {
 				error.emitEncoderError(stream, c);
 			}

@@ -32,7 +32,7 @@ public sealed class URL {
 		return result;
 	}
 
-	public bool equals(Object obj) {
+	public override sealed bool Equals(object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)

@@ -273,7 +273,7 @@ public sealed class DownloadHelper {
 					} else {
 						PeterO.Support.InputStream stream=null;
 						try {
-							stream=new PeterO.Support.BufferedInputStream(new PeterO.Support.WrappedInputStream(new FileStream(cacheFile.ToString(),FileMode.Open)),8192);
+							stream=new PeterO.Support.BufferedInputStream(new PeterO.Support.WrappedInputStream(new System.IO.FileStream(cacheFile.ToString(),System.IO.FileMode.Open)),8192);
 							crinfo.cr=DownloadHelperImpl.newCacheResponse(stream,
 									headers);
 							//Console.WriteLine("headerfields: %s",headers.getHeaderFields());
@@ -583,7 +583,7 @@ public sealed class DownloadHelper {
 					if(stream!=null){
 						try {
 							stream.Close();
-						} catch(IOException){}
+						} catch (IOException){}
 					}
 				}
 			}
@@ -621,7 +621,7 @@ public sealed class DownloadHelper {
 					if(stream!=null){
 						try {
 							stream.Close();
-						} catch(IOException){}
+						} catch (IOException){}
 					}
 				}
 			}

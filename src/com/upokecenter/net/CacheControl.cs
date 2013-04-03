@@ -248,7 +248,7 @@ internal class CacheControl {
 	}
 
 	public static CacheControl fromFile(PeterO.Support.File f) {
-		PeterO.Support.WrappedInputStream fs=new PeterO.Support.WrappedInputStream(new FileStream(f.ToString(),FileMode.Open));
+		PeterO.Support.WrappedInputStream fs=new PeterO.Support.WrappedInputStream(new System.IO.FileStream(f.ToString(),System.IO.FileMode.Open));
 		try {
 			return new CacheControlSerializer().readObjectFromStream(fs);
 		} finally {

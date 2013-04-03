@@ -42,7 +42,7 @@ sealed class ShiftJISEncoding : ITextEncoder, ITextDecoder {
 				offset+=o;
 				count+=o;
 				length-=o;
-				continue;
+				break;
 			}
 			if(lead!=0){
 				int thislead=lead;
@@ -81,6 +81,12 @@ sealed class ShiftJISEncoding : ITextEncoder, ITextDecoder {
 			} else if((b>=0x81 && b<=0x9F) || (b>=0xE0 && b<=0xFC)){
 				lead=b;
 				stream.mark(2);
+				continue;
+			} else {
+				int o=error.emitDecoderError(buffer, offset, length);
+				offset+=o;
+				count+=o;
+				length-=o;
 				continue;
 			}
 		}

@@ -160,10 +160,9 @@ namespace PeterO.Support
 		public void Add(TKey key, TValue value)
 		{
 			if(Object.Equals(key,null)){
-				if(hasNull)throw new ArgumentException();
 				hasNull=true;
 				nullValue=value;
-			} else wrapped.Add(key,value);
+			} else wrapped[key]=value;
 		}
 		
 		public bool Remove(TKey key)
@@ -339,7 +338,7 @@ namespace PeterO.Support
 		
 		Stream wrapped=null;
 		public WrappedInputStream(Stream wrapped) {
-			this.wrapped=null;
+			this.wrapped=wrapped;
 		}
 
 		public override sealed void Close() {

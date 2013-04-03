@@ -108,14 +108,14 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 		this.pos=pos;
 	}
 
-	public int markIfNeeded(){
+	public int setSoftMark(){
 		if(!haveMark){
-			markToEnd();
+			setHardMark();
 		}
 		return getMarkPosition();
 	}
 
-	public int markToEnd(){
+	public int setHardMark(){
 		if(buffer==null){
 			buffer=new int[16];
 			pos=0;

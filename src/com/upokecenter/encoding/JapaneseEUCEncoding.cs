@@ -5,6 +5,7 @@ using System.IO;
 
 
 
+
 sealed class JapaneseEUCEncoding : ITextEncoder, ITextDecoder {
 
 	int eucjp1=0;
