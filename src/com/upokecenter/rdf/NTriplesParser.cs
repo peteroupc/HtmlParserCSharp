@@ -1,3 +1,5 @@
+// Written by Peter Occil, 2013. In the public domain.
+// Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
 namespace com.upokecenter.rdf {
 using System;
 
@@ -8,7 +10,6 @@ using System.Collections.Generic;
 
 
 
-using com.upokecenter.util;
 
 
 
@@ -122,7 +123,7 @@ public sealed class NTriplesParser : IRDFParser {
 	}
 
 	private string readLanguageTag()  {
-		IntList ilist=new IntList();
+		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
 		bool hyphen=false;
 		bool haveHyphen=false;
 		bool haveString=false;
@@ -130,16 +131,28 @@ public sealed class NTriplesParser : IRDFParser {
 		while(true){
 			int c2=input.read();
 			if(c2>='a' && c2<='z'){
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 				haveString=true;
 				hyphen=false;
 			} else if(haveHyphen && (c2>='0' && c2<='9')){
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 				haveString=true;
 				hyphen=false;
 			} else if(c2=='-'){
 				if(hyphen||!haveString)throw new ParserException();
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 				hyphen=true;
 				haveHyphen=true;
 				haveString=true;
@@ -154,36 +167,52 @@ public sealed class NTriplesParser : IRDFParser {
 	}
 
 	private string readStringLiteral(int ch)  {
-		IntList ilist=new IntList();
+		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
 		while(true){
 			int c2=input.read();
 			if((c2<0x20 || c2>0x7e))
 				throw new ParserException();
 			else if(c2=='\\'){
 				c2=readUnicodeEscape(true);
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 			} else if(c2==ch)
 				return ilist.ToString();
 			else {
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 			}
 		}
 	}
 
 	private string readBlankNodeLabel()  {
-		IntList ilist=new IntList();
+		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
 		int startChar=input.read();
 		if(!((startChar>='A' && startChar<='Z') ||
 				(startChar>='a' && startChar<='z')))
 			throw new ParserException();
-		ilist.appendInt(startChar);
+		if(startChar<=0xFFFF){ ilist.Append((char)(startChar)); }
+else {
+ilist.Append((char)((((startChar-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((startChar-0x10000))&0x3FF)+0xDC00));
+}
 		input.setSoftMark();
 		while(true){
 			int ch=input.read();
 			if((ch>='A' && ch<='Z') ||
 					(ch>='a' && ch<='z') ||
 					(ch>='0' && ch<='9')){
-				ilist.appendInt(ch);
+				if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
 			} else {
 				if(ch>=0) {
 					input.moveBack(1);
@@ -199,7 +228,7 @@ public sealed class NTriplesParser : IRDFParser {
 	}
 
 	private string readIriReference()  {
-		IntList ilist=new IntList();
+		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
 		bool haveString=false;
 		bool colon=false;
 		while(true){
@@ -213,7 +242,11 @@ public sealed class NTriplesParser : IRDFParser {
 				if(c2==':') {
 					colon=true;
 				}
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 				haveString=true;
 			} else if(c2=='>'){
 				if(!haveString || !colon)
@@ -226,7 +259,11 @@ public sealed class NTriplesParser : IRDFParser {
 				if(c2==':') {
 					colon=true;
 				}
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 				haveString=true;
 			}
 		}

@@ -2,6 +2,8 @@ namespace com.upokecenter.rdf {
 using System;
 
 using System.IO;
+//Written by Peter Occil, 2013. In the public domain.
+//Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
 
 using System.Collections.Generic;
 
@@ -10,7 +12,6 @@ using System.Collections.Generic;
 
 
 
-using com.upokecenter.util;
 
 
 
@@ -234,7 +235,7 @@ public class TurtleParser : IRDFParser {
 	}
 
 	private string readLanguageTag()  {
-		IntList ilist=new IntList();
+		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
 		bool hyphen=false;
 		bool haveHyphen=false;
 		bool haveString=false;
@@ -242,20 +243,36 @@ public class TurtleParser : IRDFParser {
 		while(true){
 			int c2=input.read();
 			if(c2>='A' && c2<='Z'){
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 				haveString=true;
 				hyphen=false;
 			} else if(c2>='a' && c2<='z'){
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 				haveString=true;
 				hyphen=false;
 			} else if(haveHyphen && (c2>='0' && c2<='9')){
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 				haveString=true;
 				hyphen=false;
 			} else if(c2=='-'){
 				if(hyphen||!haveString)throw new ParserException();
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 				hyphen=true;
 				haveHyphen=true;
 				haveString=true;
@@ -270,7 +287,7 @@ public class TurtleParser : IRDFParser {
 	}
 
 	private string readStringLiteral(int ch)  {
-		IntList ilist=new IntList();
+		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
 		bool first=true;
 		bool longQuote=false;
 		int quotecount=0;
@@ -294,12 +311,24 @@ public class TurtleParser : IRDFParser {
 			else if(c2=='\\'){
 				c2=readUnicodeEscape(true);
 				if(quotecount>=2) {
-					ilist.appendInt(ch);
+					if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
 				}
 				if(quotecount>=1) {
-					ilist.appendInt(ch);
+					if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
 				}
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 				quotecount=0;
 			} else if(c2==ch){
 				if(!longQuote)
@@ -311,12 +340,24 @@ public class TurtleParser : IRDFParser {
 				if(c2<0)
 					throw new ParserException();
 				if(quotecount>=2) {
-					ilist.appendInt(ch);
+					if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
 				}
 				if(quotecount>=1) {
-					ilist.appendInt(ch);
+					if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
 				}
-				ilist.appendInt(c2);
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
 				quotecount=0;
 			}
 		}
@@ -327,9 +368,13 @@ public class TurtleParser : IRDFParser {
 	// a dot, or a digit)
 	private RDFTerm readNumberLiteral(int ch)  {
 		// buffer to hold the literal
-		IntList ilist=new IntList();
+		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
 		// include the first character
-		ilist.appendInt(ch);
+		if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
 		bool haveDigits=(ch>='0' && ch<='9');
 		bool haveDot=(ch=='.');
 		input.setHardMark();
@@ -337,11 +382,19 @@ public class TurtleParser : IRDFParser {
 			int ch1=input.read();
 			if(haveDigits && (ch1=='e' || ch1=='E')){
 				// Parse exponent
-				ilist.appendInt(ch1);
+				if(ch1<=0xFFFF){ ilist.Append((char)(ch1)); }
+else {
+ilist.Append((char)((((ch1-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
+}
 				ch1=input.read();
 				haveDigits=false;
 				if(ch1=='+' || ch1=='-' || (ch1>='0' && ch1<='9')){
-					ilist.appendInt(ch1);
+					if(ch1<=0xFFFF){ ilist.Append((char)(ch1)); }
+else {
+ilist.Append((char)((((ch1-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
+}
 					if(ch1>='0' && ch1<='9') {
 						haveDigits=true;
 					}
@@ -352,7 +405,11 @@ public class TurtleParser : IRDFParser {
 					ch1=input.read();
 					if(ch1>='0' && ch1<='9'){
 						haveDigits=true;
-						ilist.appendInt(ch1);
+						if(ch1<=0xFFFF){ ilist.Append((char)(ch1)); }
+else {
+ilist.Append((char)((((ch1-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
+}
 					} else {
 						if(ch1>=0) {
 							input.moveBack(1);
@@ -364,7 +421,11 @@ public class TurtleParser : IRDFParser {
 				}
 			} else if(ch1>='0' && ch1<='9'){
 				haveDigits=true;
-				ilist.appendInt(ch1);
+				if(ch1<=0xFFFF){ ilist.Append((char)(ch1)); }
+else {
+ilist.Append((char)((((ch1-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
+}
 			} else if(!haveDot && ch1=='.'){
 				haveDot=true;
 				// check for non-digit and non-E
@@ -381,7 +442,11 @@ public class TurtleParser : IRDFParser {
 				} else {
 					input.moveBack(1);
 				}
-				ilist.appendInt(ch1);
+				if(ch1<=0xFFFF){ ilist.Append((char)(ch1)); }
+else {
+ilist.Append((char)((((ch1-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
+}
 			} else { // no more digits
 				if(ch1>=0) {
 					input.moveBack(1);
@@ -396,12 +461,16 @@ public class TurtleParser : IRDFParser {
 	}
 
 	private string readBlankNodeLabel()  {
-		IntList ilist=new IntList();
+		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
 		int startChar=input.read();
 		if(!isNameStartCharU(startChar) &&
 				(startChar<'0' || startChar>'9'))
 			throw new ParserException();
-		ilist.appendInt(startChar);
+		if(startChar<=0xFFFF){ ilist.Append((char)(startChar)); }
+else {
+ilist.Append((char)((((startChar-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((startChar-0x10000))&0x3FF)+0xDC00));
+}
 		bool lastIsPeriod=false;
 		input.setSoftMark();
 		while(true){
@@ -415,10 +484,18 @@ public class TurtleParser : IRDFParser {
 				} else {
 					input.moveBack(1);
 				}
-				ilist.appendInt(ch);
+				if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
 				lastIsPeriod=true;
 			} else if(isNameChar(ch)){
-				ilist.appendInt(ch);
+				if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
 				lastIsPeriod=false;
 			} else {
 				if(ch>=0) {
@@ -432,7 +509,7 @@ public class TurtleParser : IRDFParser {
 	}
 
 	private string readIriReference()  {
-		IntList ilist=new IntList();
+		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
 		while(true){
 			int ch=input.read();
 			if(ch<0)
@@ -449,15 +526,23 @@ public class TurtleParser : IRDFParser {
 			}
 			if(ch<=0x20 || isChar(ch, "><\\\"{}|^`"))
 				throw new ParserException();
-			ilist.appendInt(ch);
+			if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
 		}
 	}
 	private string readPrefix(int startChar)  {
-		IntList ilist=new IntList();
+		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
 		bool lastIsPeriod=false;
 		bool first=true;
 		if(startChar>=0){
-			ilist.appendInt(startChar);
+			if(startChar<=0xFFFF){ ilist.Append((char)(startChar)); }
+else {
+ilist.Append((char)((((startChar-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((startChar-0x10000))&0x3FF)+0xDC00));
+}
 			first=false;
 		}
 		while(true){
@@ -474,7 +559,11 @@ public class TurtleParser : IRDFParser {
 			else if(ch!='.' && !isNameChar(ch))
 				throw new ParserException();
 			first=false;
-			ilist.appendInt(ch);
+			if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
 			lastIsPeriod=(ch=='.');
 		}
 	}
@@ -633,7 +722,7 @@ public class TurtleParser : IRDFParser {
 	}
 
 	private string readOptionalLocalName()  {
-		IntList ilist=new IntList();
+		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
 		bool lastIsPeriod=false;
 		bool first=true;
 		input.setSoftMark();
@@ -646,16 +735,32 @@ public class TurtleParser : IRDFParser {
 				int b=input.read();
 				if(toHexValue(a)<0 ||
 						toHexValue(b)<0)throw new ParserException();
-				ilist.appendInt(ch);
-				ilist.appendInt(a);
-				ilist.appendInt(b);
+				if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
+				if(a<=0xFFFF){ ilist.Append((char)(a)); }
+else {
+ilist.Append((char)((((a-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((a-0x10000))&0x3FF)+0xDC00));
+}
+				if(b<=0xFFFF){ ilist.Append((char)(b)); }
+else {
+ilist.Append((char)((((b-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((b-0x10000))&0x3FF)+0xDC00));
+}
 				lastIsPeriod=false;
 				first=false;
 				continue;
 			} else if(ch=='\\'){
 				ch=input.read();
 				if(isChar(ch,"_~.-!$&'()*+,;=/?#@%")){
-					ilist.appendInt(ch);
+					if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
 				} else throw new ParserException();
 				lastIsPeriod=false;
 				first=false;
@@ -688,7 +793,11 @@ public class TurtleParser : IRDFParser {
 				}
 			}
 			first=false;
-			ilist.appendInt(ch);
+			if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
 		}
 
 	}
