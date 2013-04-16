@@ -1,9 +1,11 @@
 /*
 Written in 2013 by Peter Occil.  Released to the public domain.
 Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
-*/
+ */
 namespace com.upokecenter.util {
 using System;
+using System.Text;
+using System.Globalization;
 
 public sealed class IntList {
 	int[] buffer;
@@ -21,6 +23,20 @@ public int get(int index){
 
 	public void set(int index, int value){
 		buffer[index]=value;
+	}
+
+	public void appendInts(int[] array, int offset, int length){
+		if((array)==null)throw new ArgumentNullException("array");
+		if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
+		if((length)<0)throw new ArgumentOutOfRangeException("length"+" not greater or equal to "+"0"+" ("+Convert.ToString(length,CultureInfo.InvariantCulture)+")");
+		if((offset+length)>array.Length)throw new ArgumentOutOfRangeException("offset+length"+" not less or equal to "+Convert.ToString(array.Length,CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+length,CultureInfo.InvariantCulture)+")");
+		if(ptr+length>buffer.Length){
+			int[] newbuffer=new int[Math.Max(buffer.Length*2, buffer.Length+length)];
+			Array.Copy(buffer,0,newbuffer,0,buffer.Length);
+			buffer=newbuffer;
+		}
+		Array.Copy(array, offset, buffer, ptr, length);
+		ptr+=length;
 	}
 
 	public void appendInt(int v){
@@ -61,7 +77,7 @@ public int size(){
 		return ptr;
 	}
 	public override sealed string ToString(){
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
+		StringBuilder builder=new StringBuilder();
 		for(int i=0;i<ptr;i++){
 			if(buffer[i]<=0xFFFF){
 				builder.Append((char)buffer[i]);

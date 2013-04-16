@@ -22,20 +22,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 
 namespace com.upokecenter.html {
 using System;
-
+using System.Text;
 using System.Collections.Generic;
-
-
-
-
 using com.upokecenter.util;
 internal class Element : Node, IElement {
-	private sealed class AttributeNameComparator : IComparer<HtmlParser.Attrib> {
-		public int Compare(HtmlParser.Attrib arg0, HtmlParser.Attrib arg1) {
+	private sealed class AttributeNameComparator : IComparer<IAttr> {
+		public int Compare(IAttr arg0, IAttr arg1) {
 			string a=arg0.getName();
 			string b=arg1.getName();
 			return String.Compare(a,b,StringComparison.Ordinal);
@@ -51,9 +47,9 @@ internal class Element : Node, IElement {
 			HtmlParser.StartTagToken token, string _namespace){
 		Element ret=new Element();
 		ret.name=token.getName();
-		ret.attributes=new List<HtmlParser.Attrib>();
-		foreach(HtmlParser.Attrib attribute in token.getAttributes()){
-			ret.attributes.Add(new HtmlParser.Attrib(attribute));
+		ret.attributes=new List<Attr>();
+		foreach(Attr attribute in token.getAttributes()){
+			ret.attributes.Add(new Attr(attribute));
 		}
 		ret._namespace=_namespace;
 		return ret;
@@ -65,38 +61,105 @@ internal class Element : Node, IElement {
 
 	private string prefix=null;
 
-	private IList<HtmlParser.Attrib> attributes;
+	private IList<Attr> attributes;
 
 	internal Element() : base(NodeType.ELEMENT_NODE) {
-		attributes=new List<HtmlParser.Attrib>();
+		attributes=new List<Attr>();
 	}
 
 	public Element(string name) : base(NodeType.ELEMENT_NODE) {
-		attributes=new List<HtmlParser.Attrib>();
+		attributes=new List<Attr>();
 		this.name=name;
 	}
 
+
+	private void collectElements(INode c, string s, IList<IElement> nodes){
+		if(c.getNodeType()==NodeType.ELEMENT_NODE){
+			Element e=(Element)c;
+			if(s==null || e.getLocalName().Equals(s)){
+				nodes.Add(e);
+			}
+		}
+		foreach(INode node in c.getChildNodes()){
+			collectElements(node,s,nodes);
+		}
+	}
+
+
+	private void collectElementsHtml(INode c, string s,
+			string sLowercase, IList<IElement> nodes){
+		if(c.getNodeType()==NodeType.ELEMENT_NODE){
+			Element e=(Element)c;
+			if(s==null){
+				nodes.Add(e);
+			} else if(HtmlParser.HTML_NAMESPACE.Equals(e.getNamespaceURI()) &&
+					e.getLocalName().Equals(sLowercase)){
+				nodes.Add(e);
+			} else if(e.getLocalName().Equals(s)){
+				nodes.Add(e);
+			}
+		}
+		foreach(INode node in c.getChildNodes()){
+			collectElements(node,s,nodes);
+		}
+	}
+
 	public string getAttribute(string name) {
-		foreach(HtmlParser.Attrib attr in getAttributes()){
+		foreach(IAttr attr in getAttributes()){
 			if(attr.getName().Equals(name))
 				return attr.getValue();
 		}
 		return null;
 	}
 
-	public void setPrefix(string prefix){
-		this.prefix=prefix;
-	}
-
 	public string getAttributeNS(string _namespace, string localName) {
-		foreach(HtmlParser.Attrib attr in getAttributes()){
-			if(attr.isAttribute(localName,_namespace))
+		foreach(IAttr attr in getAttributes()){
+			if((localName==null ? attr.getLocalName()==null : localName.Equals(attr.getLocalName())) &&
+					(_namespace==null ? attr.getNamespaceURI()==null : _namespace.Equals(attr.getNamespaceURI())))
 				return attr.getValue();
 		}
 		return null;
 	}
-	public IList<HtmlParser.Attrib> getAttributes() {
-		return attributes;
+
+	public IList<IAttr> getAttributes() {
+		return new List<IAttr>(attributes);
+	}
+	public IElement getElementById(string id) {
+		if(id==null)
+			throw new ArgumentException();
+		foreach(INode node in getChildNodes()){
+			if(node is IElement){
+				if(id.Equals(((IElement)node).getId()))
+					return (IElement)node;
+				IElement element=((IElement)node).getElementById(id);
+				if(element!=null)return element;
+			}
+		}
+		return null;
+	}
+
+	public IList<IElement> getElementsByTagName(string tagName) {
+		if(tagName==null)
+			throw new ArgumentException();
+		if(tagName.Equals("*")) {
+			tagName=null;
+		}
+		IList<IElement> ret=new List<IElement>();
+		if(((Document) getOwnerDocument()).isHtmlDocument()){
+			string lowerTagName=StringUtility.toLowerCaseAscii(tagName);
+			foreach(INode node in getChildNodes()){
+				collectElementsHtml(node,tagName,lowerTagName,ret);
+			}
+		} else {
+			foreach(INode node in getChildNodes()){
+				collectElements(node,tagName,ret);
+			}
+		}
+		return ret;
+	}
+
+	public string getId(){
+		return getAttribute("id");
 	}
 
 	public string getLocalName() {
@@ -107,10 +170,29 @@ internal class Element : Node, IElement {
 		return _namespace;
 	}
 
+	public string getTagName() {
+		string tagName=name;
+		if(prefix!=null){
+			tagName=prefix+":"+name;
+		}
+		if((getOwnerDocument() is Document) &&
+				HtmlParser.HTML_NAMESPACE.Equals(_namespace))
+			return StringUtility.toUpperCaseAscii(tagName);
+		return tagName;
+	}
+	public override sealed string getTextContent(){
+		StringBuilder builder=new StringBuilder();
+		foreach(INode node in getChildNodes()){
+			if(node.getNodeType()!=NodeType.COMMENT_NODE){
+				builder.Append(node.getTextContent());
+			}
+		}
+		return builder.ToString();
+	}
+
 	internal bool isHtmlElement(string name){
 		return name.Equals(this.name) && HtmlParser.HTML_NAMESPACE.Equals(_namespace);
 	}
-
 	internal bool isMathMLElement(string name){
 		return name.Equals(this.name) && HtmlParser.MATHML_NAMESPACE.Equals(_namespace);
 	}
@@ -118,8 +200,9 @@ internal class Element : Node, IElement {
 	internal bool isSvgElement(string name){
 		return name.Equals(this.name) && HtmlParser.SVG_NAMESPACE.Equals(_namespace);
 	}
+
 	internal void mergeAttributes(HtmlParser.StartTagToken token){
-		foreach(HtmlParser.Attrib attr in token.getAttributes()){
+		foreach(IAttr attr in token.getAttributes()){
 			string s=getAttribute(attr.getName());
 			if(s==null){
 				setAttribute(attr.getName(),attr.getValue());
@@ -127,15 +210,21 @@ internal class Element : Node, IElement {
 		}
 	}
 
-	public void setAttribute(string _string, string value) {
-		foreach(HtmlParser.Attrib attr in getAttributes()){
+	internal void addAttribute(Attr value) {
+		attributes.Add(value);
+	}
+
+
+	internal void setAttribute(string _string, string value) {
+		foreach(IAttr attr in getAttributes()){
 			if(attr.getName().Equals(_string)){
-				attr.setValue(value);
+				((Attr)attr).setValue(value);
 			}
 		}
-		attributes.Add(new HtmlParser.Attrib(_string,value));
+		attributes.Add(new Attr(_string,value));
 	}
-	internal void setName(string name) {
+
+	internal void setLocalName(string name) {
 		this.name = name;
 	}
 
@@ -143,8 +232,11 @@ internal class Element : Node, IElement {
 		this._namespace = _namespace;
 	}
 
+	public void setPrefix(string prefix){
+		this.prefix=prefix;
+	}
 	internal override sealed string toDebugString(){
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
+		StringBuilder builder=new StringBuilder();
 		string extra="";
 		if(HtmlParser.MATHML_NAMESPACE.Equals(_namespace)) {
 			extra="math ";
@@ -153,16 +245,16 @@ internal class Element : Node, IElement {
 			extra="svg ";
 		}
 		builder.Append("<"+extra+name.ToString()+">\n");
-		List<HtmlParser.Attrib> attribs=new List<HtmlParser.Attrib>(getAttributes());
+		List<IAttr> attribs=new List<IAttr>(getAttributes());
 		attribs.Sort(new AttributeNameComparator());
-		foreach(HtmlParser.Attrib attribute in attribs){
+		foreach(IAttr attribute in attribs){
 			//Console.WriteLine("%s %s",attribute.getNamespace(),attribute.getLocalName());
-			if(attribute.getNamespace()!=null){
+			if(attribute.getNamespaceURI()!=null){
 				string extra1="";
-				if(HtmlParser.XLINK_NAMESPACE.Equals(attribute.getNamespace())) {
+				if(HtmlParser.XLINK_NAMESPACE.Equals(attribute.getNamespaceURI())) {
 					extra1="xlink ";
 				}
-				if(HtmlParser.XML_NAMESPACE.Equals(attribute.getNamespace())) {
+				if(HtmlParser.XML_NAMESPACE.Equals(attribute.getNamespaceURI())) {
 					extra1="xml ";
 				}
 				extra1+=attribute.getLocalName();
@@ -186,90 +278,13 @@ internal class Element : Node, IElement {
 		return builder.ToString();
 	}
 
-	public override sealed string ToString(){
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
-		builder.Append("Element: "+name.ToString()+", "+_namespace.ToString()+"\n");
-		foreach(HtmlParser.Attrib attribute in getAttributes()){
-			builder.Append("Attribute: "+attribute.getName().ToString()+"="+
-					attribute.getValue().ToString()+"\n");
-		}
-		foreach(Node node in getChildNodesInternal()){
-			string str=node.ToString();
-			string[] strarray=StringUtility.splitAt(str,"\n");
-			foreach(string el in strarray){
-				builder.Append("  ");
-				builder.Append(el);
-				builder.Append("\n");
-			}
-		}
-		return builder.ToString();
+
+	public override sealed string getNodeName(){
+		return getTagName();
 	}
 
-	public string getTagName() {
-		string tagName=name;
-		if(prefix!=null){
-			tagName=prefix+":"+name;
-		}
-		if((getOwnerDocument() is Document) &&
-				HtmlParser.HTML_NAMESPACE.Equals(_namespace))
-			return StringUtility.toUpperCaseAscii(tagName);
-		return tagName;
-	}
-
-	private void collectElements(INode c, string s, IList<IElement> nodes){
-		if(c.getNodeType()==NodeType.ELEMENT_NODE){
-			Element e=(Element)c;
-			if(s==null || e.getLocalName().Equals(s)){
-				nodes.Add(e);
-			}
-		}
-		foreach(INode node in c.getChildNodes()){
-			collectElements(node,s,nodes);
-		}
-	}
-
-	private void collectElementsHtml(INode c, string s,
-			string sLowercase, IList<IElement> nodes){
-		if(c.getNodeType()==NodeType.ELEMENT_NODE){
-			Element e=(Element)c;
-			if(s==null){
-				nodes.Add(e);
-			} else if(HtmlParser.HTML_NAMESPACE.Equals(e.getNamespaceURI()) &&
-					e.getLocalName().Equals(sLowercase)){
-				nodes.Add(e);
-			} else if(e.getLocalName().Equals(s)){
-				nodes.Add(e);
-			}
-		}
-		foreach(INode node in c.getChildNodes()){
-			collectElements(node,s,nodes);
-		}
-	}
-	public IList<IElement> getElementsByTagName(string tagName) {
-		if(tagName==null)
-			throw new ArgumentException();
-		if(tagName.Equals("*")) {
-			tagName="";
-		}
-		IList<IElement> ret=new List<IElement>();
-		if(((Document) getOwnerDocument()).isHtmlDocument()){
-			collectElementsHtml(this,tagName,
-					StringUtility.toLowerCaseAscii(tagName),ret);
-		} else {
-			collectElements(this,tagName,ret);
-		}
-		return ret;
-	}
-
-
-	public override sealed string getTextContent(){
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
-		foreach(INode node in getChildNodes()){
-			if(node.getNodeType()!=NodeType.COMMENT_NODE){
-				builder.Append(node.getTextContent());
-			}
-		}
-		return builder.ToString();
+	public string getPrefix() {
+		return prefix;
 	}
 }
 }

@@ -22,11 +22,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 
 namespace com.upokecenter.html {
 using System;
-
 using System.Collections.Generic;
 
 /**
@@ -39,21 +38,11 @@ using System.Collections.Generic;
  */
 public interface IDocument : INode {
 	/**
+	 * Gets the document's address
 	 * 
-	 * Gets all descendents, both direct and indirect, that have
-	 * the specified tag name, using ASCII case-insensitive matching.
-	 * 
-	 * @param _string A tag name.
-	 * 
+	 * @return An absolute URL.
 	 */
-	IList<IElement> getElementsByTagName(string _string);
-	/**
-	 * 
-	 * Gets the document type of this document, if any.
-	 * 
-	 * 
-	 */
-	 IDocumentType getDoctype();
+	string getURL();
 	/**
 	 * 
 	 * Gets the character encoding used in this document.
@@ -63,11 +52,28 @@ public interface IDocument : INode {
 	string getCharacterSet();
 	/**
 	 * 
+	 * Gets the document type of this document, if any.
+	 * 
+	 * 
+	 */
+	 IDocumentType getDoctype();
+	/**
+	 * 
 	 * Gets the root element of this document.
 	 * 
 	 * 
 	 */
 	 IElement getDocumentElement();
+	IElement getElementById(string id);
+	/**
+	 * 
+	 * Gets all descendents, both direct and indirect, that have
+	 * the specified tag name, using ASCII case-insensitive matching.
+	 * 
+	 * @param _string A tag name.
+	 * 
+	 */
+	IList<IElement> getElementsByTagName(string _string);
 }
 
 }

@@ -22,18 +22,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 
 namespace com.upokecenter.html {
 using System;
-
 using System.IO;
-
-
 using com.upokecenter.encoding;
-
-
-
+using com.upokecenter.io;
 
 sealed class DecoderCharacterInput : ICharacterInput {
 	private PeterO.Support.InputStream input;
@@ -51,12 +46,12 @@ sealed class DecoderCharacterInput : ICharacterInput {
 		this.error=error;
 	}
 
-	public int read(int[] buf, int offset, int unitCount)  {
-		return decoder.decode(input,buf,offset,unitCount,error);
-	}
-
 	public int read()  {
 		return decoder.decode(input,error);
+	}
+
+	public int read(int[] buf, int offset, int unitCount)  {
+		return decoder.decode(input,buf,offset,unitCount,error);
 	}
 
 }

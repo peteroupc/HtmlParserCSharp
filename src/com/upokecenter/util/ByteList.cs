@@ -1,10 +1,9 @@
 /*
 Written in 2013 by Peter Occil.  Released to the public domain.
 Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
-*/
+ */
 namespace com.upokecenter.util {
 using System;
-
 using System.IO;
 
 
@@ -16,7 +15,8 @@ public sealed class ByteList {
 		ptr=0;
 	}
 
-	public int this[int i] { get { return get(i); }}
+	public int this[int i] { get { return get(i); }
+ set { set(i,(byte)(value&0xFF)); }}
 public int get(int index){
 		return buffer[index];
 	}

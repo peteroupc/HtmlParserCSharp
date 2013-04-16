@@ -1,10 +1,11 @@
 /*
 Written in 2013 by Peter Occil.  Released to the public domain.
 Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
-*/
+ */
 namespace com.upokecenter.io {
 using System;
-
+using System.Text;
+using System.Globalization;
 using System.IO;
 
 
@@ -26,15 +27,14 @@ public class Utf8CharacterInput : ICharacterInput {
 	public int read(int[] buf, int offset, int unitCount)
 			 {
 		if((buf)==null)throw new ArgumentNullException("buf");
-		if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")");
-		if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount"+" not greater or equal to "+"0"+" ("+Convert.ToString(unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
-		if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount"+" not less or equal to "+Convert.ToString(buf.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
+		if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
+		if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount"+" not greater or equal to "+"0"+" ("+Convert.ToString(unitCount,CultureInfo.InvariantCulture)+")");
+		if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount"+" not less or equal to "+Convert.ToString(buf.Length,CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,CultureInfo.InvariantCulture)+")");
 		if(unitCount==0)return 0;
 		for(int i=0;i<unitCount;i++){
 			int c=read();
-			if(c<0){
+			if(c<0)
 				return i==0 ? -1 : i;
-			}
 			buf[offset++]=c;
 		}
 		return unitCount;
@@ -50,14 +50,12 @@ public class Utf8CharacterInput : ICharacterInput {
 			int b=stream.ReadByte();
 			if(b<0 && bytesNeeded!=0){
 				bytesNeeded=0;
-				throw new System.IO.IOException("",new System.Text.DecoderFallbackException());
-			} else if(b<0){
+				throw new IOException("",new DecoderFallbackException());
+			} else if(b<0)
 				return -1;
-			}
 			if(bytesNeeded==0){
-				if(b<0x80){
+				if(b<0x80)
 					return b;
-				}
 				else if(b>=0xc2 && b<=0xdf){
 					stream.mark(4);
 					bytesNeeded=1;
@@ -75,7 +73,7 @@ public class Utf8CharacterInput : ICharacterInput {
 					bytesNeeded=3;
 					cp=b-0xf0;
 				} else
-					throw new System.IO.IOException("",new System.Text.DecoderFallbackException());
+					throw new IOException("",new DecoderFallbackException());
 				cp<<=(6*bytesNeeded);
 				continue;
 			}
@@ -84,7 +82,7 @@ public class Utf8CharacterInput : ICharacterInput {
 				lower=0x80;
 				upper=0xbf;
 				stream.reset();
-				throw new System.IO.IOException("",new System.Text.DecoderFallbackException());
+				throw new IOException("",new DecoderFallbackException());
 			}
 			lower=0x80;
 			upper=0xbf;

@@ -2,19 +2,20 @@
 // Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
 namespace com.upokecenter.rdf {
 using System;
+using System.Text;
 
 public sealed class RDFTerm {
+
 	public override sealed int GetHashCode(){unchecked{
 		 int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((identifier == null) ? 0 : identifier.GetHashCode());
 		result = prime * result + kind;
 		result = prime * result
-				+ ((languageTag == null) ? 0 : languageTag.GetHashCode());
-		result = prime * result + ((lexicalForm == null) ? 0 : lexicalForm.GetHashCode());
+				+ ((typeOrLanguage == null) ? 0 : typeOrLanguage.GetHashCode());
+		result = prime * result + ((value == null) ? 0 : value.GetHashCode());
 		return result;
 	}}
+
 	public override sealed bool Equals(object obj) {
 		if (this == obj)
 			return true;
@@ -23,27 +24,22 @@ public sealed class RDFTerm {
 		if (GetType() != obj.GetType())
 			return false;
 		RDFTerm other = (RDFTerm) obj;
-		if (identifier == null) {
-			if (other.identifier != null)
-				return false;
-		} else if (!identifier.Equals(other.identifier))
-			return false;
 		if (kind != other.kind)
 			return false;
-		if (languageTag == null) {
-			if (other.languageTag != null)
+		if (typeOrLanguage == null) {
+			if (other.typeOrLanguage != null)
 				return false;
-		} else if (!languageTag.Equals(other.languageTag))
+		} else if (!typeOrLanguage.Equals(other.typeOrLanguage))
 			return false;
-		if (lexicalForm == null) {
-			if (other.lexicalForm != null)
+		if (value == null) {
+			if (other.value != null)
 				return false;
-		} else if (!lexicalForm.Equals(other.lexicalForm))
+		} else if (!value.Equals(other.value))
 			return false;
 		return true;
 	}
 
-	private static void escapeLanguageTag(string str, System.Text.StringBuilder builder){
+	private static void escapeLanguageTag(string str, StringBuilder builder){
 		int length=str.Length;
 		bool hyphen=false;
 		for(int i=0;i<length;i++){
@@ -66,7 +62,7 @@ public sealed class RDFTerm {
 		}
 	}
 
-	private static void escapeBlankNode(string str, System.Text.StringBuilder builder){
+	private static void escapeBlankNode(string str, StringBuilder builder){
 		int length=str.Length;
 		string hex="0123456789ABCDEF";
 		for(int i=0;i<length;i++){
@@ -99,7 +95,7 @@ public sealed class RDFTerm {
 	}
 
 	private static void escapeString(string str,
-			System.Text.StringBuilder builder, bool uri){
+			StringBuilder builder, bool uri){
 		int length=str.Length;
 		string hex="0123456789ABCDEF";
 		for(int i=0;i<length;i++){
@@ -150,116 +146,141 @@ public sealed class RDFTerm {
 	 * 
 	 */
 	public override sealed string ToString(){
-		System.Text.StringBuilder builder=null;
+		StringBuilder builder=null;
 		if(this.kind==BLANK){
-			builder=new System.Text.StringBuilder();
+			builder=new StringBuilder();
 			builder.Append("_:");
-			escapeBlankNode(identifier,builder);
+			escapeBlankNode(value,builder);
 		} else if(this.kind==LANGSTRING){
-			builder=new System.Text.StringBuilder();
+			builder=new StringBuilder();
 			builder.Append("\"");
-			escapeString(lexicalForm,builder,false);
+			escapeString(value,builder,false);
 			builder.Append("\"@");
-			escapeLanguageTag(languageTag,builder);
+			escapeLanguageTag(typeOrLanguage,builder);
 		} else if(this.kind==TYPEDSTRING){
-			builder=new System.Text.StringBuilder();
+			builder=new StringBuilder();
 			builder.Append("\"");
-			escapeString(lexicalForm,builder,false);
+			escapeString(value,builder,false);
 			builder.Append("\"");
-			if(!"http://www.w3.org/2001/XMLSchema#string".Equals(identifier)){
+			if(!"http://www.w3.org/2001/XMLSchema#string".Equals(typeOrLanguage)){
 				builder.Append("^^<");
-				escapeString(identifier,builder,true);
+				escapeString(typeOrLanguage,builder,true);
 				builder.Append(">");
 			}
 		} else if(this.kind==IRI){
-			builder=new System.Text.StringBuilder();
+			builder=new StringBuilder();
 			builder.Append("<");
-			escapeString(identifier,builder,true);
+			escapeString(value,builder,true);
 			builder.Append(">");
 		} else
 			return "<about:blank>";
 		return builder.ToString();
 	}
 	/**
-	 * A blank node.
+	 * Type value for a blank node.
 	 */
 	public static readonly int BLANK = 0; // type is blank node name, literal is blank
 	/**
-	 * An IRI (Internationalized Resource Identifier.)
+	 * Type value for an IRI (Internationalized Resource Identifier.)
 	 */
 	public static readonly int IRI = 1; // type is IRI, literal is blank
 	/**
-	 * A _string with a language tag.
+	 * Type value for a _string with a language tag.
 	 */
 	public static readonly int LANGSTRING = 2; // literal is given
 	/**
-	 * A piece of data serialized to a _string.
+	 * Type value for a piece of data serialized to a _string.
 	 */
 	public static readonly int TYPEDSTRING = 3; // type is IRI, literal is given
-	private string identifier=null;
-	private string languageTag=null;
-	private string lexicalForm=null;
+	private string typeOrLanguage=null;
+	private string value=null;
+
 	/**
-	 * 
-	 * Gets the IRI or blank node label for this RDF
-	 * literal. Supported by all kinds.
-	 * 
-	 * 
+	 * Gets the language tag or data type for this RDF literal.
 	 */
-	public string getIdentifier() {
-		return identifier;
+	public string getTypeOrLanguage() {
+		return typeOrLanguage;
 	}
 	/**
-	 * Gets the language tag for this RDF literal.
-	 * Supported by the LANGSTRING kind.
-	 * 
-	 * 
-	 */
-	public string getLanguageTag() {
-		return languageTag;
-	}
-	/**
-	 * Gets the lexical form of an RDF literal.
-	 * Supported in the LANGSTRING and TYPEDSTRING kinds.
-	 * 
+	 * Gets the IRI, blank node identifier, or
+	 * lexical form of an RDF literal.
 	 * 
 	 */
-	public string getLexicalForm() {
-		return lexicalForm;
+	public string getValue() {
+		return value;
 	}
 	public int getKind() {
 		return kind;
 	}
+
+	public bool isOrdinaryString(){
+		return kind==TYPEDSTRING && "http://www.w3.org/2001/XMLSchema#string".Equals(typeOrLanguage);
+	}
+
+	public bool isBlank(){
+		return kind==BLANK;
+	}
+
+	public bool isIRI(string str){
+		return kind==IRI && str!=null && str.Equals(value);
+	}
+
 	private int kind;
+	/**
+	 * Predicate for RDF types.
+	 */
+	public static readonly RDFTerm A=
+			fromIRI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+	/**
+	 * Predicate for the first object in a list.
+	 */
+	public static readonly RDFTerm FIRST=fromIRI(
+			"http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
+	/**
+	 * Object for nil, the end of a list, or an empty list.
+	 */
+	public static readonly RDFTerm NIL=fromIRI(
+			"http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
+	/**
+	 * Predicate for the remaining objects in a list.
+	 */
+	public static readonly RDFTerm REST=fromIRI(
+			"http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
+	/**
+	 * Object for false.
+	 */
+	public static readonly RDFTerm FALSE=fromTypedString(
+			"false","http://www.w3.org/2001/XMLSchema#bool");
+	/**
+	 * Object for true.
+	 */
+	public static readonly RDFTerm TRUE=fromTypedString(
+			"true","http://www.w3.org/2001/XMLSchema#bool");
 	public static RDFTerm fromTypedString(string str, string iri){
 		if((str)==null)throw new ArgumentNullException("str");
 		if((iri)==null)throw new ArgumentNullException("iri");
-		if((iri).Length==0)throw new ArgumentException("iri");
+		if((iri).Length==0)throw new ArgumentException("iri is empty.");
 		RDFTerm ret=new RDFTerm();
 		ret.kind=TYPEDSTRING;
-		ret.identifier=iri;
-		ret.lexicalForm=str;
-		if(iri.Equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"))
-			// this can't be a language _string
-			// because there is no language tag
-			throw new ArgumentException("iri");
+		ret.typeOrLanguage=iri;
+		ret.value=str;
 		return ret;
 	}
 	public static RDFTerm fromBlankNode(string name){
 		if((name)==null)throw new ArgumentNullException("name");
-		if((name).Length==0)throw new ArgumentException("name");
+		if((name).Length==0)throw new ArgumentException("name is empty.");
 		RDFTerm ret=new RDFTerm();
 		ret.kind=BLANK;
-		ret.identifier=name;
-		ret.lexicalForm=null;
+		ret.typeOrLanguage=null;
+		ret.value=name;
 		return ret;
 	}
 	public static RDFTerm fromIRI(string iri){
 		if((iri)==null)throw new ArgumentNullException("iri");
 		RDFTerm ret=new RDFTerm();
 		ret.kind=IRI;
-		ret.identifier=iri;
-		ret.lexicalForm=null;
+		ret.typeOrLanguage=null;
+		ret.value=iri;
 		return ret;
 	}
 	public static RDFTerm fromTypedString(string str) {
@@ -268,12 +289,11 @@ public sealed class RDFTerm {
 	public static RDFTerm fromLangString(string str, string languageTag) {
 		if((str)==null)throw new ArgumentNullException("str");
 		if((languageTag)==null)throw new ArgumentNullException("languageTag");
-		if((languageTag).Length==0)throw new ArgumentException("languageTag");
+		if((languageTag).Length==0)throw new ArgumentException("languageTag is empty.");
 		RDFTerm ret=new RDFTerm();
 		ret.kind=LANGSTRING;
-		ret.identifier="http://www.w3.org/1999/02/22-rdf-syntax-ns#langString";
-		ret.languageTag=languageTag;
-		ret.lexicalForm=str;
+		ret.typeOrLanguage=languageTag;
+		ret.value=str;
 		return ret;
 	}
 }

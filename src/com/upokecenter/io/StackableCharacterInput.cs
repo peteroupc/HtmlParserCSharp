@@ -1,10 +1,10 @@
 /*
 Written in 2013 by Peter Occil.  Released to the public domain.
 Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
-*/
+ */
 namespace com.upokecenter.io {
 using System;
-
+using System.Globalization;
 using System.IO;
 using System.Collections.Generic;
 
@@ -39,9 +39,9 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 		public int read(int[] buf, int offset, int unitCount)
 				 {
 			if((buf)==null)throw new ArgumentNullException("buf");
-			if((offset)<0)throw new ArgumentOutOfRangeException("offset not greater or equal to 0 ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")");
-			if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount not greater or equal to 0 ("+Convert.ToString(unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
-			if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount not less or equal to "+Convert.ToString(buf.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
+			if((offset)<0)throw new ArgumentOutOfRangeException("offset not greater or equal to 0 ("+Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
+			if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount not greater or equal to 0 ("+Convert.ToString(unitCount,CultureInfo.InvariantCulture)+")");
+			if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount not less or equal to "+Convert.ToString(buf.Length,CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,CultureInfo.InvariantCulture)+")");
 			if(unitCount==0)return 0;
 			int count=0;
 			if(charInput!=null){
@@ -146,13 +146,13 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 if(!(((buf)!=null) ))throw new InvalidOperationException("buf");
 #endif
 		#if DEBUG
-if(!(((offset)>=0) ))throw new InvalidOperationException(("offset not greater or equal to 0 ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")"));
+if(!(((offset)>=0) ))throw new InvalidOperationException(("offset not greater or equal to 0 ("+Convert.ToString(offset,CultureInfo.InvariantCulture)+")"));
 #endif
 		#if DEBUG
-if(!(((unitCount)>=0) ))throw new InvalidOperationException(("unitCount not greater or equal to 0 ("+Convert.ToString(unitCount,System.Globalization.CultureInfo.InvariantCulture)+")"));
+if(!(((unitCount)>=0) ))throw new InvalidOperationException(("unitCount not greater or equal to 0 ("+Convert.ToString(unitCount,CultureInfo.InvariantCulture)+")"));
 #endif
 		#if DEBUG
-if(!(((offset+unitCount)<=buf.Length) ))throw new InvalidOperationException(("offset+unitCount not less or equal to "+Convert.ToString(buf.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,System.Globalization.CultureInfo.InvariantCulture)+")"));
+if(!(((offset+unitCount)<=buf.Length) ))throw new InvalidOperationException(("offset+unitCount not less or equal to "+Convert.ToString(buf.Length,CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,CultureInfo.InvariantCulture)+")"));
 #endif
 		if(unitCount==0)return 0;
 		int count=0;
@@ -190,9 +190,9 @@ if(!(((offset+unitCount)<=buf.Length) ))throw new InvalidOperationException(("of
 	public int read(int[] buf, int offset, int unitCount)  {
 		if(haveMark){
 			if((buf)==null)throw new ArgumentNullException("buf");
-			if((offset)<0)throw new ArgumentOutOfRangeException("offset not greater or equal to 0 ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")");
-			if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount not greater or equal to 0 ("+Convert.ToString(unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
-			if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount not less or equal to "+Convert.ToString(buf.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
+			if((offset)<0)throw new ArgumentOutOfRangeException("offset not greater or equal to 0 ("+Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
+			if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount not greater or equal to 0 ("+Convert.ToString(unitCount,CultureInfo.InvariantCulture)+")");
+			if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount not less or equal to "+Convert.ToString(buf.Length,CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,CultureInfo.InvariantCulture)+")");
 			if(unitCount==0)return 0;
 			// Read from buffer
 			if(pos+unitCount<=endpos){
@@ -277,7 +277,7 @@ if(!(((offset+unitCount)<=buf.Length) ))throw new InvalidOperationException(("of
 	}
 
 	public void moveBack(int count)  {
-		if((count)<0)throw new ArgumentOutOfRangeException("count not greater or equal to 0 ("+Convert.ToString(count,System.Globalization.CultureInfo.InvariantCulture)+")");
+		if((count)<0)throw new ArgumentOutOfRangeException("count not greater or equal to 0 ("+Convert.ToString(count,CultureInfo.InvariantCulture)+")");
 		if(haveMark && pos>=count){
 			pos-=count;
 			return;

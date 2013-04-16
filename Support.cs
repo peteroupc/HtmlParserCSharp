@@ -76,7 +76,7 @@ namespace PeterO.Support
 			return ret.ToArray();
 		}
 	}
-	
+
 	public static class Collections {
 		public static IList<T> UnmodifiableList<T>(IList<T> list){
 			if(list.IsReadOnly)return list;
@@ -85,6 +85,9 @@ namespace PeterO.Support
 		public static IDictionary<TKey,TValue> UnmodifiableMap<TKey,TValue>(IDictionary<TKey,TValue> list){
 			if(list.IsReadOnly)return list;
 			return new ReadOnlyDictionary<TKey,TValue>(list);
+		}
+		public static T[] ToArray<T>(IEnumerable<T> enu){
+			return ((enu as List<T>) ?? (new List<T>(enu))).ToArray();
 		}
 	}
 	/**
@@ -100,6 +103,20 @@ namespace PeterO.Support
 			this.wrapped=new Dictionary<TKey,TValue>();
 		}
 		
+		public LenientDictionary(IDictionary<TKey,TValue> other){
+			if(default(TKey)==null && other.ContainsKey(default(TKey))){
+				// If dictionary contains null, add the values manually,
+				// because the constructor will throw an exception
+				// otherwise
+				this.wrapped=new Dictionary<TKey,TValue>();				
+				foreach(var kvp in other){
+					this.AddInternal(kvp.Key,kvp.Value);
+				}
+			} else {
+				this.wrapped=new Dictionary<TKey,TValue>(other);
+			}
+		}
+
 		public TValue this[TKey key] {
 			get {
 				if(Object.Equals(key,null) && hasNull && default(TKey)==null)
@@ -152,19 +169,23 @@ namespace PeterO.Support
 		
 		public bool ContainsKey(TKey key)
 		{
-			if(Object.Equals(key,null) && hasNull && default(TKey)==null)
-				return true;
+			if(Object.Equals(key,null) && default(TKey)==null)
+				return (hasNull);
 			return wrapped.ContainsKey(key);
 		}
 		
 		public void Add(TKey key, TValue value)
+		{
+			AddInternal(key,value);
+		}
+		
+		private void AddInternal(TKey key, TValue value)
 		{
 			if(Object.Equals(key,null)){
 				hasNull=true;
 				nullValue=value;
 			} else wrapped[key]=value;
 		}
-		
 		public bool Remove(TKey key)
 		{
 			if(Object.Equals(key,null)){

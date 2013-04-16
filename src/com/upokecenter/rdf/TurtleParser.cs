@@ -1,20 +1,13 @@
 namespace com.upokecenter.rdf {
 using System;
-
+using System.Text;
+using System.Globalization;
 using System.IO;
+using System.Collections.Generic;
+using com.upokecenter.io;
+using com.upokecenter.util;
 //Written by Peter Occil, 2013. In the public domain.
 //Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
-
-using System.Collections.Generic;
-
-
-
-
-
-
-
-
-
 
 /**
  * 
@@ -40,7 +33,7 @@ public class TurtleParser : IRDFParser {
 	public TurtleParser(PeterO.Support.InputStream stream, string baseURI){
 		if((stream)==null)throw new ArgumentNullException("stream");
 		if(baseURI==null)throw new ArgumentNullException("baseURI");
-		if(!UriResolver.hasScheme(baseURI))
+		if(!URIUtility.hasScheme(baseURI))
 			throw new ArgumentException("baseURI");
 		this.input=new StackableCharacterInput(
 				new Utf8CharacterInput(stream));
@@ -53,13 +46,13 @@ public class TurtleParser : IRDFParser {
 	}
 
 
-	private static bool isChar(int c, string asciiChars){
+	private static bool isAsciiChar(int c, string asciiChars){
 		return (c>=0 && c<=0x7F && asciiChars.IndexOf((char)c)>=0);
 	}
 	public TurtleParser(string str, string baseURI){
 		if((str)==null)throw new ArgumentNullException("str");
 		if(baseURI==null)throw new ArgumentNullException("baseURI");
-		if(!UriResolver.hasScheme(baseURI))
+		if(!URIUtility.hasScheme(baseURI))
 			throw new ArgumentException("baseURI");
 		this.input=new StackableCharacterInput(
 				new StringCharacterInput(str,true));
@@ -190,10 +183,10 @@ public class TurtleParser : IRDFParser {
 				mark=input.setHardMark();
 				if(ch=='t' && input.read()=='r' && input.read()=='u' &&
 						input.read()=='e' && skipWhitespace())
-					return TurtleObject.fromTerm(RDF_TRUE);
+					return TurtleObject.fromTerm(RDFTerm.TRUE);
 				else if(ch=='f' && input.read()=='a' && input.read()=='l' &&
 						input.read()=='s' && input.read()=='e' && skipWhitespace())
-					return TurtleObject.fromTerm(RDF_FALSE);
+					return TurtleObject.fromTerm(RDFTerm.FALSE);
 				else {
 					input.setMarkPosition(mark);
 				}
@@ -235,7 +228,7 @@ public class TurtleParser : IRDFParser {
 	}
 
 	private string readLanguageTag()  {
-		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
+		StringBuilder ilist=new StringBuilder();
 		bool hyphen=false;
 		bool haveHyphen=false;
 		bool haveString=false;
@@ -287,7 +280,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 	}
 
 	private string readStringLiteral(int ch)  {
-		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
+		StringBuilder ilist=new StringBuilder();
 		bool first=true;
 		bool longQuote=false;
 		int quotecount=0;
@@ -368,7 +361,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 	// a dot, or a digit)
 	private RDFTerm readNumberLiteral(int ch)  {
 		// buffer to hold the literal
-		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
+		StringBuilder ilist=new StringBuilder();
 		// include the first character
 		if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
 else {
@@ -461,7 +454,7 @@ ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
 	}
 
 	private string readBlankNodeLabel()  {
-		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
+		StringBuilder ilist=new StringBuilder();
 		int startChar=input.read();
 		if(!isNameStartCharU(startChar) &&
 				(startChar<'0' || startChar>'9'))
@@ -509,7 +502,7 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 	}
 
 	private string readIriReference()  {
-		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
+		StringBuilder ilist=new StringBuilder();
 		while(true){
 			int ch=input.read();
 			if(ch<0)
@@ -518,13 +511,15 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 				string iriref=ilist.ToString();
 				// Resolve the IRI reference relative
 				// to the _base URI
-				iriref=UriResolver.relativeResolve(iriref, baseURI);
+				iriref=URIUtility.relativeResolve(iriref, baseURI);
+				if(iriref==null)
+					throw new ParserException();
 				return iriref;
 			}
 			else if(ch=='\\'){
 				ch=readUnicodeEscape(false);
 			}
-			if(ch<=0x20 || isChar(ch, "><\\\"{}|^`"))
+			if(ch<=0x20 || ((ch&0x7F)==ch && "><\\\"{}|^`".IndexOf((char)ch)>=0))
 				throw new ParserException();
 			if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
 else {
@@ -534,7 +529,7 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 		}
 	}
 	private string readPrefix(int startChar)  {
-		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
+		StringBuilder ilist=new StringBuilder();
 		bool lastIsPeriod=false;
 		bool first=true;
 		if(startChar>=0){
@@ -722,7 +717,7 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 	}
 
 	private string readOptionalLocalName()  {
-		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
+		StringBuilder ilist=new StringBuilder();
 		bool lastIsPeriod=false;
 		bool first=true;
 		input.setSoftMark();
@@ -755,7 +750,7 @@ ilist.Append((char)((((b-0x10000))&0x3FF)+0xDC00));
 				continue;
 			} else if(ch=='\\'){
 				ch=input.read();
-				if(isChar(ch,"_~.-!$&'()*+,;=/?#@%")){
+				if(((ch&0x7F)==ch && "_~.-!$&'()*+,;=/?#@%".IndexOf((char)ch)>=0)){
 					if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
 else {
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
@@ -821,7 +816,7 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 		if(ch=='a'){
 			mark=input.setHardMark();
 			if(skipWhitespace())
-				return RDF_TYPE;
+				return RDFTerm.A;
 			else {
 				input.setMarkPosition(mark);
 				string prefix=readPrefix('a');
@@ -938,18 +933,6 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 	}
 
 	private int curBlankNode=0;
-	private static readonly RDFTerm RDF_TYPE=RDFTerm.fromIRI(
-			"http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-	private static readonly RDFTerm RDF_FALSE=RDFTerm.fromTypedString(
-			"false","http://www.w3.org/2001/XMLSchema#bool");
-	private static readonly RDFTerm RDF_TRUE=RDFTerm.fromTypedString(
-			"true","http://www.w3.org/2001/XMLSchema#bool");
-	private static readonly RDFTerm RDF_FIRST=RDFTerm.fromIRI(
-			"http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
-	private static readonly RDFTerm RDF_REST=RDFTerm.fromIRI(
-			"http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
-	private static readonly RDFTerm RDF_NIL=RDFTerm.fromIRI(
-			"http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
 
 	private RDFTerm allocateBlankNode(){
 		curBlankNode++;
@@ -957,91 +940,12 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 		// with user-defined blank node labels (this is allowed
 		// because the syntax for blank node identifiers is
 		// not concretely defined)
-		string label="."+Convert.ToString(curBlankNode,System.Globalization.CultureInfo.InvariantCulture);
+		string label="."+Convert.ToString(curBlankNode,CultureInfo.InvariantCulture);
 		RDFTerm node=RDFTerm.fromBlankNode(label);
 		bnodeLabels.Add(label,node);
 		return node;
 	}
 
-	private string suggestBlankNodeName(string node, int[] nodeindex){
-		bool validnode=(node.Length>0);
-		// Check if the blank node label is valid
-		// under N-Triples
-		for(int i=0;i<node.Length;i++){
-			int c=node[i];
-			if(i==0 && !((c>='A' && c<='Z') || (c>='a' && c<='z'))){
-				validnode=false;
-				break;
-			}
-			if(i>=0 && !((c>='A' && c<='Z') || (c>='0' && c<='9') ||
-					(c>='a' && c<='z'))){
-				validnode=false;
-				break;
-			}
-		}
-		if(validnode)return node;
-		while(true){
-			// Generate a new blank node label,
-			// and ensure it's unique
-			node="b"+Convert.ToString(nodeindex[0],System.Globalization.CultureInfo.InvariantCulture);
-			if(!bnodeLabels.ContainsKey(node))
-				return node;
-			nodeindex[0]++;
-		}
-	}
-
-	// Replaces certain blank nodes with blank nodes whose
-	// names meet the N-Triples requirements
-	private void replaceBlankNodes(ISet<RDFTriple> triples){
-		if(bnodeLabels.Count==0)
-			return;
-		IDictionary<string,RDFTerm> newBlankNodes=new PeterO.Support.LenientDictionary<string,RDFTerm>();
-		IList<RDFTriple[]> changedTriples=new List<RDFTriple[]>();
-		int[] nodeindex=new int[]{0};
-		foreach(RDFTriple triple in triples){
-			bool changed=false;
-			RDFTerm subj=triple.getSubject();
-			if(subj.getKind()==RDFTerm.BLANK){
-				string oldname=subj.getIdentifier();
-				string newname=suggestBlankNodeName(oldname,nodeindex);
-				if(!newname.Equals(oldname)){
-					RDFTerm newNode=newBlankNodes[oldname];
-					if(newNode==null){
-						newNode=RDFTerm.fromBlankNode(newname);
-						bnodeLabels.Add(newname, newNode);
-						newBlankNodes.Add(oldname, newNode);
-					}
-					subj=newNode;
-					changed=true;
-				}
-			}
-			RDFTerm obj=triple.getObject();
-			if(obj.getKind()==RDFTerm.BLANK){
-				string oldname=obj.getIdentifier();
-				string newname=suggestBlankNodeName(oldname,nodeindex);
-				if(!newname.Equals(oldname)){
-					RDFTerm newNode=newBlankNodes[oldname];
-					if(newNode==null){
-						newNode=RDFTerm.fromBlankNode(newname);
-						bnodeLabels.Add(newname, newNode);
-						newBlankNodes.Add(oldname, newNode);
-					}
-					obj=newNode;
-					changed=true;
-				}
-			}
-			if(changed){
-				RDFTriple[] newTriple=new RDFTriple[]{triple,
-						new RDFTriple(subj,triple.getPredicate(),obj)
-				};
-				changedTriples.Add(newTriple);
-			}
-		}
-		foreach(RDFTriple[] triple in changedTriples){
-			triples.Remove(triple[0]);
-			triples.Add(triple[1]);
-		}
-	}
 
 	private void emitRDFTriple(RDFTerm subj, RDFTerm pred,
 			TurtleObject obj, ISet<RDFTriple> triples){
@@ -1061,18 +965,18 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 		} else if(obj.kind==TurtleObject.COLLECTION){
 			IList<TurtleObject> objs=obj.getObjects();
 			if(objs.Count==0){
-				emitRDFTriple(subj,pred,RDF_NIL,triples);
+				emitRDFTriple(subj,pred,RDFTerm.NIL,triples);
 			} else {
 				RDFTerm curBlank=allocateBlankNode();
 				RDFTerm firstBlank=curBlank;
-				emitRDFTriple(curBlank,RDF_FIRST,objs[0],triples);
+				emitRDFTriple(curBlank,RDFTerm.FIRST,objs[0],triples);
 				for(int i=1;i<=objs.Count;i++){
 					if(i==objs.Count){
-						emitRDFTriple(curBlank,RDF_REST,RDF_NIL,triples);
+						emitRDFTriple(curBlank,RDFTerm.REST,RDFTerm.NIL,triples);
 					} else {
 						RDFTerm nextBlank=allocateBlankNode();
-						emitRDFTriple(curBlank,RDF_REST,nextBlank,triples);
-						emitRDFTriple(nextBlank,RDF_FIRST,objs[i],triples);
+						emitRDFTriple(curBlank,RDFTerm.REST,nextBlank,triples);
+						emitRDFTriple(nextBlank,RDFTerm.FIRST,objs[i],triples);
 						curBlank=nextBlank;
 					}
 				}
@@ -1099,18 +1003,18 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 		} else if(subj.kind==TurtleObject.COLLECTION){
 			IList<TurtleObject> objs=subj.getObjects();
 			if(objs.Count==0){
-				emitRDFTriple(RDF_NIL,pred,obj,triples);
+				emitRDFTriple(RDFTerm.NIL,pred,obj,triples);
 			} else {
 				RDFTerm curBlank=allocateBlankNode();
 				RDFTerm firstBlank=curBlank;
-				emitRDFTriple(curBlank,RDF_FIRST,objs[0],triples);
+				emitRDFTriple(curBlank,RDFTerm.FIRST,objs[0],triples);
 				for(int i=1;i<=objs.Count;i++){
 					if(i==objs.Count){
-						emitRDFTriple(curBlank,RDF_REST,RDF_NIL,triples);
+						emitRDFTriple(curBlank,RDFTerm.REST,RDFTerm.NIL,triples);
 					} else {
 						RDFTerm nextBlank=allocateBlankNode();
-						emitRDFTriple(curBlank,RDF_REST,nextBlank,triples);
-						emitRDFTriple(nextBlank,RDF_FIRST,objs[i],triples);
+						emitRDFTriple(curBlank,RDFTerm.REST,nextBlank,triples);
+						emitRDFTriple(nextBlank,RDFTerm.FIRST,objs[i],triples);
 						curBlank=nextBlank;
 					}
 				}
@@ -1177,7 +1081,7 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 			int mark=input.setHardMark();
 			int ch=input.read();
 			if(ch<0){
-				replaceBlankNodes(triples);
+				RDFInternal.replaceBlankNodes(triples,bnodeLabels);
 				return triples;
 			}
 			if(ch=='@'){

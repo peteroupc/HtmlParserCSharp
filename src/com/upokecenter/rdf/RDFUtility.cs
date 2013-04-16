@@ -3,12 +3,77 @@
 
 namespace com.upokecenter.rdf {
 using System;
-
 using System.Collections.Generic;
+using com.upokecenter.json;
+
 
 public sealed class RDFUtility {
 	private RDFUtility(){}
 
+	/**
+	 * 
+	 * Converts a set of RDF Triples to a JSON _object.  The _object
+	 * contains all the subjects, each of which contains a dictionary
+	 * of predicates for that subject, and each dictionary contains
+	 * a list of objects for the subject and predicate.  The
+	 * subject can either be a URI or a blank node (which starts
+	 * with "_:".
+	 * 
+	 * @param triples
+	 * 
+	 */
+	public static JSONObject RDFtoJSON(ISet<RDFTriple> triples){
+		IDictionary<RDFTerm,IList<RDFTriple>> subjects=new PeterO.Support.LenientDictionary<RDFTerm,IList<RDFTriple>>();
+		JSONObject rootJson=new JSONObject();
+		foreach(RDFTriple triple in triples){
+			IList<RDFTriple> subjectList=subjects[triple.getSubject()];
+			if(subjectList==null){
+				subjectList=new List<RDFTriple>();
+				subjects.Add(triple.getSubject(),subjectList);
+			}
+			subjectList.Add(triple);
+		}
+		foreach(RDFTerm subject in subjects.Keys){
+			JSONObject subjectJson=new JSONObject();
+			IDictionary<RDFTerm,IList<RDFTerm>> predicates=new PeterO.Support.LenientDictionary<RDFTerm,IList<RDFTerm>>();
+			foreach(RDFTriple triple in triples){
+				IList<RDFTerm> subjectList=predicates[triple.getPredicate()];
+				if(subjectList==null){
+					subjectList=new List<RDFTerm>();
+					predicates.Add(triple.getPredicate(),subjectList);
+				}
+				subjectList.Add(triple.getObject());
+			}
+			foreach(RDFTerm predicate in predicates.Keys){
+				JSONArray valueArray=new JSONArray();
+				foreach(RDFTerm obj in predicates[predicate]){
+					JSONObject valueJson=new JSONObject();
+					if(obj.getKind()==RDFTerm.IRI){
+						valueJson.put("type","uri");
+						valueJson.put("value",obj.getValue());
+					} else if(obj.getKind()==RDFTerm.LANGSTRING){
+						valueJson.put("type","literal");
+						valueJson.put("value",obj.getValue());
+						valueJson.put("lang",obj.getTypeOrLanguage());
+					} else if(obj.getKind()==RDFTerm.TYPEDSTRING){
+						valueJson.put("type","literal");
+						valueJson.put("value",obj.getValue());
+						if(!obj.isOrdinaryString()) {
+							valueJson.put("lang",obj.getTypeOrLanguage());
+						}
+					} else if(obj.getKind()==RDFTerm.BLANK){
+						valueJson.put("type","bnode");
+						valueJson.put("value",obj.getValue());
+					}
+					valueArray.put(valueJson);
+				}
+				subjectJson.put(predicate.getValue(),valueArray);
+			}
+			string subjKey=(subject.getKind()==RDFTerm.BLANK ? "_:" : "")+subject.getValue();
+			rootJson.put(subjKey,subjectJson);
+		}
+		return rootJson;
+	}
 	/**
 	 * A lax comparer of RDF triples which doesn't compare
 	 * blank node labels

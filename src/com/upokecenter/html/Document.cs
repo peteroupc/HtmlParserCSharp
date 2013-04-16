@@ -22,66 +22,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 
 namespace com.upokecenter.html {
 using System;
-
+using System.Text;
 using System.Collections.Generic;
-
-
 using com.upokecenter.util;
 internal class Document : Node, IDocument {
 	internal DocumentType doctype;
 	internal string encoding;
-	internal string baseurl;
 	private DocumentMode docmode=DocumentMode.NoQuirksMode;
 
 	internal Document() : base(NodeType.DOCUMENT_NODE) {
 	}
-
-	internal bool isHtmlDocument(){
-		return true;
-	}
-
-	public IDocumentType getDoctype(){
-		return doctype;
-	}
-
-	public override IDocument getOwnerDocument(){
-		return null;
-	}
-
-	internal override string toDebugString(){
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
-		foreach(Node node in getChildNodesInternal()){
-			string str=node.toDebugString();
-			if(str==null) {
-				continue;
-			}
-			string[] strarray=StringUtility.splitAt(str,"\n");
-			foreach(string el in strarray){
-				builder.Append("| ");
-				builder.Append(el.Replace("~~~~","\n"));
-				builder.Append("\n");
-			}
-		}
-		return builder.ToString();
-	}
-
-
-	public override string getBaseURI() {
-		return (baseurl==null) ? "" : baseurl;
-	}
-
-	internal DocumentMode getMode() {
-		return docmode;
-	}
-
-	internal void setMode(DocumentMode mode) {
-		docmode=mode;
-	}
-
 
 	private void collectElements(INode c, string s, IList<IElement> nodes){
 		if(c.getNodeType()==NodeType.ELEMENT_NODE){
@@ -112,11 +66,44 @@ internal class Document : Node, IDocument {
 			collectElements(node,s,nodes);
 		}
 	}
+
+	public string getCharacterSet() {
+		return (encoding==null) ? "utf-8" : encoding;
+	}
+
+
+	public IDocumentType getDoctype(){
+		return doctype;
+	}
+
+	public IElement getDocumentElement() {
+		foreach(INode node in getChildNodes()){
+			if(node is IElement)
+				return (IElement)node;
+		}
+		return null;
+	}
+
+	public IElement getElementById(string id) {
+		if(id==null)
+			throw new ArgumentException();
+		foreach(INode node in getChildNodes()){
+			if(node is IElement){
+				if(id.Equals(((IElement)node).getId()))
+					return (IElement)node;
+				IElement element=((IElement)node).getElementById(id);
+				if(element!=null)return element;
+			}
+		}
+		return null;
+	}
+
+
 	public IList<IElement> getElementsByTagName(string tagName) {
 		if(tagName==null)
 			throw new ArgumentException();
 		if(tagName.Equals("*")) {
-			tagName="";
+			tagName=null;
 		}
 		IList<IElement> ret=new List<IElement>();
 		if(isHtmlDocument()){
@@ -128,17 +115,46 @@ internal class Document : Node, IDocument {
 		return ret;
 	}
 
-	public string getCharacterSet() {
-		return (encoding==null) ? "utf-8" : encoding;
+	internal DocumentMode getMode() {
+		return docmode;
 	}
-
-	public IElement getDocumentElement() {
-		foreach(INode node in getChildNodes()){
-			if(node is IElement)
-				return (IElement)node;
-		}
+	public override IDocument getOwnerDocument(){
 		return null;
 	}
 
+	internal bool isHtmlDocument(){
+		return true;
+	}
+
+	internal void setMode(DocumentMode mode) {
+		docmode=mode;
+	}
+
+	internal override string toDebugString(){
+		StringBuilder builder=new StringBuilder();
+		foreach(Node node in getChildNodesInternal()){
+			string str=node.toDebugString();
+			if(str==null) {
+				continue;
+			}
+			string[] strarray=StringUtility.splitAt(str,"\n");
+			foreach(string el in strarray){
+				builder.Append("| ");
+				builder.Append(el.Replace("~~~~","\n"));
+				builder.Append("\n");
+			}
+		}
+		return builder.ToString();
+	}
+
+	public override string getNodeName(){
+		return "#document";
+	}
+
+	internal string address;
+
+	public string getURL() {
+		return address;
+	}
 }
 }

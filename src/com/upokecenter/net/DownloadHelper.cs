@@ -22,23 +22,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 namespace com.upokecenter.net {
 using System;
-
+using System.Text;
+using System.Globalization;
 using System.IO;
-
-
-
-
-
 using System.Collections.Generic;
-
-
-
-
-
-
 using com.upokecenter.util;
 
 
@@ -63,7 +53,7 @@ public sealed class DownloadHelper {
 	}
 
 	private static string getCacheFileName(string uri, bool[] incomplete){
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
+		StringBuilder builder=new StringBuilder();
 		for(int i=0;i<uri.Length;i++){
 			char c=uri[i];
 			if(c<=0x20 || c==127 ||
@@ -109,7 +99,7 @@ public sealed class DownloadHelper {
 			if("date".Equals(StringUtility.toLowerCaseAscii(name)))
 				return HeaderParser.formatHttpDate(date);
 			if("content-length".Equals(StringUtility.toLowerCaseAscii(name)))
-				return Convert.ToString(length,System.Globalization.CultureInfo.InvariantCulture);
+				return Convert.ToString(length,CultureInfo.InvariantCulture);
 			return null;
 		}
 
@@ -246,7 +236,7 @@ public sealed class DownloadHelper {
 						list.Add(f);
 					}
 				}
-				cacheFiles=list.ToArray();
+				cacheFiles=PeterO.Support.Collections.ToArray(list);
 			} else if(!getStream){
 				crinfo.trueCachedFile=cacheFiles[0];
 				crinfo.trueCacheInfoFile=new PeterO.Support.File(crinfo.trueCachedFile.ToString()+".cache");
@@ -320,7 +310,7 @@ public sealed class DownloadHelper {
 					int i=0;
 					do {
 						trueCachedFile=new PeterO.Support.File(pathForCache,
-								cacheFileName+"-"+Convert.ToString(i,System.Globalization.CultureInfo.InvariantCulture));
+								cacheFileName+"-"+Convert.ToString(i,CultureInfo.InvariantCulture));
 						i++;
 					} while(trueCachedFile.exists());
 				} else {
@@ -350,7 +340,7 @@ public sealed class DownloadHelper {
 		}
 
 		public string getHeaderField(string name) {
-			if(name==null)return "HTTP/1.1 "+Convert.ToString(code,System.Globalization.CultureInfo.InvariantCulture)+" "+message;
+			if(name==null)return "HTTP/1.1 "+Convert.ToString(code,CultureInfo.InvariantCulture)+" "+message;
 			return null;
 		}
 
@@ -490,7 +480,7 @@ public sealed class DownloadHelper {
 			int len=data.Length;
 			for(int j=index;j<len;j++){
 				int c=data[j];
-				if(!StringUtility.isChar(c,"-_.!~*'()") &&
+				if(!((c&0x7F)==c && "-_.!~*'()".IndexOf((char)c)>=0) &&
 						!(c>='A' && c<='Z') &&
 						!(c>='a' && c<='z') &&
 						!(c>='0' && c<='9'))

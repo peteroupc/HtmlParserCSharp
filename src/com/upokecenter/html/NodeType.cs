@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 
 namespace com.upokecenter.html {
 using System;
@@ -35,7 +35,6 @@ using System;
  *
  */
 public sealed class NodeType {
-	private NodeType(){}
 	/**
 	 * A document node.
 	 */
@@ -56,5 +55,7 @@ public sealed class NodeType {
 	 * A DOCTYPE node.
 	 */
 	public static readonly int DOCUMENT_TYPE_NODE = 10;
+	public static readonly int PROCESSING_INSTRUCTION_NODE = 7;
+	private NodeType(){}
 }
 }

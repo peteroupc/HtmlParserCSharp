@@ -22,11 +22,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 
 namespace com.upokecenter.html {
 using System;
-
 using System.Collections.Generic;
 
 /**
@@ -37,32 +36,12 @@ using System.Collections.Generic;
  *
  */
 public interface IElement : INode {
+
+
 	/**
-	 * 
-	 * Gets the name of the element as used on its HTML tags.
-	 * 
-	 * @return the element's tag name.  For HTML elements,
-	 * an uppercase version of the name will be returned.
+	 * Gets a list of all attributes declared on this element.
 	 */
-	string getTagName();
-	/**
-	 * 
-	 * Gets the element's local name.  For elements with no
-	 * _namespace, this will equal the element's tag name.
-	 * 
-	 * @return the element's local name. This method doesn't
-	 * convert it to uppercase even for HTML elements, unlike
-	 * getTagName.
-	 */
-	string getLocalName();
-	/**
-	 * 
-	 * Gets the _namespace name of this element.  For HTML elements,
-	 * it will equal "http://www.w3.org/1999/xhtml".
-	 * 
-	 * 
-	 */
-	string getNamespaceURI();
+	IList<IAttr> getAttributes();
 	/**
 	 * 
 	 * Gets an attribute declared on this element.
@@ -83,7 +62,14 @@ public interface IElement : INode {
 	 * exist.
 	 */
 	string getAttributeNS(string _namespace, string name);
-
+	/**
+	 * Gets all descendents, both direct and indirect, that have
+	 * the specified id, using case-sensitive matching.
+	 * 
+	 * @param id
+	 * 
+	 */
+	IElement getElementById(string id);
 	/**
 	 * 
 	 * Gets all descendents, both direct and indirect, that have
@@ -92,6 +78,42 @@ public interface IElement : INode {
 	 * @param tagName A tag name.
 	 */
 	IList<IElement> getElementsByTagName(string tagName);
+	/**
+	 * Gets the value of the id attribute on this element.
+	 * 
+	 * @return the value of the id attribute, or null if it
+	 * doesn't exist.
+	 */
+	string getId();
+
+	/**
+	 * 
+	 * Gets the element's local name.  For elements with no
+	 * _namespace, this will equal the element's tag name.
+	 * 
+	 * @return the element's local name. This method doesn't
+	 * convert it to uppercase even for HTML elements, unlike
+	 * getTagName.
+	 */
+	string getLocalName();
+
+	/**
+	 * 
+	 * Gets the _namespace name of this element.  For HTML elements,
+	 * it will equal "http://www.w3.org/1999/xhtml".
+	 * 
+	 * 
+	 */
+	string getNamespaceURI();
+	/**
+	 * 
+	 * Gets the name of the element as used on its HTML tags.
+	 * 
+	 * @return the element's tag name.  For HTML elements,
+	 * an uppercase version of the name will be returned.
+	 */
+	string getTagName();
+	string getPrefix();
 }
 
 }

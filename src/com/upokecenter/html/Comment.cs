@@ -22,32 +22,35 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 
 namespace com.upokecenter.html {
 using System;
 internal class Comment : Node, IComment {
 	string data;
 
+	internal Comment() : base(NodeType.COMMENT_NODE) {
+	}
+
+
 	public string getData(){
 		return data;
 	}
 
+	public override string getTextContent(){
+		return null;
+	}
 
 	internal void setData(string data){
 		this.data=data;
 	}
 
-	internal Comment() : base(NodeType.COMMENT_NODE) {
-	}
 
 	internal override string toDebugString(){
 		return "<!-- "+getData().ToString().Replace("\n","~~~~")+" -->\n";
 	}
-
-
-	public override string getTextContent(){
-		return null;
+	public override string getNodeName(){
+		return "#comment";
 	}
 
 }

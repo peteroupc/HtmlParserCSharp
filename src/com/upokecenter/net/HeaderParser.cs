@@ -22,10 +22,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 namespace com.upokecenter.net {
 using System;
-
+using System.Text;
+using System.Globalization;
 using com.upokecenter.util;
 
 
@@ -68,7 +69,7 @@ public sealed class HeaderParser {
 		};
 		if(month<1||month>12)return "";
 		string monthstr=months[month];
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
+		StringBuilder builder=new StringBuilder();
 		builder.Append(dayofweek);
 		builder.Append((char)('0'+((components[2]/10)%10)));
 		builder.Append((char)('0'+((components[2])%10)));
@@ -329,6 +330,7 @@ public sealed class HeaderParser {
 		return index;
 	}
 
+
 	private static int getPositiveNumber(string v, int index){
 		int length=v.Length;
 		char c=(char)0;
@@ -341,7 +343,7 @@ public sealed class HeaderParser {
 				if(!haveNumber)return -1;
 				try {
 					number=v.Substring(startIndex,(index)-(startIndex));
-					return Int32.Parse(number,System.Globalization.CultureInfo.InvariantCulture);
+					return Int32.Parse(number,NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
 				} catch(FormatException){
 					return Int32.MaxValue;
 				}
@@ -352,7 +354,7 @@ public sealed class HeaderParser {
 		}
 		try {
 			number=v.Substring(startIndex,(length)-(startIndex));
-			return Int32.Parse(number,System.Globalization.CultureInfo.InvariantCulture);
+			return Int32.Parse(number,NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
 		} catch(FormatException){
 			return Int32.MaxValue;
 		}
@@ -558,12 +560,12 @@ public sealed class HeaderParser {
 		return startIndex;
 	}
 
-	static string getQuotedString(string v, int index){
+	private static string getQuotedString(string v, int index){
 		// assumes index points to quotation mark
 		index++;
 		int length=v.Length;
 		char c=(char)0;
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
+		StringBuilder builder=new StringBuilder();
 		while(index<length){
 			c=v[index];
 			if(c=='\\'){
@@ -620,7 +622,7 @@ public sealed class HeaderParser {
 		// type
 		while(i<str.Length){
 			char c=str[i];
-			if(c<=0x20 || c>=0x7F || StringUtility.isChar(c,"()<>@,;:\\\"/[]?=")) {
+			if(c<=0x20 || c>=0x7F || ((c&0x7F)==c && "()<>@,;:\\\"/[]?=".IndexOf((char)c)>=0)) {
 				break;
 			}
 			i++;
@@ -631,15 +633,27 @@ public sealed class HeaderParser {
 	static string getMimeToken(string str, int index){
 		int i=skipMimeToken(str,index);
 		return str.Substring(index,(i)-(index));
-
 	}
+	/**
+	 * Extracts the type and subtype from a MIME media
+	 * type.  For example, in the _string "text/plain;charset=utf-8",
+	 * returns "text/plain".
+	 * 
+	 * @param str a _string containing a MIME media type.
+	 * @param index the index into the _string where the
+	 * media type begins. Specify 0 for the beginning of the
+	 * _string.
+	 * @return the type and subtype, or an empty _string
+	 * if the _string is not a valid MIME media type.
+	 * The _string will be normalized to ASCII lower-case.
+	 */
 	public static string getMediaType(string str, int index){
 		int i=skipMimeToken(str,index);
 		if(i>=str.Length || str[i]!='/')
 			return "";
 		i++;
 		i=skipMimeToken(str,i);
-		return str.Substring(index,(i)-(index));
+		return StringUtility.toLowerCaseAscii(str.Substring(index,(i)-(index)));
 	}
 
 	public static int skipContentType(string data, int index){
@@ -681,7 +695,7 @@ public sealed class HeaderParser {
 	}
 
 	private static int skipAndAppendQuoted(
-			string str, int index, System.Text.StringBuilder builder){
+			string str, int index, StringBuilder builder){
 		int i=index;
 		bool slash=false;
 		while(i<str.Length){
@@ -712,7 +726,7 @@ public sealed class HeaderParser {
 			}
 			if(c<=0x20 || c>=0x7F)
 				return index;
-			if(!StringUtility.isChar(c,"-_.!~*'()") &&
+			if(!((c&0x7F)==c && "-_.!~*'()".IndexOf((char)c)>=0) &&
 					!(c>='A' && c<='Z') &&
 					!(c>='a' && c<='z') &&
 					!(c>='0' && c<='9'))
@@ -728,7 +742,7 @@ public sealed class HeaderParser {
 	}
 
 	private static bool appendUnescapedValue(
-			string str, int index, int length, System.Text.StringBuilder builder){
+			string str, int index, int length, StringBuilder builder){
 		int i=index;
 		int io=str.IndexOf('%',index);
 		bool doquote=true;
@@ -755,13 +769,13 @@ public sealed class HeaderParser {
 				i+=3;
 				continue;
 			}
-			if(c<=0x20 || c>=0x7F || StringUtility.isChar(c,"()<>@,;:\\\"/[]?=")){
+			if(c<=0x20 || c>=0x7F || ((c&0x7F)==c && "()<>@,;:\\\"/[]?=".IndexOf((char)c)>=0)){
 				if(doquote) {
 					builder.Append('\"');
 				}
 				return true;
 			}
-			if(!StringUtility.isChar(c,"-_.!~*'()") &&
+			if(!((c&0x7F)==c && "-_.!~*'()".IndexOf((char)c)>=0) &&
 					!(c>='A' && c<='Z') &&
 					!(c>='a' && c<='z') &&
 					!(c>='0' && c<='9'))
@@ -776,7 +790,7 @@ public sealed class HeaderParser {
 	}
 
 	private static bool appendUnescaped(
-			string str, int index, int length, System.Text.StringBuilder builder){
+			string str, int index, int length, StringBuilder builder){
 		int i=index;
 		// type
 		while(i<str.Length){
@@ -786,14 +800,14 @@ public sealed class HeaderParser {
 				int hex2=toHexNumber(str[i+2]);
 				c=(char)(hex1*16+hex2);
 				builder.Append(c);
-				if(c<=0x20 || c>=0x7F || StringUtility.isChar(c,"()<>@,;:\\\"/[]?="))
+				if(c<=0x20 || c>=0x7F || ((c&0x7F)==c && "()<>@,;:\\\"/[]?=".IndexOf((char)c)>=0))
 					return false;
 				i+=3;
 				continue;
 			}
-			if(c<=0x20 || c>=0x7F || StringUtility.isChar(c,"()<>@,;:\\\"/[]?="))
+			if(c<=0x20 || c>=0x7F || ((c&0x7F)==c && "()<>@,;:\\\"/[]?=".IndexOf((char)c)>=0))
 				return true;
-			if(!StringUtility.isChar(c,"-_.!~*'()") &&
+			if(!((c&0x7F)==c && "-_.!~*'()".IndexOf((char)c)>=0) &&
 					!(c>='A' && c<='Z') &&
 					!(c>='a' && c<='z') &&
 					!(c>='0' && c<='9'))
@@ -807,7 +821,7 @@ public sealed class HeaderParser {
 	public static string unescapeContentType(string data, int index){
 		int index2=skipMimeToken(data,index);
 		int indexlast=-1;
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
+		StringBuilder builder=new StringBuilder();
 		if(index2<data.Length && data[index2]=='/'){
 			index2++;
 			indexlast=index2;
@@ -864,6 +878,21 @@ public sealed class HeaderParser {
 		}
 	}
 
+	/**
+	 * Extracts the charset parameter from a MIME media
+	 * type.  For example, in the _string "text/plain;charset=utf-8",
+	 * returns "utf-8". This method skips linear whitespace
+	 * where allowed in the HTTP/1.1 specification.  For example,
+	 * a _string like "text/plain;\n  charset=utf-8" is allowed.
+	 * 
+	 * @param str a _string containing a MIME media type.
+	 * @param index the index into the _string where the
+	 * media type begins.
+	 * @return the charset parameter, or "ISO-8859-1" if the _string
+	 * is a "text" media type without a charset parameter
+	 * or if the media type is omitted and there is no charset
+	 * parameter, or an empty _string otherwise.  
+	 */
 	public static string getCharset(string data, int index){
 		if(data==null)
 			return "";

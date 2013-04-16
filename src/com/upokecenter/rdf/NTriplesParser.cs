@@ -2,15 +2,11 @@
 // Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
 namespace com.upokecenter.rdf {
 using System;
-
+using System.Text;
+using System.Globalization;
 using System.IO;
-
 using System.Collections.Generic;
-
-
-
-
-
+using com.upokecenter.io;
 
 
 
@@ -31,9 +27,9 @@ public sealed class NTriplesParser : IRDFParser {
 		public int read(int[] buf, int offset, int unitCount)
 				 {
 			if((buf)==null)throw new ArgumentNullException("buf");
-			if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")");
-			if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount"+" not greater or equal to "+"0"+" ("+Convert.ToString(unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
-			if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount"+" not less or equal to "+Convert.ToString(buf.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,System.Globalization.CultureInfo.InvariantCulture)+")");
+			if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
+			if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount"+" not greater or equal to "+"0"+" ("+Convert.ToString(unitCount,CultureInfo.InvariantCulture)+")");
+			if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount"+" not less or equal to "+Convert.ToString(buf.Length,CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,CultureInfo.InvariantCulture)+")");
 			if(unitCount==0)return 0;
 			for(int i=0;i<unitCount;i++){
 				int c=read();
@@ -123,7 +119,7 @@ public sealed class NTriplesParser : IRDFParser {
 	}
 
 	private string readLanguageTag()  {
-		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
+		StringBuilder ilist=new StringBuilder();
 		bool hyphen=false;
 		bool haveHyphen=false;
 		bool haveString=false;
@@ -167,7 +163,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 	}
 
 	private string readStringLiteral(int ch)  {
-		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
+		StringBuilder ilist=new StringBuilder();
 		while(true){
 			int c2=input.read();
 			if((c2<0x20 || c2>0x7e))
@@ -192,7 +188,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 	}
 
 	private string readBlankNodeLabel()  {
-		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
+		StringBuilder ilist=new StringBuilder();
 		int startChar=input.read();
 		if(!((startChar>='A' && startChar<='Z') ||
 				(startChar>='a' && startChar<='z')))
@@ -223,21 +219,21 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 	}
 
 
-	public static bool isChar(int c, string asciiChars){
+	public static bool isAsciiChar(int c, string asciiChars){
 		return (c>=0 && c<=0x7F && asciiChars.IndexOf((char)c)>=0);
 	}
 
 	private string readIriReference()  {
-		System.Text.StringBuilder ilist=new System.Text.StringBuilder();
+		StringBuilder ilist=new StringBuilder();
 		bool haveString=false;
 		bool colon=false;
 		while(true){
 			int c2=input.read();
-			if((c2<=0x20 || c2>0x7e) || isChar(c2, "<\"{}|^`"))
+			if((c2<=0x20 || c2>0x7e) || ((c2&0x7F)==c2 && "<\"{}|^`".IndexOf((char)c2)>=0))
 				throw new ParserException();
 			else if(c2=='\\'){
 				c2=readUnicodeEscape(true);
-				if(c2<=0x20 || (c2>=0x7F && c2<=0x9F) || isChar(c2, "<\"{}|\\^`"))
+				if(c2<=0x20 || (c2>=0x7F && c2<=0x9F) || ((c2&0x7F)==c2 && "<\"{}|\\^`".IndexOf((char)c2)>=0))
 					throw new ParserException();
 				if(c2==':') {
 					colon=true;

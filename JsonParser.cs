@@ -45,6 +45,12 @@ namespace Json
         {
 
         }
+        
+        public InvalidJsonException(string message, int index)
+            : base(message+", index "+index)
+        {
+
+        }
     }
 
 #if NET40

@@ -22,21 +22,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 
 namespace com.upokecenter.html {
 using System;
-
 using System.IO;
-
-
-
-
-
 using com.upokecenter.net;
-
-
-
+using com.upokecenter.util;
 
 public sealed class HtmlDocument {
 	private sealed class ParseURLListener : IResponseListener<IDocument> {
@@ -48,14 +40,12 @@ public sealed class HtmlDocument {
 			return parser.parse();
 		}
 	}
-	private HtmlDocument(){}
-
 	/**
 	 * 
 	 * Gets the absolute URL from an HTML element.
 	 * 
-	 * @param node An IMG, A, AREA, LINK, BASE, FRAME, or SCRIPT element
-	 * @return an absolute URL of the element's SRC or HREF, or an
+	 * @param node A HTML element containing a URL
+	 * @return an absolute URL of the element's SRC, DATA, or HREF, or an
 	 * empty _string if none exists.
 	 */
 	public static string getHref(IElement node){
@@ -64,81 +54,41 @@ public sealed class HtmlDocument {
 		if("A".Equals(name) || "LINK".Equals(name) || "AREA".Equals(name) ||
 				"BASE".Equals(name)){
 			href=node.getAttribute("href");
-		} else if("IMG".Equals(name) || "SCRIPT".Equals(name) || "FRAME".Equals(name)){
+		} else if("OBJECT".Equals(name)){
+			href=node.getAttribute("data");
+		} else if("IMG".Equals(name) || "SCRIPT".Equals(name) ||
+				"FRAME".Equals(name) || "SOURCE".Equals(name) ||
+				"TRACK".Equals(name) ||
+				"IFRAME".Equals(name) ||
+				"AUDIO".Equals(name) ||
+				"VIDEO".Equals(name) ||
+				"EMBED".Equals(name)){
 			href=node.getAttribute("src");
 		} else
 			return "";
 		if(href==null || href.Length==0)
 			return "";
-		return HtmlParser.resolveURL(node,href,null);
+		return HtmlDocument.resolveURL(node,href,null);
 	}
 
 	/**
+	 * Utility method for converting a relative URL to an absolute
+	 * one, using the _base URI and the encoding of the given node.
 	 * 
-	 * Resolves a URL relative to an HTML element.
-	 * 
-	 * @param node an HTML element.
-	 * @param href Absolute or relative URL.
-	 * @return an absolute URL corresponding to the HTML element,
-	 * or an empty _string if _href_ is null or empty.
+	 * @param node An HTML node, usually an IDocument or IElement
+	 * @param href A relative or absolute URL.
+	 * @return An absolute URL.
 	 */
-	public static string getHref(IElement node, string href){
+	public static string getHref(INode node, string href){
 		if(href==null || href.Length==0)
 			return "";
-		return HtmlParser.resolveURL(node,href,null);
+		return HtmlDocument.resolveURL(node,href,null);
 	}
 
-	/**
-	 * 
-	 * Parses an HTML document from a URL.
-	 * 
-	 * @param url URL of the HTML document. In addition to HTTP
-	 * and other URLs supported by URLConnection, this method also
-	 * supports Data URLs.
-	 * @return a document _object from the HTML document
-	 * @ if an I/O error occurs, such as a network
-	 * error, a download error, and so on.
-	 */
-	public static IDocument parseURL(string url)  {
-		return DownloadHelper.downloadUrl(url,
-				new ParseURLListener(), false);
-	}
-
-	/**
-	 * 
-	 * Parses an HTML document from an input stream, using "about:blank"
-	 * as its address.
-	 * 
-	 * @param stream an input stream
-	 * 
-	 * @ if an I/O error occurs.
-	 */
-	public static IDocument parseStream(PeterO.Support.InputStream stream)
-			 {
-		return parseStream(stream,"about:blank");
-	}
-
-	/**
-	 * 
-	 * Parses an HTML document from an input stream, using the given
-	 * URL as its address.
-	 * 
-	 * @param stream
-	 * @param address
-	 * 
-	 * @
-	 */
-	public static IDocument parseStream(PeterO.Support.InputStream stream, string address)
-			 {
-		if(!stream.markSupported()){
-			stream=new PeterO.Support.BufferedInputStream(stream);
-		}
-		HtmlParser parser=new HtmlParser(stream,address,null);
-		return parser.parse();
-	}
 	/**
 	 * 
 	 * Parses an HTML document from a file on the file system.
+	 * Its address will correspond to that file.
 	 * 
 	 * @param file
 	 * 
@@ -157,6 +107,73 @@ public sealed class HtmlDocument {
 				stream.Close();
 			}
 		}
+	}
+
+	/**
+	 * Parses an HTML document from an input stream, using "about:blank"
+	 * as its address.
+	 * 
+	 * @param stream an input stream
+	 * 
+	 * @ if an I/O error occurs.
+	 */
+	public static IDocument parseStream(PeterO.Support.InputStream stream)
+			 {
+		return parseStream(stream,"about:blank");
+	}
+
+	/**
+	 * 
+	 * Parses an HTML document from an input stream, using the given
+	 * URL as its address.
+	 * 
+	 * @param stream an input stream representing an HTML document.
+	 * @param address an absolute URL representing an address.
+	 * @return an IDocument representing the HTML document.
+	 * @ if an I/O error occurs
+	 * @ if the given address
+	 * is not an absolute URL.
+	 */
+	public static IDocument parseStream(PeterO.Support.InputStream stream, string address)
+			 {
+		if(!stream.markSupported()){
+			stream=new PeterO.Support.BufferedInputStream(stream);
+		}
+		HtmlParser parser=new HtmlParser(stream,address,null);
+		return parser.parse();
+	}
+
+	/**
+	 * 
+	 * Parses an HTML document from a URL.
+	 * 
+	 * @param url URL of the HTML document. In addition to HTTP
+	 * and other URLs supported by URLConnection, this method also
+	 * supports Data URLs.
+	 * @return a document _object from the HTML document
+	 * @ if an I/O error occurs, such as a network
+	 * error, a download error, and so on.
+	 */
+	public static IDocument parseURL(string url)  {
+		return DownloadHelper.downloadUrl(url,
+				new ParseURLListener(), false);
+	}
+	private HtmlDocument(){}
+
+	public static string resolveURL(INode node, string url, string _base){
+		string encoding=((node is IDocument) ?
+				((IDocument)node).getCharacterSet() : node.getOwnerDocument().getCharacterSet());
+		if("utf-16be".Equals(encoding) ||
+				"utf-16le".Equals(encoding)){
+			encoding="utf-8";
+		}
+		if(_base==null){
+			_base=node.getBaseURI();
+		}
+		URL resolved=URL.parse(url,URL.parse(_base),encoding,true);
+		if(resolved==null)
+			return _base;
+		return resolved.ToString();
 	}
 }
 

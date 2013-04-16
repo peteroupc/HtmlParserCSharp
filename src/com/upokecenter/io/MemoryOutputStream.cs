@@ -1,10 +1,10 @@
 /*
 Written in 2013 by Peter Occil.  Released to the public domain.
 Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
-*/
+ */
 namespace com.upokecenter.io {
 using System;
-
+using System.Globalization;
 using System.IO;
 
 
@@ -26,9 +26,9 @@ public sealed class MemoryOutputStream : PeterO.Support.OutputStream {
 
 	public override sealed void Write(byte[] buf, int off, int len){
 		if((buf)==null)throw new ArgumentNullException("buf");
-		if((off)<0)throw new ArgumentOutOfRangeException("off not greater or equal to 0 ("+Convert.ToString(off,System.Globalization.CultureInfo.InvariantCulture)+")");
-		if((len)<0)throw new ArgumentOutOfRangeException("len not greater or equal to 0 ("+Convert.ToString(len,System.Globalization.CultureInfo.InvariantCulture)+")");
-		if((off+len)>buf.Length)throw new ArgumentOutOfRangeException("off+len not less or equal to "+Convert.ToString(buf.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(off+len,System.Globalization.CultureInfo.InvariantCulture)+")");
+		if((off)<0)throw new ArgumentOutOfRangeException("off not greater or equal to 0 ("+Convert.ToString(off,CultureInfo.InvariantCulture)+")");
+		if((len)<0)throw new ArgumentOutOfRangeException("len not greater or equal to 0 ("+Convert.ToString(len,CultureInfo.InvariantCulture)+")");
+		if((off+len)>buf.Length)throw new ArgumentOutOfRangeException("off+len not less or equal to "+Convert.ToString(buf.Length,CultureInfo.InvariantCulture)+" ("+Convert.ToString(off+len,CultureInfo.InvariantCulture)+")");
 		if(pos+len>buffer.Length){
 			byte[] newbuffer=new byte[Math.Max(pos+len+1024, buffer.Length*2)];
 			Array.Copy(buffer,0,newbuffer,0,buffer.Length);

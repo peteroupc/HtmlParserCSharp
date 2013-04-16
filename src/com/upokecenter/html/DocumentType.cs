@@ -22,10 +22,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 
 namespace com.upokecenter.html {
 using System;
+using System.Text;
 
 
 
@@ -37,17 +38,6 @@ sealed class DocumentType : Node, IDocumentType {
 
 	public DocumentType() : base(NodeType.DOCUMENT_TYPE_NODE) {
 	}
-	internal override sealed string toDebugString(){
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
-		builder.Append("<!DOCTYPE "+name);
-		if((publicId!=null && publicId.Length>0) ||
-				(systemId!=null && systemId.Length>0)){
-			builder.Append(publicId!=null && publicId.Length>0 ? " \""+publicId.Replace("\n","~~~~")+"\"" : " \"\"");
-			builder.Append(systemId!=null && systemId.Length>0 ? " \""+systemId.Replace("\n","~~~~")+"\"" : " \"\"");
-		}
-		builder.Append(">\n");
-		return builder.ToString();
-	}
 	public string getName() {
 		return name;
 	}
@@ -57,10 +47,24 @@ sealed class DocumentType : Node, IDocumentType {
 	public string getSystemId() {
 		return systemId;
 	}
-
-
 	public override sealed string getTextContent(){
 		return null;
+	}
+
+	public override sealed string getNodeName(){
+		return getName();
+	}
+
+	internal override sealed string toDebugString(){
+		StringBuilder builder=new StringBuilder();
+		builder.Append("<!DOCTYPE "+name);
+		if((publicId!=null && publicId.Length>0) ||
+				(systemId!=null && systemId.Length>0)){
+			builder.Append(publicId!=null && publicId.Length>0 ? " \""+publicId.Replace("\n","~~~~")+"\"" : " \"\"");
+			builder.Append(systemId!=null && systemId.Length>0 ? " \""+systemId.Replace("\n","~~~~")+"\"" : " \"\"");
+		}
+		builder.Append(">\n");
+		return builder.ToString();
 	}
 }
 }

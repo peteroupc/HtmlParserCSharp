@@ -22,10 +22,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 namespace com.upokecenter.encoding {
 using System;
-
+using System.Globalization;
 using System.IO;
 
 
@@ -83,9 +83,9 @@ sealed class SingleByteEncoding : ITextEncoder, ITextDecoder {
 		if((stream)==null)throw new ArgumentNullException("stream");
 		if((error)==null)throw new ArgumentNullException("error");
 		if((buffer)==null)throw new ArgumentNullException("buffer");
-		if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")");
-		if((length)<0)throw new ArgumentOutOfRangeException("length"+" not greater or equal to "+"0"+" ("+Convert.ToString(length,System.Globalization.CultureInfo.InvariantCulture)+")");
-		if((offset+length)>buffer.Length)throw new ArgumentOutOfRangeException("offset+length"+" not less or equal to "+Convert.ToString(buffer.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+length,System.Globalization.CultureInfo.InvariantCulture)+")");
+		if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
+		if((length)<0)throw new ArgumentOutOfRangeException("length"+" not greater or equal to "+"0"+" ("+Convert.ToString(length,CultureInfo.InvariantCulture)+")");
+		if((offset+length)>buffer.Length)throw new ArgumentOutOfRangeException("offset+length"+" not less or equal to "+Convert.ToString(buffer.Length,CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+length,CultureInfo.InvariantCulture)+")");
 		if(length==0)return 0;
 		int total=0;
 		for(int i=0;i<length;i++){
@@ -98,9 +98,9 @@ sealed class SingleByteEncoding : ITextEncoder, ITextDecoder {
 			} else {
 				int cp=indexes[(c)&0x7F];
 				if(cp==0){
-					if(error.Equals(TextEncoding.ENCODING_ERROR_REPLACE))
+					if(error.Equals(TextEncoding.ENCODING_ERROR_REPLACE)) {
 						cp=0xFFFD;
-					else {
+					} else {
 						int[] data=new int[1];
 						int o=error.emitDecoderError(data,0,1);
 						if(o>0)return data[0];
@@ -123,9 +123,9 @@ sealed class SingleByteEncoding : ITextEncoder, ITextDecoder {
 		if((stream)==null)throw new ArgumentNullException("stream");
 		if((error)==null)throw new ArgumentNullException("error");
 		if((array)==null)throw new ArgumentNullException("array");
-		if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,System.Globalization.CultureInfo.InvariantCulture)+")");
-		if((length)<0)throw new ArgumentOutOfRangeException("length"+" not greater or equal to "+"0"+" ("+Convert.ToString(length,System.Globalization.CultureInfo.InvariantCulture)+")");
-		if((offset+length)>array.Length)throw new ArgumentOutOfRangeException("offset+length"+" not less or equal to "+Convert.ToString(array.Length,System.Globalization.CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+length,System.Globalization.CultureInfo.InvariantCulture)+")");
+		if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
+		if((length)<0)throw new ArgumentOutOfRangeException("length"+" not greater or equal to "+"0"+" ("+Convert.ToString(length,CultureInfo.InvariantCulture)+")");
+		if((offset+length)>array.Length)throw new ArgumentOutOfRangeException("offset+length"+" not less or equal to "+Convert.ToString(array.Length,CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+length,CultureInfo.InvariantCulture)+")");
 		for(int i=0;i<length;i++){
 			int c=array[offset++];
 			if(c<0 || c>=0x110000){

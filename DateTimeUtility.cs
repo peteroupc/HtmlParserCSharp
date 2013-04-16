@@ -164,7 +164,7 @@ public sealed class DateTimeUtility {
 		
 		public static int[] getGmtDateComponents(long date){
 			long days = FloorDiv(date, 86400000L) + 1;
-			int[] ret=new int[8];
+			int[] ret=new int[9];
 			GetNormalizedPartGregorian(1970,1,days,ret);
 			ret[3]=(int)(FloorMod(date, 86400000L) / 3600000L);
 			ret[4]=(int)(FloorMod(date, 3600000L) / 60000L);
@@ -172,6 +172,38 @@ public sealed class DateTimeUtility {
 			ret[6]=(int)FloorMod(date, 1000L);
 			// day of week: 1 is Sunday, 2 is Monday, and so on
 			ret[7]=(int)(FloorMod(days+3,7)+1);
+			ret[8]=0;
+			return ret;
+		}
+
+		public static int[] getLocalDateComponents(long date){
+			long days = FloorDiv(date, 86400000L) + 1;
+			int[] ret=new int[9];
+			// Separate GMT date into components
+			GetNormalizedPartGregorian(1970,1,days,ret);
+			ret[3]=(int)(FloorMod(date, 86400000L) / 3600000L);
+			ret[4]=(int)(FloorMod(date, 3600000L) / 60000L);
+			ret[5]=(int)(FloorMod(date, 60000L) / 1000L);
+			TimeZone tz=TimeZone.CurrentTimeZone;
+			DateTime dt=tz.ToLocalTime(new DateTime(ret[0],ret[1],ret[2],ret[3],ret[4],ret[5]));
+			ret[0]=dt.Year;
+			ret[1]=dt.Month;
+			ret[2]=dt.Day;
+			ret[3]=dt.Hour;
+			ret[4]=dt.Minute;
+			ret[5]=dt.Second;
+			ret[6]=dt.Millisecond;
+			// time zone offset
+			ret[8]=(int)Math.Round(tz.GetUtcOffset(dt).TotalMinutes);
+			DayOfWeek dow=dt.DayOfWeek;
+			if(dow== DayOfWeek.Sunday)ret[7]=1;
+			else if(dow== DayOfWeek.Monday)ret[7]=2;
+			else if(dow== DayOfWeek.Tuesday)ret[7]=3;
+			else if(dow== DayOfWeek.Wednesday)ret[7]=4;
+			else if(dow== DayOfWeek.Thursday)ret[7]=5;
+			else if(dow== DayOfWeek.Friday)ret[7]=6;
+			else if(dow== DayOfWeek.Saturday)ret[7]=7;
+			else ret[7]=0;
 			return ret;
 		}
 
@@ -185,6 +217,7 @@ public sealed class DateTimeUtility {
 			ret[4]=dt.Minute;
 			ret[5]=dt.Second;
 			ret[6]=dt.Millisecond;
+			ret[8]=0; // time zone offset is 0 for GMT
 			DayOfWeek dow=dt.DayOfWeek;
 			if(dow== DayOfWeek.Sunday)ret[7]=1;
 			else if(dow== DayOfWeek.Monday)ret[7]=2;
@@ -196,7 +229,67 @@ public sealed class DateTimeUtility {
 			else ret[7]=0;
 			return ret;
 		}
-		
+
+		public static int[] getCurrentLocalDateComponents(){
+			DateTime dt=DateTime.Now;
+			int[] ret=new int[9];
+			ret[0]=dt.Year;
+			ret[1]=dt.Month;
+			ret[2]=dt.Day;
+			ret[3]=dt.Hour;
+			ret[4]=dt.Minute;
+			ret[5]=dt.Second;
+			ret[6]=dt.Millisecond;
+			// time zone offset
+			ret[8]=(int)Math.Round(TimeZone.CurrentTimeZone.GetUtcOffset(dt).TotalMinutes);
+			DayOfWeek dow=dt.DayOfWeek;
+			if(dow== DayOfWeek.Sunday)ret[7]=1;
+			else if(dow== DayOfWeek.Monday)ret[7]=2;
+			else if(dow== DayOfWeek.Tuesday)ret[7]=3;
+			else if(dow== DayOfWeek.Wednesday)ret[7]=4;
+			else if(dow== DayOfWeek.Thursday)ret[7]=5;
+			else if(dow== DayOfWeek.Friday)ret[7]=6;
+			else if(dow== DayOfWeek.Saturday)ret[7]=7;
+			else ret[7]=0;
+			return ret;
+		}
+	
+		public static String toXmlSchemaDate(int[] components){
+		System.Text.StringBuilder b=new System.Text.StringBuilder();
+		// Date
+		b.Append(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+				"{0:d4}-{1:d2}-{2:d2}T",components[0],components[1],components[2]));
+		// Time
+		if(components[3]!=0 ||
+				components[4]!=0 ||
+				components[5]!=0 ||
+				components[6]!=0){
+			b.Append(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+					"{0:d2}:{1:d2}:{2:d2}",components[3],components[4],components[5]));
+			// Milliseconds
+			if(components[6]!=0){
+				b.Append(String.Format(System.Globalization.CultureInfo.InvariantCulture,".{0:d3}",components[6]));
+			}
+		}
+		// Time zone offset
+		if(components[8]==0){
+			b.Append('Z');
+		} else {
+			int tzabs=Math.Abs(components[8]);
+			b.Append(components[8]<0 ? '-' : '+');
+			b.Append(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+					"{0:d2}:{1:d2}",tzabs/60,tzabs%60));
+		}
+		return b.ToString();
+	}
+	public static String toXmlSchemaGmtDate(long time){
+		return toXmlSchemaDate(getGmtDateComponents(time));
+	}
+	public static String toXmlSchemaLocalDate(long time){
+		return toXmlSchemaDate(getLocalDateComponents(time));
+	}
+
+	
 		public static long toGmtDate(int year, int month, int day,
 		                          int hour, int minute, int second){
 			long days;

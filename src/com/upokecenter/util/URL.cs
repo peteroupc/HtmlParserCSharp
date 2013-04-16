@@ -1,20 +1,14 @@
 /*
 Written in 2013 by Peter Occil.  Released to the public domain.
 Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
-*/
+ */
 namespace com.upokecenter.util {
 using System;
-
+using System.Text;
 using System.IO;
-
 using System.Collections.Generic;
-
-
 using com.upokecenter.encoding;
-
-
-
-
+using com.upokecenter.io;
 
 public sealed class URL {
 
@@ -252,7 +246,7 @@ public sealed class URL {
 	}
 
 	public override sealed string ToString(){
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
+		StringBuilder builder=new StringBuilder();
 		builder.Append(scheme);
 		builder.Append(':');
 		if(scheme.Equals("file") ||
@@ -297,7 +291,7 @@ public sealed class URL {
 		return builder.ToString();
 	}
 
-	private static void appendOutputBytes(System.Text.StringBuilder builder,
+	private static void appendOutputBytes(StringBuilder builder,
 			MemoryOutputStream baos){
 		for(int i=0;i<baos.Length;i++){
 			int c=baos[i];
@@ -356,7 +350,7 @@ public sealed class URL {
 		ITextEncoder encoder=TextEncoding.getEncoder(encoding);
 		if(encoder==null)
 			throw new ArgumentException();
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
+		StringBuilder builder=new StringBuilder();
 		bool first=true;
 		MemoryOutputStream baos=new MemoryOutputStream();
 		foreach(string[] pair in pairs){
@@ -582,10 +576,10 @@ public sealed class URL {
 					state=ParseState.Fragment;
 					break;
 				}
-				if(!isUrlCodePoint(c) || (c=='%' &&
+				if((c>=0 && (!isUrlCodePoint(c) && c!='%')  || (c=='%' &&
 						(index+2>ending ||
 								!isHexDigit(s[index]) ||
-								!isHexDigit(s[index+1])))){
+								!isHexDigit(s[index+1]))))){
 					error=true;
 				}
 				if(c>=0 && c!=0x09 && c!=0x0a && c!=0x0d){
@@ -626,10 +620,9 @@ public sealed class URL {
 				break;
 			case ParseState.Relative:{
 				relative=true;
-				if(baseurl==null) {
-					baseurl=url;
+				if(!"file".Equals(url.scheme)){
+					url.scheme=baseurl.scheme;
 				}
-				url.scheme=baseurl.scheme;
 				if(c<0){
 					url.host=baseurl.host;
 					url.port=baseurl.port;
@@ -727,7 +720,7 @@ public sealed class URL {
 							error=true;
 							continue;
 						}
-						if(!isUrlCodePoint(cp) || (cp=='%' &&
+						if((!isUrlCodePoint(c) && c!='%')  || (cp=='%' &&
 								(i+3>buffer.Count ||
 										!isHexDigit(array[index+1]) ||
 										!isHexDigit(array[index+2])))){
@@ -738,17 +731,18 @@ public sealed class URL {
 							continue;
 						}
 						IntList result=(password==null) ? username : password;
-						if(cp<=0x20 || cp>=0x7F || StringUtility.isChar(cp,"#<>?`\"")){
+						if(cp<=0x20 || cp>=0x7F || ((cp&0x7F)==cp && "#<>?`\"".IndexOf((char)cp)>=0)){
 							percentEncodeUtf8(result,cp);
 						} else {
 							result.appendInt(cp);
 						}
 					}
+					
 					//Console.WriteLine("username=%s",username);
 					//Console.WriteLine("password=%s",password);
 					buffer.clearAll();
 					hostStart=index;
-				} else if(c<0 || StringUtility.isChar(c,"/\\?#")){
+				} else if(c<0 || ((c&0x7F)==c && "/\\?#".IndexOf((char)c)>=0)){
 					buffer.clearAll();
 					state=ParseState.Host;
 					index=hostStart;
@@ -757,7 +751,7 @@ public sealed class URL {
 				}
 				break;
 			case ParseState.FileHost:
-				if(c<0 || StringUtility.isChar(c,"/\\?#")){
+				if(c<0 || ((c&0x7F)==c && "/\\?#".IndexOf((char)c)>=0)){
 					index=oldindex;
 					if(buffer.Count==2){
 						int c1=buffer[0];
@@ -788,7 +782,7 @@ public sealed class URL {
 					url.host=host;
 					buffer.clearAll();
 					state=ParseState.Port;
-				} else if(c<0 || StringUtility.isChar(c,"/\\?#")){
+				} else if(c<0 || ((c&0x7F)==c && "/\\?#".IndexOf((char)c)>=0)){
 					string host=hostParse(buffer.ToString());
 					if(host==null)
 						return null;
@@ -817,7 +811,7 @@ public sealed class URL {
 					if(portstate==2) {
 						buffer.appendInt(c);
 					}
-				} else if(c<0 || StringUtility.isChar(c,"/\\?#")){
+				} else if(c<0 || ((c&0x7F)==c && "/\\?#".IndexOf((char)c)>=0)){
 					string bufport="";
 					if(portstate==1) {
 						bufport="0";
@@ -895,7 +889,7 @@ public sealed class URL {
 				} else if(c==0x09 || c==0x0a || c==0x0d){
 					error=true;
 				} else {
-					if(!isUrlCodePoint(c) || (c=='%' &&
+					if((!isUrlCodePoint(c) && c!='%')  || (c=='%' &&
 							(index+2>ending ||
 									!isHexDigit(s[index]) ||
 									!isHexDigit(s[index+1])))){
@@ -959,13 +953,13 @@ public sealed class URL {
 				} else if(c==0x09 || c==0x0a || c==0x0d){
 					error=true;
 				} else {
-					if(!isUrlCodePoint(c) || (c=='%' &&
+					if((!isUrlCodePoint(c) && c!='%') || (c=='%' &&
 							(index+2>ending ||
 									!isHexDigit(s[index]) ||
 									!isHexDigit(s[index+1])))){
 						error=true;
 					}
-					if(c<=0x20 || c>=0x7F || StringUtility.isChar(c,"#<>?`\"")){
+					if(c<=0x20 || c>=0x7F || ((c&0x7F)==c && "#<>?`\"".IndexOf((char)c)>=0)){
 						percentEncodeUtf8(buffer,c);
 					} else {
 						buffer.appendInt(c);
@@ -979,7 +973,7 @@ public sealed class URL {
 				if(c==0x09 || c==0x0a || c==0x0d) {
 					error=true;
 				} else {
-					if(!isUrlCodePoint(c) || (c=='%' &&
+					if((!isUrlCodePoint(c) && c!='%')  || (c=='%' &&
 							(index+2>ending ||
 									!isHexDigit(s[index]) ||
 									!isHexDigit(s[index+1])))){
@@ -1003,7 +997,7 @@ public sealed class URL {
 		if(schemeData!=null) {
 			url.schemeData=schemeData.ToString();
 		}
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
+		StringBuilder builder=new StringBuilder();
 		if(path.Count==0){
 			builder.Append('/');
 		} else {
@@ -1069,12 +1063,12 @@ public sealed class URL {
 					int value=0;
 					int length=0;
 					while(length<4){
-						if(c>='A' && c<='Z'){
+						if(c>='A' && c<='F'){
 							value=value*16+(c-'A')+10;
 							index++;
 							length++;
 							c=(index>=ending) ? -1 : _string[index];
-						} else if(c>='a' && c<='z'){
+						} else if(c>='a' && c<='f'){
 							value=value*16+(c-'a')+10;
 							index++;
 							length++;
@@ -1169,7 +1163,7 @@ public sealed class URL {
 			return((c>='a' && c<='z') ||
 					(c>='A' && c<='Z') ||
 					(c>='0' && c<='9') ||
-					StringUtility.isChar(c,"!$&'()*+,-./:;=?@_~"));
+					((c&0x7F)==c && "!$&'()*+,-./:;=?@_~".IndexOf((char)c)>=0));
 		else if((c&0xFFFE)==0xFFFE)
 			return false;
 		else if((c>=0xa0 && c<=0xd7ff) ||

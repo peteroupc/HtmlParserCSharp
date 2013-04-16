@@ -22,14 +22,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 
 namespace com.upokecenter.html {
 using System;
-
 using System.IO;
-
-
 using com.upokecenter.encoding;
 
 
@@ -44,8 +41,15 @@ internal class Html5Decoder : ITextDecoder {
 		this.decoder=decoder;
 	}
 
-	public bool isError(){
-		return iserror;
+	public int decode(PeterO.Support.InputStream stream)  {
+		return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
+	}
+
+	public int decode(PeterO.Support.InputStream stream, IEncodingError error)  {
+		int[] value=new int[1];
+		int c=decode(stream,value,0,1, error);
+		if(c<=0)return -1;
+		return value[0];
 	}
 
 	public int decode(PeterO.Support.InputStream stream, int[] buffer, int offset, int length)
@@ -102,15 +106,8 @@ internal class Html5Decoder : ITextDecoder {
 		return count==0 ? -1 : count;
 	}
 
-	public int decode(PeterO.Support.InputStream stream)  {
-		return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
-	}
-
-	public int decode(PeterO.Support.InputStream stream, IEncodingError error)  {
-		int[] value=new int[1];
-		int c=decode(stream,value,0,1, error);
-		if(c<=0)return -1;
-		return value[0];
+	public bool isError(){
+		return iserror;
 	}
 }
 

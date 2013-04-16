@@ -22,25 +22,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 namespace com.upokecenter.net {
 using System;
-
+using System.Globalization;
 using System.IO;
-
-
-
-
-
-
 using System.Collections.Generic;
-
-
-
-
-
-
-
+using com.upokecenter.io;
+using com.upokecenter.json;
 using com.upokecenter.util;
 
 internal class CacheControl {
@@ -201,7 +190,7 @@ internal class CacheControl {
 		}
 		if(headers.getHeaderField("age")!=null){
 			try {
-				cc.age=Int32.Parse(headers.getHeaderField("age"),System.Globalization.CultureInfo.InvariantCulture);
+				cc.age=Int32.Parse(headers.getHeaderField("age"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
 				if(cc.age<0) {
 					cc.age=0;
 				}
@@ -297,27 +286,27 @@ internal class CacheControl {
 	private class CacheControlSerializer {
 		public CacheControl readObjectFromStream(PeterO.Support.InputStream stream)  {
 			try {
-				System.Collections.Generic.IDictionary<string, object> jsonobj=Json.JsonParser.FromJson(StreamUtility.streamToString(stream));
+				JSONObject jsonobj=new JSONObject(StreamUtility.streamToString(stream));
 				CacheControl cc=new CacheControl();
-				cc.cacheability=(int)jsonobj["cacheability"];
-				cc.noStore=(bool)jsonobj["noStore"];
-				cc.noTransform=(bool)jsonobj["noTransform"];
-				cc.mustRevalidate=(bool)jsonobj["mustRevalidate"];
-				cc.requestTime=Int64.Parse((string)jsonobj["requestTime"],System.Globalization.CultureInfo.InvariantCulture);
-				cc.responseTime=Int64.Parse((string)jsonobj["responseTime"],System.Globalization.CultureInfo.InvariantCulture);
-				cc.maxAge=Int64.Parse((string)jsonobj["maxAge"],System.Globalization.CultureInfo.InvariantCulture);
-				cc.date=Int64.Parse((string)jsonobj["date"],System.Globalization.CultureInfo.InvariantCulture);
-				cc.code=(int)jsonobj["code"];
-				cc.age=Int64.Parse((string)jsonobj["age"],System.Globalization.CultureInfo.InvariantCulture);
-				cc.uri=(string)jsonobj["uri"];
-				cc.requestMethod=(string)jsonobj["requestMethod"];
+				cc.cacheability=jsonobj.getInt("cacheability");
+				cc.noStore=jsonobj.getBoolean("noStore");
+				cc.noTransform=jsonobj.getBoolean("noTransform");
+				cc.mustRevalidate=jsonobj.getBoolean("mustRevalidate");
+				cc.requestTime=Int64.Parse(jsonobj.getString("requestTime"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
+				cc.responseTime=Int64.Parse(jsonobj.getString("responseTime"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
+				cc.maxAge=Int64.Parse(jsonobj.getString("maxAge"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
+				cc.date=Int64.Parse(jsonobj.getString("date"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
+				cc.code=jsonobj.getInt("code");
+				cc.age=Int64.Parse(jsonobj.getString("age"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
+				cc.uri=jsonobj.getString("uri");
+				cc.requestMethod=jsonobj.getString("requestMethod");
 				if(cc.requestMethod!=null) {
 					cc.requestMethod=StringUtility.toLowerCaseAscii(cc.requestMethod);
 				}
 				cc.headers=new List<string>();
-				System.Collections.Generic.IList<object> jsonarr=(System.Collections.Generic.IList<object>)jsonobj["headers"];
-				for(int i=0;i<jsonarr.Count;i++){
-					string str=(string)jsonarr[i];
+				JSONArray jsonarr=jsonobj.getJSONArray("headers");
+				for(int i=0;i<jsonarr.Length;i++){
+					string str=jsonarr.getString(i);
 					if(str!=null && (i%2)!=0){
 						str=StringUtility.toLowerCaseAscii(str);
 						if("age".Equals(str) ||
@@ -351,25 +340,25 @@ internal class CacheControl {
 		}
 		public void writeObjectToStream(CacheControl o, Stream stream)
 				 {
-			System.Collections.Generic.IDictionary<string, object> jsonobj=new System.Collections.Generic.Dictionary<string, object>();
-			jsonobj["cacheability"]=o.cacheability;
-			jsonobj["noStore"]=o.noStore;
-			jsonobj["noTransform"]=o.noTransform;
-			jsonobj["mustRevalidate"]=o.mustRevalidate;
-			jsonobj["requestTime"]=Convert.ToString(o.requestTime,System.Globalization.CultureInfo.InvariantCulture);
-			jsonobj["responseTime"]=Convert.ToString(o.responseTime,System.Globalization.CultureInfo.InvariantCulture);
-			jsonobj["maxAge"]=Convert.ToString(o.maxAge,System.Globalization.CultureInfo.InvariantCulture);
-			jsonobj["date"]=Convert.ToString(o.date,System.Globalization.CultureInfo.InvariantCulture);
-			jsonobj["uri"]=o.uri;
-			jsonobj["requestMethod"]=o.requestMethod;
-			jsonobj["code"]=o.code;
-			jsonobj["age"]=Convert.ToString(o.age,System.Globalization.CultureInfo.InvariantCulture);
-			System.Collections.Generic.IList<object> jsonarr=new System.Collections.Generic.List<object>();
+			JSONObject jsonobj=new JSONObject();
+			jsonobj.put("cacheability",o.cacheability);
+			jsonobj.put("noStore",o.noStore);
+			jsonobj.put("noTransform",o.noTransform);
+			jsonobj.put("mustRevalidate",o.mustRevalidate);
+			jsonobj.put("requestTime",Convert.ToString(o.requestTime,CultureInfo.InvariantCulture));
+			jsonobj.put("responseTime",Convert.ToString(o.responseTime,CultureInfo.InvariantCulture));
+			jsonobj.put("maxAge",Convert.ToString(o.maxAge,CultureInfo.InvariantCulture));
+			jsonobj.put("date",Convert.ToString(o.date,CultureInfo.InvariantCulture));
+			jsonobj.put("uri",o.uri);
+			jsonobj.put("requestMethod",o.requestMethod);
+			jsonobj.put("code",o.code);
+			jsonobj.put("age",Convert.ToString(o.age,CultureInfo.InvariantCulture));
+			JSONArray jsonarr=new JSONArray();
 			foreach(string header in o.headers){
-				jsonarr.Add(header);
+				jsonarr.put(header);
 			}
-			jsonobj["headers"]=jsonarr;
-			StreamUtility.stringToStream(Json.JsonParser.ToJson(jsonobj),stream);
+			jsonobj.put("headers",jsonarr);
+			StreamUtility.stringToStream(jsonobj.ToString(),stream);
 		}
 	}
 
@@ -398,9 +387,9 @@ internal class CacheControl {
 			}
 			this.age=age/1000; // convert age to seconds
 			list.Add("age");
-			list.Add(Convert.ToString(this.age,System.Globalization.CultureInfo.InvariantCulture));
+			list.Add(Convert.ToString(this.age,CultureInfo.InvariantCulture));
 			list.Add("content-length");
-			list.Add(Convert.ToString(length,System.Globalization.CultureInfo.InvariantCulture));
+			list.Add(Convert.ToString(length,CultureInfo.InvariantCulture));
 			//Console.WriteLine("aged=%s",list);
 			this.cc=cc;
 		}

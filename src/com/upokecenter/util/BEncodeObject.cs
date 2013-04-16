@@ -1,16 +1,13 @@
 /*
 Written in 2013 by Peter Occil.  Released to the public domain.
 Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
-*/
+ */
 
 namespace com.upokecenter.util {
 using System;
-
+using System.Text;
+using System.Globalization;
 using System.IO;
-
-
-
-
 using System.Collections.Generic;
 
 
@@ -35,7 +32,7 @@ public sealed class BEncodeObject {
 	public static readonly int TYPE_DICTIONARY=3;
 
 	public byte[] toByteArray(){
-		com.upokecenter.util.MemoryOutputStream os=new com.upokecenter.util.MemoryOutputStream();
+		com.upokecenter.io.MemoryOutputStream os=new com.upokecenter.io.MemoryOutputStream();
 		try {
 			write(os);
 		} catch (IOException e) {
@@ -71,7 +68,7 @@ public sealed class BEncodeObject {
 				map[key].write(stream);
 			}
 			stream.WriteByte(unchecked((byte)((byte)'e')));
-		} else if(obj is List<BEncodeObject>){
+		} else if(obj is IList<BEncodeObject>){
 			stream.WriteByte(unchecked((byte)((byte)'l')));
 			IList<BEncodeObject> list=(IList<BEncodeObject>)obj;
 			foreach(BEncodeObject value in list){
@@ -83,7 +80,7 @@ public sealed class BEncodeObject {
 	}
 
 	private static void writeInteger(long value, Stream stream)  {
-		string value1=Convert.ToString(value,System.Globalization.CultureInfo.InvariantCulture);
+		string value1=Convert.ToString(value,CultureInfo.InvariantCulture);
 		for(int i=0;i<value1.Length;i++){
 			int c=value1[i];
 			stream.WriteByte(unchecked((byte)((c&0x7F))));
@@ -91,7 +88,7 @@ public sealed class BEncodeObject {
 	}
 
 	private static string readUtf8(PeterO.Support.InputStream stream, int byteLength)  {
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
+		StringBuilder builder=new StringBuilder();
 		int cp=0;
 		int bytesSeen=0;
 		int bytesNeeded=0;
@@ -255,7 +252,7 @@ public sealed class BEncodeObject {
 			return TYPE_STRING;
 		if(obj is IDictionary<string,BEncodeObject>)
 			return TYPE_DICTIONARY;
-		if(obj is List<BEncodeObject>)
+		if(obj is IList<BEncodeObject>)
 			return TYPE_LIST;
 		throw new InvalidOperationException();
 	}
@@ -279,14 +276,15 @@ public sealed class BEncodeObject {
 		if(beo.obj is IDictionary<string,BEncodeObject>){
 			BEncodeObject newbeo=BEncodeObject.newDictionary();
 			foreach(string key in ((IDictionary<string,BEncodeObject>)beo.obj).Keys){
-				((IDictionary<string,BEncodeObject>)newbeo.obj).Add(key,((IDictionary<string,BEncodeObject>)beo.obj)[key]);
+				newbeo.getDictionary().Add(key,
+						((IDictionary<string,BEncodeObject>)beo.obj)[key]);
 			}
 			return newbeo;
 		}
-		if(beo.obj is List<BEncodeObject>){
+		if(beo.obj is IList<BEncodeObject>){
 			BEncodeObject newbeo=BEncodeObject.newList();
 			foreach(BEncodeObject value in ((IList<BEncodeObject>)beo.obj)){
-				((IList<BEncodeObject>)newbeo.obj).Add(value);
+				newbeo.getList().Add(value);
 			}
 			return newbeo;
 		}
@@ -344,11 +342,12 @@ public sealed class BEncodeObject {
 public int size(){
 		if(obj is IDictionary<string,BEncodeObject>)
 			return ((IDictionary<string,BEncodeObject>)obj).Count;
-		else if(obj is List<BEncodeObject>)
-			return ((List<BEncodeObject>)obj).Count;
+		else if(obj is IList<BEncodeObject>)
+			return ((IList<BEncodeObject>)obj).Count;
 		return 0;
 	}
-	public BEncodeObject get(string key){
+	public BEncodeObject this[string i] { get { return get(i); } set { put(i,value); } }
+public BEncodeObject get(string key){
 		return getDictionary()[key];
 	}
 	public void put(string key,int value){
@@ -381,7 +380,8 @@ public int size(){
 	public void put(string key,BEncodeObject value){
 		getDictionary().Add(key,value);
 	}
-	public BEncodeObject get(int key){
+	public BEncodeObject this[int i] { get { return get(i); } set { set(i,value); } }
+public BEncodeObject get(int key){
 		return getList()[key];
 	}
 	public void add(int key,BEncodeObject value){
@@ -548,14 +548,14 @@ public int size(){
 			return 0;
 		try {
 			string retstr=new String(buffer,0,bufOffset);
-			return Int64.Parse(retstr,System.Globalization.CultureInfo.InvariantCulture);
+			return Int64.Parse(retstr,NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
 		} catch(FormatException){
 			throw new BEncodeException(negative ? "Integer too small" : "Integer too big");
 		}
 	}
 
 	private static int readPositiveInteger(PeterO.Support.InputStream stream) {
-		bool haveHex=false;
+		bool haveNumber=false;
 		while(true){ // skip zeros
 			stream.mark(2);
 			int c=stream.ReadByte();
@@ -565,7 +565,7 @@ public int size(){
 				}
 				break;
 			}
-			haveHex=true;
+			haveNumber=true;
 		}
 		long value=0;
 		while(true){
@@ -573,7 +573,7 @@ public int size(){
 			int number=stream.ReadByte();
 			if(number>='0' && number<='9'){
 				value=(value*10)+(number-'0');
-				haveHex=true;
+				haveNumber=true;
 			} else {
 				if(number>=0) {
 					stream.reset();
@@ -583,7 +583,7 @@ public int size(){
 			if(value>Int32.MaxValue)
 				throw new BEncodeException("Integer too big");
 		}
-		if(!haveHex)
+		if(!haveNumber)
 			throw new BEncodeException("Positive integer expected");
 		return (int)value;
 	}

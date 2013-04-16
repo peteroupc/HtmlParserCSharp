@@ -22,35 +22,83 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 
 namespace com.upokecenter.html {
 using System;
-
 using System.Collections.Generic;
-
+using com.upokecenter.util;
 internal class Node : INode {
 	private IList<Node> childNodes;
 	private Node parentNode=null;
 	private IDocument ownerDocument=null;
 
-	public virtual IDocument getOwnerDocument(){
-		return ownerDocument;
-	}
-
-	void setOwnerDocument(IDocument document){
-		ownerDocument=document;
-	}
-
 	int nodeType;
+
 	public Node(int nodeType){
 		this.nodeType=nodeType;
 		childNodes=new List<Node>();
 	}
-	internal virtual string toDebugString() {
-		return null;
+
+	public void appendChild(Node node){
+		if(node==this)
+			throw new ArgumentException();
+		node.parentNode=this;
+		node.ownerDocument=(this is IDocument) ? (IDocument)this : ownerDocument;
+		childNodes.Add(node);
 	}
 
+	private string baseURI=null;
+
+	public virtual string getBaseURI() {
+		INode parent=getParentNode();
+		if(baseURI==null){
+			if(parent==null)
+				return "about:blank";
+			else
+				return parent.getBaseURI();
+		} else {
+			if(parent==null)
+				return baseURI;
+			else {
+				URL ret=URL.parse(baseURI,URL.parse(parent.getBaseURI()));
+				return (ret==null) ? parent.getBaseURI() : ret.ToString();
+			}
+		}
+	}
+
+	internal void setBaseURI(string value){
+		INode parent=getParentNode();
+		if(parent==null){
+			baseURI=value;
+		} else {
+			string val=URL.parse(value,URL.parse(parent.getBaseURI())).ToString();
+			baseURI=(val==null) ? parent.getBaseURI() : val.ToString();
+		}
+	}
+
+	public IList<INode> getChildNodes() {
+		return new List<INode>(childNodes);
+	}
+
+	internal IList<Node> getChildNodesInternal(){
+		return childNodes;
+	}
+
+	public int getNodeType(){
+		return nodeType;
+	}
+
+	public virtual IDocument getOwnerDocument(){
+		return ownerDocument;
+	}
+
+	public INode getParentNode() {
+		return parentNode;
+	}
+	public virtual string getTextContent(){
+		return null;
+	}
 	public void insertBefore(Node child, Node sibling){
 		if(sibling==null){
 			appendChild(child);
@@ -69,41 +117,27 @@ internal class Node : INode {
 		}
 		throw new ArgumentException();
 	}
-
-	public void appendChild(Node node){
-		if(node==this)
-			throw new ArgumentException();
-		node.parentNode=this;
-		node.ownerDocument=(this is IDocument) ? (IDocument)this : ownerDocument;
-		childNodes.Add(node);
-	}
-
-	internal IList<Node> getChildNodesInternal(){
-		return childNodes;
-	}
-
-	public int getNodeType(){
-		return nodeType;
-	}
-	public INode getParentNode() {
-		return parentNode;
-	}
 	public void removeChild(Node node){
 		node.parentNode=null;
 		childNodes.Remove(node);
 	}
-	public IList<INode> getChildNodes() {
-		return new List<INode>(childNodes);
+
+	void setOwnerDocument(IDocument document){
+		ownerDocument=document;
 	}
 
-	public virtual string getBaseURI() {
-		IDocument doc=getOwnerDocument();
-		if(doc==null)return "";
-		return doc.getBaseURI();
-	}
-
-	public virtual string getTextContent(){
+	internal virtual string toDebugString() {
 		return null;
 	}
+
+	public virtual string getNodeName() {
+		return "";
+	}
+
+	public override string ToString() {
+		return getNodeName();
+	}
+
+
 }
 }

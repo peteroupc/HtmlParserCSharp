@@ -22,21 +22,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-*/
+ */
 namespace com.upokecenter.encoding {
 using System;
-
+using System.Text;
 using System.IO;
-
-
-
-
 using System.Collections.Generic;
-
-
-
-
-
 using com.upokecenter.util;
 
 /**
@@ -61,11 +52,11 @@ public sealed class TextEncoding {
 
 	private sealed class EncodingErrorThrow : IEncodingError {
 		public int emitDecoderError(int[] buffer, int offset, int length)  {
-			throw new System.IO.IOException("",new System.Text.DecoderFallbackException());
+			throw new IOException("",new DecoderFallbackException());
 		}
 
 		public void emitEncoderError(Stream stream, int codePoint)  {
-			throw new System.IO.IOException("",new System.Text.EncoderFallbackException());
+			throw new IOException("",new EncoderFallbackException());
 		}
 	}
 
@@ -312,7 +303,9 @@ public sealed class TextEncoding {
 	private static Object syncRoot=new Object();
 
 	/**
-	 * Converts a name to a supported character encoding
+	 * Converts a name to a supported character encoding.
+	 * In this implementation, the return value will be the name preferred in the
+	 * WHATWG's Encoding specification.
 	 * 
 	 * @param encoding the name of an encoding
 	 * @return a character encoding, or null if the name
@@ -346,11 +339,15 @@ public sealed class TextEncoding {
 	/**
 	 * Utility method to decode an input byte stream into a _string.
 	 * 
-	 * @param input
-	 * @param decoder
-	 * @param error
+	 * @param input an input stream containing character data
+	 * encoded as bytes. If null, 
+	 * @param decoder a text decoder.
+	 * @param error an _object that handles encoding errors.  You
+	 * can use TextEncoding.ENCODING_ERROR_THROW or
+	 * TextEncoding.ENCODING_ERROR_REPLACE for this.
 	 * 
-	 * @
+	 * @ if the error handler  exception
+	 * or another I/O error occurs
 	 */
 	public static string decodeString(
 			PeterO.Support.InputStream input, ITextDecoder decoder, IEncodingError error)
@@ -358,7 +355,7 @@ public sealed class TextEncoding {
 		if(decoder==null || input==null || error==null)
 			throw new ArgumentException();
 		int[] data=new int[64];
-		System.Text.StringBuilder builder=new System.Text.StringBuilder();
+		StringBuilder builder=new StringBuilder();
 		while(true){
 			int count=decoder.decode(input,data,0,data.Length,error);
 			if(count<0) {
@@ -386,11 +383,16 @@ public sealed class TextEncoding {
 	 * @param str string. If null, 
 	 * Any unpaired surrogates in the _string are kept intact in the
 	 * input to the encoder.
-	 * @param output
+	 * @param output a stream for writing converted bytes to.
+	 * If null, 
 	 * @param encoder Encoder for converting Unicode characters
-	 * to bytes
+	 * to bytes.
+	 * If null, 
 	 * @param error Error handler called when a Unicode character
-	 * cannot be converted to bytes
+	 * cannot be converted to bytes.  You
+	 * can use TextEncoding.ENCODING_ERROR_THROW or
+	 * TextEncoding.ENCODING_ERROR_REPLACE for this.
+	 * If null, 
 	 * @ if the error handler  exception
 	 * or another I/O error occurs
 	 */
@@ -458,7 +460,7 @@ public sealed class TextEncoding {
 	public static string[] getSupportedEncodings(){
 		List<string> values=new List<string>(new HashSet<string>(encodingMap.Values));
 		values.Sort();
-		return values.ToArray();
+		return PeterO.Support.Collections.ToArray(values);
 	}
 
 	private static ITextEncoder setIndexEncoding(string name, ITextEncoder enc){
