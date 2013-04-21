@@ -139,5 +139,15 @@ internal class Node : INode {
 	}
 
 
+	public virtual string getLanguage(){
+		INode parent=getParentNode();
+		if(parent==null){
+			parent=getOwnerDocument();
+			if(parent==null)return "";
+			return parent.getLanguage();
+		} else
+			return parent.getLanguage();
+	}
+
 }
 }

@@ -138,7 +138,13 @@ internal class Document : Node, IDocument {
 				continue;
 			}
 			string[] strarray=StringUtility.splitAt(str,"\n");
-			foreach(string el in strarray){
+			int len=strarray.Length;
+			if(len>0 && strarray[len-1].Length==0)
+			{
+				len--; // ignore trailing empty _string
+			}
+			for(int i=0;i<len;i++){
+				string el=strarray[i];
 				builder.Append("| ");
 				builder.Append(el.Replace("~~~~","\n"));
 				builder.Append("\n");
@@ -152,9 +158,15 @@ internal class Document : Node, IDocument {
 	}
 
 	internal string address;
+	internal string defaultLanguage;
 
 	public string getURL() {
 		return address;
 	}
+
+	public override string getLanguage(){
+		return (defaultLanguage==null) ? "" : defaultLanguage;
+	}
+
 }
 }

@@ -4,7 +4,18 @@ namespace com.upokecenter.util {
 using System;
 using System.Text;
 
+/**
+ * 
+ * Contains utility methods for processing Uniform
+ * Resource Identifiers (URIs) and Internationalized
+ * Resource Identifiers (IRIs) under RFC3986 and RFC3987,
+ * respectively.
+ * 
+ * @author Peter
+ *
+ */
 public sealed class URIUtility {
+	
 	private URIUtility(){}
 
 	private static int parseDecOctet(string s, int index,
@@ -134,7 +145,7 @@ public sealed class URIUtility {
 				if((c>='a' && c<='z') ||
 						(c>='A' && c<='Z') ||
 						(c>='0' && c<='9') ||
-						((c&0x7F)==c && ":-._~!$&'()*+,;=".IndexOf((char)c)>=0)){
+						((c&0x7F)==c && ":-._~!$&'()*+,;=".IndexOf(c)>=0)){
 					hex=true;
 				} else {
 					break;
@@ -437,7 +448,7 @@ public sealed class URIUtility {
 	 * false otherwise.
 	 */
 	public static bool hasSchemeForURI(string refValue){
-		int[] segments=splitIRI(refValue,false);
+		int[] segments=splitIRI(refValue,ParseMode.URIStrict);
 		return segments!=null && segments[0]>=0;
 	}
 
@@ -473,6 +484,19 @@ public sealed class URIUtility {
 		return splitIRI(s)!=null;
 	}
 
+	/**
+	 * 
+	 * Resolves a URI or IRI relative to another URI or IRI.
+	 * 
+	 * @param refValue an absolute or relative URI reference
+	 * @param _base an absolute URI reference.
+	 * @return the resolved IRI, or null if refValue is null or is not a
+	 * valid IRI.  If _base
+	 * is null or is not a valid IRI, returns refValue.
+	 */
+	public static string relativeResolve(string refValue, string _base){
+		return relativeResolve(refValue,_base,ParseMode.IRIStrict);
+	}
 
 	/**
 	 * 
@@ -480,23 +504,37 @@ public sealed class URIUtility {
 	 * 
 	 * @param refValue an absolute or relative URI reference
 	 * @param _base an absolute URI reference.
-	 * @return the resolved URI, or null if refValue is null or is not a
+	 * @param parseMode Specifies whether certain characters are allowed
+	 * in <i>refValue</i> and <i>_base</i>:
+	 * <ul>
+	 * <li>URIUtility.ParseMode.IRIStrict: The rules follow the syntax
+	 * for parsing IRIs.</li>
+	 * <li>URIUtility.ParseMode.URIStrict: Same as IRIStrict, 
+	 * except that non-ASCII characters are not allowed.</li>
+	 * <li>URIUtility.ParseMode.IRILenient: The rules only check for the appropriate
+	 * delimiters when splitting the path, without checking if all the characters
+	 * in each component are valid.  Even with this mode, strings with unpaired
+	 * surrogate code points are considered invalid.</li>
+	 * <li>URIUtility.ParseMode.URILenient: Same as IRILenient, 
+	 * except that non-ASCII characters are not allowed.</li>
+	 * </ul>
+	 * @return the resolved IRI, or null if refValue is null or is not a
 	 * valid IRI.  If _base
 	 * is null or is not a valid IRI, returns refValue.
 	 */
-	public static string relativeResolve(string refValue, string _base){
-		int[] segments=splitIRI(refValue);
+	public static string relativeResolve(string refValue, string _base, ParseMode parseMode){
+		int[] segments=splitIRI(refValue,parseMode);
 		if(segments==null)return null;
-		int[] segmentsBase=splitIRI(_base);
+		int[] segmentsBase=splitIRI(_base,parseMode);
 		if(segmentsBase==null)return refValue;
 		StringBuilder builder=new StringBuilder();
-		if(segments[0]>=0){
+		if(segments[0]>=0){ // scheme present
 			appendScheme(builder,refValue,segments);
 			appendAuthority(builder,refValue,segments);
 			appendNormalizedPath(builder,refValue,segments);
 			appendQuery(builder,refValue,segments);
 			appendFragment(builder,refValue,segments);
-		} else if(segments[2]>=0){
+		} else if(segments[2]>=0){ // authority present
 			appendScheme(builder,_base,segmentsBase);
 			appendAuthority(builder,refValue,segments);
 			appendNormalizedPath(builder,refValue,segments);
@@ -519,7 +557,7 @@ public sealed class URIUtility {
 				appendNormalizedPath(builder,refValue,segments);
 			} else {
 				StringBuilder merged=new StringBuilder();
-				if(segmentsBase[2]>=0 && segmentsBase[4]==segments[5]){
+				if(segmentsBase[2]>=0 && segmentsBase[4]==segmentsBase[5]){
 					merged.Append('/');
 					appendPath(merged,refValue,segments);
 					builder.Append(normalizePath(merged.ToString()));
@@ -534,9 +572,6 @@ public sealed class URIUtility {
 		}
 		return builder.ToString();
 	}
-
-
-
 
 	/**
 	 * Escapes characters that cannot appear in URIs or IRIs.
@@ -618,6 +653,13 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 		}
 		return builder.ToString();
 	}
+	
+	public enum ParseMode {
+		IRIStrict,
+		URIStrict,
+		IRILenient,
+		URILenient
+	}
 
 	/**
 	 * Parses a substring that represents an
@@ -630,10 +672,20 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 	 * @param offset Index of the first character of a substring
 	 * to check for an IRI.
 	 * @param length Length of the substring to check for an IRI.
-	 * @param asciiOnly Specifies whether non-ASCII characters
-	 * are allowed in the _string.  If false, the rules will correspond
-	 * to those for parsing Uniform Resource Identifiers (URIs) under
-	 * RFC3986.
+	 * @param parseMode Specifies whether certain characters are allowed
+	 * in the _string:
+	 * <ul>
+	 * <li>URIUtility.ParseMode.IRIStrict: The rules follow the syntax
+	 * for parsing IRIs.</li>
+	 * <li>URIUtility.ParseMode.URIStrict: Same as IRIStrict, 
+	 * except that non-ASCII characters are not allowed.</li>
+	 * <li>URIUtility.ParseMode.IRILenient: The rules only check for the appropriate
+	 * delimiters when splitting the path, without checking if all the characters
+	 * in each component are valid.  Even with this mode, strings with unpaired
+	 * surrogate code points are considered invalid.</li>
+	 * <li>URIUtility.ParseMode.URILenient: Same as IRILenient, 
+	 * except that non-ASCII characters are not allowed.</li>
+	 * </ul>
 	 * @return If the _string is a valid IRI, returns an array of 10
 	 * integers.  Each of the five pairs corresponds to the start
 	 * and end index of the IRI's scheme, authority, path, query,
@@ -643,7 +695,7 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 	 * or is not a valid IRI, returns null.
 	 */
 	public static int[] splitIRI(string s,
-			int offset, int length, bool asciiOnly){
+			int offset, int length, ParseMode parseMode){
 		if(s==null)return null;
 		if(offset<0||length<0||offset+length>s.Length)
 			throw new ArgumentOutOfRangeException();
@@ -653,6 +705,8 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 			retval[5]=0;
 			return retval;
 		}
+		bool asciiOnly=(parseMode==ParseMode.URILenient || parseMode==ParseMode.URIStrict);
+		bool strict=(parseMode==ParseMode.URIStrict || parseMode==ParseMode.IRIStrict);
 		int index=offset;
 		int sLength=offset+length;
 		bool scheme=false;
@@ -666,16 +720,16 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 				index++;
 				break;
 			}
-			if(index==offset && !((c>='a' && c<='z') || (c>='A' && c<='Z'))){
-				index++;
+			if(strict && index==offset && !((c>='a' && c<='z') || (c>='A' && c<='Z'))){
 				break;
 			}
-			else if(index>offset && !((c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9') ||
+			else if(strict && index>offset && !((c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9') ||
 					c=='+' && c=='-' && c=='.')){
-				index++;
 				break;
 			}
-
+			else if(!strict && (c=='#' || c==':' || c=='?' || c=='/')){
+				break;
+			}
 			index++;
 		}
 		if(!scheme) {
@@ -703,7 +757,7 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 				} else if(c>=0xD800 && c<=0xDFFF)
 					// error
 					return null;
-				if(c=='%' && (state==0 || state==1)){
+				if(c=='%' && (state==0 || state==1) && strict){
 					// Percent encoded character (except in port)
 					if(index+2<sLength && isHexChar(s[index+1]) &&
 							isHexChar(s[index+2])){
@@ -718,12 +772,12 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 						state=1;
 						index=authorityStart;
 						continue;
-					} else if(c=='@'){
+					} else if(strict && c=='@'){
 						// is user info
 						index++;
 						state=1;
 						continue;
-					} else if(isIUserInfoChar(c)){
+					} else if(strict && isIUserInfoChar(c)){
 						index++;
 						if(index==sLength){
 							// not user info
@@ -738,15 +792,17 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 						continue;
 					}
 				} else if(state==1){ // host
-					if(c=='['){
+					if(c=='/' || c=='?' || c=='#'){
+						// end of authority
+						retval[3]=index;
+						break;
+					} else if(!strict){
+						index++;
+					} else if(c=='['){
 						index++;
 						index=parseIPLiteral(s,index,sLength);
 						if(index<0)return null;
 						continue;
-					} else if(c=='/' || c=='?' || c=='#'){
-						// end of authority
-						retval[3]=index;
-						break;
 					} else if(c==':'){
 						// port
 						state=2;
@@ -789,7 +845,7 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 			} else if(c>=0xD800 && c<=0xDFFF)
 				// error
 				return null;
-			if(c=='%'){
+			if(c=='%' && strict){
 				// Percent encoded character
 				if(index+2<sLength && isHexChar(s[index+1]) &&
 						isHexChar(s[index+2])){
@@ -803,7 +859,7 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 					colon=true;
 				} else if(c=='/' && fullyRelative && !segment){
 					// noscheme path can't have colon before slash
-					if(colon)return null;
+					if(strict && colon)return null;
 					segment=true;
 				}
 				if(c=='?'){
@@ -816,7 +872,7 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 					retval[8]=index+1;
 					retval[9]=sLength;
 					state=2;//move to fragment state
-				} else if(!isIpchar(c))return null;
+				} else if(strict && !isIpchar(c))return null;
 				index++;
 			} else if(state==1){ // Query
 				if(c=='#'){
@@ -824,14 +880,14 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 					retval[8]=index+1;
 					retval[9]=sLength;
 					state=2;//move to fragment state
-				} else if(!isIqueryChar(c))return null;
+				} else if(strict && !isIqueryChar(c))return null;
 				index++;
 			} else if(state==2){ // Fragment
-				if(!isIfragmentChar(c))return null;
+				if(strict && !isIfragmentChar(c))return null;
 				index++;
 			}
 		}
-		if(fullyRelative && colon && !segment)
+		if(strict && fullyRelative && colon && !segment)
 			return null; // ex. "x@y:z"
 		return retval;
 	}
@@ -923,7 +979,7 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 	 * or is not a valid IRI, returns null.
 	 */
 	public static int[] splitIRI(string s){
-		return splitIRI(s,false);
+		return splitIRI(s,ParseMode.IRIStrict);
 	}
 	/**
 	 * Parses an Internationalized Resource Identifier (IRI) reference
@@ -932,10 +988,19 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 	 * the indices into the components.
 	 * 
 	 * @param s A _string.
-	 * @param asciiOnly Specifies whether non-ASCII characters
-	 * are allowed in the _string.  If false, the rules will correspond
-	 * to those for parsing Uniform Resource Identifiers under
-	 * RFC3986.
+	 * @param parseMode Specifies whether certain characters are allowed
+	 * in the _string:
+	 * <ul>
+	 * <li>URIUtility.ParseMode.IRIStrict: The rules follow the syntax
+	 * for parsing IRIs.</li>
+	 * <li>URIUtility.ParseMode.URIStrict: Same as IRIStrict, 
+	 * except that non-ASCII characters are not allowed.</li>
+	 * <li>URIUtility.ParseMode.IRILenient: The rules only check for the appropriate
+	 * delimiters when splitting the path, without checking if all the characters
+	 * in each component are valid.  Even with this mode</li>
+	 * <li>URIUtility.ParseMode.URILenient: Same as IRILenient, 
+	 * except that non-ASCII characters are not allowed.</li>
+	 * </ul>
 	 * @return If the _string is a valid IRI reference, returns an array of 10
 	 * integers.  Each of the five pairs corresponds to the start
 	 * and end index of the IRI's scheme, authority, path, query,
@@ -943,9 +1008,9 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 	 * both indices in that pair will be -1.  If the _string is null
 	 * or is not a valid IRI, returns null.
 	 */
-	public static int[] splitIRI(string s, bool asciiOnly){
+	public static int[] splitIRI(string s, ParseMode parseMode){
 		if(s==null)return null;
-		return splitIRI(s,0,s.Length,asciiOnly);
+		return splitIRI(s,0,s.Length,parseMode);
 	}
 }
 

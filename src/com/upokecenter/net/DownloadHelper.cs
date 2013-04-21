@@ -446,26 +446,14 @@ public sealed class DownloadHelper {
 	}
 
 	private static string getDataURLContentType(string data){
-		int index=HeaderParser.skipContentType(data, 0);
-		string ctype=null;
-		if(index==0)
-			return "text/plain;charset=US-ASCII";
-		else if(data[0]==';'){
-			ctype="text/plain"+data.Substring(0,(index)-(0));
-		} else {
-			ctype=data.Substring(0,(index)-(0));
-		}
-		if(ctype.IndexOf('%')<0)
-			return ctype;
-		ctype=HeaderParser.unescapeContentType(ctype,0);
-		if(ctype==null || ctype.Length==0)
-			return "text/plain;charset=US-ASCII";
-		return ctype;
+		StringBuilder builder=new StringBuilder();
+		HeaderParser.skipDataUrlContentType(data,0,data.Length,builder);
+		return builder.ToString();
 	}
 
 
 	private static byte[] getDataURLBytes(string data){
-		int index=HeaderParser.skipContentType(data, 0);
+		int index=HeaderParser.skipDataUrlContentType(data, 0,data.Length,null);
 		if(com.upokecenter.util.StringUtility.startsWith(data,";base64,",index)){
 			index+=8;
 			try {

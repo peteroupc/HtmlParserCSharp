@@ -269,7 +269,13 @@ internal class Element : Node, IElement {
 				continue;
 			}
 			string[] strarray=StringUtility.splitAt(str,"\n");
-			foreach(string el in strarray){
+			int len=strarray.Length;
+			if(len>0 && strarray[len-1].Length==0)
+			{
+				len--; // ignore trailing empty _string
+			}
+			for(int i=0;i<len;i++){
+				string el=strarray[i];
 				builder.Append("  ");
 				builder.Append(el);
 				builder.Append("\n");
@@ -286,5 +292,21 @@ internal class Element : Node, IElement {
 	public string getPrefix() {
 		return prefix;
 	}
+
+	public override sealed string getLanguage(){
+		INode parent=getParentNode();
+		string a=getAttributeNS(HtmlParser.XML_NAMESPACE,"lang");
+		if(a==null) {
+			a=getAttribute("lang");
+		}
+		if(a!=null)return a;
+		if(parent==null){
+			parent=getOwnerDocument();
+			if(parent==null)return "";
+			return parent.getLanguage();
+		} else
+			return parent.getLanguage();
+	}
+
 }
 }

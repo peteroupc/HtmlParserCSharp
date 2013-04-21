@@ -34,10 +34,9 @@ public sealed class HtmlDocument {
 	private sealed class ParseURLListener : IResponseListener<IDocument> {
 		public IDocument processResponse(string url, PeterO.Support.InputStream stream,
 				IHttpHeaders headers)  {
-			string charset=HeaderParser.getCharset(
-					headers.getHeaderField("content-type"),0);
-			HtmlParser parser=new HtmlParser(stream,headers.getUrl(),charset);
-			return parser.parse();
+			string contentType=headers.getHeaderField("content-type");
+			return HtmlDocument.parseStream(stream,headers.getUrl(),contentType,
+					headers.getHeaderField("content-language"));
 		}
 	}
 	/**
@@ -122,6 +121,12 @@ public sealed class HtmlDocument {
 		return parseStream(stream,"about:blank");
 	}
 
+	public static IDocument parseStream(
+			PeterO.Support.InputStream stream, string address, string contentType)
+					 {
+		return parseStream(stream,address,contentType,null);
+	}
+
 	/**
 	 * 
 	 * Parses an HTML document from an input stream, using the given
@@ -129,18 +134,44 @@ public sealed class HtmlDocument {
 	 * 
 	 * @param stream an input stream representing an HTML document.
 	 * @param address an absolute URL representing an address.
+	 * @param contentType Desired MIME media type of the document, including the
+	 *   charset parameter, if any.  Examples: "text/html" or
+	 *  "application/xhtml+xml; charset=utf-8".
+	 * @param contentLang Language tag from the Content-Language header
 	 * @return an IDocument representing the HTML document.
 	 * @ if an I/O error occurs
 	 * @ if the given address
 	 * is not an absolute URL.
 	 */
-	public static IDocument parseStream(PeterO.Support.InputStream stream, string address)
-			 {
+	public static IDocument parseStream(
+			PeterO.Support.InputStream stream, string address, string contentType, string contentLang)
+					 {
+		if((stream)==null)throw new ArgumentNullException("stream");
+		if((address)==null)throw new ArgumentNullException("address");
+		if((contentType)==null)throw new ArgumentNullException("contentType");
 		if(!stream.markSupported()){
 			stream=new PeterO.Support.BufferedInputStream(stream);
 		}
-		HtmlParser parser=new HtmlParser(stream,address,null);
-		return parser.parse();
+		string mediatype=HeaderParser.getMediaType(contentType);
+		string charset=HeaderParser.getCharset(contentType);
+		if(mediatype.Equals("text/html")){
+			// TODO: add lang
+			HtmlParser parser=new HtmlParser(stream,address,charset,contentLang);
+			return parser.parse();
+		} else if(mediatype.Equals("application/xhtml+xml") ||
+				mediatype.Equals("application/xml") ||
+				mediatype.Equals("image/svg+xml") ||
+				mediatype.Equals("text/xml")){
+			XhtmlParser parser=new XhtmlParser(stream,address,charset,contentLang);
+			return parser.parse();
+		} else
+			throw new ArgumentException("content type not supported: "+mediatype);
+	}
+
+	public static IDocument parseStream(
+			PeterO.Support.InputStream stream, string address)
+					 {
+		return parseStream(stream,address,"text/html");
 	}
 
 	/**

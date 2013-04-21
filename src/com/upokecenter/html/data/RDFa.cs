@@ -169,7 +169,7 @@ public class RDFa : IRDFParser {
 		return builder.ToString();
 	}
 
-  
+
 	private static bool isNCNameStartChar(int c){
 		return (c>='a' && c<='z') ||
 				(c>='A' && c<='Z') ||

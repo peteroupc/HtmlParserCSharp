@@ -28,8 +28,6 @@ namespace com.upokecenter.html {
 using System;
 using System.IO;
 using com.upokecenter.encoding;
-
-
 internal class Html5Decoder : ITextDecoder {
 
 	ITextDecoder decoder=null;

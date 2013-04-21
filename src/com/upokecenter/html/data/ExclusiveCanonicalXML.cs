@@ -15,7 +15,7 @@ using com.upokecenter.util;
  * @author Peter
  *
  */
-sealed class ExclusiveCanonicalXML {
+public sealed class ExclusiveCanonicalXML {
 	private ExclusiveCanonicalXML(){}
 	private sealed class NamespaceAttrComparer : IComparer<IAttr> {
 		public int Compare(IAttr arg0, IAttr arg1) {
@@ -51,6 +51,21 @@ sealed class ExclusiveCanonicalXML {
 			){
 		return canonicalize(node,includeRoot,prefixList,false);
 	}
+	private static void checkNamespacePrefix(string prefix, string nsvalue){
+		if(prefix.Equals("xmlns"))
+			throw new ArgumentException("'xmlns' _namespace declared");
+		if(prefix.Equals("xml") && !"http://www.w3.org/XML/1998/_namespace".Equals(nsvalue))
+			throw new ArgumentException("'xml' bound to wrong _namespace name");
+		if(!"xml".Equals(prefix) && "http://www.w3.org/XML/1998/_namespace".Equals(nsvalue))
+			throw new ArgumentException("'xml' bound to wrong _namespace name");
+		if("http://www.w3.org/2000/xmlns/".Equals(nsvalue))
+			throw new ArgumentException("'prefix' bound to xmlns _namespace name");
+		if(!string.IsNullOrEmpty(nsvalue)){
+			if(!URIUtility.hasSchemeForURI(nsvalue))
+				throw new ArgumentException(nsvalue+" is not a valid _namespace URI.");
+		} else if(!"".Equals(prefix))
+			throw new ArgumentException("can't undeclare a prefix");
+	}
 	public static string canonicalize(
 			INode node,
 			bool includeRoot,
@@ -63,15 +78,12 @@ sealed class ExclusiveCanonicalXML {
 		if(prefixList==null) {
 			prefixList=new PeterO.Support.LenientDictionary<string,string>();
 		} else {
-      foreach(string prefix in prefixList.Keys){
-        string nsvalue=prefixList[prefix];
-        if(!string.IsNullOrEmpty(nsvalue)){
-					if(!URIUtility.hasSchemeForURI(nsvalue))
-						throw new ArgumentException(nsvalue+" is not a valid _namespace URI.");
-				}
-      }
-    }
-    PeterO.Support.LenientDictionary<string,string> item=new PeterO.Support.LenientDictionary<string,string>(); 
+			foreach(string prefix in prefixList.Keys){
+				string nsvalue=prefixList[prefix];
+				checkNamespacePrefix(prefix,nsvalue);
+			}
+		}
+		PeterO.Support.LenientDictionary<string,string> item=new PeterO.Support.LenientDictionary<string,string>();
 		stack.Add(item);
 		if(node is IDocument){
 			bool beforeElement=true;
@@ -218,10 +230,10 @@ sealed class ExclusiveCanonicalXML {
 		int nodeType=node.getNodeType();
 		if(nodeType==NodeType.COMMENT_NODE){
 			if(withComments){
-        builder.Append("<!--");
-		  	builder.Append(((IComment)node).getData());
-			  builder.Append("-->");
-      }
+				builder.Append("<!--");
+				builder.Append(((IComment)node).getData());
+				builder.Append("-->");
+			}
 		} else if(nodeType==NodeType.PROCESSING_INSTRUCTION_NODE){
 			builder.Append("<?");
 			builder.Append(((IProcessingInstruction)node).getTarget());
@@ -255,16 +267,14 @@ sealed class ExclusiveCanonicalXML {
 						declaredNames.Add("");
 					}
 					nsvalue=attr.getValue();
+					checkNamespacePrefix("",nsvalue);
 				} else if(name.StartsWith("xmlns:",StringComparison.Ordinal) && name.Length>6){
 					attrs.Add(attr); // add prefix _namespace
 					if(declaredNames!=null) {
 						declaredNames.Add(attr.getLocalName());
 					}
 					nsvalue=attr.getValue();
-				}
-				if(!string.IsNullOrEmpty(nsvalue)){
-					if(!URIUtility.hasSchemeForURI(nsvalue))
-						throw new ArgumentException(nsvalue+" is not a valid _namespace URI.");
+					checkNamespacePrefix(attr.getLocalName(),nsvalue);
 				}
 			}
 			if(declaredNames!=null){

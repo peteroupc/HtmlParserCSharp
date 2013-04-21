@@ -619,7 +619,7 @@ public sealed class Microformats {
 				// this is a child microformat
 				// with no properties
 				JSONObject obj=new JSONObject();
-				obj.put("type", new JSONArray((IList<Object>)types));
+				obj.put("type", new JSONArray(types));
 				// for holding child elements with
 				// properties
 				JSONObject subProperties=new JSONObject();

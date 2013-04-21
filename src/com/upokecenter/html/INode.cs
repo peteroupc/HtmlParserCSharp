@@ -83,6 +83,10 @@ public interface INode {
 	 * be the same as the tag name.
 	 */
 	string getNodeName();
+	/**
+	 * Gets the language of this node.  Not defined in the DOM specification.
+	 */
+	string getLanguage();
 }
 
 }

@@ -56,29 +56,31 @@ public sealed class StringUtility {
 	/**
 	 * 
 	 * Splits a _string by a delimiter.  If the _string ends
-	 * with the delimiter, the trailing _string does not
-	 * appear in the result.
+	 * with the delimiter, the result will end with an
+	 * empty _string.  If the _string begins with the
+	 * delimiter, the result will start with an empty _string.
+	 * If the delimiter is null or empty,  exception.
 	 * 
-	 * @param s
-	 * @param delimiter
+	 * 
+	 * @param s a _string to split.
+	 * @param delimiter a _string to signal where each substring
+	 * begins and ends.
 	 * 
 	 */
 	public static string[] splitAt(string s, string delimiter){
-		if(delimiter==null)throw new ArgumentException();
+		if(delimiter==null ||
+				delimiter.Length==0)throw new ArgumentException();
 		if(s==null || s.Length==0)return emptyStringArray;
 		int index=0;
 		bool first=true;
 		List<string> strings=null;
 		int delimLength=delimiter.Length;
 		if(delimLength==0)return emptyStringArray;
-		int sLength=s.Length;
 		while(true){
 			int index2=s.IndexOf(delimiter,index,StringComparison.Ordinal);
 			if(index2<0){
-				if(first)return emptyStringArray;
-				if(index!=sLength) {
-					strings.Add(s.Substring(index));
-				}
+				if(first)return new string[]{s};
+        strings.Add(s.Substring(index));
 				break;
 			} else {
 				if(first) {
@@ -148,8 +150,11 @@ public sealed class StringUtility {
 
 	/**
 	 * 
-	 * Splits a _string separated by space characters. The method ignores
-	 * leading and trailing space characters.  The space characters are
+	 * Splits a _string separated by space characters.
+	 * This method acts as though it strips leading and
+	 * trailing space
+	 * characters from the _string before splitting it.
+	 * The space characters are
 	 * U+0009, U+000A, U+000C, U+000D, and U+0020.
 	 * 
 	 * @param s a _string. Can be null.
@@ -198,8 +203,10 @@ public sealed class StringUtility {
 	/**
 	 * 
 	 * Splits a _string separated by space characters other than
-	 * form feed. The method ignores
-	 * leading and trailing space characters.  The space characters used
+	 * form feed. This method acts as though it strips
+	 * leading and trailing space
+	 * characters from the _string before splitting it.
+	 * The space characters used
 	 * here are U+0009, U+000A, U+000D, and U+0020.
 	 * 
 	 * @param s a _string. Can be null.

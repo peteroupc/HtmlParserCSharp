@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using com.upokecenter.html;
 using com.upokecenter.rdf;
 using com.upokecenter.util;
-
 internal class RDFa1 : IRDFParser {
 
 
@@ -198,7 +197,7 @@ internal class RDFa1 : IRDFParser {
 	private static bool isValidCurieReference(string s, int offset, int length){
 		if(s==null)return false;
 		if(length==0)return true;
-		int[] indexes=URIUtility.splitIRI(s,offset,length,false);
+		int[] indexes=URIUtility.splitIRI(s,offset,length,URIUtility.ParseMode.IRIStrict);
 		if(indexes==null)
 			return false;
 		if(indexes[0]!=-1) // check if scheme component is present

@@ -27,11 +27,18 @@ namespace com.upokecenter.net {
 using System;
 using System.Text;
 using System.Globalization;
+using System.Collections.Generic;
 using com.upokecenter.util;
 
 
 
-
+/**
+ * 
+ * Contains methods useful for parsing header fields.
+ * 
+ * @author Peter
+ *
+ */
 public sealed class HeaderParser {
 
 	private HeaderParser(){}
@@ -267,67 +274,8 @@ public sealed class HeaderParser {
 			index+=3;
 		}
 		if(index!=length)return defaultValue;
-		// NOTE: Month is one-based
+		// NOTE: Here, the month is one-based
 		return DateTimeUtility.toGmtDate(year,month,day,hour,minute,second);
-	}
-
-	private static int skipQuotedString(string v, int index){
-		// assumes index points to quotation mark
-		index++;
-		int length=v.Length;
-		char c=(char)0;
-		while(index<length){
-			c=v[index];
-			if(c=='\\'){
-				if(index+1>=length)
-					return length;
-				else {
-					index++;
-				}
-			} else if(c=='"')
-				return index+1;
-			else if(c=='\r'){
-				if(index+2>=length ||
-						v[index+1]!='\n' ||
-						(v[index+2]!=' ' && v[index+2]!='\t'))
-					// ill-formed whitespace
-					return length;
-				index+=2;
-			} else if(c=='\n'){
-				if(index+1>=length ||
-						(v[index+1]!=' ' && v[index+1]!='\t'))
-					// ill-formed whitespace
-					return length;
-				index+=1;
-			} else if(c==127 || (c<32 && c!='\t' && c!=' '))
-				// ill-formed
-				return length;
-			index++;
-		}
-		return index;
-	}
-
-	private static int skipQuotedStringNoLws(string v, int index){
-		// assumes index points to quotation mark
-		index++;
-		int length=v.Length;
-		char c=(char)0;
-		while(index<length){
-			c=v[index];
-			if(c=='\\'){
-				if(index+1>=length)
-					return length;
-				else {
-					index++;
-				}
-			} else if(c=='"')
-				return index+1;
-			else if(c==127 || (c<32))
-				// ill-formed
-				return length;
-			index++;
-		}
-		return index;
 	}
 
 
@@ -387,7 +335,7 @@ public sealed class HeaderParser {
 		return num;
 	}
 
-	static int skipZeros(string v, int index){
+	private static int skipZeros(string v, int index){
 		char c=(char)0;
 		int length=v.Length;
 		while(index<length){
@@ -397,7 +345,7 @@ public sealed class HeaderParser {
 		}
 		return index;
 	}
-	static int skipDigits(string v, int index){
+	private static int skipDigits(string v, int index){
 		char c=(char)0;
 		int length=v.Length;
 		while(index<length){
@@ -407,53 +355,6 @@ public sealed class HeaderParser {
 		}
 		return index;
 	}
-	static int skipSpace(string v, int index){
-		char c=(char)0;
-		int length=v.Length;
-		while(index<length){
-			c=v[index];
-			if(c!=' ')return index;
-			index++;
-		}
-		return index;
-	}
-	static int skipSpaceOrTab(string v, int index){
-		char c=(char)0;
-		int length=v.Length;
-		while(index<length){
-			c=v[index];
-			if(c!=' ' && c!='\t')return index;
-			index++;
-		}
-		return index;
-	}
-	static int skipLinearWhitespace(string v, int index){
-		char c=(char)0;
-		int length=v.Length;
-		while(index<length){ // skip whitespace
-			c=v[index];
-			if(c=='\r'){
-				if(index+2>=length ||
-						v[index+1]!='\n' ||
-						(v[index+2]!=' ' && v[index+2]!='\t'))
-					return index;
-				index+=2;
-			} else if(c=='\n'){
-				// HTTP usually allows only '\r\n' in linear whitespace,
-				// but we're being tolerant here
-				if(index+1>=length ||
-						(v[index+1]!=' ' && v[index+1]!='\t'))
-					return index;
-				index+=1;
-
-			} else if(c!='\t' && c!=' ')
-				return index;
-			index++;
-		}
-		return index;
-	}
-
-
 	internal static int skipDirective(string str, int io){
 		int length=str.Length;
 		char c=(char)0;
@@ -464,12 +365,12 @@ public sealed class HeaderParser {
 			}
 			io++;
 		}
-		io=skipLinearWhitespace(str,io);
+		io=skipLws(str,io,length,null);
 		if(io<length && str[io]=='='){
 			io++;
-			io=skipLinearWhitespace(str,io);
+			io=skipLws(str,io,length,null);
 			if(io<length && str[io]=='"') {
-				io=skipQuotedString(str,io);
+				io=skipQuotedString(str,io,length,null,true);
 			} else {
 				while(io<length){ // skip non-separator
 					c=str[io];
@@ -479,11 +380,11 @@ public sealed class HeaderParser {
 					io++;
 				}
 			}
-			io=skipLinearWhitespace(str,io);
+			io=skipLws(str,io,length,null);
 		}
 		if(io<length && str[io]==','){
 			io++;
-			io=skipLinearWhitespace(str,io);
+			io=skipLws(str,io,length,null);
 		} else {
 			io=length;
 		}
@@ -502,10 +403,10 @@ public sealed class HeaderParser {
 				return startIndex;
 		}
 		index+=token.Length;
-		index=skipLinearWhitespace(str,index);
+		index=skipLws(str,index,length,null);
 		if(index<length && str[index]=='='){
 			index++;
-			index=skipLinearWhitespace(str,index);
+			index=skipLws(str,index,length,null);
 			int number=getPositiveNumber(str,index);
 			while(index<length){
 				char c=str[index];
@@ -517,13 +418,13 @@ public sealed class HeaderParser {
 			result[0]=number;
 			if(number<-1)
 				return startIndex;
-			index=skipLinearWhitespace(str,index);
+			index=skipLws(str,index,length,null);
 		} else
 			return startIndex;
 		if(index>=length)return index;
 		if(str[index]==','){
 			index++;
-			index=skipLinearWhitespace(str,index);
+			index=skipLws(str,index,length,null);
 			return index;
 		}
 		return startIndex;
@@ -540,150 +441,418 @@ public sealed class HeaderParser {
 				return startIndex;
 		}
 		index+=token.Length;
-		index=skipLinearWhitespace(str,index);
+		index=skipLws(str,index,length,null);
 		if(optionalQuoted){
 			if(index<length && str[index]=='='){
 				index++;
-				index=skipLinearWhitespace(str,index);
+				index=skipLws(str,index,length,null);
 				if(index<length && str[index]=='"'){
-					index=skipQuotedString(str,index);
+					index=skipQuotedString(str,index,length,null,true);
 				} else return startIndex;
-				index=skipLinearWhitespace(str,index);
+				index=skipLws(str,index,length,null);
 			}
 		}
 		if(index>=length)return index;
 		if(str[index]==','){
 			index++;
-			index=skipLinearWhitespace(str,index);
+			index=skipLws(str,index,length,null);
 			return index;
 		}
 		return startIndex;
 	}
 
-	private static string getQuotedString(string v, int index){
-		// assumes index points to quotation mark
-		index++;
-		int length=v.Length;
-		char c=(char)0;
-		StringBuilder builder=new StringBuilder();
-		while(index<length){
-			c=v[index];
-			if(c=='\\'){
-				if(index+1>=length)
-					// ill-formed
-					return "";
-				builder.Append(v[index+1]);
-				index+=2;
-				continue;
-			} else if(c=='\r' || c=='\n' || c==' ' || c=='\t'){
-				int newIndex=skipLinearWhitespace(v,index);
-				if(newIndex==index)
-					// ill-formed whitespace
-					return "";
-				builder.Append(' ');
-				index=newIndex;
-				continue;
-			} else if(c=='"')
-				// done
-				return builder.ToString();
-			else if(c==127 || c<32)
-				// ill-formed
-				return "";
-			else {
-				builder.Append(c);
+	private static int skipDataUrlParameters(
+			string str, int index, int endIndex, StringBuilder builder, bool plain){
+		#if DEBUG
+if(!(str!=null))throw new InvalidOperationException("doesn't satisfy str!=null");
+#endif
+		if(plain && builder!=null){
+			builder.Append("text/plain");
+		}
+		StringBuilder tmpbuilder=(builder==null) ? null : new StringBuilder();
+		int builderStartPos=(builder==null) ? 0 : builder.Length;
+		int retval=-1;
+		while(true){
+			int oldindex=index;
+			int builderOldPos=(builder==null) ? 0 : builder.Length;
+			if(index>=endIndex){
+				retval=oldindex;
+				break;
+			}
+			char c=str[index];
+			if(c!=';'){
+				// reached end of content type
+				if(builder!=null && builder.Length==0){
+					// no content type given; provide default
+					builder.Append("text/plain;charset=us-ascii");
+				}
+				retval=index;
+				break;
+			}
+			index++;
+			if(builder!=null) {
+				builder.Append(';');
+			}
+			// get parameter name
+			int index2=skipEncodedMimeWord(str,index,endIndex,tmpbuilder,1);
+			if(index==index2){
+				if(builder!=null) {
+					builder.Remove(builderOldPos,(builder.Length)-(builderOldPos));
+				}
+				retval=oldindex;
+				break;
+			}
+			if(builder!=null){
+				// append parameter name to builder
+				builder.Append(tmpbuilder.ToString());
+				tmpbuilder.Remove(0,(tmpbuilder.Length)-(0));
+			}
+			index=index2;
+			if(index>=endIndex || str[index]!='='){
+				if(builder!=null) {
+					builder.Remove(builderOldPos,(builder.Length)-(builderOldPos));
+				}
+				retval=oldindex;
+				break;
+			}
+			index++;
+			if(builder!=null) {
+				builder.Append('=');
+			}
+			if(index>=endIndex){
+				if(builder!=null) {
+					builder.Remove(builderOldPos,(builder.Length)-(builderOldPos));
+				}
+				retval=oldindex;
+				break;
+			}
+			// get parameter value
+			index2=skipEncodedMimeWord(str,index,endIndex,tmpbuilder,2);
+			if(index==index2){
+				if(builder!=null) {
+					builder.Remove(builderOldPos,(builder.Length)-(builderOldPos));
+				}
+				retval=oldindex;
+				break;
+			}
+			if(builder!=null){
+				// append parameter value to builder
+				appendParameterValue(tmpbuilder.ToString(),builder);
+				tmpbuilder.Remove(0,(tmpbuilder.Length)-(0));
+			}
+			index=index2;
+		}
+		if(plain && builder!=null && builder.Length==builderStartPos){
+			// nothing, so append default charset
+			builder.Append(";charset=us-ascii");
+		}
+		return retval;
+	}
+	public static int skipDataUrlContentType(
+			string str, int index, StringBuilder builder){
+		if(str==null)return index;
+		return skipDataUrlContentType(str,index,str.Length,builder);
+	}
+	/**
+	 * Extracts the MIME media type, including its parameters,
+	 * from a Data URL path (RFC2397). This function should be used
+	 * before calling getMediaType or getMimeParameter because
+	 * there are several differences in the MIME media type in
+	 * data URLs than in Content-Type headers:
+	 * <ul>
+	 * <li>Each part of a MIME content type can be URL-encoded
+	 * in a data URL, while they can't in a Content-Type header.</li>
+	 * <li>The type and subtype can be left out. If left out, the media
+	 * type "text/plain" is assumed.</li>
+	 * <li>No whitespace is allowed between semicolons of
+	 * a MIME media type in a data URL.</li>
+	 * </ul>
+	 * @param _string a _string containing the path of the data URL (after
+	 * the "data:"). Example: ",test" or "text/plain,test"
+	 * @param index the index into the _string where the data URL path
+	 *  begins.
+	 * @param endIndex the index into the _string where the data
+	 * URL path ends.
+	 * @param builder a _string builder to append the MIME media
+	 * type to. Can be null.
+	 * @return the index into the _string where the MIME media
+	 * type ends within the data URL.  If the MIME type is ill-formed
+	 * or <i>_string</i> is null, the return value will
+	 * be equal to <i>index</i>, and nothing will be appended to
+	 * the _string builder.  If
+	 * the MIME type is blank, the return value will be equal to
+	 * <i>index</i>, and the _string "text/plain;charset=us-ascii" is
+	 * appended to the _string builder, if any.
+	 */
+	public static int skipDataUrlContentType(
+			string str, int index, int endIndex, StringBuilder builder){
+		if(str==null)return index;
+		int startIndex=index;
+		int oldpos=(builder==null) ? 0 : builder.Length;
+		StringBuilder tmpbuilder=(builder==null) ? null : new StringBuilder();
+		// Get the type
+		int i2=skipEncodedMimeWord(str,index,endIndex,tmpbuilder,0);
+		if(index!=i2){
+			index=i2;
+			if(index<endIndex && str[index]=='/'){
 				index++;
-				continue;
+				if(builder!=null){
+					// append type to builder
+					builder.Append(tmpbuilder.ToString());
+					builder.Append('/');
+					tmpbuilder.Remove(0,(tmpbuilder.Length)-(0));
+				}
+				// Get the subtype
+				i2=skipEncodedMimeWord(str,index,endIndex,tmpbuilder,0);
+				if(index!=i2){
+					index=i2;
+					if(builder!=null){
+						// append subtype to builder
+						builder.Append(tmpbuilder.ToString());
+						tmpbuilder.Remove(0,(tmpbuilder.Length)-(0));
+					}
+					return skipDataUrlParameters(str,index,endIndex,builder,false);
+				} else {
+					// invalid media type
+					if(builder!=null) {
+						builder.Remove(oldpos,(builder.Length)-(oldpos));
+					}
+					return startIndex;
+				}
+			} else {
+				// invalid media type
+				if(builder!=null) {
+					builder.Remove(oldpos,(builder.Length)-(oldpos));
+				}
+				return startIndex;
+			}
+		} else {
+			// No media type, try checking if it really is blank
+			if(index<endIndex && (str[index]==',' || str[index]==';'))
+				// it's blank; assume text/plain
+				return skipDataUrlParameters(str,index,endIndex,builder,true);
+			else {
+				if(builder!=null) {
+					builder.Remove(oldpos,(builder.Length)-(oldpos));
+				}
+				return startIndex;
 			}
 		}
-		// ill-formed
-		return "";
 	}
 
-	private static string getDefaultCharset(string contentType){
-		if(contentType.Length>=5){
-			char c;
-			c=contentType[0];
-			if(c!='T' && c!='t')return "";
-			c=contentType[1];
-			if(c!='E' && c!='e')return "";
-			c=contentType[2];
-			if(c!='X' && c!='x')return "";
-			c=contentType[3];
-			if(c!='T' && c!='t')return "";
-			c=contentType[4];
-			if(c!='/')return "";
-			return "ISO-8859-1";
+	private static void appendParameterValue(string str, StringBuilder builder){
+		// if _string is a valid MIME token, the return value
+		// will be the end of the _string
+		if(skipMimeToken(str,0,str.Length,null)==str.Length){
+			// append the _string as is
+			builder.Append(str);
+			return;
+		} else {
+			// otherwise, we must quote the _string
+			builder.Append('"');
+			int endIndex=str.Length;
+			for(int i=0;i<endIndex;i++){
+				char c=str[i];
+				if(c=='"' || c==0x7F || c<0x20){
+					builder.Append('\\');
+				}
+				builder.Append(c);
+			}
+			builder.Append('"');
 		}
-		return "";
 	}
 
-	static int skipMimeToken(string str, int index){
+	internal static int skipEncodedMimeWord(
+			string str, int index, int endIndex, 
+			StringBuilder builder, int kind
+			){
 		int i=index;
-		// type
-		while(i<str.Length){
+		bool start=true;
+		bool quoted=false;
+		int startIndex=index;
+		int count=0;
+		while(i<endIndex){
 			char c=str[i];
-			if(c<=0x20 || c>=0x7F || ((c&0x7F)==c && "()<>@,;:\\\"/[]?=".IndexOf((char)c)>=0)) {
-				break;
+			// check for percent-encoded characters
+			if(i+2<endIndex && c=='%' && 
+					toHexNumber(str[i+1])>=0 &&
+					toHexNumber(str[i+2])>=0){
+				int c2=toHexNumber(str[i+1])*16+toHexNumber(str[i+2]);
+				if(c2<=0x7F){ // this is an encoded ASCII character
+					c=(char)c2;
+					i+=2;
+				}
+			}
+			if(start && c==0x22 && kind==2){ // if kind is parameter value
+				// this is the start of a quoted _string
+				i++;
+				start=false;
+				quoted=true;
+				continue;
+			}
+			start=false;
+			if(quoted){
+				// quoted _string case
+				if(c=='\\'){
+					if(i+1>=endIndex)
+						return startIndex;
+					else {
+						// get the next character of the
+						// quoted pair
+						i++;
+						c=str[i];
+						// check for percent-encoded characters
+						if(i+2<endIndex && c=='%' && 
+								toHexNumber(str[i+1])>=0 &&
+								toHexNumber(str[i+2])>=0){
+							int c2=toHexNumber(str[i+1])*16+toHexNumber(str[i+2]);
+							if(c2<=0x7F){ // this is an encoded ASCII character
+								c=(char)c2;
+								i+=2;
+							}
+						}
+						if(builder!=null) {
+							builder.Append(c);
+						}
+					}
+				} else if(c=='"')
+					// end of quoted _string
+					return i+1;
+				else if(c==127 || (c<32 && c!='\t'))
+					// ill-formed
+					return startIndex;
+				else {
+					if(builder!=null) {
+						builder.Append(c);
+					}
+				}
+			} else {
+				if(kind==1 || kind==2){ // kind is parameter name or parameter value
+					// unquoted _string case
+					if(c<=0x20 || c>=0x7F || ((c&0x7F)==c && "()<>@,;:\\\"/[]?=".IndexOf(c)>=0)) {
+						break;
+					}
+					if(builder!=null) {
+						builder.Append(c);
+					}
+				} else { // kind is 0, type or subtype
+					// See RFC6838
+					if((c>='A' && c<='Z') || (c>='a' && c<='z') || (c>='0' && c<='9')){
+						if(builder!=null) {
+							builder.Append(c);
+						}
+						count++;
+					} else if(count>0 && ((c&0x7F)==c && "!#$&-^_.+".IndexOf(c)>=0)){
+						if(builder!=null) {
+							builder.Append(c);
+						}
+						count++;
+					} else {
+						break;
+					}
+					// type or subtype too long
+					if(count>127)return startIndex;
+				}
 			}
 			i++;
 		}
 		return i;
+	}
 
+
+	internal static int skipMimeToken(string str, int index, int endIndex, StringBuilder builder){
+		int i=index;
+		while(i<endIndex){
+			char c=str[i];
+			if(c<=0x20 || c>=0x7F || ((c&0x7F)==c && "()<>@,;:\\\"/[]?=".IndexOf(c)>=0)) {
+				break;
+			}
+			if(builder!=null) {
+				builder.Append(c);
+			}
+			i++;
+		}
+		return i;
 	}
-	static string getMimeToken(string str, int index){
-		int i=skipMimeToken(str,index);
-		return str.Substring(index,(i)-(index));
+
+	private static int skipMimeTypeSubtype(string str, int index, int endIndex, StringBuilder builder){
+		int i=index;
+		int count=0;
+		while(i<str.Length){
+			char c=str[i];
+			// See RFC6838
+			if((c>='A' && c<='Z') || (c>='a' && c<='z') || (c>='0' && c<='9')){
+				if(builder!=null) {
+					builder.Append(c);
+				}
+				i++;
+				count++;
+			} else if(count>0 && ((c&0x7F)==c && "!#$&-^_.+".IndexOf(c)>=0)){
+				if(builder!=null) {
+					builder.Append(c);
+				}
+				i++;
+				count++;
+			} else {
+				break;
+			}
+			// type or subtype too long
+			if(count>127)return index;
+		}
+		return i;
 	}
+
 	/**
 	 * Extracts the type and subtype from a MIME media
 	 * type.  For example, in the _string "text/plain;charset=utf-8",
 	 * returns "text/plain".
-	 * 
+	 * <br><br>
+	 * Note that the default media type according to RFC2045
+	 * section 2 is "text/plain"; this function will not return that
+	 * value if the media type is ill-formed; rather, this function
+	 * is useful more to check if a media type is well-formed.
+	 * <br><br>
+	 * This function should not be used to extract the media
+	 * type from a data URL _string; use skipDataUrlContentType
+	 * instead on those strings.
+	 *
 	 * @param str a _string containing a MIME media type.
 	 * @param index the index into the _string where the
 	 * media type begins. Specify 0 for the beginning of the
 	 * _string.
+	 * @param endIndex the index for the end of the _string.
 	 * @return the type and subtype, or an empty _string
 	 * if the _string is not a valid MIME media type.
 	 * The _string will be normalized to ASCII lower-case.
 	 */
-	public static string getMediaType(string str, int index){
-		int i=skipMimeToken(str,index);
-		if(i>=str.Length || str[i]!='/')
+	public static string getMediaType(string str, int index, int endIndex){
+		if(str==null)return "";
+		int i=skipMimeTypeSubtype(str,index,endIndex,null);
+		if(i==index || i>=endIndex || str[i]!='/')
 			return "";
 		i++;
-		i=skipMimeToken(str,i);
-		return StringUtility.toLowerCaseAscii(str.Substring(index,(i)-(index)));
-	}
-
-	public static int skipContentType(string data, int index){
-		string mediaType=getMediaType(data,index);
-		// NOTE: Media type can be omitted
-		index+=mediaType.Length;
-		while(true){
-			int oldindex=index;
-			if(index>=data.Length || data[index]!=';')
-				return oldindex;
-			index++;
-			int index2=skipMimeToken(data,index);
-			if(index==index2)
-				return oldindex;
-			index=index2;
-			if(index>=data.Length || data[index]!='=')
-				return oldindex;
-			index++;
-			if(index>=data.Length || data[index]=='\"'){
-				index=skipQuotedStringNoLws(data,index);
-			} else {
-				index2=skipMimeToken(data,index);
-				if(index==index2)
-					return oldindex;
-				index=index2;
-			}
+		int i2=skipMimeTypeSubtype(str,i,endIndex,null);
+		if(i==i2)
+			return "";
+		if(i2<endIndex){
+			// if not at end
+			int i3=skipCFWS(str,i2,endIndex);
+			if(i3==endIndex || (i3<endIndex && str[i3]!=';' && str[i3]!=','))
+				// at end, or not followed by ";" or ",", so not a media type
+				return "";
 		}
+		return StringUtility.toLowerCaseAscii(str.Substring(index,(i2)-(index)));
 	}
 
+	public static string getMediaType(string str, int index){
+		if(str==null)return "";
+		return getMediaType(str,index,str.Length);
+	}
 
+	public static string getMediaType(string str){
+		if(str==null)return "";
+		return getMediaType(str,0,str.Length);
+	}
 	internal static int toHexNumber(int c) {
 		if(c>='A' && c<='Z')
 			return 10+c-'A';
@@ -694,259 +863,837 @@ public sealed class HeaderParser {
 		return -1;
 	}
 
-	private static int skipAndAppendQuoted(
-			string str, int index, StringBuilder builder){
-		int i=index;
-		bool slash=false;
-		while(i<str.Length){
-			char c=str[i];
-			//Console.WriteLine(c);
-			if(c=='%' && i+2<str.Length){
-				int hex1=toHexNumber(str[i+1]);
-				int hex2=toHexNumber(str[i+2]);
-				c=(char)(hex1*16+hex2);
-				if(i==index && c!='"')
-					return index;
-				if(!slash){
-					if(i!=index && c=='"'){
-						builder.Append('"');
-						return i+1;
-					}
-					if(c<=0x20 || c>=0x7F)
-						return index;
-				}
-				if(c=='\\' && !slash){
-					slash=true;
-				} else if(c=='\\'){
-					slash=false;
-				}
-				builder.Append(c);
-				i+=3;
-				continue;
-			}
-			if(c<=0x20 || c>=0x7F)
-				return index;
-			if(!((c&0x7F)==c && "-_.!~*'()".IndexOf((char)c)>=0) &&
-					!(c>='A' && c<='Z') &&
-					!(c>='a' && c<='z') &&
-					!(c>='0' && c<='9'))
-				return index;
-			// NOTE: Impossible for '"' and '\' to appear
-			// here
-			if(i==index)
-				return index;
-			builder.Append(c);
-			i++;
-		}
-		return index;
-	}
-
-	private static bool appendUnescapedValue(
-			string str, int index, int length, StringBuilder builder){
-		int i=index;
-		int io=str.IndexOf('%',index);
-		bool doquote=true;
-		if(io<0 || io>=index+length){
-			doquote=false;
-		}
-		if(doquote)
-		{
-			builder.Append('\"'); // quote the _string for convenience
-		}
-		while(i<str.Length){
-			char c=str[i];
-			//Console.WriteLine(c);
-			if(c=='%' && i+2<str.Length){
-				int hex1=toHexNumber(str[i+1]);
-				int hex2=toHexNumber(str[i+2]);
-				c=(char)(hex1*16+hex2);
-				if(c<=0x20 || c>=0x7F)
-					return false;
-				if(doquote && (c=='\\' || c=='"')) {
-					builder.Append('\\');
-				}
-				builder.Append(c);
-				i+=3;
-				continue;
-			}
-			if(c<=0x20 || c>=0x7F || ((c&0x7F)==c && "()<>@,;:\\\"/[]?=".IndexOf((char)c)>=0)){
-				if(doquote) {
-					builder.Append('\"');
-				}
-				return true;
-			}
-			if(!((c&0x7F)==c && "-_.!~*'()".IndexOf((char)c)>=0) &&
-					!(c>='A' && c<='Z') &&
-					!(c>='a' && c<='z') &&
-					!(c>='0' && c<='9'))
-				return false;
-			builder.Append(c);
-			i++;
-		}
-		if(doquote) {
-			builder.Append('\"');
-		}
-		return true;
-	}
-
-	private static bool appendUnescaped(
-			string str, int index, int length, StringBuilder builder){
-		int i=index;
-		// type
-		while(i<str.Length){
-			char c=str[i];
-			if(c=='%' && i+2<str.Length){
-				int hex1=toHexNumber(str[i+1]);
-				int hex2=toHexNumber(str[i+2]);
-				c=(char)(hex1*16+hex2);
-				builder.Append(c);
-				if(c<=0x20 || c>=0x7F || ((c&0x7F)==c && "()<>@,;:\\\"/[]?=".IndexOf((char)c)>=0))
-					return false;
-				i+=3;
-				continue;
-			}
-			if(c<=0x20 || c>=0x7F || ((c&0x7F)==c && "()<>@,;:\\\"/[]?=".IndexOf((char)c)>=0))
-				return true;
-			if(!((c&0x7F)==c && "-_.!~*'()".IndexOf((char)c)>=0) &&
-					!(c>='A' && c<='Z') &&
-					!(c>='a' && c<='z') &&
-					!(c>='0' && c<='9'))
-				return false;
-			builder.Append(c);
-			i++;
-		}
-		return true;
-	}
-
-	public static string unescapeContentType(string data, int index){
-		int index2=skipMimeToken(data,index);
-		int indexlast=-1;
-		StringBuilder builder=new StringBuilder();
-		if(index2<data.Length && data[index2]=='/'){
-			index2++;
-			indexlast=index2;
-			index2=skipMimeToken(data,index2);
-		} else {
-			index2=index;
-		}
-		if(index!=index2){
-			if(!appendUnescaped(data,index,indexlast-1-index,builder))
-				return "";
-			builder.Append('/');
-			if(!appendUnescaped(data,indexlast,index2-indexlast,builder))
-				return "";
-		}
-		index=index2;
-		while(true){
-			if(index>=data.Length || data[index]!=';')
-				return builder.ToString();
-			index++;
-			index2=skipMimeToken(data,index);
-			if(index==index2)
-				return builder.ToString();
-			int currentLength=builder.Length;
-			builder.Append(';');
-			if(!appendUnescaped(data,index,index2-index,builder)){
-				builder.Length=(currentLength);
-				return builder.ToString();
-			}
-			index=index2;
-			if(index>=data.Length || data[index]!='='){
-				builder.Length=(currentLength);
-				return builder.ToString();
-			}
-			builder.Append('=');
-			index++;
-			if(com.upokecenter.util.StringUtility.startsWith(data,"%22",index)){
-				index2=skipAndAppendQuoted(data,index,builder);
-				if(index==index2){
-					builder.Length=(currentLength);
-					return builder.ToString();
-				}
-			} else {
-				index2=skipMimeToken(data,index);
-				if(index==index2){
-					builder.Length=(currentLength);
-					return builder.ToString();
-				}
-				if(!appendUnescapedValue(data,index,index2-index,builder)){
-					builder.Length=(currentLength);
-					return builder.ToString();
-				}
-				index=index2;
-			}
-		}
+	public static string getCharset(string data){
+		return getCharset(data, 0);
 	}
 
 	/**
 	 * Extracts the charset parameter from a MIME media
 	 * type.  For example, in the _string "text/plain;charset=utf-8",
-	 * returns "utf-8". This method skips linear whitespace
-	 * where allowed in the HTTP/1.1 specification.  For example,
-	 * a _string like "text/plain;\n  charset=utf-8" is allowed.
+	 * returns "utf-8".	This method skips folding whitespace and
+	 * comments where allowed under RFC5322.  For example,
+	 * a _string like "text/plain;\r\n  charset=utf-8" is allowed.
 	 * 
 	 * @param str a _string containing a MIME media type.
 	 * @param index the index into the _string where the
 	 * media type begins.
-	 * @return the charset parameter, or "ISO-8859-1" if the _string
-	 * is a "text" media type without a charset parameter
-	 * or if the media type is omitted and there is no charset
-	 * parameter, or an empty _string otherwise.  
+	 * @return the charset parameter, converted to ASCII lower-case,
+	 * if it exists, or "us-ascii" if the media type is null, absent, or
+	 * ill-formed (RFC2045 sec. 5.2), or if the media type is
+	 * "text/plain" or "text/xml" without a charset parameter
+	 * (see RFC2046 and RFC3023, respectively),
+	 * or the empty _string otherwise.
 	 */
 	public static string getCharset(string data, int index){
+		if(data==null)return "us-ascii";
+		return getCharset(data, index, data.Length);
+	}
+	/**
+	 * Extracts the charset parameter from a MIME media
+	 * type.  For example, in the _string "text/plain;charset=utf-8",
+	 * returns "utf-8".	This method skips folding whitespace and
+	 * comments where allowed under RFC5322.  For example,
+	 * a _string like "text/plain;\r\n  charset=utf-8" is allowed.
+	 * @param index the index into the _string where the
+	 * media type begins.
+	 * @param endIndex an index into the end of the _string.
+	 * @param data a _string containing a MIME media type.
+	 * 
+	 * @return the charset parameter, converted to ASCII lower-case,
+	 * if it exists, or "us-ascii" if the media type is null, absent, or
+	 * ill-formed (RFC2045 sec. 5.2), or if the media type is
+	 * "text/plain" or "text/xml" and doesn't have a charset parameter
+	 * (see RFC2046 and RFC3023, respectively),
+	 * or the empty _string otherwise.
+	 */
+	public static string getCharset(string data, int index, int endIndex){
 		if(data==null)
-			return "";
+			return "us-ascii";
 		string mediaType=getMediaType(data,index);
-		// NOTE: if media type is omitted,
-		// text/plain is assumed by default
-		index+=mediaType.Length;
-		while(true){
-			// Note that we skip linear whitespace here,
-			// since it doesn't appear to be disallowed
-			// in HTTP/1.1 (unlike whitespace between the
-			// type/subtype and between attribute/value
-			// of a media type)
-			index=skipLinearWhitespace(data,index);
-			if(index>=data.Length || data[index]!=';')
-				return getDefaultCharset(mediaType);
+		if(mediaType.Length==0)
+			return "us-ascii";
+		string charset=getMimeParameter(data,index,data.Length, "charset");
+		if(charset!=null)return StringUtility.toLowerCaseAscii(charset);
+		if("text/plain".Equals(mediaType) || "text/xml".Equals(mediaType))
+			return "us-ascii";
+		return "";
+	}
+
+	private static int skipCrLf(string s, int index, int endIndex){
+		if(index+1<endIndex && s[index]==0x0d && s[index+1]==0x0a)
+			return index+2;
+		else
+			return index;
+	}
+
+	private static int skipNewLine(string s, int index, int endIndex){
+		if(index+1<endIndex && s[index]==0x0d && s[index+1]==0x0a)
+			return index+2;
+		else if(index<endIndex && (s[index]==0x0d || s[index]==0x0a))
+			return index+1;
+		else
+			return index;
+	}
+
+	/* skip space and tab characters */
+	private static int skipWsp(string s, int index, int endIndex){
+		while(index<endIndex){
+			char c=s[index];
+			if(c!=0x20 && c!=0x09)return index;
 			index++;
-			index=skipLinearWhitespace(data,index);
-			string attribute=getMimeToken(data,index);
-			if(attribute.Length==0)
-				return getDefaultCharset(mediaType);
-			index+=attribute.Length;
-			if(index>=data.Length || data[index]!='=')
-				return getDefaultCharset(mediaType);
-			bool isCharset=(attribute.Length==7 &&
-					(attribute[0]=='c' || attribute[0]=='C') ||
-					(attribute[1]=='h' || attribute[1]=='H') ||
-					(attribute[2]=='a' || attribute[2]=='A') ||
-					(attribute[3]=='r' || attribute[3]=='R') ||
-					(attribute[4]=='s' || attribute[4]=='S') ||
-					(attribute[5]=='e' || attribute[5]=='E') ||
-					(attribute[6]=='t' || attribute[6]=='T')
-					);
-			index++;
-			if(index>=data.Length || data[index]=='\"'){
-				if(isCharset){
-					string str=getQuotedString(data,index);
-					return (str.Length>0) ? str :  getDefaultCharset(mediaType);
-				} else {
-					index=skipQuotedString(data,index);
-				}
-			} else {
-				if(isCharset){
-					string str=getMimeToken(data,index);
-					return (str.Length>0) ? str :  getDefaultCharset(mediaType);
-				} else {
-					int index2=skipMimeToken(data,index);
-					if(index==index2)
-						return getDefaultCharset(mediaType);
-					index=index2;
+		}
+		return index;
+	}
+	internal static int skipLws(string s, int index, int endIndex, StringBuilder builder){
+		int ret;
+		// While HTTP usually only allows CRLF, it also allows
+		// us to be tolerant here
+		int i2=skipNewLine(s,index,endIndex);
+		ret=skipWsp(s,i2,endIndex);
+		if(ret!=i2){
+			if(builder!=null) {
+				// Note that folding LWS into a space is
+				// currently optional under HTTP/1.1 sec. 2.2
+				builder.Append(' ');
+			}
+			return ret;
+		}
+		return index;
+	}
+
+	/* Folding white space (RFC5322 sec. 3.2.2) */
+	internal static int skipFws(string s, int index, int endIndex, StringBuilder builder){
+		int ret=skipFws(s,index,endIndex);
+		if(builder!=null && ret!=index){
+			while(index<ret){
+				char c=s[index];
+				index++;
+				if(c!=0x0d && c!=0x0a) {
+					builder.Append(c);
 				}
 			}
 		}
+		return ret;
 	}
+	private static int skipObsFws(string s, int index, int endIndex){
+		// parse obs-fws (according to errata)
+		while(true){
+			int i2=skipCrLf(s,index,endIndex);
+			if(i2<endIndex && (s[i2]==0x20 || s[i2]==0x09)){
+				index=i2+1;
+			} else
+				return index;
+		}
+	}
+	/* Folding white space (RFC5322 sec. 3.2.2) */
+	internal static int skipFws(string s, int index, int endIndex){
+		int startIndex=index;
+		int i2=skipWsp(s,index,endIndex);
+		int i2crlf=skipCrLf(s,i2,endIndex);
+		if(i2crlf!=i2){// means a CRLF was seen
+			int i3=skipWsp(s,i2crlf,endIndex);
+			if(i3==i2crlf)
+				return skipObsFws(s,startIndex,endIndex);
+			else
+				return Math.Max(i3,skipObsFws(s,startIndex,endIndex));
+		} else
+			return Math.Max(i2,skipObsFws(s,startIndex,endIndex));
+	}
+	/* quoted-pair (RFC5322 sec. 3.2.1) */
+	internal static int skipQuotedPair(string s, int index, int endIndex){
+		if(index+1<endIndex && s[index]=='\\'){
+			char c=s[index+1];
+			if(c==0x20 || c==0x09 || (c>=0x21 && c<=0x7e))
+				return index+2;
+			// obs-qp
+			if((c<0x20 && c!=0x09)  || c==0x7F)
+				return index+2;
+		}
+		return index;
+	}
+	/* quoted-_string (RFC5322 sec. 3.2.4) */
+	internal static int skipQuotedString(string s, int index,
+			int endIndex, StringBuilder builder){
+		return skipQuotedString(s,index,endIndex,builder,false);
+	}
+
+	private static int skipCtextOrQuotedPairOrComment(string s, int index, int endIndex){
+		if(index>=endIndex)return index;
+		int i2;
+		i2=skipCtext(s,index,endIndex);
+		if(index!=i2)return i2;
+		index=i2;
+		i2=skipQuotedPair(s,index,endIndex);
+		if(index!=i2)return i2;
+		index=i2;
+		i2=skipComment(s,index,endIndex);
+		if(index!=i2)return i2;
+		return i2;
+	}
+
+	private static int skipQtextOrQuotedPair(string s, int index, int endIndex, bool httpRules){
+		if(index>=endIndex)return index;
+		int i2;
+		if(httpRules){
+			char c=s[index];
+			if(c<0x100 && c>=0x21 && c!='\\' && c!='"'){
+				return index+1;
+			}
+		} else {
+			i2=skipQtext(s,index,endIndex);
+			if(index!=i2)return i2;
+			index=i2;
+		}
+		i2=skipQuotedPair(s,index,endIndex);
+		if(index!=i2)return i2;
+		return i2;
+	}
+
+	internal static int skipQuotedString(
+			string s,
+			int index,
+			int endIndex, StringBuilder builder,
+			bool httpRules // true: use RFC2616 (HTTP/1.1) rules; false: use RFC5322 rules
+			){
+		int startIndex=index;
+		bool haveString=false;
+		index=(httpRules) ? index : skipCFWS(s,index,endIndex);
+		if(!(index<endIndex && s[index]=='"'))
+			return startIndex; // not a valid quoted-_string
+		index++;
+		while(index<endIndex){
+			int i2=(httpRules) ? skipLws(s,index,endIndex,builder) : skipFws(s,index,endIndex,builder);
+			if(i2!=index) {
+				haveString=true;
+			}
+			index=i2;
+			char c=s[index];
+			if(c=='"'){ // end of quoted-_string
+				index++;
+				// RFC5322 requires at least one character in a quoted _string
+				// (although the published production for quoted-_string is wrong
+				// according to an erratum)
+				if(!haveString && !httpRules)return startIndex;
+				return (httpRules) ? index : skipCFWS(s,index,endIndex);
+			}
+			int oldIndex=index;
+			index=skipQtextOrQuotedPair(s,index,endIndex,httpRules);
+			if(index==oldIndex)return startIndex;
+			haveString=true;
+			if(builder!=null){
+				// this is a qtext or quoted-pair, so
+				// append the last character read
+				builder.Append(s[index-1]);
+			}
+		}
+		return startIndex; // not a valid quoted-_string
+	}
+	/* atom (RFC5322 sec. 3.2.3) */
+	internal static int skipAtom(string s, int index,
+			int endIndex, StringBuilder builder){
+		int startIndex=index;
+		index=skipCFWS(s,index,endIndex);
+		bool haveAtom=false;
+		while(index<endIndex){
+			char c=s[index];
+			if((c>='A' && c<='Z') ||
+					(c>='a' && c<='z')  ||
+					((c&0x7F)==c && "0123456789!#$%&'*+-/=?^_`{}|~".IndexOf(c)>=0)){
+				if(builder!=null) {
+					builder.Append(c);
+				}
+				index++;
+				haveAtom=true;
+			}else {
+				if(!haveAtom)return startIndex;
+				return skipCFWS(s,index,endIndex);
+			}
+		}
+		return (haveAtom) ? index : startIndex;
+	}
+
+	/* dot-atom (RFC5322 sec. 3.2.3) */
+	/*  currently not used
+	 static int skipDotAtom(string s, int index,
+	 			int endIndex, StringBuilder builder){
+		int startIndex=index;
+		index=skipCFWS(s,index,endIndex);
+		bool haveAtom=false;
+		bool haveDot=false;
+		while(index<endIndex){
+			char c=s[index];
+			if(c=='.'){
+				// in case of "x..y"
+				if(haveDot){
+					builder.delete(builder.Length-1,1);
+					return index-1; // index of previous dot
+				}
+				// in case of ".y"
+				if(!haveAtom)return startIndex;
+				if(builder!=null)builder.Append(c);
+				haveDot=true;
+				continue;
+			}
+			if((c>='A' && c<='Z') ||
+					(c>='a' && c<='z')  ||
+					((c&0x7F)==c && "0123456789!#$%&'*+-/=?^_`{}|~".IndexOf((char)c)>=0)){
+				if(builder!=null)builder.Append(c);
+				index++;
+				haveAtom=true;
+				haveDot=false;
+			}else {
+				if(!haveAtom)return startIndex;
+				if(haveDot){
+					// move index to the dot
+					builder.delete(builder.Length-1,1);
+					return index-1;
+				}
+				return skipCFWS(s,index,endIndex);
+			}
+		}
+		return (haveAtom) ? index : startIndex;
+	}
+	 */
+	/* ctext (RFC5322 sec. 3.2.1) */
+	internal static int skipCtext(string s, int index, int endIndex){
+		if(index<endIndex){
+			char c=s[index];
+			if(c>=33 && c<=126 && c!='(' && c!=')' && c!='\\')
+				return index+1;
+			// obs-ctext
+			if((c<0x20 && c!=0x00 && c!=0x09 && c!=0x0a && c!=0x0d)  || c==0x7F)
+				return index+2;
+		}
+		return index;
+	}
+	/* ctext (RFC5322 sec. 3.2.1) */
+	internal static int skipQtext(string s, int index, int endIndex){
+		if(index<endIndex){
+			char c=s[index];
+			if(c>=33 && c<=126 && c!='\\' && c!='"')
+				return index+1;
+			// obs-ctext
+			if((c<0x20 && c!=0x00 && c!=0x09 && c!=0x0a && c!=0x0d)  || c==0x7F)
+				return index+2;
+		}
+		return index;
+	}
+	/* comment (RFC5322 sec. 3.2.1) */
+	internal static int skipComment(string s, int index, int endIndex){
+		if(!(index<endIndex && s[index]=='('))
+			return index;
+		index++;
+		int startIndex=0;
+		while(index<endIndex){
+			index=skipFws(s,index,endIndex);
+			char c=s[index];
+			if(c==')')return index+1;
+			int oldIndex=index;
+			index=skipCtextOrQuotedPairOrComment(s,index,endIndex);
+			if(index==oldIndex)return startIndex;
+		}
+		return startIndex;
+	}
+
+	private static int skipLanguageTag(string str, int index, int endIndex){
+		if(index==endIndex || str==null)return index;
+		char c=str[index];
+		if(!((c>='A' && c<='Z') || (c>='a' && c<='z')))
+			return index; // not a valid language tag
+		index++;
+		while(index<endIndex){
+			c=str[index];
+			if(!((c>='A' && c<='Z') || (c>='a' && c<='z') || (c>='0' && c<='9') || c=='-')){
+				break;
+			}
+			index++;
+		}
+		return index;
+	}
+
+	private static int lengthIfAllAlpha(string str){
+		int len=(str==null) ? 0 : str.Length;
+		for(int i=0;i<len;i++){
+			char c1=str[i];
+			if(!((c1>='A' && c1<='Z') || (c1>='a' && c1<='z')))
+				return 0;
+		}
+		return len;
+	}
+	private static int lengthIfAllAlphaNum(string str){
+		int len=(str==null) ? 0 : str.Length;
+		for(int i=0;i<len;i++){
+			char c1=str[i];
+			if(!((c1>='A' && c1<='Z') || (c1>='a' && c1<='z') || (c1>='0' && c1<='9')))
+				return 0;
+		}
+		return len;
+	}
+	private static int lengthIfAllDigit(string str){
+		int len=(str==null) ? 0 : str.Length;
+		for(int i=0;i<len;i++){
+			char c1=str[i];
+			if(!((c1>='0' && c1<='9')))
+				return 0;
+		}
+		return len;
+	}
+
+	public static bool isValidLanguageTag(string str){
+		int index=0;
+		int endIndex=str.Length;
+		int startIndex=index;
+		if(index+1<endIndex){
+			char c1=str[index];
+			char c2=str[index+1];
+			if(
+					((c1>='A' && c1<='Z') || (c1>='a' && c1<='z')) &&
+					((c2>='A' && c2<='Z') || (c2>='a' && c2<='z'))
+					){
+				index+=2;
+				if(index==endIndex)return true; // case AA
+				index+=2;
+				// convert the language tag to lower case
+				// to simplify handling
+				str=StringUtility.toLowerCaseAscii(str);
+				c1=str[index];
+				// Straightforward cases
+				if((c1>='a' && c1<='z')){
+					index++;
+					// case AAA
+					if(index==endIndex)return true;
+					c1=str[index]; // get the next character
+				}
+				if(c1=='-'){ // case AA- or AAA-
+					index++;
+					if(index+2==endIndex){ // case AA-?? or AAA-??
+						c1=str[index];
+						c2=str[index];
+						if(((c1>='a' && c1<='z')) && ((c2>='a' && c2<='z')))
+							return true; // case AA-BB or AAA-BB
+					}
+				}
+				// match grandfathered language tags
+				if(str.Equals("sgn-be-fr") || str.Equals("sgn-be-nl") || str.Equals("sgn-ch-de") ||
+						str.Equals("en-gb-oed"))return true;
+				// More complex cases
+				string[] splitString=StringUtility.splitAt(
+						str.Substring(startIndex,(endIndex)-(startIndex)),"-");
+				if(splitString.Length==0)return false;
+				int splitIndex=0;
+				int splitLength=splitString.Length;
+				int len=lengthIfAllAlpha(splitString[splitIndex]);
+				if(len<2 || len>8)return false;
+				if(len==2 || len==3){
+					splitIndex++;
+					// skip optional extended language subtags
+					for(int i=0;i<3;i++){
+						if(splitIndex<splitLength && lengthIfAllAlpha(splitString[splitIndex])==3){
+							if(i>=1)
+								// point 4 in section 2.2.2 renders two or
+								// more extended language subtags invalid
+								return false;
+							splitIndex++;
+						} else {
+							break;
+						}
+					}
+				}
+				// optional script
+				if(splitIndex<splitLength && lengthIfAllAlpha(splitString[splitIndex])==4) {
+					splitIndex++;
+				}
+				// optional region
+				if(splitIndex<splitLength && lengthIfAllAlpha(splitString[splitIndex])==2) {
+					splitIndex++;
+				} else if(splitIndex<splitLength && lengthIfAllDigit(splitString[splitIndex])==3) {
+					splitIndex++;
+				}
+				// variant, any number
+				IList<string> variants=null;
+				while(splitIndex<splitLength){
+					string curString=splitString[splitIndex];
+					len=lengthIfAllAlphaNum(curString);
+					if(len>=5 && len<=8){
+						if(variants==null){
+							variants=new List<string>();
+						}
+						if(!variants.Contains(curString)) {
+							variants.Add(curString);
+						} else return false; // variant already exists; see point 5 in section 2.2.5
+						splitIndex++;
+					} else if(len==4 && (curString[0]>='0' && curString[0]<='9')){
+						if(variants==null){
+							variants=new List<string>();
+						}
+						if(!variants.Contains(curString)) {
+							variants.Add(curString);
+						} else return false; // variant already exists; see point 5 in section 2.2.5
+						splitIndex++;
+					} else {
+						break;
+					}
+				}
+				// extension, any number
+				if(variants!=null) {
+					variants.Clear();
+				}
+				while(splitIndex<splitLength){
+					string curString=splitString[splitIndex];
+					int curIndex=splitIndex;
+					if(lengthIfAllAlphaNum(curString)==1 &&
+							!curString.Equals("x")){
+						if(variants==null){
+							variants=new List<string>();
+						}
+						if(!variants.Contains(curString)) {
+							variants.Add(curString);
+						} else return false; // extension already exists
+						splitIndex++;
+						bool havetoken=false;
+						while(splitIndex<splitLength){
+							curString=splitString[splitIndex];
+							len=lengthIfAllAlphaNum(curString);
+							if(len>=2 && len<=8){
+								havetoken=true;
+								splitIndex++;
+							} else {
+								break;
+							}
+						}
+						if(!havetoken){
+							splitIndex=curIndex;
+							break;
+						}
+					} else {
+						break;
+					}
+				}
+				// optional private use
+				if(splitIndex<splitLength){
+					int curIndex=splitIndex;
+					if(splitString[splitIndex].Equals("x")){
+						splitIndex++;
+						bool havetoken=false;
+						while(splitIndex<splitLength){
+							len=lengthIfAllAlphaNum(splitString[splitIndex]);
+							if(len>=1 && len<=8){
+								havetoken=true;
+								splitIndex++;
+							} else {
+								break;
+							}
+						}
+						if(!havetoken) {
+							splitIndex=curIndex;
+						}
+					}
+				}
+				// check if all the tokens were used
+				return (splitIndex==splitLength);
+			} else if(c2=='-' && (c1=='x' || c1=='X')){
+				// private use
+				index++;
+				while(index<endIndex){
+					int count=0;
+					if(str[index]!='-')return false;
+					index++;
+					while(index<endIndex){
+						c1=str[index];
+						if(((c1>='A' && c1<='Z') || (c1>='a' && c1<='z') || (c1>='0' && c1<='9'))){
+							count++;
+							if(count>8)return false;
+						} else if(c1=='-') {
+							break;
+						} else return false;
+						index++;
+					}
+					if(count<1)return false;
+				}
+				return true;
+			} else if(c2=='-' && (c1=='i' || c1=='I')){
+				// grandfathered language tags
+				str=StringUtility.toLowerCaseAscii(str);
+				return (str.Equals("i-ami") || str.Equals("i-bnn") ||
+						str.Equals("i-default") || str.Equals("i-enochian") ||
+						str.Equals("i-hak") || str.Equals("i-klingon") ||
+						str.Equals("i-lux") || str.Equals("i-navajo") ||
+						str.Equals("i-mingo") || str.Equals("i-pwn") ||
+						str.Equals("i-tao") || str.Equals("i-tay") ||
+						str.Equals("i-tsu"));
+			} else return false;
+		} else
+			return false;
+	}
+
+	private static string[] emptyStringArray=new string[0];
+
+	/**
+	 * 
+	 * Parses a _string consisting of language tags under
+	 * Best Current Practice 47.  Examples include "en"
+	 * for English, or "fr-ca" for Canadian French.
+	 * 
+	 * The _string is treated as a Content-Language header
+	 * value under RFC 3282.
+	 * 
+	 * @param str a _string.
+	 * @return an array of language tags within the given
+	 * _string, or an empty
+	 * array if str is null, if there are no language tags,
+	 * or at least one language tag in the given
+	 * _string is invalid under Best Current Practice 47.
+	 * The language tags will be converted to ASCII lower-case.
+	 */
+	public static string[] getLanguages(string str){
+		if(str==null)return emptyStringArray;
+		return getLanguages(str,0,str.Length);
+	}
+	private static string[] getLanguages(string str, int index, int endIndex){
+		if(index==endIndex || str==null)
+			return emptyStringArray;
+		IList<string> strings=new List<string>();
+		index=skipCFWS(str,index,endIndex);
+		while(true){
+			int i2=skipLanguageTag(str,index,endIndex);
+			if(i2==index)return emptyStringArray;
+			string tag=StringUtility.toLowerCaseAscii(str.Substring(index,(i2)-(index)));
+			i2=index;
+			if(!isValidLanguageTag(tag))return emptyStringArray;
+			strings.Add(tag);
+			index=skipCFWS(str,index,endIndex);
+			if(index>=endIndex) {
+				break;
+			}
+			if(str[index]!=',')return emptyStringArray;
+			index=skipCFWS(str,index,endIndex);
+		}
+		return PeterO.Support.Collections.ToArray(strings);
+	}
+
+
+	/**
+	 * Skips comments and folding whitespace (CFWS) in a _string,
+	 * as specified in RFC5322 section 3.2.1.
+	 *
+	 * @param index the index into the beginning of the _string
+	 * for the purposes of this method.
+	 * @param endIndex the index into the end of the _string
+	 * for the purposes of this method.
+	 * @param the index where CFWS ends.  Will be the same
+	 * as _index_ if _index_ doesn't point to a comment or folding
+	 * whitespace.
+	 */
+	internal static int skipCFWS(string s, int index, int endIndex){
+		int retIndex=index;
+		while(index<endIndex){
+			index=skipFws(s,index,endIndex);
+			retIndex=index;
+			int oldIndex=index;
+			index=skipComment(s,index,endIndex);
+			if(index==oldIndex)return retIndex;
+			retIndex=index;
+		}
+		return retIndex;
+	}
+	/**
+	 * Extracts a parameter from a MIME media
+	 * type.  For example, in the _string "text/plain;charset=utf-8",
+	 * returns "utf-8" if the parameter is "charset".
+	 * This method skips folding whitespace and comments
+	 * where allowed under RFC5322.  For example,
+	 * a _string like "text/plain;\r\n  charset=utf-8" is allowed.
+	 * 
+	 * @param str a _string containing a MIME media type.
+	 * Parameters are compared case-insensitively.
+	 * @param index the index into the _string where the
+	 * media type begins.
+	 * @param parameter a parameter name.
+	 * @return the parameter, or null if the parameter
+	 * doesn't exist or the media type _string is ill-formed.
+	 */
+	public static string getMimeParameter(string data, int index, string parameter){
+		if(data==null)return null;
+		return getMimeParameter(data, index, data.Length, parameter);
+	}
+	public static string getMimeParameter(string data, int index, int endIndex, string parameter){
+		if(data==null)return null;
+		return getMimeParameter(data, index, data.Length, parameter,false);
+	}
+	/**
+	 * Extracts a parameter from a MIME media
+	 * type.  For example, in the _string "text/plain;charset=utf-8",
+	 * returns "utf-8" if the parameter is "charset".
+	 * This method either skips folding whitespace and comments
+	 * where allowed under RFC5322, or skips linear whitespace
+	 * where allowed under HTTP/1.1.  For example,
+	 * a _string like "text/plain;\r\n  charset=utf-8" is allowed.
+	 * @param index the index into the _string where the
+	 * media type begins.
+	 * @param endIndex an index into the end of the _string.
+	 * @param parameter a parameter name.
+	 * @param str a _string containing a MIME media type.
+	 * Parameters are compared case-insensitively.
+	 * @param httpRules If false, the whitespace rules of RFC5322
+	 * are used. If true, the whitespace rules of HTTP/1.1 (RFC2616)
+	 * are used, and parameter continuations under RFC2231 sec. 3
+	 * are supported.
+	 * @return the parameter, or null if the parameter
+	 * doesn't exist or the media type _string is ill-formed.
+	 */
+	private static string getMimeParameter(
+			string data, int index, int endIndex, string parameter, bool httpRules){
+		if(data==null || parameter==null)
+			return null;
+		string ret=getMimeParameterRaw(data,index,endIndex,parameter,httpRules);
+		if(!httpRules && ret==null){
+			ret=getMimeParameterRaw(data,index,endIndex,parameter+"*0",httpRules);
+			if(ret!=null){
+				int pindex=1;
+				// Support parameter continuations under RFC2184 sec. 3
+				while(true){
+					string ret2=getMimeParameterRaw(
+							data,index,endIndex,
+							parameter+"*"+Convert.ToString(pindex,CultureInfo.InvariantCulture),httpRules);
+					if(ret2==null) {
+						break;
+					}
+					pindex++;
+					ret+=ret2;
+				}
+			}
+		}
+		return ret;
+	}
+	private static string getMimeParameterRaw(
+			string data, int index, int endIndex, string parameter, bool httpRules){
+		if(data==null || parameter==null)
+			return null;
+		if((endIndex-index)<parameter.Length)
+			return null;
+		parameter=StringUtility.toLowerCaseAscii(parameter);
+		string mediaType=getMediaType(data,index);
+		index+=mediaType.Length;
+		while(true){
+			// RFC5322 uses skipCFWS when skipping whitespace;
+			// HTTP currently uses skipLws, though that may change
+			// to skipWsp in a future revision of HTTP
+			if(httpRules) {
+				index=skipLws(data,index,endIndex,null);
+			} else {
+				index=skipCFWS(data,index,endIndex);
+			}
+			if(index>=endIndex || data[index]!=';')
+				return null;
+			index++;
+			if(httpRules) {
+				index=skipLws(data,index,endIndex,null);
+			} else {
+				index=skipCFWS(data,index,endIndex);
+			}
+			StringBuilder builder=new StringBuilder();
+			int afteratt=skipMimeToken(data,index,endIndex,builder);
+			if(afteratt==index) // ill-formed attribute
+				return null;
+			string attribute=builder.ToString();
+			index=afteratt;
+			if(index>=endIndex)
+				return null;
+			if(data[index]!='=')
+				return null;
+			bool isToken=StringUtility.toLowerCaseAscii(attribute).Equals(parameter);
+			index++;
+			if(index>=endIndex)
+				return "";
+			builder.Clear();
+			// try getting the value quoted
+			int qs=skipQuotedString(data,index,endIndex,isToken ? builder : null,httpRules);
+			if(qs!=index){
+				if(isToken)
+					return builder.ToString();
+				index=qs;
+				continue;
+			}
+			builder.Clear();
+			// try getting the value unquoted
+			// Note we don't use getAtom
+			qs=skipMimeToken(data,index,endIndex,isToken ? builder : null);
+			if(qs!=index){
+				if(isToken)
+					return builder.ToString();
+				index=qs;
+				continue;
+			}
+			// no valid value, return
+			return null;
+		}
+	}
+
+	public static bool isValidMediaType(string data){
+		if(data==null)
+			return false;
+		return isValidMediaType(data,0,data.Length,true);
+	}
+
+	public static bool isValidMediaType(
+			string data,
+			int index,
+			int endIndex,
+			bool httpRules // true: use RFC2616 (HTTP/1.1) rules; false: use RFC5322 rules
+			){
+		if(data==null)
+			return false;
+		string mediaType=getMediaType(data,index,endIndex);
+		index+=mediaType.Length;
+		while(true){
+			if(index>=endIndex)
+				return true;
+			// RFC5322 uses skipCFWS when skipping whitespace;
+			// HTTP currently uses skipLws, though that may change
+			// to skipWsp in a future revision of HTTP
+			if(httpRules) {
+				index=skipLws(data,index,endIndex,null);
+			} else {
+				index=skipCFWS(data,index,endIndex);
+			}
+			if(index>=endIndex)
+				return false;
+			if(data[index]!=';')
+				return false;
+			index++;
+			if(httpRules) {
+				index=skipLws(data,index,endIndex,null);
+			} else {
+				index=skipCFWS(data,index,endIndex);
+			}
+			int afteratt=skipMimeToken(data,index,endIndex,null);
+			if(afteratt==index) // ill-formed attribute
+				return false;
+			index=afteratt;
+			if(index>=endIndex)
+				return false;
+			if(data[index]!='=')
+				return false;
+			index++;
+			if(index>=endIndex)
+				return false;
+			// try getting the value quoted
+			int qs=skipQuotedString(data,index,endIndex,null,httpRules);
+			if(qs!=index){
+				index=qs;
+				continue;
+			}
+			// try getting the value unquoted
+			qs=skipMimeToken(data,index,endIndex,null);
+			if(qs!=index){
+				index=qs;
+				continue;
+			}
+			// no valid value, return
+			return false;
+		}
+	}
+
 }
 
 }

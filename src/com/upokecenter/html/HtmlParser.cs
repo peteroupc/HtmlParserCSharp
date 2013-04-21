@@ -31,6 +31,7 @@ using System.IO;
 using System.Collections.Generic;
 using com.upokecenter.encoding;
 using com.upokecenter.io;
+using com.upokecenter.net;
 using com.upokecenter.util;
 
 
@@ -464,6 +465,8 @@ sealed class HtmlParser {
 	private bool noforeign;
 	private string address;
 
+	private string[] contentLanguage;
+
 	public static readonly string XLINK_NAMESPACE="http://www.w3.org/1999/xlink";
 
 	public static readonly string XML_NAMESPACE="http://www.w3.org/XML/1998/_namespace";
@@ -476,18 +479,22 @@ sealed class HtmlParser {
 		return ret;
 	}
 
-	public HtmlParser(PeterO.Support.InputStream s, string _string) : this(s,_string,null) {
+	public HtmlParser(PeterO.Support.InputStream s, string address) : this(s,address,null,null) {
+	}
+
+	public HtmlParser(PeterO.Support.InputStream s, string address, string charset) : this(s,address,charset,null) {
 	}
 
 
-
-	public HtmlParser(PeterO.Support.InputStream source, string address, string charset) {
+	public HtmlParser(PeterO.Support.InputStream source, string address,
+			string charset, string contentLanguage) {
 		if(source==null)throw new ArgumentException();
 		if(address!=null && address.Length>0){
 			URL url=URL.parse(address);
 			if(url==null || url.getScheme().Length==0)
 				throw new ArgumentException();
 		}
+		this.contentLanguage=HeaderParser.getLanguages(contentLanguage);
 		this.address=address;
 		initialize();
 		inputStream=new ConditionalBufferInputStream(source);
@@ -1090,8 +1097,9 @@ sealed class HtmlParser {
 								return true;
 							}
 						}
-						string value=element.getAttribute("http-equiv");
-						if(value!=null && StringUtility.toLowerCaseAscii(value).Equals("content-type")){
+						string value=StringUtility.toLowerCaseAscii(
+								element.getAttribute("http-equiv"));
+						if("content-type".Equals(value)){
 							value=element.getAttribute("content");
 							if(value!=null){
 								value=StringUtility.toLowerCaseAscii(value);
@@ -1106,7 +1114,19 @@ sealed class HtmlParser {
 									return true;
 								}
 							}
+						} else if("content-language".Equals(value)){
+							// HTML5 requires us to use this algorithm
+							// to parse the Content-Language, rather than
+							// use HTTP parsing (with HeaderParser.getLanguages)
+							// NOTE: this pragma is non-conforming
+							value=element.getAttribute("content");
+							if(!string.IsNullOrEmpty(value) &&
+									value.IndexOf(',')<0){
+								string[] data=StringUtility.splitAtSpaces(value);
+								document.defaultLanguage=(data.Length==0) ? "" : data[0];
+							}
 						}
+
 					}
 					if(encoding.getConfidence()==EncodingConfidence.Certain){
 						inputStream.disableBuffer();
@@ -3716,7 +3736,13 @@ sealed class HtmlParser {
 		foreach(Node node in nodes){
 			string str=node.toDebugString();
 			string[] strarray=StringUtility.splitAt(str,"\n");
-			foreach(string el in strarray){
+			int len=strarray.Length;
+			if(len>0 && strarray[len-1].Length==0)
+			{
+				len--; // ignore trailing empty _string
+			}
+			for(int i=0;i<len;i++){
+				string el=strarray[i];
 				builder.Append("| ");
 				builder.Append(el.Replace("~~~~","\n"));
 				builder.Append("\n");
@@ -5713,6 +5739,14 @@ sealed class HtmlParser {
 
 	private void stopParsing() {
 		done=true;
+		if(string.IsNullOrEmpty(document.defaultLanguage)){
+			if(contentLanguage.Length==1){
+				// set the fallback language if there is
+				// only one language defined and no meta element
+				// defines the language
+				document.defaultLanguage=contentLanguage[0];
+			}
+		}
 		document.encoding=encoding.getEncoding();
 		string docbase=document.getBaseURI();
 		if(docbase==null || docbase.Length==0){

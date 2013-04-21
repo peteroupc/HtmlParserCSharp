@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 
 
+
 /**
  * A JSONArray is an ordered sequence of values. Its external form is a _string
  * wrapped in square brackets with commas between the values. The internal form
@@ -115,6 +116,12 @@ public class JSONArray {
 		myArrayList = new List<Object>(collection);
 	}
 
+	public JSONArray(IList<string> collection) {
+		myArrayList = new List<Object>();
+    foreach(string str in collection){
+      myArrayList.Add(str);
+    }
+	}
 
 	/**
 	 * Get the _object value associated with an index.

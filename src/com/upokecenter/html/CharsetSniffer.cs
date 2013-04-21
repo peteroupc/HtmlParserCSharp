@@ -357,8 +357,7 @@ sealed class CharsetSniffer {
 	}
 
 	public static string sniffContentType(PeterO.Support.InputStream input, string mediaType) {
-		if(mediaType!=null &&
-				HeaderParser.skipContentType(mediaType, 0)==mediaType.Length){
+		if(mediaType!=null && HeaderParser.isValidMediaType(mediaType)){
 			string type=HeaderParser.getMediaType(mediaType,0);
 			if(type.Equals("text/xml") || type.Equals("application/xml") ||
 					type.EndsWith("+xml",StringComparison.Ordinal))

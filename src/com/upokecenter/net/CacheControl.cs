@@ -31,7 +31,6 @@ using System.Collections.Generic;
 using com.upokecenter.io;
 using com.upokecenter.json;
 using com.upokecenter.util;
-
 internal class CacheControl {
 
 	public override string ToString() {

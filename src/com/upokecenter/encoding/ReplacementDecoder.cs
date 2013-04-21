@@ -26,7 +26,6 @@ THE SOFTWARE.
 namespace com.upokecenter.encoding {
 using System;
 using System.IO;
-
 internal class ReplacementDecoder : ITextDecoder {
 
 	bool endofstream=false;
