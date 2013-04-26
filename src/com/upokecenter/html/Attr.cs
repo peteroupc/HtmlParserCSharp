@@ -8,17 +8,15 @@ internal class Attr : IAttr {
 	StringBuilder value;
 	string prefix=null;
 
-	/* (non-Javadoc)
-	 * @see com.upokecenter.html.IAttr#getPrefix()
-	 */
-	public string getPrefix() {
-		return prefix;
-	}
-
 	string localName=null;
+
 	string nameString=null;
 	string valueString=null;
 	string _namespace=null;
+	public Attr(){
+		name=new StringBuilder();
+		value=new StringBuilder();
+	}
 
 	public Attr(Attr attr){
 		nameString=attr.getName();
@@ -27,11 +25,6 @@ internal class Attr : IAttr {
 		localName=attr.localName;
 		_namespace=attr._namespace;
 	}
-	public Attr(){
-		name=new StringBuilder();
-		value=new StringBuilder();
-	}
-
 	public Attr(char ch){
 		name=new StringBuilder();
 		value=new StringBuilder();
@@ -47,11 +40,11 @@ name.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 name.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
 	}
+
 	public Attr(string name, string value){
 		nameString=name;
 		valueString=value;
 	}
-
 	internal void appendToName(int ch){
 		if(nameString!=null)
 			throw new InvalidOperationException();
@@ -99,6 +92,13 @@ value.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 	public string getNamespaceURI(){
 		return _namespace;
 	}
+
+	/* (non-Javadoc)
+	 * @see com.upokecenter.html.IAttr#getPrefix()
+	 */
+	public string getPrefix() {
+		return prefix;
+	}
 	/* (non-Javadoc)
 	 * @see com.upokecenter.html.IAttr#getValue()
 	 */
@@ -136,16 +136,6 @@ value.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 		}
 	}
 
-	internal void setValue(string value2) {
-		if(value2==null)
-			throw new ArgumentException();
-		valueString=value2;
-		value=null;
-	}
-
-	public override string ToString(){
-		return "[Attribute: "+getName()+"="+getValue()+"]";
-	}
 	/**
 	 * NOTE: Set after setNamespace, or it
 	 * may be overwritten
@@ -153,6 +143,16 @@ value.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 	 */
 	public void setPrefix(string attrprefix) {
 		prefix=attrprefix;
+	}
+
+	internal void setValue(string value2) {
+		if(value2==null)
+			throw new ArgumentException();
+		valueString=value2;
+		value=null;
+	}
+	public override string ToString(){
+		return "[Attribute: "+getName()+"="+getValue()+"]";
 	}
 
 }

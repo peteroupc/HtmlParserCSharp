@@ -23,34 +23,6 @@ public sealed class ActionList<T> {
 		postponeCall=new List<T[]>();
 	}
 
-	public bool unbindAction(int actionID){
-		//Console.WriteLine("Unbinding action %d",actionID);
-		IBoundAction<T> action=null;
-		if(actionID<0)return false;
-		lock(syncRoot){
-			if(actionID>=actions.Count)
-				return false;
-			action=actions[actionID];
-			if(action==null)
-				return false;
-			boundObjects[actionID]=null;
-		}
-		return true;
-	}
-
-	public bool removeAction(int actionID){
-		//Console.WriteLine("Removing action %d",actionID);
-		if(actionID<0)return false;
-		lock(syncRoot){
-			if(actionID>=actions.Count)
-				return false;
-			actions[actionID]=null;
-			boundObjects[actionID]=null;
-			postponeCall[actionID]=null;
-		}
-		return true;
-	}
-
 	public bool rebindAction(int actionID, Object boundObject){
 		//Console.WriteLine("Rebinding action %d",actionID);
 		IBoundAction<T> action=null;
@@ -73,6 +45,39 @@ public sealed class ActionList<T> {
 		if(postponed!=null){
 			//Console.WriteLine("Calling postponed action %d",actionID);
 			action.action(boundObject,postponed);
+		}
+		return true;
+	}
+
+	public int registerAction(Object boundObject, IBoundAction<T> action){
+		lock(syncRoot){
+			for(int i=0;i<actions.Count;i++){
+				if(actions[i]==null){
+					//Console.WriteLine("Adding action %d",i);
+					actions[i]=action;
+					boundObjects[i]=boundObject;
+					postponeCall[i]=null;
+					return i;
+				}
+			}
+			int ret=actions.Count;
+			//Console.WriteLine("Adding action %d",ret);
+			actions.Add(action);
+			boundObjects.Add(boundObject);
+			postponeCall.Add(null);
+			return ret;
+		}
+	}
+
+	public bool removeAction(int actionID){
+		//Console.WriteLine("Removing action %d",actionID);
+		if(actionID<0)return false;
+		lock(syncRoot){
+			if(actionID>=actions.Count)
+				return false;
+			actions[actionID]=null;
+			boundObjects[actionID]=null;
+			postponeCall[actionID]=null;
 		}
 		return true;
 	}
@@ -101,24 +106,19 @@ public sealed class ActionList<T> {
 		return true;
 	}
 
-	public int registerAction(Object boundObject, IBoundAction<T> action){
+	public bool unbindAction(int actionID){
+		//Console.WriteLine("Unbinding action %d",actionID);
+		IBoundAction<T> action=null;
+		if(actionID<0)return false;
 		lock(syncRoot){
-			for(int i=0;i<actions.Count;i++){
-				if(actions[i]==null){
-					//Console.WriteLine("Adding action %d",i);
-					actions[i]=action;
-					boundObjects[i]=boundObject;
-					postponeCall[i]=null;
-					return i;
-				}
-			}
-			int ret=actions.Count;
-			//Console.WriteLine("Adding action %d",ret);
-			actions.Add(action);
-			boundObjects.Add(boundObject);
-			postponeCall.Add(null);
-			return ret;
+			if(actionID>=actions.Count)
+				return false;
+			action=actions[actionID];
+			if(action==null)
+				return false;
+			boundObjects[actionID]=null;
 		}
+		return true;
 	}
 }
 

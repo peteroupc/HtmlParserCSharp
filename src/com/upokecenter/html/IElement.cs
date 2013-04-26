@@ -37,11 +37,6 @@ using System.Collections.Generic;
  */
 public interface IElement : INode {
 
-
-	/**
-	 * Gets a list of all attributes declared on this element.
-	 */
-	IList<IAttr> getAttributes();
 	/**
 	 * 
 	 * Gets an attribute declared on this element.
@@ -51,6 +46,7 @@ public interface IElement : INode {
 	 * exist.
 	 */
 	string getAttribute(string name);
+
 	/**
 	 * 
 	 * Gets an attribute of this element, with the given _namespace
@@ -62,6 +58,10 @@ public interface IElement : INode {
 	 * exist.
 	 */
 	string getAttributeNS(string _namespace, string name);
+	/**
+	 * Gets a list of all attributes declared on this element.
+	 */
+	IList<IAttr> getAttributes();
 	/**
 	 * Gets all descendents, both direct and indirect, that have
 	 * the specified id, using case-sensitive matching.
@@ -85,6 +85,13 @@ public interface IElement : INode {
 	 * doesn't exist.
 	 */
 	string getId();
+	/**
+	 * Gets a serialized form of this HTML element.
+	 * 
+	 * @return a _string consisting of the serialized
+	 * form of this element's children, in HTML.
+	 */
+	string getInnerHTML();
 
 	/**
 	 * 
@@ -102,9 +109,9 @@ public interface IElement : INode {
 	 * Gets the _namespace name of this element.  For HTML elements,
 	 * it will equal "http://www.w3.org/1999/xhtml".
 	 * 
-	 * 
 	 */
 	string getNamespaceURI();
+	string getPrefix();
 	/**
 	 * 
 	 * Gets the name of the element as used on its HTML tags.
@@ -113,7 +120,6 @@ public interface IElement : INode {
 	 * an uppercase version of the name will be returned.
 	 */
 	string getTagName();
-	string getPrefix();
 }
 
 }

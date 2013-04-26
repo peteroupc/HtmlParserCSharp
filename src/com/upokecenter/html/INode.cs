@@ -37,6 +37,8 @@ using System.Collections.Generic;
  *
  */
 public interface INode {
+
+
 	/**
 	 * Returns the _base URL of this node.  URLs on this
 	 * node are resolved relative to this URL.
@@ -49,6 +51,15 @@ public interface INode {
 	 * @return A list of the direct children of this node.
 	 */
 	IList<INode> getChildNodes();
+	/**
+	 * Gets the language of this node.  Not defined in the DOM specification.
+	 */
+	string getLanguage();
+	/**
+	 * Gets the name of this node.  For HTML elements, this will
+	 * be the same as the tag name.
+	 */
+	string getNodeName();
 	/**
 	 * 
 	 * Returns the type of node represented by this _object.
@@ -78,15 +89,6 @@ public interface INode {
 	 * nodes; or the text of Comment nodes; or null otherwise.
 	 */
 	string getTextContent();
-	/**
-	 * Gets the name of this node.  For HTML elements, this will
-	 * be the same as the tag name.
-	 */
-	string getNodeName();
-	/**
-	 * Gets the language of this node.  Not defined in the DOM specification.
-	 */
-	string getLanguage();
 }
 
 }

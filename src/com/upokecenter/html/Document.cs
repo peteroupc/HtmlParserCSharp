@@ -34,6 +34,10 @@ internal class Document : Node, IDocument {
 	internal string encoding;
 	private DocumentMode docmode=DocumentMode.NoQuirksMode;
 
+	internal string address;
+
+	internal string defaultLanguage;
+
 	internal Document() : base(NodeType.DOCUMENT_NODE) {
 	}
 
@@ -48,6 +52,7 @@ internal class Document : Node, IDocument {
 			collectElements(node,s,nodes);
 		}
 	}
+
 
 	private void collectElementsHtml(INode c, string s,
 			string sLowercase, IList<IElement> nodes){
@@ -71,10 +76,10 @@ internal class Document : Node, IDocument {
 		return (encoding==null) ? "utf-8" : encoding;
 	}
 
-
 	public IDocumentType getDoctype(){
 		return doctype;
 	}
+
 
 	public IElement getDocumentElement() {
 		foreach(INode node in getChildNodes()){
@@ -97,8 +102,6 @@ internal class Document : Node, IDocument {
 		}
 		return null;
 	}
-
-
 	public IList<IElement> getElementsByTagName(string tagName) {
 		if(tagName==null)
 			throw new ArgumentException();
@@ -115,13 +118,25 @@ internal class Document : Node, IDocument {
 		return ret;
 	}
 
+	public override string getLanguage(){
+		return (defaultLanguage==null) ? "" : defaultLanguage;
+	}
+
 	internal DocumentMode getMode() {
 		return docmode;
 	}
+
+	public override string getNodeName(){
+		return "#document";
+	}
+
 	public override IDocument getOwnerDocument(){
 		return null;
 	}
 
+	public string getURL() {
+		return address;
+	}
 	internal bool isHtmlDocument(){
 		return true;
 	}
@@ -151,21 +166,6 @@ internal class Document : Node, IDocument {
 			}
 		}
 		return builder.ToString();
-	}
-
-	public override string getNodeName(){
-		return "#document";
-	}
-
-	internal string address;
-	internal string defaultLanguage;
-
-	public string getURL() {
-		return address;
-	}
-
-	public override string getLanguage(){
-		return (defaultLanguage==null) ? "" : defaultLanguage;
 	}
 
 }

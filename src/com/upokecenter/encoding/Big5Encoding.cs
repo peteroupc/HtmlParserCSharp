@@ -34,6 +34,17 @@ sealed class Big5Encoding : ITextEncoder, ITextDecoder {
 	int lead=0;
 	int nextChar=-1;
 
+	public int decode(PeterO.Support.InputStream stream)  {
+		return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
+	}
+
+	public int decode(PeterO.Support.InputStream stream, IEncodingError error)  {
+		int[] value=new int[1];
+		int c=decode(stream,value,0,1, error);
+		if(c<=0)return -1;
+		return value[0];
+	}
+
 	public int decode(PeterO.Support.InputStream stream, int[] buffer, int offset, int length)
 			 {
 		return decode(stream, buffer, offset, length, TextEncoding.ENCODING_ERROR_THROW);
@@ -136,6 +147,11 @@ sealed class Big5Encoding : ITextEncoder, ITextDecoder {
 		return count>0 ? count : -1;
 	}
 
+	public void encode(Stream stream, int[] buffer, int offset, int length)
+			 {
+		encode(stream,buffer,offset,length,TextEncoding.ENCODING_ERROR_THROW);
+	}
+
 	public void encode(Stream stream, int[] buffer, int offset, int length,
 			IEncodingError error)
 					 {
@@ -174,22 +190,6 @@ sealed class Big5Encoding : ITextEncoder, ITextDecoder {
 			stream.WriteByte(unchecked((byte)(lead)));
 			stream.WriteByte(unchecked((byte)(trail)));
 		}
-	}
-
-	public int decode(PeterO.Support.InputStream stream)  {
-		return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
-	}
-
-	public int decode(PeterO.Support.InputStream stream, IEncodingError error)  {
-		int[] value=new int[1];
-		int c=decode(stream,value,0,1, error);
-		if(c<=0)return -1;
-		return value[0];
-	}
-
-	public void encode(Stream stream, int[] buffer, int offset, int length)
-			 {
-		encode(stream,buffer,offset,length,TextEncoding.ENCODING_ERROR_THROW);
 	}
 }
 

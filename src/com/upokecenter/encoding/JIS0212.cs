@@ -27,7 +27,6 @@ THE SOFTWARE.
 namespace com.upokecenter.encoding {
 using System;
 sealed class JIS0212 {
-	private JIS0212(){}
 	private static short[] table=new short[7103];
 	static JIS0212(){
 		Array.Copy(method0(),0,table,0,4096);
@@ -62,13 +61,6 @@ sealed class JIS0212 {
 		39344,40215,6656,256,
 		40216,40869,6912,191
 	};
-
-	public static int indexToCodePoint(int index){
-		if(index<108 || index>7210)return -1;
-		int ret=table[index-108];
-		return (ret==0) ? -1 : (ret&0xFFFF);
-	}
-
 	public static int codePointToIndex(int codepoint){
 		if(codepoint<161 || codepoint>65374)return -1;
 		for(int i=0;i<indextable.Length;i+=4){
@@ -82,6 +74,12 @@ sealed class JIS0212 {
 			}
 		}
 		return -1;
+	}
+
+	public static int indexToCodePoint(int index){
+		if(index<108 || index>7210)return -1;
+		int ret=table[index-108];
+		return (ret==0) ? -1 : (ret&0xFFFF);
 	}
 
 	private static short[] method0(){
@@ -345,6 +343,7 @@ sealed class JIS0212 {
 
 		};
 	}
+
 	private static short[] method1(){
 		return new short[]{
 				0x7603,0x7604,0x7607,0x7608,0x760A,0x760C,0x760F,0x7612,0x7613,0x7615,0x7616,0x7619,0x761B,0x761C,0x761D,0x761E,
@@ -537,6 +536,7 @@ sealed class JIS0212 {
 				unchecked((short)0x9F75),unchecked((short)0x9F7A),unchecked((short)0x9F7D),unchecked((short)0x9F8F),unchecked((short)0x9F90),unchecked((short)0x9F91),unchecked((short)0x9F92),unchecked((short)0x9F94),unchecked((short)0x9F96),unchecked((short)0x9F97),unchecked((short)0x9F9E),unchecked((short)0x9FA1),unchecked((short)0x9FA2),unchecked((short)0x9FA3),unchecked((short)0x9FA5)
 		};
 	}
+	private JIS0212(){}
 }
 
 }

@@ -6,10 +6,16 @@ using com.upokecenter.json;
 using com.upokecenter.util;
 
 public sealed class Microdata {
-	private Microdata(){}
+	private class ElementAndIndex {
+		public int index;
+		public IElement element;
+	}
 
-	private static bool isHtmlElement(IElement element){
-		return "http://www.w3.org/1999/xhtml".Equals(element.getNamespaceURI());
+	private sealed class SortInTreeOrderComparer : IComparer<ElementAndIndex> {
+		public int Compare(ElementAndIndex arg0, ElementAndIndex arg1) {
+			if(arg0.index==arg1.index)return 0;
+			return (arg0.index<arg1.index) ? -1 : 1;
+		}
 	}
 
 	private static int getElementIndex(
@@ -32,10 +38,6 @@ public sealed class Microdata {
 		return -1;
 	}
 
-
-	private static bool isHtmlElement(IElement e, string name){
-		return e.getLocalName().Equals(name) && isHtmlElement(e);
-	}
 
 	private static string getHref(IElement node){
 		string name=StringUtility.toLowerCaseAscii(node.getLocalName());
@@ -61,59 +63,22 @@ public sealed class Microdata {
 		return href;
 	}
 
-
-
-	private static string getPropertyValue(IElement e){
-		if(isHtmlElement(e)){
-			if(isHtmlElement(e,"meta")){
-				string attr=e.getAttribute("content");
-				return (attr==null) ? "" : attr;
-			}
-			string href=getHref(e);
-			if(href!=null)return href;
-			if(isHtmlElement(e,"data")){
-				string attr=e.getAttribute("value");
-				return (attr==null) ? "" : attr;
-			}
-			if(isHtmlElement(e,"time")){
-				string attr=e.getAttribute("datetime");
-				if(attr!=null)
-					return attr;
+	public static JSONObject getMicrodataJSON(IDocument document){
+		if((document)==null)throw new ArgumentNullException("document");
+		JSONObject result=new JSONObject();
+		JSONArray items=new JSONArray();
+		foreach(IElement node in document.getElementsByTagName("*")){
+			if(node.getAttribute("itemscope")!=null &&
+					node.getAttribute("itemprop")==null){
+				IList<IElement> memory=new List<IElement>();
+				items.put(getMicrodataObject(node,memory));
 			}
 		}
-		return e.getTextContent();
+		result.put("items", items);
+		return result;
 	}
 
-	private sealed class SortInTreeOrderComparer : IComparer<ElementAndIndex> {
-		public int Compare(ElementAndIndex arg0, ElementAndIndex arg1) {
-			if(arg0.index==arg1.index)return 0;
-			return (arg0.index<arg1.index) ? -1 : 1;
-		}
-	}
 
-	private class ElementAndIndex {
-		public int index;
-		public IElement element;
-	}
-
-	private static IList<IElement> sortInTreeOrder(
-			IList<IElement> elements, INode root){
-		if(elements==null || elements.Count<2)
-			return elements;
-		List<ElementAndIndex> elems=new List<ElementAndIndex>();
-		foreach(IElement element in elements){
-			ElementAndIndex el=new ElementAndIndex();
-			el.element=element;
-			el.index=getElementIndex(root,element,0);
-			elems.Add(el);
-		}
-		elems.Sort(new SortInTreeOrderComparer());
-		IList<IElement> ret=new List<IElement>();
-		foreach(ElementAndIndex el in elems){
-			ret.Add(el.element);
-		}
-		return ret;
-	}
 
 	private static JSONObject getMicrodataObject(IElement item, IList<IElement> memory){
 		string[] itemtypes=StringUtility.splitAtSpaces(item.getAttribute("itemtype"));
@@ -159,21 +124,6 @@ public sealed class Microdata {
 		return result;
 	}
 
-	public static JSONObject getMicrodataJSON(IDocument document){
-		if((document)==null)throw new ArgumentNullException("document");
-		JSONObject result=new JSONObject();
-		JSONArray items=new JSONArray();
-		foreach(IElement node in document.getElementsByTagName("*")){
-			if(node.getAttribute("itemscope")!=null &&
-					node.getAttribute("itemprop")==null){
-				IList<IElement> memory=new List<IElement>();
-				items.put(getMicrodataObject(node,memory));
-			}
-		}
-		result.put("items", items);
-		return result;
-	}
-
 	private static IList<IElement> getMicrodataProperties(IElement root){
 		IList<IElement> results=new List<IElement>();
 		IList<IElement> memory=new List<IElement>();
@@ -212,6 +162,56 @@ public sealed class Microdata {
 		}
 		return sortInTreeOrder(results,document);
 	}
+
+	private static string getPropertyValue(IElement e){
+		if(isHtmlElement(e)){
+			if(isHtmlElement(e,"meta")){
+				string attr=e.getAttribute("content");
+				return (attr==null) ? "" : attr;
+			}
+			string href=getHref(e);
+			if(href!=null)return href;
+			if(isHtmlElement(e,"data")){
+				string attr=e.getAttribute("value");
+				return (attr==null) ? "" : attr;
+			}
+			if(isHtmlElement(e,"time")){
+				string attr=e.getAttribute("datetime");
+				if(attr!=null)
+					return attr;
+			}
+		}
+		return e.getTextContent();
+	}
+
+	private static bool isHtmlElement(IElement element){
+		return "http://www.w3.org/1999/xhtml".Equals(element.getNamespaceURI());
+	}
+
+	private static bool isHtmlElement(IElement e, string name){
+		return e.getLocalName().Equals(name) && isHtmlElement(e);
+	}
+
+	private static IList<IElement> sortInTreeOrder(
+			IList<IElement> elements, INode root){
+		if(elements==null || elements.Count<2)
+			return elements;
+		List<ElementAndIndex> elems=new List<ElementAndIndex>();
+		foreach(IElement element in elements){
+			ElementAndIndex el=new ElementAndIndex();
+			el.element=element;
+			el.index=getElementIndex(root,element,0);
+			elems.Add(el);
+		}
+		elems.Sort(new SortInTreeOrderComparer());
+		IList<IElement> ret=new List<IElement>();
+		foreach(ElementAndIndex el in elems){
+			ret.Add(el.element);
+		}
+		return ret;
+	}
+
+	private Microdata(){}
 
 }
 

@@ -122,6 +122,12 @@ public sealed class HtmlDocument {
 	}
 
 	public static IDocument parseStream(
+			PeterO.Support.InputStream stream, string address)
+					 {
+		return parseStream(stream,address,"text/html");
+	}
+
+	public static IDocument parseStream(
 			PeterO.Support.InputStream stream, string address, string contentType)
 					 {
 		return parseStream(stream,address,contentType,null);
@@ -168,12 +174,6 @@ public sealed class HtmlDocument {
 			throw new ArgumentException("content type not supported: "+mediatype);
 	}
 
-	public static IDocument parseStream(
-			PeterO.Support.InputStream stream, string address)
-					 {
-		return parseStream(stream,address,"text/html");
-	}
-
 	/**
 	 * 
 	 * Parses an HTML document from a URL.
@@ -189,8 +189,6 @@ public sealed class HtmlDocument {
 		return DownloadHelper.downloadUrl(url,
 				new ParseURLListener(), false);
 	}
-	private HtmlDocument(){}
-
 	public static string resolveURL(INode node, string url, string _base){
 		string encoding=((node is IDocument) ?
 				((IDocument)node).getCharacterSet() : node.getOwnerDocument().getCharacterSet());
@@ -206,6 +204,8 @@ public sealed class HtmlDocument {
 			return _base;
 		return resolved.ToString();
 	}
+
+	private HtmlDocument(){}
 }
 
 }

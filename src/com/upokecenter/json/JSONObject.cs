@@ -69,11 +69,6 @@ public class JSONObject {
 			return this;
 		}
 
-		public override sealed int GetHashCode(){unchecked{
-			return 0;
-		}}
-
-
 		/**
 		 * A Null _object is equal to the null value and to itself.
 		 * @param _object    An _object to test for nullness.
@@ -85,6 +80,11 @@ public class JSONObject {
 		}
 
 
+		public override sealed int GetHashCode(){unchecked{
+			return 0;
+		}}
+
+
 		/**
 		 * Get the "null" _string value.
 		 * @return The _string "null".
@@ -94,6 +94,60 @@ public class JSONObject {
 		}
 	}
 
+
+	/**
+	 * Produce a _string in double quotes with backslash sequences in all the
+	 * right places. (Modified so that the slash character is not escaped.)
+	 * @param _string A string
+	 * @return  A string correctly formatted for insertion in a JSON message.
+	 */
+	public static string quote(string _string) {
+		if (_string == null || _string.Length == 0)
+			return "\"\"";
+
+		char         c;
+		int          i;
+		int          len = _string.Length;
+		StringBuilder sb = new StringBuilder(len + 4);
+		string       t;
+
+		sb.Append('"');
+		for (i = 0; i < len; i += 1) {
+			c = _string[i];
+			switch (c) {
+			case '\\':
+			case '"':// Peter O: '/' removed as needing escaping
+				sb.Append('\\');
+				sb.Append(c);
+				break;
+			case '\b':
+				sb.Append("\\b");
+				break;
+			case '\t':
+				sb.Append("\\t");
+				break;
+			case '\n':
+				sb.Append("\\n");
+				break;
+			case '\f':
+				sb.Append("\\f");
+				break;
+			case '\r':
+				sb.Append("\\r");
+				break;
+			default:
+				if (c < ' ') {
+					t = "000" + ((int)(c)).ToString("x",CultureInfo.InvariantCulture);
+					sb.Append("\\u" + t.Substring(t.Length - 4));
+				} else {
+					sb.Append(c);
+				}
+				break;
+			}
+		}
+		sb.Append('"');
+		return sb.ToString();
+	}
 
 	/**
 	 * The hash map where the JSONObject's properties are kept.
@@ -109,11 +163,69 @@ public class JSONObject {
 	public static readonly Object NULL = new Null();
 
 	/**
+	 * Produce a _string from a number.
+	 * @param  n A Number
+	 * @return A string.
+	 * @exception ArithmeticException JSON can only serialize finite numbers.
+	 */
+	static public string numberToString(Object n)  {
+		if (
+				(n is float &&
+						(Single.IsInfinity((float)n) || Single.IsNaN((float)n))) ||
+						(n is double &&
+								(Double.IsInfinity((double)n) || Double.IsNaN((double)n))))
+			throw new ArithmeticException(
+					"JSON can only serialize finite numbers.");
+
+		// Shave off trailing zeros and decimal point, if possible.
+
+		string s = toLowerCaseAscii(n.ToString());
+		if (s.IndexOf('e') < 0 && s.IndexOf('.') > 0) {
+			while (s.EndsWith("0",StringComparison.Ordinal)) {
+				s = s.Substring(0,(s.Length - 1)-(0));
+			}
+			if (s.EndsWith(".",StringComparison.Ordinal)) {
+				s = s.Substring(0,(s.Length - 1)-(0));
+			}
+		}
+		return s;
+	}
+
+
+	public static string toLowerCaseAscii(string s){
+		if(s==null)return null;
+		int len=s.Length;
+		char c=(char)0;
+		bool hasUpperCase=false;
+		for(int i=0;i<len;i++){
+			c=s[i];
+			if(c>='A' && c<='Z'){
+				hasUpperCase=true;
+				break;
+			}
+		}
+		if(!hasUpperCase)
+			return s;
+		StringBuilder builder=new StringBuilder();
+		for(int i=0;i<len;i++){
+			c=s[i];
+			if(c>='A' && c<='Z'){
+				builder.Append((char)(c+0x20));
+			} else {
+				builder.Append(c);
+			}
+		}
+		return builder.ToString();
+	}
+
+
+	/**
 	 * Construct an empty JSONObject.
 	 */
 	public JSONObject() {
 		myHashMap = new PeterO.Support.LenientDictionary<string, Object>();
 	}
+
 
 	/**
 	 * Construct a JSONObject from a JSONTokener.
@@ -161,6 +273,16 @@ public class JSONObject {
 
 
 	/**
+	 * Construct a JSONObject from a Map.
+	 * @param map A map _object that can be used to initialize the contents of
+	 *  the JSONObject.
+	 */
+	public JSONObject(IDictionary<string, Object> map) {
+		myHashMap = new PeterO.Support.LenientDictionary<string, Object>(map);
+	}
+
+
+	/**
 	 * Construct a JSONObject from a _string.
 	 *
 	 * @param _string    A _string beginning
@@ -169,16 +291,6 @@ public class JSONObject {
 	 *  @exception Json.InvalidJsonException The _string must be properly formatted.
 	 */
 	public JSONObject(string _string) : this(new JSONTokener(_string)) {
-	}
-
-
-	/**
-	 * Construct a JSONObject from a Map.
-	 * @param map A map _object that can be used to initialize the contents of
-	 *  the JSONObject.
-	 */
-	public JSONObject(IDictionary<string, Object> map) {
-		myHashMap = new PeterO.Support.LenientDictionary<string, Object>(map);
 	}
 
 
@@ -210,6 +322,23 @@ public class JSONObject {
 			put(key, a);
 		}
 		return this;
+	}
+
+
+	public override sealed bool Equals(object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (GetType() != obj.GetType())
+			return false;
+		JSONObject other = (JSONObject) obj;
+		if (myHashMap == null) {
+			if (other.myHashMap != null)
+				return false;
+		} else if (!myHashMap.Equals(other.myHashMap))
+			return false;
+		return true;
 	}
 
 
@@ -352,6 +481,15 @@ public Object get(string key)  {
 	}
 
 
+	public override sealed int GetHashCode(){unchecked{
+		 int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((myHashMap == null) ? 0 : myHashMap.GetHashCode());
+		return result;
+	}}
+
+
 	/**
 	 * Determine if the value associated with the key is null or if there is
 	 *  no value.
@@ -374,33 +512,6 @@ public Object get(string key)  {
 	public IEnumerable<string> keys() {
 		return myHashMap.Keys;
 	}
-
-
-	public override sealed int GetHashCode(){unchecked{
-		 int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((myHashMap == null) ? 0 : myHashMap.GetHashCode());
-		return result;
-	}}
-
-
-	public override sealed bool Equals(object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (GetType() != obj.GetType())
-			return false;
-		JSONObject other = (JSONObject) obj;
-		if (myHashMap == null) {
-			if (other.myHashMap != null)
-				return false;
-		} else if (!myHashMap.Equals(other.myHashMap))
-			return false;
-		return true;
-	}
-
 
 	/**
 	 * Get the number of keys stored in the JSONObject.
@@ -427,62 +538,6 @@ public int length() {
 		if (ja.Length == 0)
 			return null;
 		return ja;
-	}
-
-
-	/**
-	 * Produce a _string from a number.
-	 * @param  n A Number
-	 * @return A string.
-	 * @exception ArithmeticException JSON can only serialize finite numbers.
-	 */
-	static public string numberToString(Object n)  {
-		if (
-				(n is float &&
-						(Single.IsInfinity((float)n) || Single.IsNaN((float)n))) ||
-						(n is double &&
-								(Double.IsInfinity((double)n) || Double.IsNaN((double)n))))
-			throw new ArithmeticException(
-					"JSON can only serialize finite numbers.");
-
-		// Shave off trailing zeros and decimal point, if possible.
-
-		string s = toLowerCaseAscii(n.ToString());
-		if (s.IndexOf('e') < 0 && s.IndexOf('.') > 0) {
-			while (s.EndsWith("0",StringComparison.Ordinal)) {
-				s = s.Substring(0,(s.Length - 1)-(0));
-			}
-			if (s.EndsWith(".",StringComparison.Ordinal)) {
-				s = s.Substring(0,(s.Length - 1)-(0));
-			}
-		}
-		return s;
-	}
-
-	public static string toLowerCaseAscii(string s){
-		if(s==null)return null;
-		int len=s.Length;
-		char c=(char)0;
-		bool hasUpperCase=false;
-		for(int i=0;i<len;i++){
-			c=s[i];
-			if(c>='A' && c<='Z'){
-				hasUpperCase=true;
-				break;
-			}
-		}
-		if(!hasUpperCase)
-			return s;
-		StringBuilder builder=new StringBuilder();
-		for(int i=0;i<len;i++){
-			c=s[i];
-			if(c>='A' && c<='Z'){
-				builder.Append((char)(c+0x20));
-			} else {
-				builder.Append(c);
-			}
-		}
-		return builder.ToString();
 	}
 
 
@@ -745,61 +800,6 @@ public int length() {
 			put(key, value);
 		}
 		return this;
-	}
-
-
-	/**
-	 * Produce a _string in double quotes with backslash sequences in all the
-	 * right places. (Modified so that the slash character is not escaped.)
-	 * @param _string A string
-	 * @return  A string correctly formatted for insertion in a JSON message.
-	 */
-	public static string quote(string _string) {
-		if (_string == null || _string.Length == 0)
-			return "\"\"";
-
-		char         c;
-		int          i;
-		int          len = _string.Length;
-		StringBuilder sb = new StringBuilder(len + 4);
-		string       t;
-
-		sb.Append('"');
-		for (i = 0; i < len; i += 1) {
-			c = _string[i];
-			switch (c) {
-			case '\\':
-			case '"':// Peter O: '/' removed as needing escaping
-				sb.Append('\\');
-				sb.Append(c);
-				break;
-			case '\b':
-				sb.Append("\\b");
-				break;
-			case '\t':
-				sb.Append("\\t");
-				break;
-			case '\n':
-				sb.Append("\\n");
-				break;
-			case '\f':
-				sb.Append("\\f");
-				break;
-			case '\r':
-				sb.Append("\\r");
-				break;
-			default:
-				if (c < ' ') {
-					t = "000" + ((int)(c)).ToString("x",CultureInfo.InvariantCulture);
-					sb.Append("\\u" + t.Substring(t.Length - 4));
-				} else {
-					sb.Append(c);
-				}
-				break;
-			}
-		}
-		sb.Append('"');
-		return sb.ToString();
 	}
 
 	/**

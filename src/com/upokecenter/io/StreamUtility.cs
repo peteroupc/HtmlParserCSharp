@@ -15,23 +15,6 @@ using System.IO;
 
 
 public sealed class StreamUtility {
-	private StreamUtility(){}
-
-	public static void skipToEnd(PeterO.Support.InputStream stream){
-		if(stream==null)return;
-		while(true){
-			byte[] x=new byte[1024];
-			try {
-				int c=stream.Read(x,0,x.Length);
-				if(c<0) {
-					break;
-				}
-			} catch(IOException){
-				break; // maybe this stream is already closed
-			}
-		}
-	}
-
 	public static void copyStream(PeterO.Support.InputStream stream, Stream output)
 			 {
 		byte[] buffer=new byte[8192];
@@ -44,6 +27,27 @@ public sealed class StreamUtility {
 		}
 	}
 
+	public static string fileToString(PeterO.Support.File file)
+			 {
+		StreamReader reader = new StreamReader(file.ToString());
+		try {
+			StringBuilder builder=new StringBuilder();
+			char[] buffer = new char[4096];
+			while(true){
+				int count=reader.Read(buffer,0,(buffer).Length);
+				if(count<0) {
+					break;
+				}
+				builder.Append(buffer,0,count);
+			}
+			return builder.ToString();
+		} finally {
+			if(reader!=null) {
+				reader.Close();
+			}
+		}
+	}
+
 	public static void inputStreamToFile(PeterO.Support.InputStream stream, PeterO.Support.File file)
 			 {
 		FileStream output=null;
@@ -53,6 +57,21 @@ public sealed class StreamUtility {
 		} finally {
 			if(output!=null) {
 				output.Close();
+			}
+		}
+	}
+
+	public static void skipToEnd(PeterO.Support.InputStream stream){
+		if(stream==null)return;
+		while(true){
+			byte[] x=new byte[1024];
+			try {
+				int c=stream.Read(x,0,x.Length);
+				if(c<0) {
+					break;
+				}
+			} catch(IOException){
+				break; // maybe this stream is already closed
 			}
 		}
 	}
@@ -77,6 +96,30 @@ public sealed class StreamUtility {
 		return builder.ToString();
 	}
 
+
+	/**
+	 * 
+	 * Writes a _string in UTF-8 to the specified file.
+	 * If the file exists, it will be overwritten
+	 * 
+	 * @param s a _string to write. Illegal code unit
+	 * sequences are replaced with
+	 * with U+FFFD REPLACEMENT CHARACTER when writing to the stream.
+	 * @param file a filename
+	 * @ if the file can't be created
+	 * or another I/O error occurs.
+	 */
+	public static void stringToFile(string s, PeterO.Support.File file) {
+		Stream os=null;
+		try {
+			os=new FileStream((file).ToString(),FileMode.Create);
+			stringToStream(s,os);
+		} finally {
+			if(os!=null) {
+				os.Close();
+			}
+		}
+	}
 
 	/**
 	 * 
@@ -122,50 +165,7 @@ public sealed class StreamUtility {
 		}
 	}
 
-	/**
-	 * 
-	 * Writes a _string in UTF-8 to the specified file.
-	 * If the file exists, it will be overwritten
-	 * 
-	 * @param s a _string to write. Illegal code unit
-	 * sequences are replaced with
-	 * with U+FFFD REPLACEMENT CHARACTER when writing to the stream.
-	 * @param file a filename
-	 * @ if the file can't be created
-	 * or another I/O error occurs.
-	 */
-	public static void stringToFile(string s, PeterO.Support.File file) {
-		Stream os=null;
-		try {
-			os=new FileStream((file).ToString(),FileMode.Create);
-			stringToStream(s,os);
-		} finally {
-			if(os!=null) {
-				os.Close();
-			}
-		}
-	}
-
-	public static string fileToString(PeterO.Support.File file)
-			 {
-		StreamReader reader = new StreamReader(file.ToString());
-		try {
-			StringBuilder builder=new StringBuilder();
-			char[] buffer = new char[4096];
-			while(true){
-				int count=reader.Read(buffer,0,(buffer).Length);
-				if(count<0) {
-					break;
-				}
-				builder.Append(buffer,0,count);
-			}
-			return builder.ToString();
-		} finally {
-			if(reader!=null) {
-				reader.Close();
-			}
-		}
-	}
+	private StreamUtility(){}
 
 }
 

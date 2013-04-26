@@ -10,35 +10,6 @@ using System;
 
 public class JSONPatch {
 
-	private static string getString(JSONObject o, string key){
-		try {
-			return o.getString(key);
-		} catch(System.Collections.Generic.KeyNotFoundException){
-			return null;
-		}
-	}
-
-	private static Object removeOperation(
-			Object o,
-			string opStr,
-			string path){
-		if(path==null)throw new ArgumentException("patch "+opStr);
-		if(path.Length==0)
-			return o;
-		else {
-			JSONPointer pointer=JSONPointer.fromPointer(o, path);
-			if(!pointer.exists())
-				throw new System.Collections.Generic.KeyNotFoundException("patch "+opStr+" "+path);
-			o=pointer.getValue();
-			if(pointer.getParent() is JSONArray){
-				((JSONArray)pointer.getParent()).removeAt(pointer.getIndex());
-			} else if(pointer.getParent() is JSONObject){
-				((JSONObject)pointer.getParent()).remove(pointer.getKey());
-			}
-			return o;
-		}
-	}
-
 	private static Object addOperation(
 			Object o,
 			string opStr,
@@ -64,33 +35,6 @@ public class JSONPatch {
 		return o;
 	}
 
-	private static Object replaceOperation(
-			Object o,
-			string opStr,
-			string path,
-			Object value
-			){
-		if(path==null)throw new ArgumentException("patch "+opStr);
-		if(path.Length==0){
-			o=value;
-		} else {
-			JSONPointer pointer=JSONPointer.fromPointer(o, path);
-			if(!pointer.exists())
-				throw new System.Collections.Generic.KeyNotFoundException("patch "+opStr+" "+path);
-			if(pointer.getParent() is JSONArray){
-				int index=pointer.getIndex();
-				if(index<0)
-					throw new ArgumentException("patch "+opStr+" path");
-				((JSONArray)pointer.getParent()).put(index,value);
-			} else if(pointer.getParent() is JSONObject){
-				string key=pointer.getKey();
-				((JSONObject)pointer.getParent()).put(key,value);
-			} else
-				throw new ArgumentException("patch "+opStr+" path");
-		}
-		return o;
-	}
-
 	private static Object cloneJsonObject(Object o){
 		try {
 			if(o is JSONArray)
@@ -101,6 +45,14 @@ public class JSONPatch {
 			return o;
 		}
 		return o;
+	}
+
+	private static string getString(JSONObject o, string key){
+		try {
+			return o.getString(key);
+		} catch(System.Collections.Generic.KeyNotFoundException){
+			return null;
+		}
 	}
 
 	public static Object patch(Object o, JSONArray patch){
@@ -183,6 +135,54 @@ public class JSONPatch {
 			}
 		}
 		return (o==null) ? JSONObject.NULL : o;
+	}
+
+	private static Object removeOperation(
+			Object o,
+			string opStr,
+			string path){
+		if(path==null)throw new ArgumentException("patch "+opStr);
+		if(path.Length==0)
+			return o;
+		else {
+			JSONPointer pointer=JSONPointer.fromPointer(o, path);
+			if(!pointer.exists())
+				throw new System.Collections.Generic.KeyNotFoundException("patch "+opStr+" "+path);
+			o=pointer.getValue();
+			if(pointer.getParent() is JSONArray){
+				((JSONArray)pointer.getParent()).removeAt(pointer.getIndex());
+			} else if(pointer.getParent() is JSONObject){
+				((JSONObject)pointer.getParent()).remove(pointer.getKey());
+			}
+			return o;
+		}
+	}
+
+	private static Object replaceOperation(
+			Object o,
+			string opStr,
+			string path,
+			Object value
+			){
+		if(path==null)throw new ArgumentException("patch "+opStr);
+		if(path.Length==0){
+			o=value;
+		} else {
+			JSONPointer pointer=JSONPointer.fromPointer(o, path);
+			if(!pointer.exists())
+				throw new System.Collections.Generic.KeyNotFoundException("patch "+opStr+" "+path);
+			if(pointer.getParent() is JSONArray){
+				int index=pointer.getIndex();
+				if(index<0)
+					throw new ArgumentException("patch "+opStr+" path");
+				((JSONArray)pointer.getParent()).put(index,value);
+			} else if(pointer.getParent() is JSONObject){
+				string key=pointer.getKey();
+				((JSONObject)pointer.getParent()).put(key,value);
+			} else
+				throw new ArgumentException("patch "+opStr+" path");
+		}
+		return o;
 	}
 }
 

@@ -224,10 +224,10 @@ sealed class CharsetSniffer {
 			StringBuilder attrValue
 			){
 		if(attrName!=null) {
-			attrName.Length=(0);
+			attrName.Clear();
 		}
 		if(attrValue!=null) {
-			attrValue.Length=(0);
+			attrValue.Clear();
 		}
 		while(position<length &&
 				(data[position]==0x09 ||
@@ -245,8 +245,14 @@ sealed class CharsetSniffer {
 		int b=0;
 		// Skip attribute name
 		while(true){
-			if(position>=length)
+			if(position>=length){
+				// end of stream reached, so clear
+				// the attribute name to indicate failure
+				if(attrName!=null) {
+					attrName.Clear();
+				}
 				return position;
+			}
 			b=(data[position]&0xFF);
 			if(b==0x3D && !empty){
 				position++;
@@ -276,7 +282,15 @@ sealed class CharsetSniffer {
 				}
 				position++;
 			}
-			if(position>=length || (data[position]&0xFF)!=0x3D)
+			if(position>=length){
+				// end of stream reached, so clear
+				// the attribute name to indicate failure
+				if(attrName!=null) {
+					attrName.Clear();
+				}
+				return position;
+			}
+			if((data[position]&0xFF)!=0x3D)
 				return position;
 			position++;
 		}
@@ -288,13 +302,32 @@ sealed class CharsetSniffer {
 			position++;
 		}
 		// Skip value
-		if(position>=length)return position;
+		if(position>=length){
+			// end of stream reached, so clear
+			// the attribute name to indicate failure
+			if(attrName!=null) {
+				attrName.Clear();
+			}
+			return position;
+		}
 		b=(data[position]&0xFF);
-		if(b==0x22 || b==0x27){
+		if(b==0x22 || b==0x27){ // have quoted _string
 			position++;
-			while(position<length){
+			while(true){
+				if(position>=length){
+					// end of stream reached, so clear
+					// the attribute name and value to indicate failure
+					if(attrName!=null) {
+						attrName.Clear();
+					}
+					if(attrValue!=null) {
+						attrValue.Clear();
+					}
+					return position;
+				}
 				int b2=(data[position]&0xFF);
-				if(b==b2) {
+				if(b==b2) { // quote mark reached
+					position++;
 					break;
 				}
 				if(attrValue!=null){
@@ -306,7 +339,6 @@ sealed class CharsetSniffer {
 				}
 				position++;
 			}
-			position++;
 			return position;
 		} else if(b==0x3E)
 			return position;
@@ -321,8 +353,17 @@ sealed class CharsetSniffer {
 			position++;
 		}
 		while(true){
-			if(position>=length)
+			if(position>=length){
+				// end of stream reached, so clear
+				// the attribute name and value to indicate failure
+				if(attrName!=null) {
+					attrName.Clear();
+				}
+				if(attrValue!=null) {
+					attrValue.Clear();
+				}
 				return position;
+			}
 			b=(data[position]&0xFF);
 			if(b==0x09 || b==0x0a || b==0x0c || b==0x0d || b==0x20 || b==0x3e)
 				return position;
@@ -358,7 +399,7 @@ sealed class CharsetSniffer {
 
 	public static string sniffContentType(PeterO.Support.InputStream input, string mediaType) {
 		if(mediaType!=null && HeaderParser.isValidMediaType(mediaType)){
-			string type=HeaderParser.getMediaType(mediaType,0);
+			string type=HeaderParser.getMediaType(mediaType,0,mediaType.Length);
 			if(type.Equals("text/xml") || type.Equals("application/xml") ||
 					type.EndsWith("+xml",StringComparison.Ordinal))
 				return mediaType;

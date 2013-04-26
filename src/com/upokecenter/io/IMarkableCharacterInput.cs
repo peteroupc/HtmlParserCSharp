@@ -10,13 +10,13 @@ public interface IMarkableCharacterInput : ICharacterInput {
 
 	 int getMarkPosition();
 
-	 void setMarkPosition(int pos) ;
-
-	 int setSoftMark();
+	 void moveBack(int count) ;
 
 	 int setHardMark();
 
-	 void moveBack(int count) ;
+	 void setMarkPosition(int pos) ;
+
+	 int setSoftMark();
 
 }
 }

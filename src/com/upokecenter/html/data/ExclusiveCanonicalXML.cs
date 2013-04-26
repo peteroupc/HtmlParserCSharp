@@ -15,14 +15,7 @@ using com.upokecenter.util;
  * @author Peter
  *
  */
-public sealed class ExclusiveCanonicalXML {
-	private ExclusiveCanonicalXML(){}
-	private sealed class NamespaceAttrComparer : IComparer<IAttr> {
-		public int Compare(IAttr arg0, IAttr arg1) {
-			return StringUtility.codePointCompare(arg0.getName(),arg1.getName());
-		}
-	}
-
+sealed class ExclusiveCanonicalXML {
 	private sealed class AttrComparer : IComparer<IAttr> {
 		public int Compare(IAttr arg0, IAttr arg1) {
 			string namespace1=string.IsNullOrEmpty(arg0.getPrefix()) ?
@@ -40,6 +33,46 @@ public sealed class ExclusiveCanonicalXML {
 			return cmp;
 		}
 	}
+	private sealed class NamespaceAttr : IAttr {
+		string prefix;
+		string localName;
+		string value;
+		string name;
+		public NamespaceAttr(string prefix, string value){
+			if(prefix.Length==0){
+				this.prefix="";
+				this.localName="xmlns";
+				this.value=value;
+				this.name="xmlns";
+			} else {
+				this.prefix="xmlns";
+				this.localName=prefix;
+				this.name="xmlns:"+value;
+				this.value=value;
+			}
+		}
+		public string getLocalName() {
+			return localName;
+		}
+		public string getName() {
+			return name;
+		}
+		public string getNamespaceURI() {
+			return "http://www.w3.org/2000/xmlns/";
+		}
+		public string getPrefix() {
+			return prefix;
+		}
+		public string getValue() {
+			return value;
+		}
+	}
+
+	private sealed class NamespaceAttrComparer : IComparer<IAttr> {
+		public int Compare(IAttr arg0, IAttr arg1) {
+			return StringUtility.codePointCompare(arg0.getName(),arg1.getName());
+		}
+	}
 
 	private static readonly IComparer<IAttr> attrComparer=new AttrComparer();
 	private static readonly IComparer<IAttr> attrNamespaceComparer=new NamespaceAttrComparer();
@@ -50,21 +83,6 @@ public sealed class ExclusiveCanonicalXML {
 			IDictionary<string,string> prefixList
 			){
 		return canonicalize(node,includeRoot,prefixList,false);
-	}
-	private static void checkNamespacePrefix(string prefix, string nsvalue){
-		if(prefix.Equals("xmlns"))
-			throw new ArgumentException("'xmlns' _namespace declared");
-		if(prefix.Equals("xml") && !"http://www.w3.org/XML/1998/_namespace".Equals(nsvalue))
-			throw new ArgumentException("'xml' bound to wrong _namespace name");
-		if(!"xml".Equals(prefix) && "http://www.w3.org/XML/1998/_namespace".Equals(nsvalue))
-			throw new ArgumentException("'xml' bound to wrong _namespace name");
-		if("http://www.w3.org/2000/xmlns/".Equals(nsvalue))
-			throw new ArgumentException("'prefix' bound to xmlns _namespace name");
-		if(!string.IsNullOrEmpty(nsvalue)){
-			if(!URIUtility.hasSchemeForURI(nsvalue))
-				throw new ArgumentException(nsvalue+" is not a valid _namespace URI.");
-		} else if(!"".Equals(prefix))
-			throw new ArgumentException("can't undeclare a prefix");
 	}
 	public static string canonicalize(
 			INode node,
@@ -104,121 +122,6 @@ public sealed class ExclusiveCanonicalXML {
 		}
 		return builder.ToString();
 	}
-
-	private static bool isVisiblyUtilized(IElement element, string s){
-		string prefix=element.getPrefix();
-		if(prefix==null) {
-			prefix="";
-		}
-		if(s.Equals(prefix))return true;
-		if(s.Length>0){
-			foreach(IAttr attr in element.getAttributes()){
-				prefix=attr.getPrefix();
-				if(prefix==null) {
-					continue;
-				}
-				if(s.Equals(prefix))return true;
-			}
-		}
-		return false;
-	}
-
-	private static void renderAttribute(StringBuilder builder,
-			string prefix, string name, string value){
-		builder.Append(' ');
-		if(!string.IsNullOrEmpty(prefix)){
-			builder.Append(prefix);
-			builder.Append(":");
-		}
-		builder.Append(name);
-		builder.Append("=\"");
-		for(int i=0;i<value.Length;i++){
-			char c=value[i];
-			if(c==0x0d) {
-				builder.Append("&#xD;");
-			} else if(c==0x09) {
-				builder.Append("&#x9;");
-			} else if(c==0x0a) {
-				builder.Append("&#xA;");
-			} else if(c=='"') {
-				builder.Append("&quot;");
-			} else if(c=='<') {
-				builder.Append("&lt;");
-			} else if(c=='&') {
-				builder.Append("&amp;");
-			} else {
-				builder.Append(c);
-			}
-		}
-		builder.Append('"');
-	}
-
-	private static void canonicalizeOutsideElement(
-			INode node, StringBuilder builder, bool beforeDocument){
-		int nodeType=node.getNodeType();
-		if(nodeType==NodeType.COMMENT_NODE){
-			if(!beforeDocument) {
-				builder.Append('\n');
-			}
-			builder.Append("<!--");
-			builder.Append(((IComment)node).getData());
-			builder.Append("-->");
-			if(beforeDocument) {
-				builder.Append('\n');
-			}
-		} else if(nodeType==NodeType.PROCESSING_INSTRUCTION_NODE){
-			if(!beforeDocument) {
-				builder.Append('\n');
-			}
-			builder.Append("<?");
-			builder.Append(((IProcessingInstruction)node).getTarget());
-			string data=((IProcessingInstruction)node).getData();
-			if(data.Length>0){
-				builder.Append(' ');
-				builder.Append(data);
-			}
-			builder.Append("?>");
-			if(beforeDocument) {
-				builder.Append('\n');
-			}
-		}
-	}
-
-	private sealed class NamespaceAttr : IAttr {
-		string prefix;
-		string localName;
-		string value;
-		string name;
-		public NamespaceAttr(string prefix, string value){
-			if(prefix.Length==0){
-				this.prefix="";
-				this.localName="xmlns";
-				this.value=value;
-				this.name="xmlns";
-			} else {
-				this.prefix="xmlns";
-				this.localName=prefix;
-				this.name="xmlns:"+value;
-				this.value=value;
-			}
-		}
-		public string getPrefix() {
-			return prefix;
-		}
-		public string getLocalName() {
-			return localName;
-		}
-		public string getName() {
-			return name;
-		}
-		public string getNamespaceURI() {
-			return "http://www.w3.org/2000/xmlns/";
-		}
-		public string getValue() {
-			return value;
-		}
-	}
-
 	private static void canonicalize(
 			INode node,
 			StringBuilder builder,
@@ -378,6 +281,103 @@ public sealed class ExclusiveCanonicalXML {
 			}
 		}
 	}
+
+	private static void canonicalizeOutsideElement(
+			INode node, StringBuilder builder, bool beforeDocument){
+		int nodeType=node.getNodeType();
+		if(nodeType==NodeType.COMMENT_NODE){
+			if(!beforeDocument) {
+				builder.Append('\n');
+			}
+			builder.Append("<!--");
+			builder.Append(((IComment)node).getData());
+			builder.Append("-->");
+			if(beforeDocument) {
+				builder.Append('\n');
+			}
+		} else if(nodeType==NodeType.PROCESSING_INSTRUCTION_NODE){
+			if(!beforeDocument) {
+				builder.Append('\n');
+			}
+			builder.Append("<?");
+			builder.Append(((IProcessingInstruction)node).getTarget());
+			string data=((IProcessingInstruction)node).getData();
+			if(data.Length>0){
+				builder.Append(' ');
+				builder.Append(data);
+			}
+			builder.Append("?>");
+			if(beforeDocument) {
+				builder.Append('\n');
+			}
+		}
+	}
+
+	private static void checkNamespacePrefix(string prefix, string nsvalue){
+		if(prefix.Equals("xmlns"))
+			throw new ArgumentException("'xmlns' _namespace declared");
+		if(prefix.Equals("xml") && !"http://www.w3.org/XML/1998/_namespace".Equals(nsvalue))
+			throw new ArgumentException("'xml' bound to wrong _namespace name");
+		if(!"xml".Equals(prefix) && "http://www.w3.org/XML/1998/_namespace".Equals(nsvalue))
+			throw new ArgumentException("'xml' bound to wrong _namespace name");
+		if("http://www.w3.org/2000/xmlns/".Equals(nsvalue))
+			throw new ArgumentException("'prefix' bound to xmlns _namespace name");
+		if(!string.IsNullOrEmpty(nsvalue)){
+			if(!URIUtility.hasSchemeForURI(nsvalue))
+				throw new ArgumentException(nsvalue+" is not a valid _namespace URI.");
+		} else if(!"".Equals(prefix))
+			throw new ArgumentException("can't undeclare a prefix");
+	}
+
+	private static bool isVisiblyUtilized(IElement element, string s){
+		string prefix=element.getPrefix();
+		if(prefix==null) {
+			prefix="";
+		}
+		if(s.Equals(prefix))return true;
+		if(s.Length>0){
+			foreach(IAttr attr in element.getAttributes()){
+				prefix=attr.getPrefix();
+				if(prefix==null) {
+					continue;
+				}
+				if(s.Equals(prefix))return true;
+			}
+		}
+		return false;
+	}
+
+	private static void renderAttribute(StringBuilder builder,
+			string prefix, string name, string value){
+		builder.Append(' ');
+		if(!string.IsNullOrEmpty(prefix)){
+			builder.Append(prefix);
+			builder.Append(":");
+		}
+		builder.Append(name);
+		builder.Append("=\"");
+		for(int i=0;i<value.Length;i++){
+			char c=value[i];
+			if(c==0x0d) {
+				builder.Append("&#xD;");
+			} else if(c==0x09) {
+				builder.Append("&#x9;");
+			} else if(c==0x0a) {
+				builder.Append("&#xA;");
+			} else if(c=='"') {
+				builder.Append("&quot;");
+			} else if(c=='<') {
+				builder.Append("&lt;");
+			} else if(c=='&') {
+				builder.Append("&amp;");
+			} else {
+				builder.Append(c);
+			}
+		}
+		builder.Append('"');
+	}
+
+	private ExclusiveCanonicalXML(){}
 
 }
 

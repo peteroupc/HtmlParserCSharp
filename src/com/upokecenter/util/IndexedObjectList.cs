@@ -13,6 +13,21 @@ public sealed class IndexedObjectList<T> {
 	private Object syncRoot=new Object();
 
 
+	// Remove the strong reference, but keep the weak
+	// reference; the index becomes no good when the
+	// _object is garbage collected
+	public T receiveObject(int index){
+		if(index<0)return default(T);
+		T ret=default(T);
+		lock(syncRoot){
+			if(index>=strongrefs.Count)return default(T);
+			ret=strongrefs[index];
+			if(ret==null)throw new InvalidOperationException();
+			strongrefs[index]=default(T);
+		}
+		return ret;
+	}
+
 	// Keep a strong reference and a weak reference
 	public int sendObject(T value){
 		if(value==null)return -1; // Special case for null
@@ -38,21 +53,6 @@ public sealed class IndexedObjectList<T> {
 			weakrefs.Add(new WeakReference(value));
 			return ret;
 		}
-	}
-
-	// Remove the strong reference, but keep the weak
-	// reference; the index becomes no good when the
-	// _object is garbage collected
-	public T receiveObject(int index){
-		if(index<0)return default(T);
-		T ret=default(T);
-		lock(syncRoot){
-			if(index>=strongrefs.Count)return default(T);
-			ret=strongrefs[index];
-			if(ret==null)throw new InvalidOperationException();
-			strongrefs[index]=default(T);
-		}
-		return ret;
 	}
 }
 

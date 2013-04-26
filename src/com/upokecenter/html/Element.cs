@@ -73,6 +73,11 @@ internal class Element : Node, IElement {
 	}
 
 
+	internal void addAttribute(Attr value) {
+		attributes.Add(value);
+	}
+
+
 	private void collectElements(INode c, string s, IList<IElement> nodes){
 		if(c.getNodeType()==NodeType.ELEMENT_NODE){
 			Element e=(Element)c;
@@ -84,7 +89,6 @@ internal class Element : Node, IElement {
 			collectElements(node,s,nodes);
 		}
 	}
-
 
 	private void collectElementsHtml(INode c, string s,
 			string sLowercase, IList<IElement> nodes){
@@ -120,10 +124,10 @@ internal class Element : Node, IElement {
 		}
 		return null;
 	}
-
 	public IList<IAttr> getAttributes() {
 		return new List<IAttr>(attributes);
 	}
+
 	public IElement getElementById(string id) {
 		if(id==null)
 			throw new ArgumentException();
@@ -162,12 +166,37 @@ internal class Element : Node, IElement {
 		return getAttribute("id");
 	}
 
+	public string getInnerHTML() {
+		return getInnerHtmlInternal();
+	}
+
+	public override sealed string getLanguage(){
+		INode parent=getParentNode();
+		string a=getAttributeNS(HtmlParser.XML_NAMESPACE,"lang");
+		if(a==null) {
+			a=getAttribute("lang");
+		}
+		if(a!=null)return a;
+		if(parent==null){
+			parent=getOwnerDocument();
+			if(parent==null)return "";
+			return parent.getLanguage();
+		} else
+			return parent.getLanguage();
+	}
 	public string getLocalName() {
 		return name;
 	}
 
 	public string getNamespaceURI() {
 		return _namespace;
+	}
+	public override sealed string getNodeName(){
+		return getTagName();
+	}
+
+	public string getPrefix() {
+		return prefix;
 	}
 
 	public string getTagName() {
@@ -180,6 +209,7 @@ internal class Element : Node, IElement {
 			return StringUtility.toUpperCaseAscii(tagName);
 		return tagName;
 	}
+
 	public override sealed string getTextContent(){
 		StringBuilder builder=new StringBuilder();
 		foreach(INode node in getChildNodes()){
@@ -190,9 +220,11 @@ internal class Element : Node, IElement {
 		return builder.ToString();
 	}
 
+
 	internal bool isHtmlElement(string name){
 		return name.Equals(this.name) && HtmlParser.HTML_NAMESPACE.Equals(_namespace);
 	}
+
 	internal bool isMathMLElement(string name){
 		return name.Equals(this.name) && HtmlParser.MATHML_NAMESPACE.Equals(_namespace);
 	}
@@ -209,12 +241,6 @@ internal class Element : Node, IElement {
 			}
 		}
 	}
-
-	internal void addAttribute(Attr value) {
-		attributes.Add(value);
-	}
-
-
 	internal void setAttribute(string _string, string value) {
 		foreach(IAttr attr in getAttributes()){
 			if(attr.getName().Equals(_string)){
@@ -223,6 +249,7 @@ internal class Element : Node, IElement {
 		}
 		attributes.Add(new Attr(_string,value));
 	}
+
 
 	internal void setLocalName(string name) {
 		this.name = name;
@@ -235,6 +262,7 @@ internal class Element : Node, IElement {
 	public void setPrefix(string prefix){
 		this.prefix=prefix;
 	}
+
 	internal override sealed string toDebugString(){
 		StringBuilder builder=new StringBuilder();
 		string extra="";
@@ -282,30 +310,6 @@ internal class Element : Node, IElement {
 			}
 		}
 		return builder.ToString();
-	}
-
-
-	public override sealed string getNodeName(){
-		return getTagName();
-	}
-
-	public string getPrefix() {
-		return prefix;
-	}
-
-	public override sealed string getLanguage(){
-		INode parent=getParentNode();
-		string a=getAttributeNS(HtmlParser.XML_NAMESPACE,"lang");
-		if(a==null) {
-			a=getAttribute("lang");
-		}
-		if(a!=null)return a;
-		if(parent==null){
-			parent=getOwnerDocument();
-			if(parent==null)return "";
-			return parent.getLanguage();
-		} else
-			return parent.getLanguage();
 	}
 
 }

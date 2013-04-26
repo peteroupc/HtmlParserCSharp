@@ -10,10 +10,128 @@ using com.upokecenter.util;
 internal class RDFa1 : IRDFParser {
 
 
+	private static string getTextNodeText(INode node){
+		StringBuilder builder=new StringBuilder();
+		foreach(INode child in node.getChildNodes()){
+			if(child.getNodeType()==NodeType.TEXT_NODE){
+				builder.Append(((IText)child).getData());
+			} else {
+				builder.Append(getTextNodeText(child));
+			}
+		}
+		return builder.ToString();
+	}
+	private static bool isHtmlElement(IElement element, string name){
+		return element!=null &&
+				"http://www.w3.org/1999/xhtml".Equals(element.getNamespaceURI()) &&
+				name.Equals(element.getLocalName());
+	}
 	private RDFa.EvalContext context;
 	private ISet<RDFTriple> outputGraph;
+
 	private IDocument document;
+
 	private bool xhtml=false;
+
+	private static readonly string RDF_XMLLITERAL="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral";
+	private static readonly string RDF_NAMESPACE="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+
+	private static IList<string> relterms=(new string[]{
+			"alternate","appendix","cite",
+			"bookmark","chapter","contents",
+			"copyright","first","glossary",
+			"help","icon","index","last",
+			"license","meta","next","prev",
+			"role","section","start",
+			"stylesheet","subsection","top",
+			"up","p3pv1"
+	});
+
+	private static int getCuriePrefixLength(string s, int offset, int length){
+		if(s==null || length==0)return -1;
+		if(s[offset]==':')return 0;
+		if(!isNCNameStartChar(s[offset]))return -1;
+		int index=offset+1;
+		int sLength=offset+length;
+		while(index<sLength){
+			// Get the next Unicode character
+			int c=s[index];
+			if(c>=0xD800 && c<=0xDBFF && index+1<sLength &&
+					s[index+1]>=0xDC00 && s[index+1]<=0xDFFF){
+				// Get the Unicode code point for the surrogate pair
+				c=0x10000+(c-0xD800)*0x400+(s[index+1]-0xDC00);
+				index++;
+			} else if(c>=0xD800 && c<=0xDFFF)
+				// error
+				return -1;
+			if(c==':')return index-offset;
+			else if(!isNCNameChar(c))return -1;
+			index++;
+		}
+		return -1;
+	}
+
+	private static bool hasNonTextChildNodes(INode node){
+		foreach(INode child in node.getChildNodes()){
+			if(child.getNodeType()!=NodeType.TEXT_NODE)
+				return true;
+		}
+		return false;
+	}
+
+	private static bool isNCNameChar(int c){
+		return (c>='a' && c<='z') ||
+				(c>='A' && c<='Z') ||
+				c=='_' || c=='.' || c=='-' ||
+				(c>='0' && c<='9') ||
+				c==0xb7 ||
+				(c>=0xc0 && c<=0xd6) ||
+				(c>=0xd8 && c<=0xf6) ||
+				(c>=0xf8 && c<=0x2ff) ||
+				(c>=0x300 && c<=0x37d) ||
+				(c>=0x37f && c<=0x1fff) ||
+				(c>=0x200c && c<=0x200d) ||
+				(c>=0x203f && c<=0x2040) ||
+				(c>=0x2070 && c<=0x218f) ||
+				(c>=0x2c00 && c<=0x2fef) ||
+				(c>=0x3001 && c<=0xd7ff) ||
+				(c>=0xf900 && c<=0xfdcf) ||
+				(c>=0xfdf0 && c<=0xfffd) ||
+				(c>=0x10000 && c<=0xeffff);
+	}
+
+	private static bool isNCNameStartChar(int c){
+		return (c>='a' && c<='z') ||
+				(c>='A' && c<='Z') ||
+				c=='_' ||
+				(c>=0xc0 && c<=0xd6) ||
+				(c>=0xd8 && c<=0xf6) ||
+				(c>=0xf8 && c<=0x2ff) ||
+				(c>=0x370 && c<=0x37d) ||
+				(c>=0x37f && c<=0x1fff) ||
+				(c>=0x200c && c<=0x200d) ||
+				(c>=0x2070 && c<=0x218f) ||
+				(c>=0x2c00 && c<=0x2fef) ||
+				(c>=0x3001 && c<=0xd7ff) ||
+				(c>=0xf900 && c<=0xfdcf) ||
+				(c>=0xfdf0 && c<=0xfffd) ||
+				(c>=0x10000 && c<=0xeffff);
+	}
+	private static bool isValidCurieReference(string s, int offset, int length){
+		if(s==null)return false;
+		if(length==0)return true;
+		int[] indexes=URIUtility.splitIRI(s,offset,length,URIUtility.ParseMode.IRIStrict);
+		if(indexes==null)
+			return false;
+		if(indexes[0]!=-1) // check if scheme component is present
+			return false;
+		return true;
+	}
+	private int blankNode;
+
+	private IDictionary<string,RDFTerm> bnodeLabels=new PeterO.Support.LenientDictionary<string,RDFTerm>();
+
+	private static readonly string RDFA_DEFAULT_PREFIX = "http://www.w3.org/1999/xhtml/vocab#";
 
 	public RDFa1(IDocument document){
 		this.document=document;
@@ -33,55 +151,141 @@ internal class RDFa1 : IRDFParser {
 			xhtml=true;
 		}
 	}
-
-	private static bool isHtmlElement(IElement element, string name){
-		return element!=null &&
-				"http://www.w3.org/1999/xhtml".Equals(element.getNamespaceURI()) &&
-				name.Equals(element.getLocalName());
+	private RDFTerm generateBlankNode(){
+		// Use "b:" as the prefix; according to the CURIE syntax,
+		// "b:" can never begin a valid CURIE reference (in RDFa 1.0,
+		// the reference has the broader production irelative-refValue),
+		// so it can
+		// be used to guarantee that generated blank nodes will never
+		// conflict with those stated explicitly
+		string blankNodeString="b:"+Convert.ToString(blankNode,CultureInfo.InvariantCulture);
+		blankNode++;
+		RDFTerm term=RDFTerm.fromBlankNode(blankNodeString);
+		bnodeLabels.Add(blankNodeString,term);
+		return term;
 	}
 
-	private static readonly string RDF_XMLLITERAL="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral";
-	private static readonly string RDF_NAMESPACE="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-
-	private static string getTextNodeText(INode node){
-		StringBuilder builder=new StringBuilder();
-		foreach(INode child in node.getChildNodes()){
-			if(child.getNodeType()==NodeType.TEXT_NODE){
-				builder.Append(((IText)child).getData());
+	private string getCurie(
+			string attribute, int offset, int length,
+			IDictionary<string,string> prefixMapping) {
+		if(attribute==null)return null;
+		int refIndex=offset;
+		int refLength=length;
+		int prefix=getCuriePrefixLength(attribute,refIndex,refLength);
+		string prefixIri=null;
+		if(prefix>=0){
+			string prefixName=StringUtility.toLowerCaseAscii(
+					attribute.Substring(refIndex,(refIndex+prefix)-(refIndex)));
+			refIndex+=(prefix+1);
+			refLength-=(prefix+1);
+			prefixIri=prefixMapping[prefixName];
+			if(prefix==0) {
+				prefixIri=RDFA_DEFAULT_PREFIX;
 			} else {
-				builder.Append(getTextNodeText(child));
+				prefixIri=prefixMapping[prefixName];
 			}
-		}
-		return builder.ToString();
+			if(prefixIri==null || "_".Equals(prefixName))
+				return null;
+		} else
+			// RDFa doesn't define a mapping for an absent prefix
+			return null;
+		if(!isValidCurieReference(attribute,refIndex,refLength))
+			return null;
+		if(prefix>=0)
+			return relativeResolve(prefixIri+attribute.Substring(refIndex,(refIndex+refLength)-(refIndex))).getValue();
+		else
+			return null;
 	}
 
-	private void miniRdfXmlChild(IElement node, RDFTerm subject, string language){
-		string nsname=node.getNamespaceURI();
-		if(node.getAttribute("xml:lang")!=null){
-			language=node.getAttribute("xml:lang");
-		}
-		string localname=node.getLocalName();
-		RDFTerm predicate=relativeResolve(nsname+localname);
-		if(!hasNonTextChildNodes(node)){
-			string content=getTextNodeText(node);
-			RDFTerm literal;
-			if(!string.IsNullOrEmpty(language)){
-				literal=RDFTerm.fromLangString(content, language);
+	private string getCurie(
+			string attribute,
+			IDictionary<string,string> prefixMapping) {
+		if(attribute==null)return null;
+		return getCurie(attribute,0,attribute.Length,prefixMapping);
+	}
+
+	private RDFTerm getCurieOrBnode(
+			string attribute, int offset, int length,
+			IDictionary<string,string> prefixMapping) {
+		int refIndex=offset;
+		int refLength=length;
+		int prefix=getCuriePrefixLength(attribute,refIndex,refLength);
+		string prefixIri=null;
+		string prefixName=null;
+		if(prefix>=0){
+			prefixName=StringUtility.toLowerCaseAscii(
+					attribute.Substring(refIndex,(refIndex+prefix)-(refIndex)));
+			refIndex+=(prefix+1);
+			refLength-=(prefix+1);
+			if(prefix==0) {
+				prefixIri=RDFA_DEFAULT_PREFIX;
 			} else {
-				literal=RDFTerm.fromTypedString(content);
+				prefixIri=prefixMapping[prefixName];
 			}
-			outputGraph.Add(new RDFTriple(subject,predicate,literal));
+			if(prefixIri==null && !"_".Equals(prefixName))return null;
+		} else
+			// RDFa doesn't define a mapping for an absent prefix
+			return null;
+		if(!isValidCurieReference(attribute,refIndex,refLength))
+			return null;
+		if(prefix>=0){
+			if("_".Equals(prefixName)){
+				#if DEBUG
+if(!(refIndex>=0 ))throw new InvalidOperationException(attribute);
+#endif
+				#if DEBUG
+if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(attribute);
+#endif
+				if(refLength==0)
+					// use an empty blank node: the CURIE syntax
+					// allows an empty reference; see the comment
+					// in generateBlankNode for why "b:" appears
+					// at the beginning
+					return getNamedBlankNode("b:empty");
+				return getNamedBlankNode(attribute.Substring(refIndex,(refIndex+refLength)-(refIndex)));
+			}
+			#if DEBUG
+if(!(refIndex>=0 ))throw new InvalidOperationException(attribute);
+#endif
+			#if DEBUG
+if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(attribute);
+#endif
+			return relativeResolve(prefixIri+attribute.Substring(refIndex,(refIndex+refLength)-(refIndex)));
+		} else
+			return null;
+	}
+
+	private RDFTerm getNamedBlankNode(string str){
+		RDFTerm term=RDFTerm.fromBlankNode(str);
+		bnodeLabels.Add(str,term);
+		return term;
+	}
+
+
+	private string getRelTermOrCurie(string attribute,
+			IDictionary<string,string> prefixMapping){
+		if(relterms.Contains(StringUtility.toLowerCaseAscii(attribute)))
+			return "http://www.w3.org/1999/xhtml/vocab#"+StringUtility.toLowerCaseAscii(attribute);
+		return getCurie(attribute,prefixMapping);
+	}
+
+	private RDFTerm getSafeCurieOrCurieOrIri(
+			string attribute, IDictionary<string,string> prefixMapping) {
+		if(attribute==null)return null;
+		int lastIndex=attribute.Length-1;
+		if(attribute.Length>=2 && attribute[0]=='[' && attribute[lastIndex]==']'){
+			RDFTerm curie=getCurieOrBnode(attribute,1,attribute.Length-2,
+					prefixMapping);
+			return curie;
 		} else {
-			string parseType=node.getAttributeNS(RDF_NAMESPACE, "parseType");
-			if("Literal".Equals(parseType))
-				throw new NotSupportedException();
-			RDFTerm blank=generateBlankNode();
-			context.language=language;
-			miniRdfXml(node,context,blank);
-			outputGraph.Add(new RDFTriple(subject,predicate,blank));
+			RDFTerm curie=getCurieOrBnode(attribute,0,attribute.Length,
+					prefixMapping);
+			if(curie==null)
+				// evaluate as IRI
+				return relativeResolve(attribute);
+			return curie;
 		}
 	}
-
 	private void miniRdfXml(IElement node, RDFa.EvalContext context){
 		miniRdfXml(node,context,null);
 	}
@@ -124,108 +328,31 @@ internal class RDFa1 : IRDFParser {
 						throw new NotSupportedException();
 		}
 	}
-
-	private static bool isNCNameStartChar(int c){
-		return (c>='a' && c<='z') ||
-				(c>='A' && c<='Z') ||
-				c=='_' ||
-				(c>=0xc0 && c<=0xd6) ||
-				(c>=0xd8 && c<=0xf6) ||
-				(c>=0xf8 && c<=0x2ff) ||
-				(c>=0x370 && c<=0x37d) ||
-				(c>=0x37f && c<=0x1fff) ||
-				(c>=0x200c && c<=0x200d) ||
-				(c>=0x2070 && c<=0x218f) ||
-				(c>=0x2c00 && c<=0x2fef) ||
-				(c>=0x3001 && c<=0xd7ff) ||
-				(c>=0xf900 && c<=0xfdcf) ||
-				(c>=0xfdf0 && c<=0xfffd) ||
-				(c>=0x10000 && c<=0xeffff);
-	}
-	private static bool isNCNameChar(int c){
-		return (c>='a' && c<='z') ||
-				(c>='A' && c<='Z') ||
-				c=='_' || c=='.' || c=='-' ||
-				(c>='0' && c<='9') ||
-				c==0xb7 ||
-				(c>=0xc0 && c<=0xd6) ||
-				(c>=0xd8 && c<=0xf6) ||
-				(c>=0xf8 && c<=0x2ff) ||
-				(c>=0x300 && c<=0x37d) ||
-				(c>=0x37f && c<=0x1fff) ||
-				(c>=0x200c && c<=0x200d) ||
-				(c>=0x203f && c<=0x2040) ||
-				(c>=0x2070 && c<=0x218f) ||
-				(c>=0x2c00 && c<=0x2fef) ||
-				(c>=0x3001 && c<=0xd7ff) ||
-				(c>=0xf900 && c<=0xfdcf) ||
-				(c>=0xfdf0 && c<=0xfffd) ||
-				(c>=0x10000 && c<=0xeffff);
-	}
-	private static int getCuriePrefixLength(string s, int offset, int length){
-		if(s==null || length==0)return -1;
-		if(s[offset]==':')return 0;
-		if(!isNCNameStartChar(s[offset]))return -1;
-		int index=offset+1;
-		int sLength=offset+length;
-		while(index<sLength){
-			// Get the next Unicode character
-			int c=s[index];
-			if(c>=0xD800 && c<=0xDBFF && index+1<sLength &&
-					s[index+1]>=0xDC00 && s[index+1]<=0xDFFF){
-				// Get the Unicode code point for the surrogate pair
-				c=0x10000+(c-0xD800)*0x400+(s[index+1]-0xDC00);
-				index++;
-			} else if(c>=0xD800 && c<=0xDFFF)
-				// error
-				return -1;
-			if(c==':')return index-offset;
-			else if(!isNCNameChar(c))return -1;
-			index++;
+	private void miniRdfXmlChild(IElement node, RDFTerm subject, string language){
+		string nsname=node.getNamespaceURI();
+		if(node.getAttribute("xml:lang")!=null){
+			language=node.getAttribute("xml:lang");
 		}
-		return -1;
-	}
-
-	private static bool hasNonTextChildNodes(INode node){
-		foreach(INode child in node.getChildNodes()){
-			if(child.getNodeType()!=NodeType.TEXT_NODE)
-				return true;
+		string localname=node.getLocalName();
+		RDFTerm predicate=relativeResolve(nsname+localname);
+		if(!hasNonTextChildNodes(node)){
+			string content=getTextNodeText(node);
+			RDFTerm literal;
+			if(!string.IsNullOrEmpty(language)){
+				literal=RDFTerm.fromLangString(content, language);
+			} else {
+				literal=RDFTerm.fromTypedString(content);
+			}
+			outputGraph.Add(new RDFTriple(subject,predicate,literal));
+		} else {
+			string parseType=node.getAttributeNS(RDF_NAMESPACE, "parseType");
+			if("Literal".Equals(parseType))
+				throw new NotSupportedException();
+			RDFTerm blank=generateBlankNode();
+			context.language=language;
+			miniRdfXml(node,context,blank);
+			outputGraph.Add(new RDFTriple(subject,predicate,blank));
 		}
-		return false;
-	}
-
-	private static bool isValidCurieReference(string s, int offset, int length){
-		if(s==null)return false;
-		if(length==0)return true;
-		int[] indexes=URIUtility.splitIRI(s,offset,length,URIUtility.ParseMode.IRIStrict);
-		if(indexes==null)
-			return false;
-		if(indexes[0]!=-1) // check if scheme component is present
-			return false;
-		return true;
-	}
-
-	private int blankNode;
-	private IDictionary<string,RDFTerm> bnodeLabels=new PeterO.Support.LenientDictionary<string,RDFTerm>();
-
-	private RDFTerm getNamedBlankNode(string str){
-		RDFTerm term=RDFTerm.fromBlankNode(str);
-		bnodeLabels.Add(str,term);
-		return term;
-	}
-
-	private RDFTerm generateBlankNode(){
-		// Use "b:" as the prefix; according to the CURIE syntax,
-		// "b:" can never begin a valid CURIE reference (in RDFa 1.0,
-		// the reference has the broader production irelative-refValue),
-		// so it can
-		// be used to guarantee that generated blank nodes will never
-		// conflict with those stated explicitly
-		string blankNodeString="b:"+Convert.ToString(blankNode,CultureInfo.InvariantCulture);
-		blankNode++;
-		RDFTerm term=RDFTerm.fromBlankNode(blankNodeString);
-		bnodeLabels.Add(blankNodeString,term);
-		return term;
 	}
 
 	public ISet<RDFTriple> parse()  {
@@ -233,14 +360,6 @@ internal class RDFa1 : IRDFParser {
 		RDFInternal.replaceBlankNodes(outputGraph, bnodeLabels);
 		return outputGraph;
 	}
-
-	private RDFTerm relativeResolve(string iri){
-		if(iri==null)return null;
-		if(URIUtility.splitIRI(iri)==null)
-			return null;
-		return RDFTerm.fromIRI(URIUtility.relativeResolve(iri, context.baseURI));
-	}
-
 
 	private void process(IElement node, bool root){
 		IList<RDFa.IncompleteTriple> incompleteTriplesLocal=new List<RDFa.IncompleteTriple>();
@@ -552,130 +671,11 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 		}
 	}
 
-	private static IList<string> relterms=(new string[]{
-			"alternate","appendix","cite",
-			"bookmark","chapter","contents",
-			"copyright","first","glossary",
-			"help","icon","index","last",
-			"license","meta","next","prev",
-			"role","section","start",
-			"stylesheet","subsection","top",
-			"up","p3pv1"
-	});
-	private string getRelTermOrCurie(string attribute,
-			IDictionary<string,string> prefixMapping){
-		if(relterms.Contains(StringUtility.toLowerCaseAscii(attribute)))
-			return "http://www.w3.org/1999/xhtml/vocab#"+StringUtility.toLowerCaseAscii(attribute);
-		return getCurie(attribute,prefixMapping);
-	}
-
-	private string getCurie(
-			string attribute,
-			IDictionary<string,string> prefixMapping) {
-		if(attribute==null)return null;
-		return getCurie(attribute,0,attribute.Length,prefixMapping);
-	}
-	private string getCurie(
-			string attribute, int offset, int length,
-			IDictionary<string,string> prefixMapping) {
-		if(attribute==null)return null;
-		int refIndex=offset;
-		int refLength=length;
-		int prefix=getCuriePrefixLength(attribute,refIndex,refLength);
-		string prefixIri=null;
-		if(prefix>=0){
-			string prefixName=StringUtility.toLowerCaseAscii(
-					attribute.Substring(refIndex,(refIndex+prefix)-(refIndex)));
-			refIndex+=(prefix+1);
-			refLength-=(prefix+1);
-			prefixIri=prefixMapping[prefixName];
-			if(prefix==0) {
-				prefixIri=RDFA_DEFAULT_PREFIX;
-			} else {
-				prefixIri=prefixMapping[prefixName];
-			}
-			if(prefixIri==null || "_".Equals(prefixName))
-				return null;
-		} else
-			// RDFa doesn't define a mapping for an absent prefix
+	private RDFTerm relativeResolve(string iri){
+		if(iri==null)return null;
+		if(URIUtility.splitIRI(iri)==null)
 			return null;
-		if(!isValidCurieReference(attribute,refIndex,refLength))
-			return null;
-		if(prefix>=0)
-			return relativeResolve(prefixIri+attribute.Substring(refIndex,(refIndex+refLength)-(refIndex))).getValue();
-		else
-			return null;
-	}
-
-	private static readonly string RDFA_DEFAULT_PREFIX = "http://www.w3.org/1999/xhtml/vocab#";
-
-	private RDFTerm getCurieOrBnode(
-			string attribute, int offset, int length,
-			IDictionary<string,string> prefixMapping) {
-		int refIndex=offset;
-		int refLength=length;
-		int prefix=getCuriePrefixLength(attribute,refIndex,refLength);
-		string prefixIri=null;
-		string prefixName=null;
-		if(prefix>=0){
-			prefixName=StringUtility.toLowerCaseAscii(
-					attribute.Substring(refIndex,(refIndex+prefix)-(refIndex)));
-			refIndex+=(prefix+1);
-			refLength-=(prefix+1);
-			if(prefix==0) {
-				prefixIri=RDFA_DEFAULT_PREFIX;
-			} else {
-				prefixIri=prefixMapping[prefixName];
-			}
-			if(prefixIri==null && !"_".Equals(prefixName))return null;
-		} else
-			// RDFa doesn't define a mapping for an absent prefix
-			return null;
-		if(!isValidCurieReference(attribute,refIndex,refLength))
-			return null;
-		if(prefix>=0){
-			if("_".Equals(prefixName)){
-				#if DEBUG
-if(!(refIndex>=0 ))throw new InvalidOperationException(attribute);
-#endif
-				#if DEBUG
-if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(attribute);
-#endif
-				if(refLength==0)
-					// use an empty blank node: the CURIE syntax
-					// allows an empty reference; see the comment
-					// in generateBlankNode for why "b:" appears
-					// at the beginning
-					return getNamedBlankNode("b:empty");
-				return getNamedBlankNode(attribute.Substring(refIndex,(refIndex+refLength)-(refIndex)));
-			}
-			#if DEBUG
-if(!(refIndex>=0 ))throw new InvalidOperationException(attribute);
-#endif
-			#if DEBUG
-if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(attribute);
-#endif
-			return relativeResolve(prefixIri+attribute.Substring(refIndex,(refIndex+refLength)-(refIndex)));
-		} else
-			return null;
-	}
-
-	private RDFTerm getSafeCurieOrCurieOrIri(
-			string attribute, IDictionary<string,string> prefixMapping) {
-		if(attribute==null)return null;
-		int lastIndex=attribute.Length-1;
-		if(attribute.Length>=2 && attribute[0]=='[' && attribute[lastIndex]==']'){
-			RDFTerm curie=getCurieOrBnode(attribute,1,attribute.Length-2,
-					prefixMapping);
-			return curie;
-		} else {
-			RDFTerm curie=getCurieOrBnode(attribute,0,attribute.Length,
-					prefixMapping);
-			if(curie==null)
-				// evaluate as IRI
-				return relativeResolve(attribute);
-			return curie;
-		}
+		return RDFTerm.fromIRI(URIUtility.relativeResolve(iri, context.baseURI));
 	}
 }
 

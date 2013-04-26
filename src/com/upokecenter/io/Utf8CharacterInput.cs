@@ -24,22 +24,6 @@ public class Utf8CharacterInput : ICharacterInput {
 		this.stream=stream;
 	}
 
-	public int read(int[] buf, int offset, int unitCount)
-			 {
-		if((buf)==null)throw new ArgumentNullException("buf");
-		if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
-		if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount"+" not greater or equal to "+"0"+" ("+Convert.ToString(unitCount,CultureInfo.InvariantCulture)+")");
-		if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount"+" not less or equal to "+Convert.ToString(buf.Length,CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,CultureInfo.InvariantCulture)+")");
-		if(unitCount==0)return 0;
-		for(int i=0;i<unitCount;i++){
-			int c=read();
-			if(c<0)
-				return i==0 ? -1 : i;
-			buf[offset++]=c;
-		}
-		return unitCount;
-	}
-
 	public int read()  {
 		int cp=0;
 		int bytesSeen=0;
@@ -98,6 +82,22 @@ public class Utf8CharacterInput : ICharacterInput {
 			bytesNeeded=0;
 			return ret;
 		}
+	}
+
+	public int read(int[] buf, int offset, int unitCount)
+			 {
+		if((buf)==null)throw new ArgumentNullException("buf");
+		if((offset)<0)throw new ArgumentOutOfRangeException("offset"+" not greater or equal to "+"0"+" ("+Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
+		if((unitCount)<0)throw new ArgumentOutOfRangeException("unitCount"+" not greater or equal to "+"0"+" ("+Convert.ToString(unitCount,CultureInfo.InvariantCulture)+")");
+		if((offset+unitCount)>buf.Length)throw new ArgumentOutOfRangeException("offset+unitCount"+" not less or equal to "+Convert.ToString(buf.Length,CultureInfo.InvariantCulture)+" ("+Convert.ToString(offset+unitCount,CultureInfo.InvariantCulture)+")");
+		if(unitCount==0)return 0;
+		for(int i=0;i<unitCount;i++){
+			int c=read();
+			if(c<0)
+				return i==0 ? -1 : i;
+			buf[offset++]=c;
+		}
+		return unitCount;
 	}
 }
 }

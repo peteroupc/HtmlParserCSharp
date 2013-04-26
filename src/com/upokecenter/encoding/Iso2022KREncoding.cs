@@ -32,20 +32,20 @@ using System.IO;
 sealed class Iso2022KREncoding : ITextEncoder, ITextDecoder {
 
 
+	int lead=0;
+
+	int state=0;
+
+	bool initialization=false;
 	public int decode(PeterO.Support.InputStream stream)  {
 		return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
 	}
-
 	public int decode(PeterO.Support.InputStream stream, IEncodingError error)  {
 		int[] value=new int[1];
 		int c=decode(stream,value,0,1, error);
 		if(c<=0)return -1;
 		return value[0];
 	}
-
-	int lead=0;
-	int state=0;
-	bool initialization=false;
 
 	public int decode(PeterO.Support.InputStream stream, int[] buffer, int offset, int length)
 			 {

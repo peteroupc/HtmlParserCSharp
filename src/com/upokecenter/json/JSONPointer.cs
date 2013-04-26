@@ -11,111 +11,6 @@ using System.Globalization;
 
 public sealed class JSONPointer {
 
-	private static int readPositiveInteger(
-			string str, int index, int[] result){
-		bool haveNumber=false;
-		bool haveZeros=false;
-		int oldIndex=index;
-		result[0]=-1;
-		while(index<str.Length){ // skip zeros
-			int c=str[index++];
-			if(c!='0'){
-				index--;
-				break;
-			}
-			if(haveZeros){
-				index--;
-				return index;
-			}
-			haveNumber=true;
-			haveZeros=true;
-		}
-		long value=0;
-		while(index<str.Length){
-			int number=str[index++];
-			if(number>='0' && number<='9'){
-				value=(value*10)+(number-'0');
-				haveNumber=true;
-				if(haveZeros)
-					return oldIndex+1;
-			} else {
-				index--;
-				break;
-			}
-			if(value>Int32.MaxValue)
-				return index-1;
-		}
-		if(!haveNumber)
-			return index;
-		result[0]=(int)value;
-		return index;
-	}
-
-	private string refValue;
-	private Object jsonobj;
-
-	private JSONPointer(Object jsonobj, string refValue){
-		#if DEBUG
-if(!(refValue!=null))throw new InvalidOperationException("doesn't satisfy refValue!=null");
-#endif
-		this.jsonobj=jsonobj;
-		this.refValue=refValue;
-	}
-
-	public string getKey(){
-		return refValue;
-	}
-
-	public Object getParent(){
-		return jsonobj;
-	}
-
-	public bool exists(){
-		if(jsonobj is JSONArray){
-			if(refValue.Equals("-"))return false;
-			int value=Int32.Parse(refValue,NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
-			return (value>=0 && value<((JSONArray)jsonobj).Length);
-		} else if(jsonobj is JSONObject)
-			return ((JSONObject)jsonobj).has(refValue);
-		else
-			return (refValue.Length==0);
-	}
-
-	/**
-	 * 
-	 * Gets an index into the specified _object, if the _object
-	 * is an array and is not greater than the array's length.
-	 * 
-	 * @return The index contained in this instance, or -1 if
-	 * the _object isn't a JSON array or is greater than the
-	 * array's length.
-	 */
-	public int getIndex(){
-		if(jsonobj is JSONArray){
-			if(refValue.Equals("-"))return ((JSONArray)jsonobj).Length;
-			int value=Int32.Parse(refValue,NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
-			if(value<0)return -1;
-			if(value>((JSONArray)jsonobj).Length)return -1;
-			return value;
-		} else
-			return -1;
-	}
-
-	public Object getValue(){
-		if(refValue.Length==0)
-			return jsonobj;
-		if(jsonobj is JSONArray){
-			int index=getIndex();
-			if(index>=0 && index<((JSONArray)jsonobj).Length)
-				return ((JSONArray)jsonobj)[index];
-			else
-				return null;
-		} else if(jsonobj is JSONObject)
-			return ((JSONObject)jsonobj)[refValue];
-		else
-			return (refValue.Length==0) ? jsonobj : null;
-	}
-
 	public static JSONPointer fromPointer(Object obj, string pointer){
 		int index=0;
 		if(pointer==null)throw new ArgumentNullException("pointer");
@@ -239,6 +134,111 @@ if(!(refValue!=null))throw new InvalidOperationException("doesn't satisfy refVal
 		if(pointer==null)throw new ArgumentNullException("pointer");
 		if(pointer.Length==0)return obj;
 		return JSONPointer.fromPointer(obj,pointer).getValue();
+	}
+	private static int readPositiveInteger(
+			string str, int index, int[] result){
+		bool haveNumber=false;
+		bool haveZeros=false;
+		int oldIndex=index;
+		result[0]=-1;
+		while(index<str.Length){ // skip zeros
+			int c=str[index++];
+			if(c!='0'){
+				index--;
+				break;
+			}
+			if(haveZeros){
+				index--;
+				return index;
+			}
+			haveNumber=true;
+			haveZeros=true;
+		}
+		long value=0;
+		while(index<str.Length){
+			int number=str[index++];
+			if(number>='0' && number<='9'){
+				value=(value*10)+(number-'0');
+				haveNumber=true;
+				if(haveZeros)
+					return oldIndex+1;
+			} else {
+				index--;
+				break;
+			}
+			if(value>Int32.MaxValue)
+				return index-1;
+		}
+		if(!haveNumber)
+			return index;
+		result[0]=(int)value;
+		return index;
+	}
+
+	private string refValue;
+
+	private Object jsonobj;
+
+	private JSONPointer(Object jsonobj, string refValue){
+		#if DEBUG
+if(!(refValue!=null))throw new InvalidOperationException("doesn't satisfy refValue!=null");
+#endif
+		this.jsonobj=jsonobj;
+		this.refValue=refValue;
+	}
+
+	public bool exists(){
+		if(jsonobj is JSONArray){
+			if(refValue.Equals("-"))return false;
+			int value=Int32.Parse(refValue,NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
+			return (value>=0 && value<((JSONArray)jsonobj).Length);
+		} else if(jsonobj is JSONObject)
+			return ((JSONObject)jsonobj).has(refValue);
+		else
+			return (refValue.Length==0);
+	}
+
+	/**
+	 * 
+	 * Gets an index into the specified _object, if the _object
+	 * is an array and is not greater than the array's length.
+	 * 
+	 * @return The index contained in this instance, or -1 if
+	 * the _object isn't a JSON array or is greater than the
+	 * array's length.
+	 */
+	public int getIndex(){
+		if(jsonobj is JSONArray){
+			if(refValue.Equals("-"))return ((JSONArray)jsonobj).Length;
+			int value=Int32.Parse(refValue,NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
+			if(value<0)return -1;
+			if(value>((JSONArray)jsonobj).Length)return -1;
+			return value;
+		} else
+			return -1;
+	}
+
+	public string getKey(){
+		return refValue;
+	}
+
+	public Object getParent(){
+		return jsonobj;
+	}
+
+	public Object getValue(){
+		if(refValue.Length==0)
+			return jsonobj;
+		if(jsonobj is JSONArray){
+			int index=getIndex();
+			if(index>=0 && index<((JSONArray)jsonobj).Length)
+				return ((JSONArray)jsonobj)[index];
+			else
+				return null;
+		} else if(jsonobj is JSONObject)
+			return ((JSONObject)jsonobj)[refValue];
+		else
+			return (refValue.Length==0) ? jsonobj : null;
 	}
 }
 

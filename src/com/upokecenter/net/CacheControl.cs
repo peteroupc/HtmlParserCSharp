@@ -33,66 +33,178 @@ using com.upokecenter.json;
 using com.upokecenter.util;
 internal class CacheControl {
 
-	public override string ToString() {
-		return "CacheControl [cacheability=" + cacheability + ", noStore="
-				+ noStore + ", noTransform=" + noTransform
-				+ ", mustRevalidate=" + mustRevalidate + ", requestTime="
-				+ requestTime + ", responseTime=" + responseTime + ", maxAge="
-				+ maxAge + ", date=" + date + ", age=" + age + ", code=" + code
-				+ ", headerFields=" + headers + "]";
-	}
-	private int cacheability=0;
-	// Client must not store the response
-	// to disk and must remove it from memory
-	// as soon as it's finished with it
-	private bool noStore=false;
-	// Client must not convert the response
-	// to a different format before caching it
-	private bool noTransform=false;
-	// Client must re-check the server
-	// after the response becomes stale
-	private bool mustRevalidate=false;
-	private long requestTime=0;
-	private long responseTime=0;
-	private long maxAge=0;
-	private long date=0;
-	private long age=0;
-	private int code=0;
-	private string uri="";
-	private string requestMethod="";
-	private IList<string> headers;
+	private class AgedHeaders : IHttpHeaders {
 
-	public int getCacheability() {
-		return cacheability;
-	}
-	public bool isNoStore() {
-		return noStore;
-	}
-	public bool isNoTransform() {
-		return noTransform;
-	}
-	public bool isMustRevalidate() {
-		return mustRevalidate;
-	}
+		CacheControl cc=null;
+		long age=0;
+		IList<string> list=new List<string>();
 
-	private long getAge(){
-		long now=DateTimeUtility.getCurrentDate();
-		long age=Math.Max(0,Math.Max(now-date,this.age));
-		age+=(responseTime-requestTime);
-		age+=(now-responseTime);
-		age=(age>Int32.MaxValue) ? Int32.MaxValue : (int)age;
-		return age;
-	}
+		public AgedHeaders(CacheControl cc, long age, long length){
+			list.Add(cc.headers[0]);
+			for(int i=1;i<cc.headers.Count;i+=2){
+				string key=cc.headers[i];
+				if(key!=null){
+					key=StringUtility.toLowerCaseAscii(key);
+					if("content-length".Equals(key)||"age".Equals(key)) {
+						continue;
+					}
+				}
+				list.Add(cc.headers[i]);
+				list.Add(cc.headers[i+1]);
+			}
+			this.age=age/1000; // convert age to seconds
+			list.Add("age");
+			list.Add(Convert.ToString(this.age,CultureInfo.InvariantCulture));
+			list.Add("content-length");
+			list.Add(Convert.ToString(length,CultureInfo.InvariantCulture));
+			//Console.WriteLine("aged=%s",list);
+			this.cc=cc;
+		}
 
-	public bool isFresh() {
-		if(cacheability==0 || noStore)return false;
-		return (maxAge>getAge());
-	}
+		public string getHeaderField(int index) {
+			index=(index)*2+1+1;
+			if(index<0 || index>=list.Count)
+				return null;
+			return list[index+1];
+		}
+		public string getHeaderField(string name) {
+			if(name==null)return list[0];
+			name=StringUtility.toLowerCaseAscii(name);
+			string last=null;
+			for(int i=1;i<list.Count;i+=2){
+				string key=list[i];
+				if(name.Equals(key)) {
+					last=list[i+1];
+				}
+			}
+			return last;
+		}
+		public long getHeaderFieldDate(string field, long defaultValue) {
+			return HeaderParser.parseHttpDate(getHeaderField(field),defaultValue);
+		}
+		public string getHeaderFieldKey(int index) {
+			index=(index)*2+1;
+			if(index<0 || index>=list.Count)
+				return null;
+			return list[index];
+		}
+		public IDictionary<string, IList<string>> getHeaderFields() {
+			IDictionary<string, IList<string>> map=new PeterO.Support.LenientDictionary<string, IList<string>>();
+			map.Add(null,(new string[]{list[0]}));
+			for(int i=1;i<list.Count;i+=2){
+				string key=list[i];
+				IList<string> templist=map[key];
+				if(templist==null){
+					templist=new List<string>();
+					map.Add(key,templist);
+				}
+				templist.Add(list[i+1]);
+			}
+			// Make lists unmodifiable
+			foreach(string key in new List<string>(map.Keys)){
+				map.Add(key,PeterO.Support.Collections.UnmodifiableList(map[key]));
+			}
+			return PeterO.Support.Collections.UnmodifiableMap(map);
+		}
+		public string getRequestMethod() {
+			return cc.requestMethod;
+		}
+		public int getResponseCode() {
+			return cc.code;
+		}
 
-	private CacheControl(){
-		headers=new List<string>();
+		public string getUrl() {
+			return cc.uri;
+		}
 	}
-
+	private class CacheControlSerializer {
+		public CacheControl readObjectFromStream(PeterO.Support.InputStream stream)  {
+			try {
+				JSONObject jsonobj=new JSONObject(StreamUtility.streamToString(stream));
+				CacheControl cc=new CacheControl();
+				cc.cacheability=jsonobj.getInt("cacheability");
+				cc.noStore=jsonobj.getBoolean("noStore");
+				cc.noTransform=jsonobj.getBoolean("noTransform");
+				cc.mustRevalidate=jsonobj.getBoolean("mustRevalidate");
+				cc.requestTime=Int64.Parse(jsonobj.getString("requestTime"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
+				cc.responseTime=Int64.Parse(jsonobj.getString("responseTime"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
+				cc.maxAge=Int64.Parse(jsonobj.getString("maxAge"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
+				cc.date=Int64.Parse(jsonobj.getString("date"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
+				cc.code=jsonobj.getInt("code");
+				cc.age=Int64.Parse(jsonobj.getString("age"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
+				cc.uri=jsonobj.getString("uri");
+				cc.requestMethod=jsonobj.getString("requestMethod");
+				if(cc.requestMethod!=null) {
+					cc.requestMethod=StringUtility.toLowerCaseAscii(cc.requestMethod);
+				}
+				cc.headers=new List<string>();
+				JSONArray jsonarr=jsonobj.getJSONArray("headers");
+				for(int i=0;i<jsonarr.Length;i++){
+					string str=jsonarr.getString(i);
+					if(str!=null && (i%2)!=0){
+						str=StringUtility.toLowerCaseAscii(str);
+						if("age".Equals(str) ||
+								"connection".Equals(str) ||
+								"keep-alive".Equals(str) ||
+								"proxy-authenticate".Equals(str) ||
+								"proxy-authorization".Equals(str) ||
+								"te".Equals(str) ||
+								"trailers".Equals(str) ||
+								"transfer-encoding".Equals(str) ||
+								"upgrade".Equals(str)){
+							// Skip "age" header field and
+							// hop-by-hop header fields
+							i++;
+							continue;
+						}
+					}
+					cc.headers.Add(str);
+				}
+				return cc;
+			} catch(InvalidCastException e){
+				Console.WriteLine(e.StackTrace);
+				return null;
+			} catch(FormatException e){
+				Console.WriteLine(e.StackTrace);
+				return null;
+			} catch (Json.InvalidJsonException e) {
+				Console.WriteLine(e.StackTrace);
+				return null;
+			}
+		}
+		public void writeObjectToStream(CacheControl o, Stream stream)
+				 {
+			JSONObject jsonobj=new JSONObject();
+			jsonobj.put("cacheability",o.cacheability);
+			jsonobj.put("noStore",o.noStore);
+			jsonobj.put("noTransform",o.noTransform);
+			jsonobj.put("mustRevalidate",o.mustRevalidate);
+			jsonobj.put("requestTime",Convert.ToString(o.requestTime,CultureInfo.InvariantCulture));
+			jsonobj.put("responseTime",Convert.ToString(o.responseTime,CultureInfo.InvariantCulture));
+			jsonobj.put("maxAge",Convert.ToString(o.maxAge,CultureInfo.InvariantCulture));
+			jsonobj.put("date",Convert.ToString(o.date,CultureInfo.InvariantCulture));
+			jsonobj.put("uri",o.uri);
+			jsonobj.put("requestMethod",o.requestMethod);
+			jsonobj.put("code",o.code);
+			jsonobj.put("age",Convert.ToString(o.age,CultureInfo.InvariantCulture));
+			JSONArray jsonarr=new JSONArray();
+			foreach(string header in o.headers){
+				jsonarr.put(header);
+			}
+			jsonobj.put("headers",jsonarr);
+			StreamUtility.stringToStream(jsonobj.ToString(),stream);
+		}
+	}
+	public static CacheControl fromFile(PeterO.Support.File f) {
+		PeterO.Support.WrappedInputStream fs=new PeterO.Support.WrappedInputStream(new System.IO.FileStream(f.ToString(),System.IO.FileMode.Open));
+		try {
+			return new CacheControlSerializer().readObjectFromStream(fs);
+		} finally {
+			if(fs!=null) {
+				fs.Close();
+			}
+		}
+	}
 	public static CacheControl getCacheControl(IHttpHeaders headers, long requestTime){
 		CacheControl cc=new CacheControl();
 		bool proxyRevalidate=false;
@@ -259,18 +371,6 @@ internal class CacheControl {
 		//Console.WriteLine(" cc: %s",cc);
 		return cc;
 	}
-
-	public static CacheControl fromFile(PeterO.Support.File f) {
-		PeterO.Support.WrappedInputStream fs=new PeterO.Support.WrappedInputStream(new System.IO.FileStream(f.ToString(),System.IO.FileMode.Open));
-		try {
-			return new CacheControlSerializer().readObjectFromStream(fs);
-		} finally {
-			if(fs!=null) {
-				fs.Close();
-			}
-		}
-	}
-
 	public static void toFile(CacheControl o, PeterO.Support.File file) {
 		Stream fs=new FileStream((file).ToString(),FileMode.Create);
 		try {
@@ -281,180 +381,80 @@ internal class CacheControl {
 			}
 		}
 	}
+	private int cacheability=0;
+	// Client must not store the response
+	// to disk and must remove it from memory
+	// as soon as it's finished with it
+	private bool noStore=false;
+	// Client must not convert the response
+	// to a different format before caching it
+	private bool noTransform=false;
+	// Client must re-check the server
+	// after the response becomes stale
+	private bool mustRevalidate=false;
+	private long requestTime=0;
+	private long responseTime=0;
+	private long maxAge=0;
+	private long date=0;
+	private long age=0;
 
-	private class CacheControlSerializer {
-		public CacheControl readObjectFromStream(PeterO.Support.InputStream stream)  {
-			try {
-				JSONObject jsonobj=new JSONObject(StreamUtility.streamToString(stream));
-				CacheControl cc=new CacheControl();
-				cc.cacheability=jsonobj.getInt("cacheability");
-				cc.noStore=jsonobj.getBoolean("noStore");
-				cc.noTransform=jsonobj.getBoolean("noTransform");
-				cc.mustRevalidate=jsonobj.getBoolean("mustRevalidate");
-				cc.requestTime=Int64.Parse(jsonobj.getString("requestTime"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
-				cc.responseTime=Int64.Parse(jsonobj.getString("responseTime"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
-				cc.maxAge=Int64.Parse(jsonobj.getString("maxAge"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
-				cc.date=Int64.Parse(jsonobj.getString("date"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
-				cc.code=jsonobj.getInt("code");
-				cc.age=Int64.Parse(jsonobj.getString("age"),NumberStyles.AllowLeadingSign,CultureInfo.InvariantCulture);
-				cc.uri=jsonobj.getString("uri");
-				cc.requestMethod=jsonobj.getString("requestMethod");
-				if(cc.requestMethod!=null) {
-					cc.requestMethod=StringUtility.toLowerCaseAscii(cc.requestMethod);
-				}
-				cc.headers=new List<string>();
-				JSONArray jsonarr=jsonobj.getJSONArray("headers");
-				for(int i=0;i<jsonarr.Length;i++){
-					string str=jsonarr.getString(i);
-					if(str!=null && (i%2)!=0){
-						str=StringUtility.toLowerCaseAscii(str);
-						if("age".Equals(str) ||
-								"connection".Equals(str) ||
-								"keep-alive".Equals(str) ||
-								"proxy-authenticate".Equals(str) ||
-								"proxy-authorization".Equals(str) ||
-								"te".Equals(str) ||
-								"trailers".Equals(str) ||
-								"transfer-encoding".Equals(str) ||
-								"upgrade".Equals(str)){
-							// Skip "age" header field and
-							// hop-by-hop header fields
-							i++;
-							continue;
-						}
-					}
-					cc.headers.Add(str);
-				}
-				return cc;
-			} catch(InvalidCastException e){
-				Console.WriteLine(e.StackTrace);
-				return null;
-			} catch(FormatException e){
-				Console.WriteLine(e.StackTrace);
-				return null;
-			} catch (Json.InvalidJsonException e) {
-				Console.WriteLine(e.StackTrace);
-				return null;
-			}
-		}
-		public void writeObjectToStream(CacheControl o, Stream stream)
-				 {
-			JSONObject jsonobj=new JSONObject();
-			jsonobj.put("cacheability",o.cacheability);
-			jsonobj.put("noStore",o.noStore);
-			jsonobj.put("noTransform",o.noTransform);
-			jsonobj.put("mustRevalidate",o.mustRevalidate);
-			jsonobj.put("requestTime",Convert.ToString(o.requestTime,CultureInfo.InvariantCulture));
-			jsonobj.put("responseTime",Convert.ToString(o.responseTime,CultureInfo.InvariantCulture));
-			jsonobj.put("maxAge",Convert.ToString(o.maxAge,CultureInfo.InvariantCulture));
-			jsonobj.put("date",Convert.ToString(o.date,CultureInfo.InvariantCulture));
-			jsonobj.put("uri",o.uri);
-			jsonobj.put("requestMethod",o.requestMethod);
-			jsonobj.put("code",o.code);
-			jsonobj.put("age",Convert.ToString(o.age,CultureInfo.InvariantCulture));
-			JSONArray jsonarr=new JSONArray();
-			foreach(string header in o.headers){
-				jsonarr.put(header);
-			}
-			jsonobj.put("headers",jsonarr);
-			StreamUtility.stringToStream(jsonobj.ToString(),stream);
-		}
+	private int code=0;
+	private string uri="";
+	private string requestMethod="";
+	private IList<string> headers;
+
+	private CacheControl(){
+		headers=new List<string>();
+	}
+
+	private long getAge(){
+		long now=DateTimeUtility.getCurrentDate();
+		long age=Math.Max(0,Math.Max(now-date,this.age));
+		age+=(responseTime-requestTime);
+		age+=(now-responseTime);
+		age=(age>Int32.MaxValue) ? Int32.MaxValue : (int)age;
+		return age;
+	}
+
+	public int getCacheability() {
+		return cacheability;
 	}
 
 	public IHttpHeaders getHeaders(long length) {
 		return new AgedHeaders(this,getAge(),length);
 	}
 
-	private class AgedHeaders : IHttpHeaders {
-
-		CacheControl cc=null;
-		long age=0;
-		IList<string> list=new List<string>();
-
-		public AgedHeaders(CacheControl cc, long age, long length){
-			list.Add(cc.headers[0]);
-			for(int i=1;i<cc.headers.Count;i+=2){
-				string key=cc.headers[i];
-				if(key!=null){
-					key=StringUtility.toLowerCaseAscii(key);
-					if("content-length".Equals(key)||"age".Equals(key)) {
-						continue;
-					}
-				}
-				list.Add(cc.headers[i]);
-				list.Add(cc.headers[i+1]);
-			}
-			this.age=age/1000; // convert age to seconds
-			list.Add("age");
-			list.Add(Convert.ToString(this.age,CultureInfo.InvariantCulture));
-			list.Add("content-length");
-			list.Add(Convert.ToString(length,CultureInfo.InvariantCulture));
-			//Console.WriteLine("aged=%s",list);
-			this.cc=cc;
-		}
-
-		public string getRequestMethod() {
-			return cc.requestMethod;
-		}
-		public string getHeaderField(string name) {
-			if(name==null)return list[0];
-			name=StringUtility.toLowerCaseAscii(name);
-			string last=null;
-			for(int i=1;i<list.Count;i+=2){
-				string key=list[i];
-				if(name.Equals(key)) {
-					last=list[i+1];
-				}
-			}
-			return last;
-		}
-		public string getHeaderField(int index) {
-			index=(index)*2+1+1;
-			if(index<0 || index>=list.Count)
-				return null;
-			return list[index+1];
-		}
-		public string getHeaderFieldKey(int index) {
-			index=(index)*2+1;
-			if(index<0 || index>=list.Count)
-				return null;
-			return list[index];
-		}
-		public int getResponseCode() {
-			return cc.code;
-		}
-		public long getHeaderFieldDate(string field, long defaultValue) {
-			return HeaderParser.parseHttpDate(getHeaderField(field),defaultValue);
-		}
-		public IDictionary<string, IList<string>> getHeaderFields() {
-			IDictionary<string, IList<string>> map=new PeterO.Support.LenientDictionary<string, IList<string>>();
-			map.Add(null,(new string[]{list[0]}));
-			for(int i=1;i<list.Count;i+=2){
-				string key=list[i];
-				IList<string> templist=map[key];
-				if(templist==null){
-					templist=new List<string>();
-					map.Add(key,templist);
-				}
-				templist.Add(list[i+1]);
-			}
-			// Make lists unmodifiable
-			foreach(string key in new List<string>(map.Keys)){
-				map.Add(key,PeterO.Support.Collections.UnmodifiableList(map[key]));
-			}
-			return PeterO.Support.Collections.UnmodifiableMap(map);
-		}
-
-		public string getUrl() {
-			return cc.uri;
-		}
-	}
-
 	public string getRequestMethod() {
 		return requestMethod;
 	}
+
 	public string getUri() {
 		return uri;
+	}
+
+	public bool isFresh() {
+		if(cacheability==0 || noStore)return false;
+		return (maxAge>getAge());
+	}
+
+	public bool isMustRevalidate() {
+		return mustRevalidate;
+	}
+
+	public bool isNoStore() {
+		return noStore;
+	}
+
+	public bool isNoTransform() {
+		return noTransform;
+	}
+	public override string ToString() {
+		return "CacheControl [cacheability=" + cacheability + ", noStore="
+				+ noStore + ", noTransform=" + noTransform
+				+ ", mustRevalidate=" + mustRevalidate + ", requestTime="
+				+ requestTime + ", responseTime=" + responseTime + ", maxAge="
+				+ maxAge + ", date=" + date + ", age=" + age + ", code=" + code
+				+ ", headerFields=" + headers + "]";
 	}
 }
 }

@@ -4,18 +4,19 @@ namespace com.upokecenter.rdf {
 using System;
 
 public sealed class RDFTriple {
-	public override sealed int GetHashCode(){unchecked{
-		 int prime = 31;
-		int result = 1;
-		result = prime * result + ((_object == null) ? 0 : _object.GetHashCode());
-		result = prime * result
-				+ ((predicate == null) ? 0 : predicate.GetHashCode());
-		result = prime * result + ((subject == null) ? 0 : subject.GetHashCode());
-		return result;
-	}}
+	private RDFTerm subject, predicate, _object;
 
-	public override sealed string ToString(){
-		return subject.ToString()+" "+predicate.ToString()+" "+_object.ToString()+" .";
+	public RDFTriple(RDFTerm subject, RDFTerm predicate, RDFTerm _object) {
+		setSubject(subject);
+		setPredicate(predicate);
+		setObject(_object);
+	}
+
+	public RDFTriple(RDFTriple triple){
+		if(triple==null)throw new ArgumentNullException("triple");
+		setSubject(triple.subject);
+		setPredicate(triple.predicate);
+		setObject(triple._object);
 	}
 
 	public override sealed bool Equals(object obj) {
@@ -44,21 +45,37 @@ public sealed class RDFTriple {
 		return true;
 	}
 
-	public RDFTriple(RDFTerm subject, RDFTerm predicate, RDFTerm _object) {
-		setSubject(subject);
-		setPredicate(predicate);
-		setObject(_object);
+	public RDFTerm getObject() {
+		return _object;
 	}
 
-	public RDFTriple(RDFTriple triple){
-		if(triple==null)throw new ArgumentNullException("triple");
-		setSubject(triple.subject);
-		setPredicate(triple.predicate);
-		setObject(triple._object);
+	public RDFTerm getPredicate() {
+		return predicate;
 	}
 
 	public RDFTerm getSubject() {
 		return subject;
+	}
+
+	public override sealed int GetHashCode(){unchecked{
+		 int prime = 31;
+		int result = 1;
+		result = prime * result + ((_object == null) ? 0 : _object.GetHashCode());
+		result = prime * result
+				+ ((predicate == null) ? 0 : predicate.GetHashCode());
+		result = prime * result + ((subject == null) ? 0 : subject.GetHashCode());
+		return result;
+	}}
+
+	private void setObject(RDFTerm _object) {
+		if((_object)==null)throw new ArgumentNullException("object");
+		this._object = _object;
+	}
+
+	private void setPredicate(RDFTerm predicate) {
+		if((predicate)==null)throw new ArgumentNullException("predicate");
+		if(!(predicate.getKind()==RDFTerm.IRI))throw new ArgumentException("doesn't satisfy predicate.kind==RDFTerm.IRI");
+		this.predicate = predicate;
 	}
 
 	private void setSubject(RDFTerm subject) {
@@ -68,26 +85,9 @@ public sealed class RDFTriple {
 		this.subject = subject;
 	}
 
-	public RDFTerm getPredicate() {
-		return predicate;
+	public override sealed string ToString(){
+		return subject.ToString()+" "+predicate.ToString()+" "+_object.ToString()+" .";
 	}
-
-	private void setPredicate(RDFTerm predicate) {
-		if((predicate)==null)throw new ArgumentNullException("predicate");
-		if(!(predicate.getKind()==RDFTerm.IRI))throw new ArgumentException("doesn't satisfy predicate.kind==RDFTerm.IRI");
-		this.predicate = predicate;
-	}
-
-	public RDFTerm getObject() {
-		return _object;
-	}
-
-	private void setObject(RDFTerm _object) {
-		if((_object)==null)throw new ArgumentNullException("object");
-		this._object = _object;
-	}
-
-	private RDFTerm subject, predicate, _object;
 }
 
 }

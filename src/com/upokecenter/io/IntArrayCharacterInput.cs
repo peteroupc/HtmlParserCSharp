@@ -16,6 +16,13 @@ public sealed class IntArrayCharacterInput : ICharacterInput {
 		this.ilist=ilist;
 	}
 
+	public int read()  {
+		int[] arr=this.ilist;
+		if(pos<this.ilist.Length)
+			return arr[pos++];
+		return -1;
+	}
+
 	public int read(int[] buf, int offset, int unitCount)  {
 		if(offset<0 || unitCount<0 || offset+unitCount>buf.Length)
 			throw new ArgumentOutOfRangeException();
@@ -31,13 +38,6 @@ public sealed class IntArrayCharacterInput : ICharacterInput {
 			pos++;
 		}
 		return count==0 ? -1 : count;
-	}
-
-	public int read()  {
-		int[] arr=this.ilist;
-		if(pos<this.ilist.Length)
-			return arr[pos++];
-		return -1;
 	}
 
 }

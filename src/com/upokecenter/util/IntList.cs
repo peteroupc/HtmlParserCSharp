@@ -7,6 +7,13 @@ using System;
 using System.Text;
 using System.Globalization;
 
+/**
+ * 
+ * Represents a list of integers or Unicode characters.
+ * 
+ * @author Peter
+ *
+ */
 public sealed class IntList {
 	int[] buffer;
 	int ptr;
@@ -15,14 +22,15 @@ public sealed class IntList {
 		ptr=0;
 	}
 
-	public int this[int i] { get { return get(i); }
- set { set(i,value); }}
-public int get(int index){
-		return buffer[index];
-	}
-
-	public void set(int index, int value){
-		buffer[index]=value;
+	public void appendInt(int v){
+		if(ptr<buffer.Length){
+			buffer[ptr++]=v;
+		} else {
+			int[] newbuffer=new int[buffer.Length*2];
+			Array.Copy(buffer,0,newbuffer,0,buffer.Length);
+			buffer=newbuffer;
+			buffer[ptr++]=v;
+		}
 	}
 
 	public void appendInts(int[] array, int offset, int length){
@@ -39,16 +47,6 @@ public int get(int index){
 		ptr+=length;
 	}
 
-	public void appendInt(int v){
-		if(ptr<buffer.Length){
-			buffer[ptr++]=v;
-		} else {
-			int[] newbuffer=new int[buffer.Length*2];
-			Array.Copy(buffer,0,newbuffer,0,buffer.Length);
-			buffer=newbuffer;
-			buffer[ptr++]=v;
-		}
-	}
 	public void appendString(string str) {
 		for(int i=0;i<str.Length;i++){
 			int c=str[i];
@@ -66,11 +64,25 @@ public int get(int index){
 			}
 		}
 	}
+
 	public int[] array(){
 		return buffer;
 	}
 	public void clearAll(){
 		ptr=0;
+	}
+	public int this[int i] { get { return get(i); }
+ set { set(i,value); }}
+public int get(int index){
+		return buffer[index];
+	}
+	/**
+	 * Sets the integer at a specified position to a new value.
+	 * @param index an index into the list.
+	 * @param value the integer's new value.
+	 */
+	public void set(int index, int value){
+		buffer[index]=value;
 	}
 	public int Count { get { return size(); }}
 public int size(){

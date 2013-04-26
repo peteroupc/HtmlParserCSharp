@@ -29,14 +29,14 @@ using System.Collections.Generic;
 
 
 public interface IHttpHeaders {
-	 string getUrl();
-	 string getRequestMethod();
-	 string getHeaderField(string name);
 	 string getHeaderField(int name);
-	 string getHeaderFieldKey(int name);
-	 int getResponseCode();
+	 string getHeaderField(string name);
 	 long getHeaderFieldDate(string field, long defaultValue);
+	 string getHeaderFieldKey(int name);
 	 IDictionary<string,IList<string>> getHeaderFields();
+	 string getRequestMethod();
+	 int getResponseCode();
+	 string getUrl();
 }
 
 }

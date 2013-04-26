@@ -77,9 +77,8 @@ public sealed class TextEncoding {
 	 * 
 	 */
 	public static readonly IEncodingError ENCODING_ERROR_REPLACE = new EncodingErrorReplace();
-	private TextEncoding(){}
-
 	private static IDictionary<string,string> encodingMap=new PeterO.Support.LenientDictionary<string,string>();
+
 	private static IDictionary<string,ITextEncoder> indexEncodingMap=new PeterO.Support.LenientDictionary<string,ITextEncoder>();
 	static TextEncoding(){
 		encodingMap.Add("unicode-1-1-utf-8","utf-8");
@@ -299,42 +298,7 @@ public sealed class TextEncoding {
 		encodingMap.Add("utf-16le","utf-16le");
 		encodingMap.Add("x-user-defined","x-user-defined");
 	}
-
 	private static Object syncRoot=new Object();
-
-	/**
-	 * Converts a name to a supported character encoding.
-	 * In this implementation, the return value will be the name preferred in the
-	 * WHATWG's Encoding specification.
-	 * 
-	 * @param encoding the name of an encoding
-	 * @return a character encoding, or null if the name
-	 * does not resolve to a supported encoding
-	 */
-	public static string resolveEncoding(string encoding){
-		if(encoding==null)return null;
-		int index=0;
-		int length=encoding.Length;
-		while(index<length){
-			char c=encoding[index];
-			if(c!=0x09 && c!=0x0c && c!=0x0d && c!=0x0a && c!=0x20) {
-				break;
-			}
-			index++;
-		}
-		int lastIndex=length-1;
-		while(lastIndex>=0){
-			char c=encoding[lastIndex];
-			if(c!=0x09 && c!=0x0c && c!=0x0d && c!=0x0a && c!=0x20) {
-				break;
-			}
-			lastIndex--;
-		}
-		encoding=StringUtility.toLowerCaseAscii(encoding.Substring(index,(lastIndex+1)-(index)));
-		if(encodingMap[encoding]!=null)
-			return encodingMap[encoding];
-		return null;
-	}
 
 	/**
 	 * Utility method to decode an input byte stream into a _string.
@@ -416,6 +380,90 @@ public sealed class TextEncoding {
 		}
 	}
 
+	/**
+	 * Gets a character decoder for a given character
+	 * encoding.
+	 * @param name a name of a character encoding
+	 * @return a character encoder, or null if the name
+	 * does not resolve to a supported encoding, or if
+	 * no decoder is supported for that encoding.
+	 */
+	public static ITextDecoder getDecoder(string name){
+		name=resolveEncoding(name);
+		if(name==null)
+			return null;
+		ITextEncoder encoder=getIndexEncoding(name);
+		if(encoder!=null)return (ITextDecoder)encoder;
+		if(name.Equals("replacement"))
+			return new ReplacementDecoder();
+		if(name.Equals("utf-8"))
+			return new Utf8Encoding();
+		if(name.Equals("utf-16le"))
+			return new Utf16Encoding(false);
+		if(name.Equals("utf-16be"))
+			return new Utf16Encoding(true);
+		if(name.Equals("gbk"))
+			return new GbkEncoding(false);
+		if(name.Equals("gb18030"))
+			return new GbkEncoding(true);
+		if(name.Equals("hz-gb-2312"))
+			return new HzGb2312Encoding();
+		if(name.Equals("big5"))
+			return new Big5Encoding();
+		if(name.Equals("shift_jis"))
+			return new ShiftJISEncoding();
+		if(name.Equals("iso-2022-jp"))
+			return new Iso2022JPEncoding();
+		if(name.Equals("euc-jp"))
+			return new JapaneseEUCEncoding();
+		if(name.Equals("euc-kr"))
+			return new KoreanEUCEncoding();
+		if(name.Equals("iso-2022-kr"))
+			return new Iso2022KREncoding();
+		return null;
+	}
+
+	/**
+	 * Gets a character encoder for a given character
+	 * encoding.
+	 * @param name a name of a character encoding
+	 * @return a character encoder, or null if the name
+	 * does not resolve to a supported encoding, or if
+	 * no encoder is supported for that encoding.
+	 */
+	public static ITextEncoder getEncoder(string name){
+		name=resolveEncoding(name);
+		if(name==null)
+			return null;
+		ITextEncoder encoder=getIndexEncoding(name);
+		if(encoder!=null)return encoder;
+		if(name.Equals("utf-8") || name.Equals("replacement"))
+			return new Utf8Encoding();
+		if(name.Equals("utf-16le"))
+			return new Utf16Encoding(false);
+		if(name.Equals("utf-16be"))
+			return new Utf16Encoding(true);
+		if(name.Equals("gbk"))
+			return new GbkEncoding(false);
+		if(name.Equals("gb18030"))
+			return new GbkEncoding(true);
+		if(name.Equals("hz-gb-2312"))
+			return new HzGb2312Encoding();
+		if(name.Equals("big5"))
+			return new Big5Encoding();
+		if(name.Equals("shift_jis"))
+			return new ShiftJISEncoding();
+		if(name.Equals("iso-2022-jp"))
+			return new Iso2022JPEncoding();
+		if(name.Equals("euc-jp"))
+			return new JapaneseEUCEncoding();
+		if(name.Equals("euc-kr"))
+			return new KoreanEUCEncoding();
+		if(name.Equals("iso-2022-kr"))
+			return new Iso2022KREncoding();
+		return null;
+	}
+
 	private static ITextEncoder getIndexEncoding(string name){
 		lock(syncRoot){
 			ITextEncoder encoder=indexEncodingMap[name];
@@ -463,55 +511,6 @@ public sealed class TextEncoding {
 		return PeterO.Support.Collections.ToArray(values);
 	}
 
-	private static ITextEncoder setIndexEncoding(string name, ITextEncoder enc){
-		lock(syncRoot){
-			indexEncodingMap.Add(name,enc);
-		}
-		return enc;
-	}
-
-	/**
-	 * Gets a character encoder for a given character
-	 * encoding.
-	 * @param name a name of a character encoding
-	 * @return a character encoder, or null if the name
-	 * does not resolve to a supported encoding, or if
-	 * no encoder is supported for that encoding.
-	 */
-	public static ITextEncoder getEncoder(string name){
-		name=resolveEncoding(name);
-		if(name==null)
-			return null;
-		ITextEncoder encoder=getIndexEncoding(name);
-		if(encoder!=null)return encoder;
-		if(name.Equals("utf-8") || name.Equals("replacement"))
-			return new Utf8Encoding();
-		if(name.Equals("utf-16le"))
-			return new Utf16Encoding(false);
-		if(name.Equals("utf-16be"))
-			return new Utf16Encoding(true);
-		if(name.Equals("gbk"))
-			return new GbkEncoding(false);
-		if(name.Equals("gb18030"))
-			return new GbkEncoding(true);
-		if(name.Equals("hz-gb-2312"))
-			return new HzGb2312Encoding();
-		if(name.Equals("big5"))
-			return new Big5Encoding();
-		if(name.Equals("shift_jis"))
-			return new ShiftJISEncoding();
-		if(name.Equals("iso-2022-jp"))
-			return new Iso2022JPEncoding();
-		if(name.Equals("euc-jp"))
-			return new JapaneseEUCEncoding();
-		if(name.Equals("euc-kr"))
-			return new KoreanEUCEncoding();
-		if(name.Equals("iso-2022-kr"))
-			return new Iso2022KREncoding();
-		return null;
-	}
-
-
 	/**
 	 * Gets whether an encoding is ASCII compatible
 	 * within the meaning of the WHATWG's HTML specification.
@@ -531,47 +530,48 @@ public sealed class TextEncoding {
 	}
 
 	/**
-	 * Gets a character decoder for a given character
-	 * encoding.
-	 * @param name a name of a character encoding
-	 * @return a character encoder, or null if the name
-	 * does not resolve to a supported encoding, or if
-	 * no decoder is supported for that encoding.
+	 * Converts a name to a supported character encoding.
+	 * In this implementation, the return value will be the name preferred in the
+	 * WHATWG's Encoding specification.
+	 * 
+	 * @param encoding the name of an encoding
+	 * @return a character encoding, or null if the name
+	 * does not resolve to a supported encoding
 	 */
-	public static ITextDecoder getDecoder(string name){
-		name=resolveEncoding(name);
-		if(name==null)
-			return null;
-		ITextEncoder encoder=getIndexEncoding(name);
-		if(encoder!=null)return (ITextDecoder)encoder;
-		if(name.Equals("replacement"))
-			return new ReplacementDecoder();
-		if(name.Equals("utf-8"))
-			return new Utf8Encoding();
-		if(name.Equals("utf-16le"))
-			return new Utf16Encoding(false);
-		if(name.Equals("utf-16be"))
-			return new Utf16Encoding(true);
-		if(name.Equals("gbk"))
-			return new GbkEncoding(false);
-		if(name.Equals("gb18030"))
-			return new GbkEncoding(true);
-		if(name.Equals("hz-gb-2312"))
-			return new HzGb2312Encoding();
-		if(name.Equals("big5"))
-			return new Big5Encoding();
-		if(name.Equals("shift_jis"))
-			return new ShiftJISEncoding();
-		if(name.Equals("iso-2022-jp"))
-			return new Iso2022JPEncoding();
-		if(name.Equals("euc-jp"))
-			return new JapaneseEUCEncoding();
-		if(name.Equals("euc-kr"))
-			return new KoreanEUCEncoding();
-		if(name.Equals("iso-2022-kr"))
-			return new Iso2022KREncoding();
+	public static string resolveEncoding(string encoding){
+		if(encoding==null)return null;
+		int index=0;
+		int length=encoding.Length;
+		while(index<length){
+			char c=encoding[index];
+			if(c!=0x09 && c!=0x0c && c!=0x0d && c!=0x0a && c!=0x20) {
+				break;
+			}
+			index++;
+		}
+		int lastIndex=length-1;
+		while(lastIndex>=0){
+			char c=encoding[lastIndex];
+			if(c!=0x09 && c!=0x0c && c!=0x0d && c!=0x0a && c!=0x20) {
+				break;
+			}
+			lastIndex--;
+		}
+		encoding=StringUtility.toLowerCaseAscii(encoding.Substring(index,(lastIndex+1)-(index)));
+		if(encodingMap[encoding]!=null)
+			return encodingMap[encoding];
 		return null;
 	}
+
+
+	private static ITextEncoder setIndexEncoding(string name, ITextEncoder enc){
+		lock(syncRoot){
+			indexEncodingMap.Add(name,enc);
+		}
+		return enc;
+	}
+
+	private TextEncoding(){}
 }
 
 }

@@ -63,6 +63,15 @@ public class JSONArray {
 
 
 	/**
+	 * Construct a JSONArray from a Collection.
+	 * @param collection     A Collection.
+	 */
+	public JSONArray(/*covar*/ICollection<Object> collection) {
+		myArrayList = new List<Object>(collection);
+	}
+
+
+	/**
 	 * Construct a JSONArray from a JSONTokener.
 	 * @param x A JSONTokener
 	 * @exception Json.InvalidJsonException A JSONArray must start with '['
@@ -97,6 +106,13 @@ public class JSONArray {
 	}
 
 
+	public JSONArray(IList<string> collection) {
+		myArrayList = new List<Object>();
+		foreach(string str in collection){
+			myArrayList.Add(str);
+		}
+	}
+
 	/**
 	 * Construct a JSONArray from a source _string.
 	 * @param _string     A _string that begins with
@@ -107,21 +123,53 @@ public class JSONArray {
 	public JSONArray(string _string) : this(new JSONTokener(_string)) {
 	}
 
-
-	/**
-	 * Construct a JSONArray from a Collection.
-	 * @param collection     A Collection.
-	 */
-	public JSONArray(/*covar*/ICollection<Object> collection) {
-		myArrayList = new List<Object>(collection);
+	public JSONArray add(int index, bool value) {
+		add(index,(value));
+		return this;
 	}
 
-	public JSONArray(IList<string> collection) {
-		myArrayList = new List<Object>();
-    foreach(string str in collection){
-      myArrayList.Add(str);
-    }
+
+	public JSONArray add(int index, double value) {
+		add(index,(value));
+		return this;
 	}
+
+
+	public JSONArray add(int index, int value) {
+		add(index,(value));
+		return this;
+	}
+
+
+	public JSONArray add(int index, Object value) {
+		if (index < 0)
+			throw new System.Collections.Generic.KeyNotFoundException("JSONArray[" + index +
+					"] not found.");
+		else if (value == null)
+			throw new ArgumentNullException();
+		else {
+			myArrayList.Insert(index,value);
+		}
+		return this;
+	}
+
+
+	public override bool Equals(object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (GetType() != obj.GetType())
+			return false;
+		JSONArray other = (JSONArray) obj;
+		if (myArrayList == null) {
+			if (other.myArrayList != null)
+				return false;
+		} else if (!myArrayList.Equals(other.myArrayList))
+			return false;
+		return true;
+	}
+
 
 	/**
 	 * Get the _object value associated with an index.
@@ -208,7 +256,6 @@ public Object get(int index)  {
 		return (int)getDouble(index);
 	}
 
-
 	/**
 	 * Get the JSONArray associated with an index.
 	 * @param index The index must be between 0 and length() - 1.
@@ -252,6 +299,15 @@ public Object get(int index)  {
 	}
 
 
+	public override int GetHashCode(){unchecked{
+		 int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((myArrayList == null) ? 0 : myArrayList.GetHashCode());
+		return result;
+	}}
+
+
 	/**
 	 * Determine if the value is null.
 	 * @param index The index must be between 0 and length() - 1.
@@ -292,6 +348,7 @@ public Object get(int index)  {
 		}
 		return sb.ToString();
 	}
+
 
 	/**
 	 * Get the length of the JSONArray.
@@ -505,7 +562,6 @@ public int length() {
 		return this;
 	}
 
-
 	/**
 	 * Append an int value.
 	 *
@@ -516,21 +572,6 @@ public int length() {
 		put((value));
 		return this;
 	}
-
-
-	/**
-	 * Append an _object value.
-	 * @param value An _object value.  The value should be a
-	 *  Boolean, Double, Integer, JSONArray, JSObject, or string, or the
-	 *  JSONObject.NULL _object.
-	 * @return this.
-	 */
-	public JSONArray put(Object value) {
-		myArrayList.Add(value);
-		return this;
-	}
-
-
 	/**
 	 * Put or replace a bool value in the JSONArray.
 	 * @param index subscript The subscript. If the index is greater than the length of
@@ -544,8 +585,6 @@ public int length() {
 		put(index, (value));
 		return this;
 	}
-
-
 	/**
 	 * Put or replace a double value.
 	 * @param index subscript The subscript. If the index is greater than the length of
@@ -559,8 +598,6 @@ public int length() {
 		put(index, (value));
 		return this;
 	}
-
-
 	/**
 	 * Put or replace an int value.
 	 * @param index subscript The subscript. If the index is greater than the length of
@@ -574,7 +611,6 @@ public int length() {
 		put(index, (value));
 		return this;
 	}
-
 
 	/**
 	 * Put or replace an _object value in the JSONArray.
@@ -604,29 +640,30 @@ public int length() {
 		return this;
 	}
 
-	public JSONArray add(int index, bool value) {
-		add(index,(value));
+
+	/**
+	 * Append an _object value.
+	 * @param value An _object value.  The value should be a
+	 *  Boolean, Double, Integer, JSONArray, JSObject, or string, or the
+	 *  JSONObject.NULL _object.
+	 * @return this.
+	 */
+	public JSONArray put(Object value) {
+		myArrayList.Add(value);
 		return this;
 	}
-	public JSONArray add(int index, double value) {
-		add(index,(value));
-		return this;
+
+
+	/**
+	 * 
+	 * Removes the item at the specified index.
+	 * Added by Peter O. 2013-04-05
+	 * 
+	 */
+	public void removeAt(int index){
+		myArrayList.RemoveAt(index);
 	}
-	public JSONArray add(int index, int value) {
-		add(index,(value));
-		return this;
-	}
-	public JSONArray add(int index, Object value) {
-		if (index < 0)
-			throw new System.Collections.Generic.KeyNotFoundException("JSONArray[" + index +
-					"] not found.");
-		else if (value == null)
-			throw new ArgumentNullException();
-		else {
-			myArrayList.Insert(index,value);
-		}
-		return this;
-	}
+
 
 	/**
 	 * Produce a JSONObject by combining a JSONArray of names with the values
@@ -645,7 +682,6 @@ public int length() {
 		}
 		return jo;
 	}
-
 
 	/**
 	 * Make an JSON external form _string of this JSONArray. For compactness, no
@@ -716,42 +752,6 @@ public int length() {
 		}
 		sb.Append(']');
 		return sb.ToString();
-	}
-
-	/**
-	 * 
-	 * Removes the item at the specified index.
-	 * Added by Peter O. 2013-04-05
-	 * 
-	 */
-	public void removeAt(int index){
-		myArrayList.RemoveAt(index);
-	}
-
-
-	public override int GetHashCode(){unchecked{
-		 int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((myArrayList == null) ? 0 : myArrayList.GetHashCode());
-		return result;
-	}}
-
-
-	public override bool Equals(object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (GetType() != obj.GetType())
-			return false;
-		JSONArray other = (JSONArray) obj;
-		if (myArrayList == null) {
-			if (other.myArrayList != null)
-				return false;
-		} else if (!myArrayList.Equals(other.myArrayList))
-			return false;
-		return true;
 	}
 
 

@@ -13,8 +13,6 @@ using com.upokecenter.io;
 public sealed class NTriplesParser : IRDFParser {
 
 
-	IDictionary<string,RDFTerm> bnodeLabels;
-
 	public class AsciiCharacterInput : ICharacterInput {
 
 
@@ -22,6 +20,12 @@ public sealed class NTriplesParser : IRDFParser {
 
 		public AsciiCharacterInput(PeterO.Support.InputStream stream){
 			this.stream=stream;
+		}
+
+		public int read()  {
+			int c=stream.ReadByte();
+			if(c>=0x80)throw new IOException("Invalid ASCII");
+			return c;
 		}
 
 		public int read(int[] buf, int offset, int unitCount)
@@ -39,13 +43,13 @@ public sealed class NTriplesParser : IRDFParser {
 			}
 			return unitCount;
 		}
-
-		public int read()  {
-			int c=stream.ReadByte();
-			if(c>=0x80)throw new IOException("Invalid ASCII");
-			return c;
-		}
 	}
+
+	public static bool isAsciiChar(int c, string asciiChars){
+		return (c>=0 && c<=0x7F && asciiChars.IndexOf((char)c)>=0);
+	}
+
+	IDictionary<string,RDFTerm> bnodeLabels;
 
 	StackableCharacterInput input;
 
@@ -63,41 +67,15 @@ public sealed class NTriplesParser : IRDFParser {
 		bnodeLabels=new PeterO.Support.LenientDictionary<string,RDFTerm>();
 	}
 
-	private bool skipWhitespace()  {
-		bool haveWhitespace=false;
-		input.setSoftMark();
-		while(true){
-			int ch=input.read();
-			if(ch!=0x09 && ch!=0x20){
-				if(ch>=0) {
-					input.moveBack(1);
-				}
-				return haveWhitespace;
-			}
-			haveWhitespace=true;
-		}
-	}
 
-
-	private RDFTerm readObject(bool acceptLiteral)  {
-		int ch=input.read();
-		if(ch<0)
-			throw new ParserException();
-		else if(ch=='<')
-			return (RDFTerm.fromIRI(readIriReference()));
-		else if(acceptLiteral && (ch=='\"')){ // start of quote literal
-			string str=readStringLiteral(ch);
-			return (finishStringLiteral(str));
-		} else if(ch=='_'){ // Blank Node Label
-			if(input.read()!=':')
-				throw new ParserException();
-			string label=readBlankNodeLabel();
-			RDFTerm term=bnodeLabels[label];
-			if(term==null){
-				term=RDFTerm.fromBlankNode(label);
-				bnodeLabels.Add(label,term);
+	private void endOfLine(int ch)  {
+		if(ch==0x0a)
+			return;
+		else if(ch==0x0d){
+			ch=input.read();
+			if(ch!=0x0a && ch>=0){
+				input.moveBack(1);
 			}
-			return (term);
 		} else
 			throw new ParserException();
 	}
@@ -117,6 +95,105 @@ public sealed class NTriplesParser : IRDFParser {
 			return RDFTerm.fromTypedString(str);
 		}
 	}
+
+	public ISet<RDFTriple> parse()  {
+		ISet<RDFTriple> rdf=new HashSet<RDFTriple>();
+		while(true){
+			skipWhitespace();
+			input.setHardMark();
+			int ch=input.read();
+			if(ch<0)return rdf;
+			if(ch=='#'){
+				while(true){
+					ch=input.read();
+					if(ch==0x0a || ch==0x0d){
+						endOfLine(ch);
+						break;
+					} else if(ch<0x20 || ch>0x7e)
+						throw new ParserException();
+				}
+			} else if(ch==0x0a || ch==0x0d){
+				endOfLine(ch);
+			} else {
+				input.moveBack(1);
+				rdf.Add(readTriples());
+			}
+		}
+	}
+
+	private string readBlankNodeLabel()  {
+		StringBuilder ilist=new StringBuilder();
+		int startChar=input.read();
+		if(!((startChar>='A' && startChar<='Z') ||
+				(startChar>='a' && startChar<='z')))
+			throw new ParserException();
+		if(startChar<=0xFFFF){ ilist.Append((char)(startChar)); }
+else {
+ilist.Append((char)((((startChar-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((startChar-0x10000))&0x3FF)+0xDC00));
+}
+		input.setSoftMark();
+		while(true){
+			int ch=input.read();
+			if((ch>='A' && ch<='Z') ||
+					(ch>='a' && ch<='z') ||
+					(ch>='0' && ch<='9')){
+				if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
+else {
+ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
+}
+			} else {
+				if(ch>=0) {
+					input.moveBack(1);
+				}
+				return ilist.ToString();
+			}
+		}
+	}
+
+	private string readIriReference()  {
+		StringBuilder ilist=new StringBuilder();
+		bool haveString=false;
+		bool colon=false;
+		while(true){
+			int c2=input.read();
+			if((c2<=0x20 || c2>0x7e) || ((c2&0x7F)==c2 && "<\"{}|^`".IndexOf((char)c2)>=0))
+				throw new ParserException();
+			else if(c2=='\\'){
+				c2=readUnicodeEscape(true);
+				if(c2<=0x20 || (c2>=0x7F && c2<=0x9F) || ((c2&0x7F)==c2 && "<\"{}|\\^`".IndexOf((char)c2)>=0))
+					throw new ParserException();
+				if(c2==':') {
+					colon=true;
+				}
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
+				haveString=true;
+			} else if(c2=='>'){
+				if(!haveString || !colon)
+					throw new ParserException();
+				return ilist.ToString();
+			} else if(c2=='\"')
+				// Should have been escaped
+				throw new ParserException();
+			else {
+				if(c2==':') {
+					colon=true;
+				}
+				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
+else {
+ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
+ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
+}
+				haveString=true;
+			}
+		}
+	}
+
 
 	private string readLanguageTag()  {
 		StringBuilder ilist=new StringBuilder();
@@ -162,6 +239,28 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 		}
 	}
 
+	private RDFTerm readObject(bool acceptLiteral)  {
+		int ch=input.read();
+		if(ch<0)
+			throw new ParserException();
+		else if(ch=='<')
+			return (RDFTerm.fromIRI(readIriReference()));
+		else if(acceptLiteral && (ch=='\"')){ // start of quote literal
+			string str=readStringLiteral(ch);
+			return (finishStringLiteral(str));
+		} else if(ch=='_'){ // Blank Node Label
+			if(input.read()!=':')
+				throw new ParserException();
+			string label=readBlankNodeLabel();
+			RDFTerm term=bnodeLabels[label];
+			if(term==null){
+				term=RDFTerm.fromBlankNode(label);
+				bnodeLabels.Add(label,term);
+			}
+			return (term);
+		} else
+			throw new ParserException();
+	}
 	private string readStringLiteral(int ch)  {
 		StringBuilder ilist=new StringBuilder();
 		while(true){
@@ -187,83 +286,27 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 		}
 	}
 
-	private string readBlankNodeLabel()  {
-		StringBuilder ilist=new StringBuilder();
-		int startChar=input.read();
-		if(!((startChar>='A' && startChar<='Z') ||
-				(startChar>='a' && startChar<='z')))
-			throw new ParserException();
-		if(startChar<=0xFFFF){ ilist.Append((char)(startChar)); }
-else {
-ilist.Append((char)((((startChar-0x10000)>>10)&0x3FF)+0xD800));
-ilist.Append((char)((((startChar-0x10000))&0x3FF)+0xDC00));
-}
-		input.setSoftMark();
-		while(true){
-			int ch=input.read();
-			if((ch>='A' && ch<='Z') ||
-					(ch>='a' && ch<='z') ||
-					(ch>='0' && ch<='9')){
-				if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
-ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
-ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
-}
-			} else {
-				if(ch>=0) {
-					input.moveBack(1);
-				}
-				return ilist.ToString();
-			}
-		}
+	private RDFTriple readTriples()  {
+		int mark=input.setHardMark();
+		int ch=input.read();
+		#if DEBUG
+if(!((ch>=0) ))throw new InvalidOperationException("ch>=0");
+#endif
+		input.setMarkPosition(mark);
+		RDFTerm subject=readObject(false);
+		if(!skipWhitespace())throw new ParserException();
+		if(input.read()!='<')throw new ParserException();
+		RDFTerm predicate=RDFTerm.fromIRI(readIriReference());
+		if(!skipWhitespace())throw new ParserException();
+		RDFTerm obj=readObject(true);
+		skipWhitespace();
+		if(input.read()!='.')throw new ParserException();
+		skipWhitespace();
+		RDFTriple ret=new RDFTriple(subject,predicate,obj);
+		endOfLine(input.read());
+		return ret;
 	}
 
-
-	public static bool isAsciiChar(int c, string asciiChars){
-		return (c>=0 && c<=0x7F && asciiChars.IndexOf((char)c)>=0);
-	}
-
-	private string readIriReference()  {
-		StringBuilder ilist=new StringBuilder();
-		bool haveString=false;
-		bool colon=false;
-		while(true){
-			int c2=input.read();
-			if((c2<=0x20 || c2>0x7e) || ((c2&0x7F)==c2 && "<\"{}|^`".IndexOf((char)c2)>=0))
-				throw new ParserException();
-			else if(c2=='\\'){
-				c2=readUnicodeEscape(true);
-				if(c2<=0x20 || (c2>=0x7F && c2<=0x9F) || ((c2&0x7F)==c2 && "<\"{}|\\^`".IndexOf((char)c2)>=0))
-					throw new ParserException();
-				if(c2==':') {
-					colon=true;
-				}
-				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
-ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
-ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
-}
-				haveString=true;
-			} else if(c2=='>'){
-				if(!haveString || !colon)
-					throw new ParserException();
-				return ilist.ToString();
-			} else if(c2=='\"')
-				// Should have been escaped
-				throw new ParserException();
-			else {
-				if(c2==':') {
-					colon=true;
-				}
-				if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
-ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
-ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
-}
-				haveString=true;
-			}
-		}
-	}
 	private int readUnicodeEscape(bool extended)  {
 		int ch=input.read();
 		if(ch=='U'){
@@ -312,25 +355,19 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 		return ch;
 	}
 
-	private RDFTriple readTriples()  {
-		int mark=input.setHardMark();
-		int ch=input.read();
-		#if DEBUG
-if(!((ch>=0) ))throw new InvalidOperationException("ch>=0");
-#endif
-		input.setMarkPosition(mark);
-		RDFTerm subject=readObject(false);
-		if(!skipWhitespace())throw new ParserException();
-		if(input.read()!='<')throw new ParserException();
-		RDFTerm predicate=RDFTerm.fromIRI(readIriReference());
-		if(!skipWhitespace())throw new ParserException();
-		RDFTerm obj=readObject(true);
-		skipWhitespace();
-		if(input.read()!='.')throw new ParserException();
-		skipWhitespace();
-		RDFTriple ret=new RDFTriple(subject,predicate,obj);
-		endOfLine(input.read());
-		return ret;
+	private bool skipWhitespace()  {
+		bool haveWhitespace=false;
+		input.setSoftMark();
+		while(true){
+			int ch=input.read();
+			if(ch!=0x09 && ch!=0x20){
+				if(ch>=0) {
+					input.moveBack(1);
+				}
+				return haveWhitespace;
+			}
+			haveWhitespace=true;
+		}
 	}
 
 	private int toHexValue(int a) {
@@ -338,43 +375,6 @@ if(!((ch>=0) ))throw new InvalidOperationException("ch>=0");
 		if(a>='a' && a<='f')return a+10-'a';
 		if(a>='A' && a<='F')return a+10-'A';
 		return -1;
-	}
-
-	private void endOfLine(int ch)  {
-		if(ch==0x0a)
-			return;
-		else if(ch==0x0d){
-			ch=input.read();
-			if(ch!=0x0a && ch>=0){
-				input.moveBack(1);
-			}
-		} else
-			throw new ParserException();
-	}
-
-	public ISet<RDFTriple> parse()  {
-		ISet<RDFTriple> rdf=new HashSet<RDFTriple>();
-		while(true){
-			skipWhitespace();
-			input.setHardMark();
-			int ch=input.read();
-			if(ch<0)return rdf;
-			if(ch=='#'){
-				while(true){
-					ch=input.read();
-					if(ch==0x0a || ch==0x0d){
-						endOfLine(ch);
-						break;
-					} else if(ch<0x20 || ch>0x7e)
-						throw new ParserException();
-				}
-			} else if(ch==0x0a || ch==0x0d){
-				endOfLine(ch);
-			} else {
-				input.moveBack(1);
-				rdf.Add(readTriples());
-			}
-		}
 	}
 
 }

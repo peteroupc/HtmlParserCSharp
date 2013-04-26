@@ -35,6 +35,17 @@ sealed class JapaneseEUCEncoding : ITextEncoder, ITextDecoder {
 	int eucjp1=0;
 	int eucjp2=0;
 
+	public int decode(PeterO.Support.InputStream stream)  {
+		return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
+	}
+
+	public int decode(PeterO.Support.InputStream stream, IEncodingError error)  {
+		int[] value=new int[1];
+		int c=decode(stream,value,0,1, error);
+		if(c<=0)return -1;
+		return value[0];
+	}
+
 	public int decode(PeterO.Support.InputStream stream, int[] buffer, int offset, int length)
 			 {
 		return decode(stream, buffer, offset, length, TextEncoding.ENCODING_ERROR_THROW);
@@ -172,17 +183,6 @@ sealed class JapaneseEUCEncoding : ITextEncoder, ITextDecoder {
 				stream.WriteByte(unchecked((byte)(index%94+0xa1)));
 			}
 		}
-	}
-
-	public int decode(PeterO.Support.InputStream stream)  {
-		return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
-	}
-
-	public int decode(PeterO.Support.InputStream stream, IEncodingError error)  {
-		int[] value=new int[1];
-		int c=decode(stream,value,0,1, error);
-		if(c<=0)return -1;
-		return value[0];
 	}
 }
 

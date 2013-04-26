@@ -15,16 +15,6 @@ public class RDFa : IRDFParser {
 		None, Forward, Reverse
 	}
 
-	internal class IncompleteTriple {
-		public override string ToString() {
-			return "IncompleteTriple [list=" + list + ", predicate="
-					+ predicate + ", direction=" + direction + "]";
-		}
-		public IList<RDFTerm> list;
-		public RDFTerm predicate;
-		public ChainingDirection direction;
-	}
-
 	internal class EvalContext {
 		public string baseURI;
 		public RDFTerm parentSubject;
@@ -51,112 +41,17 @@ public class RDFa : IRDFParser {
 		}
 	}
 
-	private IRDFParser parser;
-	private EvalContext context;
-	private ISet<RDFTriple> outputGraph;
-	private IDocument document;
-	private static bool xhtml_rdfa11=false;
-
-	public RDFa(IDocument document){
-		this.document=document;
-		this.parser=null;
-		this.context=new EvalContext();
-		this.context.defaultVocab=null;
-		this.context.baseURI=document.getBaseURI();
-		if(!URIUtility.hasScheme(this.context.baseURI))
-			throw new ArgumentException("baseURI: "+this.context.baseURI);
-		this.context.parentSubject=RDFTerm.fromIRI(this.context.baseURI);
-		this.context.parentObject=null;
-		this.context.namespaces=new PeterO.Support.LenientDictionary<string,string>();
-		this.context.iriMap=new PeterO.Support.LenientDictionary<string,string>();
-		this.context.listMap=new PeterO.Support.LenientDictionary<string,IList<RDFTerm>>();
-		this.context.termMap=new PeterO.Support.LenientDictionary<string,string>();
-		this.context.incompleteTriples=new List<IncompleteTriple>();
-		this.context.language=null;
-		this.outputGraph=new HashSet<RDFTriple>();
-		this.context.termMap.Add("describedby","http://www.w3.org/2007/05/powder-s#describedby");
-		this.context.termMap.Add("license","http://www.w3.org/1999/xhtml/vocab#license");
-		this.context.termMap.Add("role","http://www.w3.org/1999/xhtml/vocab#role");
-		this.context.iriMap.Add("cc","http://creativecommons.org/ns#");
-		this.context.iriMap.Add("ctag","http://commontag.org/ns#");
-		this.context.iriMap.Add("dc","http://purl.org/dc/terms/");
-		this.context.iriMap.Add("dcterms","http://purl.org/dc/terms/");
-		this.context.iriMap.Add("dc11","http://purl.org/dc/elements/1.1/");
-		this.context.iriMap.Add("foaf","http://xmlns.com/foaf/0.1/");
-		this.context.iriMap.Add("gr","http://purl.org/goodrelations/v1#");
-		this.context.iriMap.Add("ical","http://www.w3.org/2002/12/cal/icaltzd#");
-		this.context.iriMap.Add("og","http://ogp.me/ns#");
-		this.context.iriMap.Add("schema","http://schema.org/");
-		this.context.iriMap.Add("rev","http://purl.org/stuff/rev#");
-		this.context.iriMap.Add("sioc","http://rdfs.org/sioc/ns#");
-		this.context.iriMap.Add("grddl","http://www.w3.org/2003/g/data-view#");
-		this.context.iriMap.Add("ma","http://www.w3.org/ns/ma-ont#");
-		this.context.iriMap.Add("owl","http://www.w3.org/2002/07/owl#");
-		this.context.iriMap.Add("prov","http://www.w3.org/ns/prov#");
-		this.context.iriMap.Add("rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-		this.context.iriMap.Add("rdfa","http://www.w3.org/ns/rdfa#");
-		this.context.iriMap.Add("rdfs","http://www.w3.org/2000/01/rdf-schema#");
-		this.context.iriMap.Add("rif","http://www.w3.org/2007/rif#");
-		this.context.iriMap.Add("rr","http://www.w3.org/ns/r2rml#");
-		this.context.iriMap.Add("sd","http://www.w3.org/ns/sparql-service-description#");
-		this.context.iriMap.Add("skos","http://www.w3.org/2004/02/skos/core#");
-		this.context.iriMap.Add("skosxl","http://www.w3.org/2008/05/skos-xl#");
-		this.context.iriMap.Add("v","http://rdf.data-vocabulary.org/#");
-		this.context.iriMap.Add("vcard","http://www.w3.org/2006/vcard/ns#");
-		this.context.iriMap.Add("void","http://rdfs.org/ns/void#");
-		this.context.iriMap.Add("wdr","http://www.w3.org/2007/05/powder#");
-		this.context.iriMap.Add("wdrs","http://www.w3.org/2007/05/powder-s#");
-		this.context.iriMap.Add("xhv","http://www.w3.org/1999/xhtml/vocab#");
-		this.context.iriMap.Add("xml","http://www.w3.org/XML/1998/_namespace");
-		this.context.iriMap.Add("xsd","http://www.w3.org/2001/XMLSchema#");
-		IElement docElement=document.getDocumentElement();
-		if(docElement!=null && isHtmlElement(docElement,"html")){
-			xhtml_rdfa11=true;
-			string version=docElement.getAttribute("version");
-			if(version!=null && "XHTML+RDFa 1.1".Equals(version)){
-				xhtml_rdfa11=true;
-				string[] terms=new string[]{
-						"alternate","appendix","cite",
-						"bookmark","chapter","contents",
-						"copyright","first","glossary",
-						"help","icon","index","last",
-						"license","meta","next","prev",
-						"previous","section","start",
-						"stylesheet","subsection","top",
-						"up","p3pv1"
-				};
-				foreach(string term in terms){
-					this.context.termMap.Add(term,"http://www.w3.org/1999/xhtml/vocab#"+term);
-				}
-			}
-			if(version!=null && "XHTML+RDFa 1.0".Equals(version)){
-				parser=new RDFa1(document);
-			}
+	internal class IncompleteTriple {
+		public IList<RDFTerm> list;
+		public RDFTerm predicate;
+		public ChainingDirection direction;
+		public override string ToString() {
+			return "IncompleteTriple [list=" + list + ", predicate="
+					+ predicate + ", direction=" + direction + "]";
 		}
-		extraContext();
 	}
 
-	private void extraContext(){
-		this.context.iriMap.Add("bibo","http://purl.org/ontology/bibo/");
-		this.context.iriMap.Add("dbp","http://dbpedia.org/property/");
-		this.context.iriMap.Add("dbp-owl","http://dbpedia.org/ontology/");
-		this.context.iriMap.Add("dbr","http://dbpedia.org/resource/");
-		this.context.iriMap.Add("ex","http://example.org/");
-	}
-
-	private static bool isHtmlElement(IElement element, string name){
-		return element!=null &&
-				"http://www.w3.org/1999/xhtml".Equals(element.getNamespaceURI()) &&
-				name.Equals(element.getLocalName());
-	}
-
-	private static readonly RDFTerm RDFA_USES_VOCABULARY=
-			RDFTerm.fromIRI("http://www.w3.org/ns/rdfa#usesVocabulary");
-
-	private static readonly string RDF_XMLLITERAL="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral";
-
-	private static readonly string[] emptyStringArray=new string[]{};
-
+	private static readonly string RDFA_DEFAULT_PREFIX = "http://www.w3.org/1999/xhtml/vocab#";
 	private static string getTextNodeText(INode node){
 		StringBuilder builder=new StringBuilder();
 		foreach(INode child in node.getChildNodes()){
@@ -168,24 +63,10 @@ public class RDFa : IRDFParser {
 		}
 		return builder.ToString();
 	}
-
-
-	private static bool isNCNameStartChar(int c){
-		return (c>='a' && c<='z') ||
-				(c>='A' && c<='Z') ||
-				c=='_' ||
-				(c>=0xc0 && c<=0xd6) ||
-				(c>=0xd8 && c<=0xf6) ||
-				(c>=0xf8 && c<=0x2ff) ||
-				(c>=0x370 && c<=0x37d) ||
-				(c>=0x37f && c<=0x1fff) ||
-				(c>=0x200c && c<=0x200d) ||
-				(c>=0x2070 && c<=0x218f) ||
-				(c>=0x2c00 && c<=0x2fef) ||
-				(c>=0x3001 && c<=0xd7ff) ||
-				(c>=0xf900 && c<=0xfdcf) ||
-				(c>=0xfdf0 && c<=0xfffd) ||
-				(c>=0x10000 && c<=0xeffff);
+	private static bool isHtmlElement(IElement element, string name){
+		return element!=null &&
+				"http://www.w3.org/1999/xhtml".Equals(element.getNamespaceURI()) &&
+				name.Equals(element.getLocalName());
 	}
 	private static bool isNCNameChar(int c){
 		return (c>='a' && c<='z') ||
@@ -207,6 +88,24 @@ public class RDFa : IRDFParser {
 				(c>=0xfdf0 && c<=0xfffd) ||
 				(c>=0x10000 && c<=0xeffff);
 	}
+	private static bool isNCNameStartChar(int c){
+		return (c>='a' && c<='z') ||
+				(c>='A' && c<='Z') ||
+				c=='_' ||
+				(c>=0xc0 && c<=0xd6) ||
+				(c>=0xd8 && c<=0xf6) ||
+				(c>=0xf8 && c<=0x2ff) ||
+				(c>=0x370 && c<=0x37d) ||
+				(c>=0x37f && c<=0x1fff) ||
+				(c>=0x200c && c<=0x200d) ||
+				(c>=0x2070 && c<=0x218f) ||
+				(c>=0x2c00 && c<=0x2fef) ||
+				(c>=0x3001 && c<=0xd7ff) ||
+				(c>=0xf900 && c<=0xfdcf) ||
+				(c>=0xfdf0 && c<=0xfffd) ||
+				(c>=0x10000 && c<=0xeffff);
+	}
+
 	private static bool isTermChar(int c){
 		return (c>='a' && c<='z') ||
 				(c>='A' && c<='Z') ||
@@ -228,6 +127,22 @@ public class RDFa : IRDFParser {
 				(c>=0x10000 && c<=0xeffff);
 	}
 
+	private IRDFParser parser;
+
+	private EvalContext context;
+
+	private ISet<RDFTriple> outputGraph;
+
+	private IDocument document;
+
+	private static bool xhtml_rdfa11=false;
+
+	private static readonly RDFTerm RDFA_USES_VOCABULARY=
+			RDFTerm.fromIRI("http://www.w3.org/ns/rdfa#usesVocabulary");
+
+
+	private static readonly string RDF_XMLLITERAL="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral";
+	private static readonly string[] emptyStringArray=new string[]{};
 	private static int getCuriePrefixLength(string s, int offset, int length){
 		if(s==null || length==0)return -1;
 		if(s[offset]==':')return 0;
@@ -252,6 +167,23 @@ public class RDFa : IRDFParser {
 		return -1;
 	}
 
+	private static T getValueCaseInsensitive<T>(
+			IDictionary<string,T> map,
+			string key
+			){
+		if(key==null)
+			return map[null];
+		key=StringUtility.toLowerCaseAscii(key);
+		foreach(string k in map.Keys){
+			if(key.Equals(StringUtility.toLowerCaseAscii(k)))
+				return map[k];
+		}
+		return default(T);
+	}
+
+	private static bool isValidCurieReference(string s, int offset, int length){
+		return URIUtility.isValidCurieReference(s, offset, length);
+	}
 	private static bool isValidTerm(string s){
 		if(s==null || s.Length==0)return false;
 		if(!isNCNameStartChar(s[0]))return false;
@@ -272,9 +204,6 @@ public class RDFa : IRDFParser {
 			index++;
 		}
 		return true;
-	}
-	private static bool isValidCurieReference(string s, int offset, int length){
-		return URIUtility.isValidCurieReference(s, offset, length, false);
 	}
 
 	private static string[] splitPrefixList(string s){
@@ -393,10 +322,91 @@ iri.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 	private int blankNode;
 	private IDictionary<string,RDFTerm> bnodeLabels=new PeterO.Support.LenientDictionary<string,RDFTerm>();
 
-	private RDFTerm getNamedBlankNode(string str){
-		RDFTerm term=RDFTerm.fromBlankNode(str);
-		bnodeLabels.Add(str,term);
-		return term;
+	public RDFa(IDocument document){
+		this.document=document;
+		this.parser=null;
+		this.context=new EvalContext();
+		this.context.defaultVocab=null;
+		this.context.baseURI=document.getBaseURI();
+		if(!URIUtility.hasScheme(this.context.baseURI))
+			throw new ArgumentException("baseURI: "+this.context.baseURI);
+		this.context.parentSubject=RDFTerm.fromIRI(this.context.baseURI);
+		this.context.parentObject=null;
+		this.context.namespaces=new PeterO.Support.LenientDictionary<string,string>();
+		this.context.iriMap=new PeterO.Support.LenientDictionary<string,string>();
+		this.context.listMap=new PeterO.Support.LenientDictionary<string,IList<RDFTerm>>();
+		this.context.termMap=new PeterO.Support.LenientDictionary<string,string>();
+		this.context.incompleteTriples=new List<IncompleteTriple>();
+		this.context.language=null;
+		this.outputGraph=new HashSet<RDFTriple>();
+		this.context.termMap.Add("describedby","http://www.w3.org/2007/05/powder-s#describedby");
+		this.context.termMap.Add("license","http://www.w3.org/1999/xhtml/vocab#license");
+		this.context.termMap.Add("role","http://www.w3.org/1999/xhtml/vocab#role");
+		this.context.iriMap.Add("cc","http://creativecommons.org/ns#");
+		this.context.iriMap.Add("ctag","http://commontag.org/ns#");
+		this.context.iriMap.Add("dc","http://purl.org/dc/terms/");
+		this.context.iriMap.Add("dcterms","http://purl.org/dc/terms/");
+		this.context.iriMap.Add("dc11","http://purl.org/dc/elements/1.1/");
+		this.context.iriMap.Add("foaf","http://xmlns.com/foaf/0.1/");
+		this.context.iriMap.Add("gr","http://purl.org/goodrelations/v1#");
+		this.context.iriMap.Add("ical","http://www.w3.org/2002/12/cal/icaltzd#");
+		this.context.iriMap.Add("og","http://ogp.me/ns#");
+		this.context.iriMap.Add("schema","http://schema.org/");
+		this.context.iriMap.Add("rev","http://purl.org/stuff/rev#");
+		this.context.iriMap.Add("sioc","http://rdfs.org/sioc/ns#");
+		this.context.iriMap.Add("grddl","http://www.w3.org/2003/g/data-view#");
+		this.context.iriMap.Add("ma","http://www.w3.org/ns/ma-ont#");
+		this.context.iriMap.Add("owl","http://www.w3.org/2002/07/owl#");
+		this.context.iriMap.Add("prov","http://www.w3.org/ns/prov#");
+		this.context.iriMap.Add("rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+		this.context.iriMap.Add("rdfa","http://www.w3.org/ns/rdfa#");
+		this.context.iriMap.Add("rdfs","http://www.w3.org/2000/01/rdf-schema#");
+		this.context.iriMap.Add("rif","http://www.w3.org/2007/rif#");
+		this.context.iriMap.Add("rr","http://www.w3.org/ns/r2rml#");
+		this.context.iriMap.Add("sd","http://www.w3.org/ns/sparql-service-description#");
+		this.context.iriMap.Add("skos","http://www.w3.org/2004/02/skos/core#");
+		this.context.iriMap.Add("skosxl","http://www.w3.org/2008/05/skos-xl#");
+		this.context.iriMap.Add("v","http://rdf.data-vocabulary.org/#");
+		this.context.iriMap.Add("vcard","http://www.w3.org/2006/vcard/ns#");
+		this.context.iriMap.Add("void","http://rdfs.org/ns/void#");
+		this.context.iriMap.Add("wdr","http://www.w3.org/2007/05/powder#");
+		this.context.iriMap.Add("wdrs","http://www.w3.org/2007/05/powder-s#");
+		this.context.iriMap.Add("xhv","http://www.w3.org/1999/xhtml/vocab#");
+		this.context.iriMap.Add("xml","http://www.w3.org/XML/1998/_namespace");
+		this.context.iriMap.Add("xsd","http://www.w3.org/2001/XMLSchema#");
+		IElement docElement=document.getDocumentElement();
+		if(docElement!=null && isHtmlElement(docElement,"html")){
+			xhtml_rdfa11=true;
+			string version=docElement.getAttribute("version");
+			if(version!=null && "XHTML+RDFa 1.1".Equals(version)){
+				xhtml_rdfa11=true;
+				string[] terms=new string[]{
+						"alternate","appendix","cite",
+						"bookmark","chapter","contents",
+						"copyright","first","glossary",
+						"help","icon","index","last",
+						"license","meta","next","prev",
+						"previous","section","start",
+						"stylesheet","subsection","top",
+						"up","p3pv1"
+				};
+				foreach(string term in terms){
+					this.context.termMap.Add(term,"http://www.w3.org/1999/xhtml/vocab#"+term);
+				}
+			}
+			if(version!=null && "XHTML+RDFa 1.0".Equals(version)){
+				parser=new RDFa1(document);
+			}
+		}
+		extraContext();
+	}
+
+	private void extraContext(){
+		this.context.iriMap.Add("bibo","http://purl.org/ontology/bibo/");
+		this.context.iriMap.Add("dbp","http://dbpedia.org/property/");
+		this.context.iriMap.Add("dbp-owl","http://dbpedia.org/ontology/");
+		this.context.iriMap.Add("dbr","http://dbpedia.org/resource/");
+		this.context.iriMap.Add("ex","http://example.org/");
 	}
 
 	private RDFTerm generateBlankNode(){
@@ -411,19 +421,145 @@ iri.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 		return term;
 	}
 
+	private string getCurie(
+			string attribute, int offset, int length,
+			IDictionary<string,string> prefixMapping) {
+		int refIndex=offset;
+		int refLength=length;
+		int prefix=getCuriePrefixLength(attribute,refIndex,refLength);
+		string prefixIri=null;
+		if(prefix>=0){
+			string prefixName=StringUtility.toLowerCaseAscii(
+					attribute.Substring(refIndex,(refIndex+prefix)-(refIndex)));
+			refIndex+=(prefix+1);
+			refLength-=(prefix+1);
+			prefixIri=prefixMapping[prefixName];
+			if(prefix==0) {
+				prefixIri=RDFA_DEFAULT_PREFIX;
+			} else {
+				prefixIri=prefixMapping[prefixName];
+			}
+			if(prefixIri==null || "_".Equals(prefixName))
+				return null;
+		} else
+			// RDFa doesn't define a mapping for an absent prefix
+			return null;
+		if(!isValidCurieReference(attribute,refIndex,refLength))
+			return null;
+		if(prefix>=0)
+			return relativeResolve(prefixIri+attribute.Substring(refIndex,(refIndex+refLength)-(refIndex))).getValue();
+		else
+			return null;
+	}
+
+	private RDFTerm getCurieOrBnode(
+			string attribute, int offset, int length,
+			IDictionary<string,string> prefixMapping) {
+		int refIndex=offset;
+		int refLength=length;
+		int prefix=getCuriePrefixLength(attribute,refIndex,refLength);
+		string prefixIri=null;
+		string prefixName=null;
+		if(prefix>=0){
+			prefixName=StringUtility.toLowerCaseAscii(
+					attribute.Substring(refIndex,(refIndex+prefix)-(refIndex)));
+			refIndex+=(prefix+1);
+			refLength-=(prefix+1);
+			if(prefix==0) {
+				prefixIri=RDFA_DEFAULT_PREFIX;
+			} else {
+				prefixIri=prefixMapping[prefixName];
+			}
+			if(prefixIri==null && !"_".Equals(prefixName))return null;
+		} else
+			// RDFa doesn't define a mapping for an absent prefix
+			return null;
+		if(!isValidCurieReference(attribute,refIndex,refLength))
+			return null;
+		if(prefix>=0){
+			if("_".Equals(prefixName)){
+				#if DEBUG
+if(!(refIndex>=0 ))throw new InvalidOperationException(attribute);
+#endif
+				#if DEBUG
+if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(attribute);
+#endif
+				if(refLength==0)
+					// use an empty blank node: the CURIE syntax
+					// allows an empty reference; see the comment
+					// in generateBlankNode for why "//" appears
+					// at the beginning
+					return getNamedBlankNode("//empty");
+				return getNamedBlankNode(attribute.Substring(refIndex,(refIndex+refLength)-(refIndex)));
+			}
+			#if DEBUG
+if(!(refIndex>=0 ))throw new InvalidOperationException(attribute);
+#endif
+			#if DEBUG
+if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(attribute);
+#endif
+			return relativeResolve(prefixIri+attribute.Substring(refIndex,(refIndex+refLength)-(refIndex)));
+		} else
+			return null;
+	}
+	private RDFTerm getNamedBlankNode(string str){
+		RDFTerm term=RDFTerm.fromBlankNode(str);
+		bnodeLabels.Add(str,term);
+		return term;
+	}
+
+	private RDFTerm getSafeCurieOrCurieOrIri(
+			string attribute, IDictionary<string,string> prefixMapping) {
+		if(attribute==null)return null;
+		int lastIndex=attribute.Length-1;
+		if(attribute.Length>=2 && attribute[0]=='[' && attribute[lastIndex]==']'){
+			RDFTerm curie=getCurieOrBnode(attribute,1,attribute.Length-2,
+					prefixMapping);
+			return curie;
+		} else {
+			RDFTerm curie=getCurieOrBnode(attribute,0,attribute.Length,
+					prefixMapping);
+			if(curie==null)
+				// evaluate as IRI
+				return relativeResolve(attribute);
+			return curie;
+		}
+	}
+
+	private string getTermOrCurieOrAbsIri(
+			string attribute,
+			IDictionary<string,string> prefixMapping,
+			IDictionary<string,string> termMapping,
+			string defaultVocab) {
+		if(attribute==null)return null;
+		if(isValidTerm(attribute)){
+			if(defaultVocab!=null)
+				return relativeResolve(defaultVocab+attribute).getValue();
+			else if(termMapping.ContainsKey(attribute))
+				return termMapping[attribute];
+			else {
+				string value=getValueCaseInsensitive(termMapping,attribute);
+				return value;
+			}
+		}
+		string curie=getCurie(attribute,0,attribute.Length,
+				prefixMapping);
+		if(curie==null){
+			// evaluate as IRI if it's absolute
+			if(URIUtility.hasScheme(attribute))
+				//Console.WriteLine("has scheme: %s",attribute);
+				return relativeResolve(attribute).getValue();
+			return null;
+		}
+		return curie;
+	}
+
 	public ISet<RDFTriple> parse()  {
 		if(parser!=null)
 			return parser.parse();
 		process(document.getDocumentElement(),true);
 		RDFInternal.replaceBlankNodes(outputGraph, bnodeLabels);
 		return outputGraph;
-	}
-
-	private RDFTerm relativeResolve(string iri){
-		if(iri==null)return null;
-		if(URIUtility.splitIRI(iri)==null)
-			return null;
-		return RDFTerm.fromIRI(URIUtility.relativeResolve(iri, context.baseURI));
 	}
 
 	private void process(IElement node, bool root){
@@ -929,148 +1065,12 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 			}
 		}
 	}
-	private string getCurie(
-			string attribute, int offset, int length,
-			IDictionary<string,string> prefixMapping) {
-		int refIndex=offset;
-		int refLength=length;
-		int prefix=getCuriePrefixLength(attribute,refIndex,refLength);
-		string prefixIri=null;
-		if(prefix>=0){
-			string prefixName=StringUtility.toLowerCaseAscii(
-					attribute.Substring(refIndex,(refIndex+prefix)-(refIndex)));
-			refIndex+=(prefix+1);
-			refLength-=(prefix+1);
-			prefixIri=prefixMapping[prefixName];
-			if(prefix==0) {
-				prefixIri=RDFA_DEFAULT_PREFIX;
-			} else {
-				prefixIri=prefixMapping[prefixName];
-			}
-			if(prefixIri==null || "_".Equals(prefixName))
-				return null;
-		} else
-			// RDFa doesn't define a mapping for an absent prefix
-			return null;
-		if(!isValidCurieReference(attribute,refIndex,refLength))
-			return null;
-		if(prefix>=0)
-			return relativeResolve(prefixIri+attribute.Substring(refIndex,(refIndex+refLength)-(refIndex))).getValue();
-		else
-			return null;
-	}
 
-	private static readonly string RDFA_DEFAULT_PREFIX = "http://www.w3.org/1999/xhtml/vocab#";
-
-	private RDFTerm getCurieOrBnode(
-			string attribute, int offset, int length,
-			IDictionary<string,string> prefixMapping) {
-		int refIndex=offset;
-		int refLength=length;
-		int prefix=getCuriePrefixLength(attribute,refIndex,refLength);
-		string prefixIri=null;
-		string prefixName=null;
-		if(prefix>=0){
-			prefixName=StringUtility.toLowerCaseAscii(
-					attribute.Substring(refIndex,(refIndex+prefix)-(refIndex)));
-			refIndex+=(prefix+1);
-			refLength-=(prefix+1);
-			if(prefix==0) {
-				prefixIri=RDFA_DEFAULT_PREFIX;
-			} else {
-				prefixIri=prefixMapping[prefixName];
-			}
-			if(prefixIri==null && !"_".Equals(prefixName))return null;
-		} else
-			// RDFa doesn't define a mapping for an absent prefix
+	private RDFTerm relativeResolve(string iri){
+		if(iri==null)return null;
+		if(URIUtility.splitIRI(iri)==null)
 			return null;
-		if(!isValidCurieReference(attribute,refIndex,refLength))
-			return null;
-		if(prefix>=0){
-			if("_".Equals(prefixName)){
-				#if DEBUG
-if(!(refIndex>=0 ))throw new InvalidOperationException(attribute);
-#endif
-				#if DEBUG
-if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(attribute);
-#endif
-				if(refLength==0)
-					// use an empty blank node: the CURIE syntax
-					// allows an empty reference; see the comment
-					// in generateBlankNode for why "//" appears
-					// at the beginning
-					return getNamedBlankNode("//empty");
-				return getNamedBlankNode(attribute.Substring(refIndex,(refIndex+refLength)-(refIndex)));
-			}
-			#if DEBUG
-if(!(refIndex>=0 ))throw new InvalidOperationException(attribute);
-#endif
-			#if DEBUG
-if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(attribute);
-#endif
-			return relativeResolve(prefixIri+attribute.Substring(refIndex,(refIndex+refLength)-(refIndex)));
-		} else
-			return null;
-	}
-
-	private static T getValueCaseInsensitive<T>(
-			IDictionary<string,T> map,
-			string key
-			){
-		if(key==null)
-			return map[null];
-		key=StringUtility.toLowerCaseAscii(key);
-		foreach(string k in map.Keys){
-			if(key.Equals(StringUtility.toLowerCaseAscii(k)))
-				return map[k];
-		}
-		return default(T);
-	}
-
-	private string getTermOrCurieOrAbsIri(
-			string attribute,
-			IDictionary<string,string> prefixMapping,
-			IDictionary<string,string> termMapping,
-			string defaultVocab) {
-		if(attribute==null)return null;
-		if(isValidTerm(attribute)){
-			if(defaultVocab!=null)
-				return relativeResolve(defaultVocab+attribute).getValue();
-			else if(termMapping.ContainsKey(attribute))
-				return termMapping[attribute];
-			else {
-				string value=getValueCaseInsensitive(termMapping,attribute);
-				return value;
-			}
-		}
-		string curie=getCurie(attribute,0,attribute.Length,
-				prefixMapping);
-		if(curie==null){
-			// evaluate as IRI if it's absolute
-			if(URIUtility.hasScheme(attribute))
-				//Console.WriteLine("has scheme: %s",attribute);
-				return relativeResolve(attribute).getValue();
-			return null;
-		}
-		return curie;
-	}
-
-	private RDFTerm getSafeCurieOrCurieOrIri(
-			string attribute, IDictionary<string,string> prefixMapping) {
-		if(attribute==null)return null;
-		int lastIndex=attribute.Length-1;
-		if(attribute.Length>=2 && attribute[0]=='[' && attribute[lastIndex]==']'){
-			RDFTerm curie=getCurieOrBnode(attribute,1,attribute.Length-2,
-					prefixMapping);
-			return curie;
-		} else {
-			RDFTerm curie=getCurieOrBnode(attribute,0,attribute.Length,
-					prefixMapping);
-			if(curie==null)
-				// evaluate as IRI
-				return relativeResolve(attribute);
-			return curie;
-		}
+		return RDFTerm.fromIRI(URIUtility.relativeResolve(iri, context.baseURI));
 	}
 }
 

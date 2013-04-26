@@ -27,7 +27,6 @@ THE SOFTWARE.
 namespace com.upokecenter.encoding {
 using System;
 sealed class Korean {
-	private Korean(){}
 	private static short[] table=new short[17630];
 	static Korean(){
 		Array.Copy(method0(),0,table,0,4096);
@@ -107,13 +106,6 @@ sealed class Korean {
 		19979,64010,17152,256,
 		20024,64011,17408,222
 	};
-
-	public static int indexToCodePoint(int index){
-		if(index<0 || index>17629)return -1;
-		int ret=table[index];
-		return (ret==0) ? -1 : (ret&0xFFFF);
-	}
-
 	public static int codePointToIndex(int codepoint){
 		if(codepoint<161 || codepoint>65510)return -1;
 		for(int i=0;i<indextable.Length;i+=4){
@@ -127,6 +119,12 @@ sealed class Korean {
 			}
 		}
 		return -1;
+	}
+
+	public static int indexToCodePoint(int index){
+		if(index<0 || index>17629)return -1;
+		int ret=table[index];
+		return (ret==0) ? -1 : (ret&0xFFFF);
 	}
 
 	private static short[] method0(){
@@ -390,6 +388,7 @@ sealed class Korean {
 
 		};
 	}
+
 	private static short[] method1(){
 		return new short[]{
 				unchecked((short)0xC042),unchecked((short)0xC043),unchecked((short)0xC044),unchecked((short)0xC045),unchecked((short)0xC046),unchecked((short)0xC047),unchecked((short)0xC048),unchecked((short)0xC049),unchecked((short)0xC04A),unchecked((short)0xC04B),unchecked((short)0xC04C),unchecked((short)0xC04D),unchecked((short)0xC04E),unchecked((short)0xC04F),unchecked((short)0xC050),unchecked((short)0xC052),
@@ -1255,6 +1254,7 @@ sealed class Korean {
 				0x5E0C,0x6199,0x6198,0x6231,0x665E,0x66E6,0x7199,0x71B9,0x71BA,0x72A7,0x79A7,0x7A00,0x7FB2,unchecked((short)0x8A70)
 		};
 	}
+	private Korean(){}
 }
 
 }

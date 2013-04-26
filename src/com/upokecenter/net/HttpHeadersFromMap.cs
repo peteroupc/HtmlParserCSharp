@@ -67,8 +67,13 @@ internal class HttpHeadersFromMap : IHttpHeaders {
 		}
 	}
 
-	public string getRequestMethod() {
-		return requestMethod;
+	public string getHeaderField(int index) {
+		if(index==0)return list[0];
+		if(index<0)return null;
+		index=(index-1)*2+1+1;
+		if(index<0 || index>=list.Count)
+			return null;
+		return list[index+1];
 	}
 
 	public string getHeaderField(string name) {
@@ -83,13 +88,8 @@ internal class HttpHeadersFromMap : IHttpHeaders {
 		}
 		return last;
 	}
-	public string getHeaderField(int index) {
-		if(index==0)return list[0];
-		if(index<0)return null;
-		index=(index-1)*2+1+1;
-		if(index<0 || index>=list.Count)
-			return null;
-		return list[index+1];
+	public long getHeaderFieldDate(string field, long defaultValue) {
+		return HeaderParser.parseHttpDate(getHeaderField(field),defaultValue);
 	}
 	public string getHeaderFieldKey(int index) {
 		if(index==0 || index<0)return null;
@@ -98,17 +98,17 @@ internal class HttpHeadersFromMap : IHttpHeaders {
 			return null;
 		return list[index];
 	}
+	public IDictionary<string, IList<string>> getHeaderFields() {
+		return PeterO.Support.Collections.UnmodifiableMap(map);
+	}
+	public string getRequestMethod() {
+		return requestMethod;
+	}
+
 	public int getResponseCode() {
 		string status=getHeaderField(null);
 		if(status==null)return -1;
 		return HeaderParser.getResponseCode(status);
-	}
-	public long getHeaderFieldDate(string field, long defaultValue) {
-		return HeaderParser.parseHttpDate(getHeaderField(field),defaultValue);
-	}
-
-	public IDictionary<string, IList<string>> getHeaderFields() {
-		return PeterO.Support.Collections.UnmodifiableMap(map);
 	}
 
 	public string getUrl() {

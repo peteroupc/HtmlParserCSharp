@@ -38,12 +38,6 @@ using System.Collections.Generic;
  */
 public interface IDocument : INode {
 	/**
-	 * Gets the document's address
-	 * 
-	 * @return An absolute URL.
-	 */
-	string getURL();
-	/**
 	 * 
 	 * Gets the character encoding used in this document.
 	 * 
@@ -74,6 +68,12 @@ public interface IDocument : INode {
 	 * 
 	 */
 	IList<IElement> getElementsByTagName(string _string);
+	/**
+	 * Gets the document's address
+	 * 
+	 * @return An absolute URL.
+	 */
+	string getURL();
 }
 
 }

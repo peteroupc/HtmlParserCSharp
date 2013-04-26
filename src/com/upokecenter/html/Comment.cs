@@ -37,20 +37,20 @@ internal class Comment : Node, IComment {
 		return data;
 	}
 
+	public override string getNodeName(){
+		return "#comment";
+	}
+
 	public override string getTextContent(){
 		return null;
 	}
 
+
 	internal void setData(string data){
 		this.data=data;
 	}
-
-
 	internal override string toDebugString(){
 		return "<!-- "+getData().ToString().Replace("\n","~~~~")+" -->\n";
-	}
-	public override string getNodeName(){
-		return "#comment";
 	}
 
 }

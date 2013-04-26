@@ -33,10 +33,6 @@ sealed class GbkEncoding : ITextEncoder, ITextDecoder {
 
 	bool gb18030=true;
 
-	public GbkEncoding(bool gb18030){
-		this.gb18030=gb18030;
-	}
-
 	private static readonly int[] gb18030table=new int[]{
 		0,0x0080,
 		36,0x00A5,
@@ -247,9 +243,6 @@ sealed class GbkEncoding : ITextEncoder, ITextDecoder {
 		39419,0xFFFF
 	};
 
-	//39394,65510
-	//39419,65535
-
 	private static int GB18030CodePoint(int pointer){
 		if((pointer>39419 && pointer<189000) || pointer>1237575)
 			return -1;
@@ -266,6 +259,8 @@ sealed class GbkEncoding : ITextEncoder, ITextDecoder {
 		return gb18030table[v+1]+pointer-gb18030table[v];
 	}
 
+	//39394,65510
+	//39419,65535
 
 	private static int GB18030Pointer(int codepoint){
 		if(codepoint<0x80 || codepoint>=0x110000)
@@ -289,10 +284,32 @@ sealed class GbkEncoding : ITextEncoder, ITextDecoder {
 		return gb18030table[v]+offset;
 	}
 
+
 	int gbk1=0;
+
 	int gbk2=0;
 	int gbk3=0;
+	public GbkEncoding(bool gb18030){
+		this.gb18030=gb18030;
+	}
 
+	public int decode(PeterO.Support.InputStream stream)  {
+		return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
+	}
+
+
+	public int decode(PeterO.Support.InputStream stream, IEncodingError error)  {
+		int[] value=new int[1];
+		int c=decode(stream,value,0,1, error);
+		if(c<=0)return -1;
+		return value[0];
+	}
+
+
+	public int decode(PeterO.Support.InputStream stream, int[] buffer, int offset, int length)
+			 {
+		return decode(stream,buffer,offset,length,TextEncoding.ENCODING_ERROR_THROW);
+	}
 	public int decode(PeterO.Support.InputStream stream, int[] buffer, int offset, int length, IEncodingError error)
 			 {
 		if(stream==null || buffer==null || offset<0 || length<0 ||
@@ -401,17 +418,12 @@ sealed class GbkEncoding : ITextEncoder, ITextDecoder {
 	}
 
 
-	public int decode(PeterO.Support.InputStream stream)  {
-		return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
+	public void encode(Stream stream, int[] buffer, int offset, int length)
+			 {
+		encode(stream,buffer,offset,length,TextEncoding.ENCODING_ERROR_THROW);
 	}
 
 
-	public int decode(PeterO.Support.InputStream stream, IEncodingError error)  {
-		int[] value=new int[1];
-		int c=decode(stream,value,0,1, error);
-		if(c<=0)return -1;
-		return value[0];
-	}
 	public void encode(Stream stream, int[] array, int offset, int length, IEncodingError error)
 			 {
 		if(stream==null || array==null)throw new ArgumentException();
@@ -456,18 +468,6 @@ sealed class GbkEncoding : ITextEncoder, ITextDecoder {
 				stream.WriteByte(unchecked((byte)(b4+0x30)));
 			}
 		}
-	}
-
-
-	public int decode(PeterO.Support.InputStream stream, int[] buffer, int offset, int length)
-			 {
-		return decode(stream,buffer,offset,length,TextEncoding.ENCODING_ERROR_THROW);
-	}
-
-
-	public void encode(Stream stream, int[] buffer, int offset, int length)
-			 {
-		encode(stream,buffer,offset,length,TextEncoding.ENCODING_ERROR_THROW);
 	}
 
 

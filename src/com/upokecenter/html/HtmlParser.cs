@@ -125,7 +125,7 @@ sealed class HtmlParser {
 			return TOKEN_START_TAG;
 		}
 		public void setName(string _string) {
-			builder.Length=(0);
+			builder.Clear();
 			builder.Append(_string);
 		}
 	}

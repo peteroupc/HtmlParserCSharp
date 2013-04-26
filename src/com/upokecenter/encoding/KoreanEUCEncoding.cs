@@ -32,6 +32,8 @@ using System.IO;
 sealed class KoreanEUCEncoding : ITextEncoder, ITextDecoder {
 
 
+	int lead=0;
+
 	public int decode(PeterO.Support.InputStream stream)  {
 		return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
 	}
@@ -42,8 +44,6 @@ sealed class KoreanEUCEncoding : ITextEncoder, ITextDecoder {
 		if(c<=0)return -1;
 		return value[0];
 	}
-
-	int lead=0;
 
 	public int decode(PeterO.Support.InputStream stream, int[] buffer, int offset, int length)
 			 {

@@ -36,6 +36,12 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 		this.buffer=new byte[1024];
 	}
 
+	public override sealed int available() {
+		if(isDisabled())
+			return stream.available();
+		return 0;
+	}
+
 	public override sealed void Close() {
 		disabled=true;
 		pos=0;
@@ -43,27 +49,6 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 		buffer=null;
 		markpos=-1;
 		stream.Close();
-	}
-
-	private bool isDisabled(){
-		if(disabled){
-			if(markpos>=0 && markpos<marklimit)
-				return false;
-			if(pos<endpos)
-				return false;
-			return true;
-		}
-		return false;
-	}
-
-	public override sealed int available() {
-		if(isDisabled())
-			return stream.available();
-		return 0;
-	}
-
-	public override sealed bool markSupported(){
-		return true;
 	}
 
 	/**
@@ -81,18 +66,36 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 		}
 	}
 
-	/**
-	 * 
-	 * Resets the stream to the beginning of the input.  This will
-	 * invalidate the mark placed on the stream, if any.
-	 * 
-	 * @ if disableBuffer() was already called.
-	 */
-	public void rewind()  {
-		if(disabled)
-			throw new IOException();
-		pos=0;
-		markpos=-1;
+	public int doRead(byte[] buffer, int offset, int byteCount) {
+		if(markpos<0)
+			return readInternal(buffer,offset,byteCount);
+		else {
+			if(isDisabled())
+				return stream.Read(buffer,offset,byteCount);
+			int c=readInternal(buffer,offset,byteCount);
+			if(c>0 && markpos>=0){
+				markpos+=c;
+				if(markpos>marklimit){
+					marklimit=0;
+					markpos=-1;
+					if(this.buffer!=null && isDisabled()){
+						this.buffer=null;
+					}
+				}
+			}
+			return c;
+		}
+	}
+
+	private bool isDisabled(){
+		if(disabled){
+			if(markpos>=0 && markpos<marklimit)
+				return false;
+			if(pos<endpos)
+				return false;
+			return true;
+		}
+		return false;
 	}
 
 	public override sealed void mark(int limit){
@@ -106,6 +109,68 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 		markpos=0;
 		posAtMark=pos;
 		marklimit=limit;
+	}
+
+	public override sealed bool markSupported(){
+		return true;
+	}
+
+	public override sealed int ReadByte() {
+		if(markpos<0)
+			return readInternal();
+		else {
+			if(isDisabled())
+				return stream.ReadByte();
+			int c=readInternal();
+			if(c>=0 && markpos>=0){
+				markpos++;
+				if(markpos>marklimit){
+					marklimit=0;
+					markpos=-1;
+					if(buffer!=null && isDisabled()){
+						buffer=null;
+					}
+				}
+			}
+			return c;
+		}
+	}
+
+	public override sealed int Read(byte[] buffer, int offset, int byteCount) {
+		return doRead(buffer,offset,byteCount);
+	}
+
+	private int readInternal()  {
+		// Read from buffer
+		if(pos<endpos)
+			return (buffer[pos++]&0xFF);
+		//if(buffer!=null)
+		//Console.WriteLine("buffer %s end=%s len=%s",pos,endpos,buffer.Length);
+		if(disabled)
+			// Buffering disabled, so read directly from stream
+			return stream.ReadByte();
+		// End pos is smaller than buffer size, fill
+		// entire buffer if possible
+		if(endpos<buffer.Length){
+			int count=stream.Read(buffer,endpos,buffer.Length-endpos);
+			if(count>0) {
+				endpos+=count;
+			}
+		}
+		// Try reading from buffer again
+		if(pos<endpos)
+			return (buffer[pos++]&0xFF);
+		// No room, read next byte and put it in buffer
+		int c=stream.ReadByte();
+		if(c<0)return c;
+		if(pos>=buffer.Length){
+			byte[] newBuffer=new byte[buffer.Length*2];
+			Array.Copy(buffer,0,newBuffer,0,buffer.Length);
+			buffer=newBuffer;
+		}
+		buffer[pos++]=(byte)(c&0xFF);
+		endpos++;
+		return c;
 	}
 
 	private int readInternal(byte[] buf, int offset, int unitCount) {
@@ -180,58 +245,30 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 		return (total==0) ? -1 : total;
 	}
 
-	private int readInternal()  {
-		// Read from buffer
-		if(pos<endpos)
-			return (buffer[pos++]&0xFF);
-		//if(buffer!=null)
-		//Console.WriteLine("buffer %s end=%s len=%s",pos,endpos,buffer.Length);
-		if(disabled)
-			// Buffering disabled, so read directly from stream
-			return stream.ReadByte();
-		// End pos is smaller than buffer size, fill
-		// entire buffer if possible
-		if(endpos<buffer.Length){
-			int count=stream.Read(buffer,endpos,buffer.Length-endpos);
-			if(count>0) {
-				endpos+=count;
-			}
-		}
-		// Try reading from buffer again
-		if(pos<endpos)
-			return (buffer[pos++]&0xFF);
-		// No room, read next byte and put it in buffer
-		int c=stream.ReadByte();
-		if(c<0)return c;
-		if(pos>=buffer.Length){
-			byte[] newBuffer=new byte[buffer.Length*2];
-			Array.Copy(buffer,0,newBuffer,0,buffer.Length);
-			buffer=newBuffer;
-		}
-		buffer[pos++]=(byte)(c&0xFF);
-		endpos++;
-		return c;
-	}
 
-	public override sealed int ReadByte() {
-		if(markpos<0)
-			return readInternal();
-		else {
-			if(isDisabled())
-				return stream.ReadByte();
-			int c=readInternal();
-			if(c>=0 && markpos>=0){
-				markpos++;
-				if(markpos>marklimit){
-					marklimit=0;
-					markpos=-1;
-					if(buffer!=null && isDisabled()){
-						buffer=null;
-					}
-				}
-			}
-			return c;
+
+	public override sealed void reset()  {
+		//Console.WriteLine("reset: %s",isDisabled());
+		if(isDisabled()){
+			stream.reset();
+			return;
 		}
+		if(markpos<0)
+			throw new IOException();
+		pos=posAtMark;
+	}
+	/**
+	 * 
+	 * Resets the stream to the beginning of the input.  This will
+	 * invalidate the mark placed on the stream, if any.
+	 * 
+	 * @ if disableBuffer() was already called.
+	 */
+	public void rewind()  {
+		if(disabled)
+			throw new IOException();
+		pos=0;
+		markpos=-1;
 	}
 
 	public override sealed long skip(long byteCount) {
@@ -249,43 +286,6 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 			byteCount-=c;
 		}
 		return ret;
-	}
-
-
-
-	public int doRead(byte[] buffer, int offset, int byteCount) {
-		if(markpos<0)
-			return readInternal(buffer,offset,byteCount);
-		else {
-			if(isDisabled())
-				return stream.Read(buffer,offset,byteCount);
-			int c=readInternal(buffer,offset,byteCount);
-			if(c>0 && markpos>=0){
-				markpos+=c;
-				if(markpos>marklimit){
-					marklimit=0;
-					markpos=-1;
-					if(this.buffer!=null && isDisabled()){
-						this.buffer=null;
-					}
-				}
-			}
-			return c;
-		}
-	}
-	public override sealed int Read(byte[] buffer, int offset, int byteCount) {
-		return doRead(buffer,offset,byteCount);
-	}
-
-	public override sealed void reset()  {
-		//Console.WriteLine("reset: %s",isDisabled());
-		if(isDisabled()){
-			stream.reset();
-			return;
-		}
-		if(markpos<0)
-			throw new IOException();
-		pos=posAtMark;
 	}
 }
 

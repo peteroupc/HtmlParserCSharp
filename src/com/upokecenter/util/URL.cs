@@ -10,152 +10,40 @@ using System.Collections.Generic;
 using com.upokecenter.encoding;
 using com.upokecenter.io;
 
+/**
+ * 
+ * A URL _object under the WHATWG's URL
+ * specification. See http://url.spec.whatwg.org/
+ * 
+ * @author Peter
+ *
+ */
 public sealed class URL {
 
-	public override sealed int GetHashCode() {
-		 int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((fragment == null) ? 0 : fragment.GetHashCode());
-		result = prime * result + ((host == null) ? 0 : host.GetHashCode());
-		result = prime * result
-				+ ((password == null) ? 0 : password.GetHashCode());
-		result = prime * result + ((path == null) ? 0 : path.GetHashCode());
-		result = prime * result + ((port == null) ? 0 : port.GetHashCode());
-		result = prime * result + ((query == null) ? 0 : query.GetHashCode());
-		result = prime * result + ((scheme == null) ? 0 : scheme.GetHashCode());
-		result = prime * result
-				+ ((schemeData == null) ? 0 : schemeData.GetHashCode());
-		result = prime * result
-				+ ((username == null) ? 0 : username.GetHashCode());
-		return result;
+	private sealed class EncodingError : IEncodingError {
+		public int emitDecoderError(int[] buffer, int offset, int length)
+				 {
+			return 0;
+		}
+
+		public void emitEncoderError(Stream stream, int codePoint)  {
+			stream.WriteByte(unchecked((byte)('?')));
+		}
 	}
 
-	public override sealed bool Equals(object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (GetType() != obj.GetType())
-			return false;
-		URL other = (URL) obj;
-		if (fragment == null) {
-			if (other.fragment != null)
-				return false;
-		} else if (!fragment.Equals(other.fragment))
-			return false;
-		if (host == null) {
-			if (other.host != null)
-				return false;
-		} else if (!host.Equals(other.host))
-			return false;
-		if (password == null) {
-			if (other.password != null)
-				return false;
-		} else if (!password.Equals(other.password))
-			return false;
-		if (path == null) {
-			if (other.path != null)
-				return false;
-		} else if (!path.Equals(other.path))
-			return false;
-		if (port == null) {
-			if (other.port != null)
-				return false;
-		} else if (!port.Equals(other.port))
-			return false;
-		if (query == null) {
-			if (other.query != null)
-				return false;
-		} else if (!query.Equals(other.query))
-			return false;
-		if (scheme == null) {
-			if (other.scheme != null)
-				return false;
-		} else if (!scheme.Equals(other.scheme))
-			return false;
-		if (schemeData == null) {
-			if (other.schemeData != null)
-				return false;
-		} else if (!schemeData.Equals(other.schemeData))
-			return false;
-		if (username == null) {
-			if (other.username != null)
-				return false;
-		} else if (!username.Equals(other.username))
-			return false;
-		return true;
-	}
-
-	private string scheme="";
-	private string schemeData="";
-	private string username="";
-	private string password=null;
-	private string host=null;
-	private string path="";
-	private string query=null;
-	private string fragment=null;
-	private string port="";
-
-	public string getScheme(){
-		return scheme;
-	}
-
-	public string getSchemeData(){
-		return schemeData;
-	}
-
-	public string getPath(){
-		return path;
-	}
-
-	public string getPort(){
-		return port;
-	}
-
-	public string getProtocol(){
-		return scheme + ":";
-	}
-
-	public string getUsername(){
-		return username==null ? "" : username;
-	}
-
-	public string getPassword(){
-		return password==null ? "" : password;
-	}
-
-	public string getQueryString(){
-		return query==null ? "" : query;
-	}
-
-	public string getFragment(){
-		return fragment==null ? "" : fragment;
-	}
-
-	public string getHash(){
-		return (fragment==null || fragment.Length==0) ? "" : "#" + fragment;
-	}
-
-	public string getSearch(){
-		return (query==null || query.Length==0) ? "" : "?" + query;
-	}
-
-	public string getHost(){
-		if(port.Length==0)
-			return hostSerialize(host);
-		return hostSerialize(host) + ":" + port;
-	}
-
-	public string getHostname(){
-		return hostSerialize(host);
-	}
-
-	public string getPathname(){
-		if(schemeData.Length>0)
-			return schemeData;
-		else
-			return path;
+	private enum ParseState {
+		SchemeStart,
+		Scheme,
+		SchemeData,
+		NoScheme,
+		RelativeOrAuthority,
+		Relative,
+		RelativeSlash,
+		AuthorityFirstSlash,
+		AuthoritySecondSlash,
+		AuthorityIgnoreSlashes,
+		Authority, Query, Fragment, Host, FileHost,
+		RelativePathStart, RelativePath, HostName, Port
 	}
 
 	private sealed class QuerySerializerError : IEncodingError {
@@ -186,111 +74,9 @@ public sealed class URL {
 			stream.WriteByte(unchecked((byte)(0x3B)));
 		}
 	}
-
-	private sealed class EncodingError : IEncodingError {
-		public int emitDecoderError(int[] buffer, int offset, int length)
-				 {
-			return 0;
-		}
-
-		public void emitEncoderError(Stream stream, int codePoint)  {
-			stream.WriteByte(unchecked((byte)('?')));
-		}
-	}
-
-	private enum ParseState {
-		SchemeStart,
-		Scheme,
-		SchemeData,
-		NoScheme,
-		RelativeOrAuthority,
-		Relative,
-		RelativeSlash,
-		AuthorityFirstSlash,
-		AuthoritySecondSlash,
-		AuthorityIgnoreSlashes,
-		Authority, Query, Fragment, Host, FileHost,
-		RelativePathStart, RelativePath, HostName, Port
-	}
-
 	private static string hex="0123456789ABCDEF";
-
 	private static IEncodingError encodingError=new EncodingError();
-
 	private static IEncodingError querySerializerError=new QuerySerializerError();
-
-	private static void percentEncode(IntList buffer, int b){
-		buffer.appendInt('%');
-		buffer.appendInt(hex[(b>>4)&0x0F]);
-		buffer.appendInt(hex[(b)&0x0F]);
-	}
-
-	private static void percentEncodeUtf8(IntList buffer, int cp){
-		if(cp<=0x7F){
-			buffer.appendInt('%');
-			buffer.appendInt(hex[(cp>>4)&0x0F]);
-			buffer.appendInt(hex[(cp)&0x0F]);
-		} else if(cp<=0x7FF){
-			percentEncode(buffer,(0xC0|((cp>>6)&0x1F)));
-			percentEncode(buffer,(0x80|(cp   &0x3F)));
-		} else if(cp<=0xFFFF){
-			percentEncode(buffer,(0xE0|((cp>>12)&0x0F)));
-			percentEncode(buffer,(0x80|((cp>>6 )&0x3F)));
-			percentEncode(buffer,(0x80|(cp      &0x3F)));
-		} else {
-			percentEncode(buffer,(0xF0|((cp>>18)&0x07)));
-			percentEncode(buffer,(0x80|((cp>>12)&0x3F)));
-			percentEncode(buffer,(0x80|((cp>>6 )&0x3F)));
-			percentEncode(buffer,(0x80|(cp      &0x3F)));
-		}
-	}
-
-	public override sealed string ToString(){
-		StringBuilder builder=new StringBuilder();
-		builder.Append(scheme);
-		builder.Append(':');
-		if(scheme.Equals("file") ||
-				scheme.Equals("http") ||
-				scheme.Equals("https") ||
-				scheme.Equals("ftp") ||
-				scheme.Equals("gopher") ||
-				scheme.Equals("ws") ||
-				scheme.Equals("wss")){
-			// NOTE: We check relative schemes here
-			// rather than have a relative flag,
-			// as specified in the URL Standard
-			// (since the protocol can't be changed
-			// as this class is immutable, we can
-			// do this variation).
-			builder.Append("//");
-			if(username.Length!=0 || password!=null){
-				builder.Append(username);
-				if(password!=null){
-					builder.Append(':');
-					builder.Append(password);
-				}
-				builder.Append('@');
-			}
-			builder.Append(hostSerialize(host));
-			if(port.Length>0){
-				builder.Append(':');
-				builder.Append(port);
-			}
-			builder.Append(path);
-		} else {
-			builder.Append(schemeData);
-		}
-		if(query!=null){
-			builder.Append('?');
-			builder.Append(query);
-		}
-		if(fragment!=null){
-			builder.Append('#');
-			builder.Append(fragment);
-		}
-		return builder.ToString();
-	}
-
 	private static void appendOutputBytes(StringBuilder builder,
 			MemoryOutputStream baos){
 		for(int i=0;i<baos.Length;i++){
@@ -309,144 +95,155 @@ public sealed class URL {
 			}
 		}
 	}
-	private static string percentDecode(string str, string encoding)
-			{
-		int len=str.Length;
-		bool percent=false;
-		for(int i=0;i<len;i++){
-			char c=str[i];
-			if(c=='%') {
-				percent=true;
-			} else if(c>=0x80) // Non-ASCII characters not allowed
-				return null;
-		}
-		if(!percent)return str;
-		ITextDecoder decoder=TextEncoding.getDecoder(encoding);
-		ByteList mos=new ByteList();
-		for(int i=0;i<len;i++){
-			int c=str[i];
-			if(c=='%'){
-				if(i+2<len){
-					int a=toHexNumber(str[i+1]);
-					int b=toHexNumber(str[i+2]);
-					if(a>=0 && b>=0){
-						mos.append((byte) (a*16+b));
-						i+=2;
+	private static string hostParse(string _string) {
+		if(_string.Length>0 && _string[0]=='['){
+			if(_string[_string.Length-1]!=']'){
+				int[] ipv6=new int[8];
+				int piecePointer=0;
+				int index=1;
+				int compress=-1;
+				int ending=_string.Length-1;
+				int c=(index>=ending) ? -1 : _string[index];
+				if(c==':'){
+					if(index+1>=ending || _string[index+1]!=':')
+						return null;
+					index+=2;
+					piecePointer++;
+					compress=piecePointer;
+				}
+				while(index<ending){
+					if(piecePointer>=8)return null;
+					c=_string[index];
+					if(c>=0xD800 && c<=0xDBFF && index+1<ending &&
+							_string[index+1]>=0xDC00 && _string[index+1]<=0xDFFF){
+						// Get the Unicode code point for the surrogate pair
+						c=0x10000+(c-0xD800)*0x400+(_string[index+1]-0xDC00);
+						index++;
+					} else if(c>=0xD800 && c<=0xDFFF)
+						// illegal surrogate
+						throw new ArgumentException();
+					index++;
+					if(c==':'){
+						if(compress>=0)return null;
+						piecePointer++;
+						compress=piecePointer;
 						continue;
 					}
+					int value=0;
+					int length=0;
+					while(length<4){
+						if(c>='A' && c<='F'){
+							value=value*16+(c-'A')+10;
+							index++;
+							length++;
+							c=(index>=ending) ? -1 : _string[index];
+						} else if(c>='a' && c<='f'){
+							value=value*16+(c-'a')+10;
+							index++;
+							length++;
+							c=(index>=ending) ? -1 : _string[index];
+						} else if(c>='0' && c<='9'){
+							value=value*16+(c-'0');
+							index++;
+							length++;
+							c=(index>=ending) ? -1 : _string[index];
+						} else {
+							break;
+						}
+					}
+					if(c=='.'){
+						if(length==0)return null;
+						index-=length;
+						break;
+					} else if(c==':'){
+						index++;
+						c=(index>=ending) ? -1 : _string[index];
+						if(c<0)return null;
+					} else if(c>=0)
+						return null;
+					ipv6[piecePointer]=value;
+					piecePointer++;
 				}
-			}
-			mos.append((byte) (c&0xFF));
-		}
-		return TextEncoding.decodeString(mos.toInputStream(),
-				decoder, TextEncoding.ENCODING_ERROR_REPLACE);
-	}
-
-	public static string toQueryString(IList<string[]> pairs,
-			string delimiter, string encoding) {
-		if(encoding==null) {
-			encoding="utf-8";
-		}
-		ITextEncoder encoder=TextEncoding.getEncoder(encoding);
-		if(encoder==null)
-			throw new ArgumentException();
-		StringBuilder builder=new StringBuilder();
-		bool first=true;
-		MemoryOutputStream baos=new MemoryOutputStream();
-		foreach(string[] pair in pairs){
-			if(!first){
-				builder.Append(delimiter==null ? "&" : delimiter);
-			}
-			first=false;
-			if(pair==null || pair.Length<2)
-				throw new ArgumentException();
-			baos.reset();
-			TextEncoding.encodeString(pair[0], baos, encoder, querySerializerError);
-			appendOutputBytes(builder,baos);
-			builder.Append('=');
-			baos.reset();
-			TextEncoding.encodeString(pair[1], baos, encoder, querySerializerError);
-			appendOutputBytes(builder,baos);
-		}
-		return builder.ToString();
-	}
-
-	public static IList<string[]> parseQueryString(
-			string input, string delimiter, string encoding, bool useCharset, bool isindex){
-		if(input==null)
-			throw new ArgumentException();
-		if(delimiter==null) {
-			delimiter="&";
-		}
-		if(encoding==null) {
-			encoding="utf-8";
-		}
-		for(int i=0;i<input.Length;i++){
-			if(input[i]>0x7F)
-				throw new ArgumentException();
-		}
-		string[] strings=StringUtility.splitAt(input,delimiter);
-		IList<string[]> pairs=new List<string[]>();
-		foreach(string str in strings){
-			if(str.Length==0) {
-				continue;
-			}
-			int index=str.IndexOf('=');
-			string name=str;
-			string value="";
-			if(index>=0){
-				name=str.Substring(0,(index)-(0));
-				value=str.Substring(index+1);
-			}
-			name=name.Replace('+',' ');
-			value=value.Replace('+',' ');
-			if(useCharset && "_charset_".Equals(name)){
-				string ch=TextEncoding.resolveEncoding(value);
-				if(ch!=null){
-					useCharset=false;
-					encoding=ch;
+				// IPv4
+				if(c>=0){
+					if(piecePointer>6)
+						return null;
+					int dotsSeen=0;
+					while(index<ending){
+						int value=0;
+						while(c>='0' && c<='9'){
+							value=value*10+(c-'0');
+							if(value>255)return null;
+							index++;
+							c=(index>=ending) ? -1 : _string[index];
+						}
+						if(dotsSeen<3 && c!='.')
+							return null;
+						else if(dotsSeen==3 && c=='.')
+							return null;
+						ipv6[piecePointer]=ipv6[piecePointer]*256+value;
+						if(dotsSeen==0 || dotsSeen==2){
+							piecePointer++;
+						}
+						dotsSeen++;
+					}
 				}
+				if(compress>=0){
+					int swaps=piecePointer-compress;
+					piecePointer=7;
+					while(piecePointer!=0 && swaps!=0){
+						int ptr=compress-swaps+1;
+						int tmp=ipv6[piecePointer];
+						ipv6[piecePointer]=ipv6[ptr];
+						ipv6[ptr]=tmp;
+						piecePointer--;
+						swaps--;
+					}
+				} else if(compress<0 && piecePointer!=8)
+					return null;
 			}
-			string[] pair=new string[]{name,value};
-			pairs.Add(pair);
 		}
 		try {
-			foreach(string[] pair in pairs){
-				pair[0]=percentDecode(pair[0],encoding);
-				pair[1]=percentDecode(pair[1],encoding);
-			}
-		} catch (IOException e) {
-			throw e;
+			//Console.WriteLine("was: %s",_string);
+			_string=percentDecode(_string,"utf-8");
+			//Console.WriteLine("now: %s",_string);
+		} catch(IOException){
+			return null;
 		}
-		return pairs;
+		return _string;
 	}
-
-	public static IList<string> pathList(string s){
-		IList<string> str=new List<string>();
-		if(s==null || s.Length==0)
-			return str;
-		if(s[0]!='/')
-			throw new ArgumentException();
-		int i=1;
-		while(i<=s.Length){
-			int io=s.IndexOf('/',i);
-			if(io>=0){
-				str.Add(s.Substring(i,(io)-(i)));
-				i=io+1;
-			} else {
-				str.Add(s.Substring(i));
-				break;
-			}
-		}
-		return str;
+	private static string hostSerialize(string _string) {
+		if(_string==null)return "";
+		return _string;
+	}
+	private static bool isHexDigit(int c) {
+		return (c>='A' && c<='Z') || (c>='a' && c<='z') || (c>='0' && c<='9');
+	}
+	private static bool isUrlCodePoint(int c) {
+		if(c<=0x20)return false;
+		if(c<0x80)
+			return((c>='a' && c<='z') ||
+					(c>='A' && c<='Z') ||
+					(c>='0' && c<='9') ||
+					((c&0x7F)==c && "!$&'()*+,-./:;=?@_~".IndexOf((char)c)>=0));
+		else if((c&0xFFFE)==0xFFFE)
+			return false;
+		else if((c>=0xa0 && c<=0xd7ff) ||
+				(c>=0xe000 && c<=0xfdcf) ||
+				(c>=0xfdf0 && c<=0xffef) ||
+				(c>=0x10000 && c<=0x10fffd))
+			return true;
+		return false;
 	}
 
 	public static URL parse(string s){
 		return parse(s,null,null, false);
 	}
+
 	public static URL parse(string s, URL baseurl){
 		return parse(s,baseurl,null, false);
 	}
+
 	public static URL parse(string s, URL baseurl, string encoding){
 		return parse(s, baseurl, encoding, false);
 	}
@@ -1024,127 +821,135 @@ public sealed class URL {
 		return url;
 	}
 
-	private static string hostSerialize(string _string) {
-		if(_string==null)return "";
-		return _string;
-	}
-	private static string hostParse(string _string) {
-		if(_string.Length>0 && _string[0]=='['){
-			if(_string[_string.Length-1]!=']'){
-				int[] ipv6=new int[8];
-				int piecePointer=0;
-				int index=1;
-				int compress=-1;
-				int ending=_string.Length-1;
-				int c=(index>=ending) ? -1 : _string[index];
-				if(c==':'){
-					if(index+1>=ending || _string[index+1]!=':')
-						return null;
-					index+=2;
-					piecePointer++;
-					compress=piecePointer;
-				}
-				while(index<ending){
-					if(piecePointer>=8)return null;
-					c=_string[index];
-					if(c>=0xD800 && c<=0xDBFF && index+1<ending &&
-							_string[index+1]>=0xDC00 && _string[index+1]<=0xDFFF){
-						// Get the Unicode code point for the surrogate pair
-						c=0x10000+(c-0xD800)*0x400+(_string[index+1]-0xDC00);
-						index++;
-					} else if(c>=0xD800 && c<=0xDFFF)
-						// illegal surrogate
-						throw new ArgumentException();
-					index++;
-					if(c==':'){
-						if(compress>=0)return null;
-						piecePointer++;
-						compress=piecePointer;
-						continue;
-					}
-					int value=0;
-					int length=0;
-					while(length<4){
-						if(c>='A' && c<='F'){
-							value=value*16+(c-'A')+10;
-							index++;
-							length++;
-							c=(index>=ending) ? -1 : _string[index];
-						} else if(c>='a' && c<='f'){
-							value=value*16+(c-'a')+10;
-							index++;
-							length++;
-							c=(index>=ending) ? -1 : _string[index];
-						} else if(c>='0' && c<='9'){
-							value=value*16+(c-'0');
-							index++;
-							length++;
-							c=(index>=ending) ? -1 : _string[index];
-						} else {
-							break;
-						}
-					}
-					if(c=='.'){
-						if(length==0)return null;
-						index-=length;
-						break;
-					} else if(c==':'){
-						index++;
-						c=(index>=ending) ? -1 : _string[index];
-						if(c<0)return null;
-					} else if(c>=0)
-						return null;
-					ipv6[piecePointer]=value;
-					piecePointer++;
-				}
-				// IPv4
-				if(c>=0){
-					if(piecePointer>6)
-						return null;
-					int dotsSeen=0;
-					while(index<ending){
-						int value=0;
-						while(c>='0' && c<='9'){
-							value=value*10+(c-'0');
-							if(value>255)return null;
-							index++;
-							c=(index>=ending) ? -1 : _string[index];
-						}
-						if(dotsSeen<3 && c!='.')
-							return null;
-						else if(dotsSeen==3 && c=='.')
-							return null;
-						ipv6[piecePointer]=ipv6[piecePointer]*256+value;
-						if(dotsSeen==0 || dotsSeen==2){
-							piecePointer++;
-						}
-						dotsSeen++;
-					}
-				}
-				if(compress>=0){
-					int swaps=piecePointer-compress;
-					piecePointer=7;
-					while(piecePointer!=0 && swaps!=0){
-						int ptr=compress-swaps+1;
-						int tmp=ipv6[piecePointer];
-						ipv6[piecePointer]=ipv6[ptr];
-						ipv6[ptr]=tmp;
-						piecePointer--;
-						swaps--;
-					}
-				} else if(compress<0 && piecePointer!=8)
-					return null;
+	public static IList<string[]> parseQueryString(
+			string input, string delimiter, string encoding, bool useCharset, bool isindex){
+		if(input==null)
+			throw new ArgumentException();
+		if(delimiter==null) {
+			delimiter="&";
+		}
+		if(encoding==null) {
+			encoding="utf-8";
+		}
+		for(int i=0;i<input.Length;i++){
+			if(input[i]>0x7F)
+				throw new ArgumentException();
+		}
+		string[] strings=StringUtility.splitAt(input,delimiter);
+		IList<string[]> pairs=new List<string[]>();
+		foreach(string str in strings){
+			if(str.Length==0) {
+				continue;
 			}
+			int index=str.IndexOf('=');
+			string name=str;
+			string value="";
+			if(index>=0){
+				name=str.Substring(0,(index)-(0));
+				value=str.Substring(index+1);
+			}
+			name=name.Replace('+',' ');
+			value=value.Replace('+',' ');
+			if(useCharset && "_charset_".Equals(name)){
+				string ch=TextEncoding.resolveEncoding(value);
+				if(ch!=null){
+					useCharset=false;
+					encoding=ch;
+				}
+			}
+			string[] pair=new string[]{name,value};
+			pairs.Add(pair);
 		}
 		try {
-			//Console.WriteLine("was: %s",_string);
-			_string=percentDecode(_string,"utf-8");
-			//Console.WriteLine("now: %s",_string);
-		} catch(IOException){
-			return null;
+			foreach(string[] pair in pairs){
+				pair[0]=percentDecode(pair[0],encoding);
+				pair[1]=percentDecode(pair[1],encoding);
+			}
+		} catch (IOException e) {
+			throw e;
 		}
-		return _string;
+		return pairs;
 	}
+
+	public static IList<string> pathList(string s){
+		IList<string> str=new List<string>();
+		if(s==null || s.Length==0)
+			return str;
+		if(s[0]!='/')
+			throw new ArgumentException();
+		int i=1;
+		while(i<=s.Length){
+			int io=s.IndexOf('/',i);
+			if(io>=0){
+				str.Add(s.Substring(i,(io)-(i)));
+				i=io+1;
+			} else {
+				str.Add(s.Substring(i));
+				break;
+			}
+		}
+		return str;
+	}
+
+	private static string percentDecode(string str, string encoding)
+			{
+		int len=str.Length;
+		bool percent=false;
+		for(int i=0;i<len;i++){
+			char c=str[i];
+			if(c=='%') {
+				percent=true;
+			} else if(c>=0x80) // Non-ASCII characters not allowed
+				return null;
+		}
+		if(!percent)return str;
+		ITextDecoder decoder=TextEncoding.getDecoder(encoding);
+		ByteList mos=new ByteList();
+		for(int i=0;i<len;i++){
+			int c=str[i];
+			if(c=='%'){
+				if(i+2<len){
+					int a=toHexNumber(str[i+1]);
+					int b=toHexNumber(str[i+2]);
+					if(a>=0 && b>=0){
+						mos.append((byte) (a*16+b));
+						i+=2;
+						continue;
+					}
+				}
+			}
+			mos.append((byte) (c&0xFF));
+		}
+		return TextEncoding.decodeString(mos.toInputStream(),
+				decoder, TextEncoding.ENCODING_ERROR_REPLACE);
+	}
+
+	private static void percentEncode(IntList buffer, int b){
+		buffer.appendInt('%');
+		buffer.appendInt(hex[(b>>4)&0x0F]);
+		buffer.appendInt(hex[(b)&0x0F]);
+	}
+
+	private static void percentEncodeUtf8(IntList buffer, int cp){
+		if(cp<=0x7F){
+			buffer.appendInt('%');
+			buffer.appendInt(hex[(cp>>4)&0x0F]);
+			buffer.appendInt(hex[(cp)&0x0F]);
+		} else if(cp<=0x7FF){
+			percentEncode(buffer,(0xC0|((cp>>6)&0x1F)));
+			percentEncode(buffer,(0x80|(cp   &0x3F)));
+		} else if(cp<=0xFFFF){
+			percentEncode(buffer,(0xE0|((cp>>12)&0x0F)));
+			percentEncode(buffer,(0x80|((cp>>6 )&0x3F)));
+			percentEncode(buffer,(0x80|(cp      &0x3F)));
+		} else {
+			percentEncode(buffer,(0xF0|((cp>>18)&0x07)));
+			percentEncode(buffer,(0x80|((cp>>12)&0x3F)));
+			percentEncode(buffer,(0x80|((cp>>6 )&0x3F)));
+			percentEncode(buffer,(0x80|(cp      &0x3F)));
+		}
+	}
+
 	private static int toHexNumber(int c) {
 		if(c>='A' && c<='Z')
 			return 10+c-'A';
@@ -1155,25 +960,228 @@ public sealed class URL {
 		return -1;
 	}
 
-	private static bool isHexDigit(int c) {
-		return (c>='A' && c<='Z') || (c>='a' && c<='z') || (c>='0' && c<='9');
+	public static string toQueryString(IList<string[]> pairs,
+			string delimiter, string encoding) {
+		if(encoding==null) {
+			encoding="utf-8";
+		}
+		ITextEncoder encoder=TextEncoding.getEncoder(encoding);
+		if(encoder==null)
+			throw new ArgumentException();
+		StringBuilder builder=new StringBuilder();
+		bool first=true;
+		MemoryOutputStream baos=new MemoryOutputStream();
+		foreach(string[] pair in pairs){
+			if(!first){
+				builder.Append(delimiter==null ? "&" : delimiter);
+			}
+			first=false;
+			if(pair==null || pair.Length<2)
+				throw new ArgumentException();
+			baos.reset();
+			TextEncoding.encodeString(pair[0], baos, encoder, querySerializerError);
+			appendOutputBytes(builder,baos);
+			builder.Append('=');
+			baos.reset();
+			TextEncoding.encodeString(pair[1], baos, encoder, querySerializerError);
+			appendOutputBytes(builder,baos);
+		}
+		return builder.ToString();
 	}
 
-	private static bool isUrlCodePoint(int c) {
-		if(c<=0x20)return false;
-		if(c<0x80)
-			return((c>='a' && c<='z') ||
-					(c>='A' && c<='Z') ||
-					(c>='0' && c<='9') ||
-					((c&0x7F)==c && "!$&'()*+,-./:;=?@_~".IndexOf((char)c)>=0));
-		else if((c&0xFFFE)==0xFFFE)
-			return false;
-		else if((c>=0xa0 && c<=0xd7ff) ||
-				(c>=0xe000 && c<=0xfdcf) ||
-				(c>=0xfdf0 && c<=0xffef) ||
-				(c>=0x10000 && c<=0x10fffd))
+	private string scheme="";
+
+	private string schemeData="";
+
+	private string username="";
+
+	private string password=null;
+
+	private string host=null;
+
+	private string path="";
+
+	private string query=null;
+
+	private string fragment=null;
+
+	private string port="";
+
+	public override sealed bool Equals(object obj) {
+		if (this == obj)
 			return true;
-		return false;
+		if (obj == null)
+			return false;
+		if (GetType() != obj.GetType())
+			return false;
+		URL other = (URL) obj;
+		if (fragment == null) {
+			if (other.fragment != null)
+				return false;
+		} else if (!fragment.Equals(other.fragment))
+			return false;
+		if (host == null) {
+			if (other.host != null)
+				return false;
+		} else if (!host.Equals(other.host))
+			return false;
+		if (password == null) {
+			if (other.password != null)
+				return false;
+		} else if (!password.Equals(other.password))
+			return false;
+		if (path == null) {
+			if (other.path != null)
+				return false;
+		} else if (!path.Equals(other.path))
+			return false;
+		if (port == null) {
+			if (other.port != null)
+				return false;
+		} else if (!port.Equals(other.port))
+			return false;
+		if (query == null) {
+			if (other.query != null)
+				return false;
+		} else if (!query.Equals(other.query))
+			return false;
+		if (scheme == null) {
+			if (other.scheme != null)
+				return false;
+		} else if (!scheme.Equals(other.scheme))
+			return false;
+		if (schemeData == null) {
+			if (other.schemeData != null)
+				return false;
+		} else if (!schemeData.Equals(other.schemeData))
+			return false;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.Equals(other.username))
+			return false;
+		return true;
+	}
+
+	public string getFragment(){
+		return fragment==null ? "" : fragment;
+	}
+
+	public string getHash(){
+		return (fragment==null || fragment.Length==0) ? "" : "#" + fragment;
+	}
+
+	public string getHost(){
+		if(port.Length==0)
+			return hostSerialize(host);
+		return hostSerialize(host) + ":" + port;
+	}
+	public string getHostname(){
+		return hostSerialize(host);
+	}
+
+	public string getPassword(){
+		return password==null ? "" : password;
+	}
+
+	public string getPath(){
+		return path;
+	}
+
+	public string getPathname(){
+		if(schemeData.Length>0)
+			return schemeData;
+		else
+			return path;
+	}
+
+	public string getPort(){
+		return port;
+	}
+	public string getProtocol(){
+		return scheme + ":";
+	}
+	public string getQueryString(){
+		return query==null ? "" : query;
+	}
+
+	public string getScheme(){
+		return scheme;
+	}
+
+	public string getSchemeData(){
+		return schemeData;
+	}
+	public string getSearch(){
+		return (query==null || query.Length==0) ? "" : "?" + query;
+	}
+	public string getUsername(){
+		return username==null ? "" : username;
+	}
+
+	public override sealed int GetHashCode() {
+		 int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((fragment == null) ? 0 : fragment.GetHashCode());
+		result = prime * result + ((host == null) ? 0 : host.GetHashCode());
+		result = prime * result
+				+ ((password == null) ? 0 : password.GetHashCode());
+		result = prime * result + ((path == null) ? 0 : path.GetHashCode());
+		result = prime * result + ((port == null) ? 0 : port.GetHashCode());
+		result = prime * result + ((query == null) ? 0 : query.GetHashCode());
+		result = prime * result + ((scheme == null) ? 0 : scheme.GetHashCode());
+		result = prime * result
+				+ ((schemeData == null) ? 0 : schemeData.GetHashCode());
+		result = prime * result
+				+ ((username == null) ? 0 : username.GetHashCode());
+		return result;
+	}
+
+	public override sealed string ToString(){
+		StringBuilder builder=new StringBuilder();
+		builder.Append(scheme);
+		builder.Append(':');
+		if(scheme.Equals("file") ||
+				scheme.Equals("http") ||
+				scheme.Equals("https") ||
+				scheme.Equals("ftp") ||
+				scheme.Equals("gopher") ||
+				scheme.Equals("ws") ||
+				scheme.Equals("wss")){
+			// NOTE: We check relative schemes here
+			// rather than have a relative flag,
+			// as specified in the URL Standard
+			// (since the protocol can't be changed
+			// as this class is immutable, we can
+			// do this variation).
+			builder.Append("//");
+			if(username.Length!=0 || password!=null){
+				builder.Append(username);
+				if(password!=null){
+					builder.Append(':');
+					builder.Append(password);
+				}
+				builder.Append('@');
+			}
+			builder.Append(hostSerialize(host));
+			if(port.Length>0){
+				builder.Append(':');
+				builder.Append(port);
+			}
+			builder.Append(path);
+		} else {
+			builder.Append(schemeData);
+		}
+		if(query!=null){
+			builder.Append('?');
+			builder.Append(query);
+		}
+		if(fragment!=null){
+			builder.Append('#');
+			builder.Append(fragment);
+		}
+		return builder.ToString();
 	}
 
 }

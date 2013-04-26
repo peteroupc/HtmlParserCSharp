@@ -32,6 +32,20 @@ using System.IO;
 
 sealed class XUserDefinedEncoding : ITextEncoder, ITextDecoder {
 
+	public int decode(PeterO.Support.InputStream stream)  {
+		return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
+	}
+
+	public int decode(PeterO.Support.InputStream stream, IEncodingError error)  {
+		if(stream==null)throw new ArgumentException();
+		int c=stream.ReadByte();
+		if(c<0)return -1;
+		if(c<0x80)
+			return c;
+		else
+			return 0xF780+c-0x80;
+	}
+
 	public int decode(PeterO.Support.InputStream stream, int[] buffer, int offset, int length)
 			 {
 		return decode(stream, buffer, offset, length, TextEncoding.ENCODING_ERROR_THROW);
@@ -62,6 +76,11 @@ sealed class XUserDefinedEncoding : ITextEncoder, ITextDecoder {
 		return (total==0) ? -1 : total;
 	}
 
+	public void encode(Stream stream, int[] buffer, int offset, int length)
+			 {
+		encode(stream, buffer, offset, length, TextEncoding.ENCODING_ERROR_THROW);
+	}
+
 	public void encode(Stream stream, int[] array, int offset, int length, IEncodingError error)
 			 {
 		if((stream)==null)throw new ArgumentNullException("stream");
@@ -83,25 +102,6 @@ sealed class XUserDefinedEncoding : ITextEncoder, ITextDecoder {
 				error.emitEncoderError(stream, c);
 			}
 		}
-	}
-
-	public int decode(PeterO.Support.InputStream stream)  {
-		return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
-	}
-
-	public int decode(PeterO.Support.InputStream stream, IEncodingError error)  {
-		if(stream==null)throw new ArgumentException();
-		int c=stream.ReadByte();
-		if(c<0)return -1;
-		if(c<0x80)
-			return c;
-		else
-			return 0xF780+c-0x80;
-	}
-
-	public void encode(Stream stream, int[] buffer, int offset, int length)
-			 {
-		encode(stream, buffer, offset, length, TextEncoding.ENCODING_ERROR_THROW);
 	}
 
 

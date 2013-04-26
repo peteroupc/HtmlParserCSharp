@@ -41,18 +41,18 @@ sealed class DocumentType : Node, IDocumentType {
 	public string getName() {
 		return name;
 	}
+	public override sealed string getNodeName(){
+		return getName();
+	}
 	public string getPublicId() {
 		return publicId;
 	}
 	public string getSystemId() {
 		return systemId;
 	}
+
 	public override sealed string getTextContent(){
 		return null;
-	}
-
-	public override sealed string getNodeName(){
-		return getName();
 	}
 
 	internal override sealed string toDebugString(){

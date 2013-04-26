@@ -36,16 +36,16 @@ internal class Text : Node, IText {
 		return text.ToString();
 	}
 
+	public string getName(){
+		return "#text";
+	}
+
 	public override string getTextContent(){
 		return text.ToString();
 	}
 
 	internal override string toDebugString(){
 		return "\""+text.ToString().Replace("\n","~~~~")+"\"\n";
-	}
-
-	public string getName(){
-		return "#text";
 	}
 }
 }

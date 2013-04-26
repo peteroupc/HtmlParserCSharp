@@ -15,16 +15,6 @@ public sealed class ByteList {
 		ptr=0;
 	}
 
-	public int this[int i] { get { return get(i); }
- set { set(i,(byte)(value&0xFF)); }}
-public int get(int index){
-		return buffer[index];
-	}
-
-	public void set(int index, byte value){
-		buffer[index]=value;
-	}
-
 	public void append(byte v){
 		if(ptr<buffer.Length){
 			buffer[ptr++]=v;
@@ -39,22 +29,32 @@ public int get(int index){
 	public byte[] array(){
 		return buffer;
 	}
+
 	public void clear(){
 		ptr=0;
+	}
+
+	public int this[int i] { get { return get(i); }
+ set { set(i,(byte)(value&0xFF)); }}
+public int get(int index){
+		return buffer[index];
+	}
+	public void set(int index, byte value){
+		buffer[index]=value;
 	}
 	public int Count { get { return size(); }}
 public int size(){
 		return ptr;
 	}
 
-	public PeterO.Support.InputStream toInputStream(){
-		return new PeterO.Support.ByteArrayInputStream(buffer,0,ptr);
-	}
-
 	public byte[] toByteArray(){
 		byte[] ret=new byte[ptr];
 		Array.Copy(buffer,0,ret,0,ptr);
 		return ret;
+	}
+
+	public PeterO.Support.InputStream toInputStream(){
+		return new PeterO.Support.ByteArrayInputStream(buffer,0,ptr);
 	}
 }
 

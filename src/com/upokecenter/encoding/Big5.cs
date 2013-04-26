@@ -27,7 +27,6 @@ THE SOFTWARE.
 namespace com.upokecenter.encoding {
 using System;
 sealed class Big5 {
-	private Big5(){}
 	private static int[] table=new int[18840];
 	static Big5(){
 		Array.Copy(method0(),0,table,0,4096);
@@ -112,13 +111,6 @@ sealed class Big5 {
 		14053,170333,18432,256,
 		14021,168205,18688,152
 	};
-
-	public static int indexToCodePoint(int index){
-		if(index<942 || index>19781)return -1;
-		int ret=table[index-942];
-		return (ret==0) ? -1 : (ret);
-	}
-
 	public static int codePointToIndex(int codepoint){
 		if(codepoint<167 || codepoint>195028)return -1;
 		for(int i=0;i<indextable.Length;i+=4){
@@ -132,6 +124,12 @@ sealed class Big5 {
 			}
 		}
 		return -1;
+	}
+
+	public static int indexToCodePoint(int index){
+		if(index<942 || index>19781)return -1;
+		int ret=table[index-942];
+		return (ret==0) ? -1 : (ret);
 	}
 
 	private static int[] method0(){
@@ -395,6 +393,7 @@ sealed class Big5 {
 
 		};
 	}
+
 	private static int[] method1(){
 		return new int[]{
 				0xFE51,0xFE52,183,0xFE54,0xFE55,0xFE56,0xFE57,0xFF5C,8211,0xFE31,8212,0xFE33,9588,0xFE34,0xFE4F,0xFF08,
@@ -1336,6 +1335,7 @@ sealed class Big5 {
 				0x793C,0x79A9,0x6E2A,0x27126,0x3EA8,0x79C6,0x2910D,0x79D4
 		};
 	}
+	private Big5(){}
 }
 
 }
