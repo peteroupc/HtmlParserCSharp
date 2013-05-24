@@ -65,7 +65,7 @@ internal class Node : INode {
 			}
 			builder.Append('<');
 			builder.Append(tagname);
-			foreach(IAttr attr in e.getAttributes()){
+			foreach(var attr in e.getAttributes()){
 				namespaceURI=attr.getNamespaceURI();
 				builder.Append(' ');
 				if(namespaceURI==null || namespaceURI.Length==0){
@@ -127,7 +127,7 @@ internal class Node : INode {
 				if("pre".Equals(localName) ||
 						"textarea".Equals(localName) ||
 						"listing".Equals(localName)){
-					foreach(INode node in e.getChildNodes()){
+					foreach(var node in e.getChildNodes()){
 						if(node.getNodeType()==NodeType.TEXT_NODE &&
 								((IText)node).getData().Length>0 &&
 								((IText)node).getData()[0]=='\n'){
@@ -137,7 +137,7 @@ internal class Node : INode {
 				}
 			}
 			// Recurse
-			foreach(INode child in e.getChildNodes()){
+			foreach(var child in e.getChildNodes()){
 				fragmentSerializeInner(child,builder);
 			}
 			builder.Append("</");
@@ -219,7 +219,7 @@ internal class Node : INode {
 
 	protected internal string getInnerHtmlInternal(){
 		StringBuilder builder=new StringBuilder();
-		foreach(INode child in getChildNodes()){
+		foreach(var child in getChildNodes()){
 			fragmentSerializeInner(child,builder);
 		}
 		return builder.ToString();

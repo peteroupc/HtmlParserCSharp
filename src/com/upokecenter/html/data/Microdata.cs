@@ -29,7 +29,7 @@ public sealed class Microdata {
 		if(root.Equals(e))
 			return index;
 		index++;
-		foreach(INode child in root.getChildNodes()){
+		foreach(var child in root.getChildNodes()){
 			int idx=getElementIndex(child,e,runningIndex);
 			if(idx>=0)
 				return idx;
@@ -67,7 +67,7 @@ public sealed class Microdata {
 		if((document)==null)throw new ArgumentNullException("document");
 		JSONObject result=new JSONObject();
 		JSONArray items=new JSONArray();
-		foreach(IElement node in document.getElementsByTagName("*")){
+		foreach(var node in document.getElementsByTagName("*")){
 			if(node.getAttribute("itemscope")!=null &&
 					node.getAttribute("itemprop")==null){
 				IList<IElement> memory=new List<IElement>();
@@ -86,7 +86,7 @@ public sealed class Microdata {
 		memory.Add(item);
 		if(itemtypes.Length>0){
 			JSONArray array=new JSONArray();
-			foreach(string itemtype in itemtypes){
+			foreach(var itemtype in itemtypes){
 				array.put(itemtype);
 			}
 			result.put("type",array);
@@ -98,7 +98,7 @@ public sealed class Microdata {
 			result.put("id", globalid);
 		}
 		JSONObject properties=new JSONObject();
-		foreach(IElement element in getMicrodataProperties(item)){
+		foreach(var element in getMicrodataProperties(item)){
 			string[] names=StringUtility.splitAtSpaces(element.getAttribute("itemprop"));
 			Object obj=null;
 			if(element.getAttribute("itemscope")!=null){
@@ -110,7 +110,7 @@ public sealed class Microdata {
 			} else {
 				obj=getPropertyValue(element);
 			}
-			foreach(string name in names){
+			foreach(var name in names){
 				if(properties.has(name)){
 					properties.getJSONArray(name).put(obj);
 				} else {
@@ -130,13 +130,13 @@ public sealed class Microdata {
 		IList<IElement> pending=new List<IElement>();
 		memory.Add(root);
 		IDocument document=root.getOwnerDocument();
-		foreach(INode child in root.getChildNodes()){
+		foreach(var child in root.getChildNodes()){
 			if(child is IElement){
 				pending.Add((IElement)child);
 			}
 		}
 		string[] itemref=StringUtility.splitAtSpaces(root.getAttribute("itemref"));
-		foreach(string item in itemref){
+		foreach(var item in itemref){
 			IElement element=document.getElementById(item);
 			if(element!=null){
 				pending.Add(element);
@@ -150,7 +150,7 @@ public sealed class Microdata {
 			}
 			memory.Add(current);
 			if(current.getAttribute("itemscope")==null){
-				foreach(INode child in current.getChildNodes()){
+				foreach(var child in current.getChildNodes()){
 					if(child is IElement){
 						pending.Add((IElement)child);
 					}
@@ -197,7 +197,7 @@ public sealed class Microdata {
 		if(elements==null || elements.Count<2)
 			return elements;
 		List<ElementAndIndex> elems=new List<ElementAndIndex>();
-		foreach(IElement element in elements){
+		foreach(var element in elements){
 			ElementAndIndex el=new ElementAndIndex();
 			el.element=element;
 			el.index=getElementIndex(root,element,0);
@@ -205,7 +205,7 @@ public sealed class Microdata {
 		}
 		elems.Sort(new SortInTreeOrderComparer());
 		IList<IElement> ret=new List<IElement>();
-		foreach(ElementAndIndex el in elems){
+		foreach(var el in elems){
 			ret.Add(el.element);
 		}
 		return ret;

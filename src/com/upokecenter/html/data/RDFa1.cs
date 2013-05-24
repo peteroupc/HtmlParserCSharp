@@ -12,7 +12,7 @@ internal class RDFa1 : IRDFParser {
 
 	private static string getTextNodeText(INode node){
 		StringBuilder builder=new StringBuilder();
-		foreach(INode child in node.getChildNodes()){
+		foreach(var child in node.getChildNodes()){
 			if(child.getNodeType()==NodeType.TEXT_NODE){
 				builder.Append(((IText)child).getData());
 			} else {
@@ -72,7 +72,7 @@ internal class RDFa1 : IRDFParser {
 	}
 
 	private static bool hasNonTextChildNodes(INode node){
-		foreach(INode child in node.getChildNodes()){
+		foreach(var child in node.getChildNodes()){
 			if(child.getNodeType()!=NodeType.TEXT_NODE)
 				return true;
 		}
@@ -294,7 +294,7 @@ if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(
 	// Doesn't implement RDF/XML completely
 	private void miniRdfXml(IElement node, RDFa.EvalContext context, RDFTerm subject){
 		string language=context.language;
-		foreach(INode child in node.getChildNodes()){
+		foreach(var child in node.getChildNodes()){
 			IElement childElement=(child is IElement) ?
 					((IElement)child) : null;
 					if(childElement==null) {
@@ -315,7 +315,7 @@ if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(
 								continue;
 							}
 						}
-						foreach(INode child2 in child.getChildNodes()){
+						foreach(var child2 in child.getChildNodes()){
 							IElement childElement2=
 									((child2 is IElement) ?
 											((IElement)child2) : null);
@@ -380,7 +380,7 @@ if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(
 			}
 		}
 		// Support XML namespaces
-		foreach(IAttr attrib in node.getAttributes()){
+		foreach(var attrib in node.getAttributes()){
 			string name=StringUtility.toLowerCaseAscii(attrib.getName());
 			//Console.WriteLine(attrib);
 			if(name.Equals("xmlns")){
@@ -487,7 +487,7 @@ if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(
 		// Step 6
 		if(newSubject!=null){
 			string[] types=StringUtility.splitAtNonFFSpaces(node.getAttribute("typeof"));
-			foreach(string type in types){
+			foreach(var type in types){
 				string iri=getCurie(type,iriMapLocal);
 				if(iri!=null){
 					outputGraph.Add(new RDFTriple(
@@ -500,7 +500,7 @@ if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(
 		// Step 7
 		if(currentObject!=null){
 			string[] types=StringUtility.splitAtNonFFSpaces(rel);
-			foreach(string type in types){
+			foreach(var type in types){
 				string iri=getRelTermOrCurie(type,
 						iriMapLocal);
 				#if DEBUG
@@ -514,7 +514,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 				}
 			}
 			types=StringUtility.splitAtNonFFSpaces(rev);
-			foreach(string type in types){
+			foreach(var type in types){
 				string iri=getRelTermOrCurie(type,
 						iriMapLocal);
 				if(iri!=null){
@@ -530,7 +530,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 			string[] types=StringUtility.splitAtNonFFSpaces(rel);
 			bool hasPredicates=false;
 			// Defines predicates
-			foreach(string type in types){
+			foreach(var type in types){
 				string iri=getRelTermOrCurie(type,
 						iriMapLocal);
 				if(iri!=null){
@@ -545,7 +545,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 				}
 			}
 			types=StringUtility.splitAtNonFFSpaces(rev);
-			foreach(string type in types){
+			foreach(var type in types){
 				string iri=getRelTermOrCurie(type,
 						iriMapLocal);
 				if(iri!=null){
@@ -571,7 +571,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 		//	datatype,property,localDefaultVocab);
 		//Console.WriteLine("datatypeValue=[%s]",datatypeValue);
 		RDFTerm currentProperty=null;
-		foreach(string pred in preds){
+		foreach(var pred in preds){
 			string iri=getCurie(pred,
 					iriMapLocal);
 			if(iri!=null){
@@ -620,7 +620,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 		}
 		// Step 10
 		if(!skipElement && newSubject!=null){
-			foreach(RDFa.IncompleteTriple triple in context.incompleteTriples){
+			foreach(var triple in context.incompleteTriples){
 				if(triple.direction==RDFa.ChainingDirection.Forward){
 					outputGraph.Add(new RDFTriple(
 							context.parentSubject,
@@ -635,7 +635,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 		}
 		// Step 13
 		if(recurse){
-			foreach(INode childNode in node.getChildNodes()){
+			foreach(var childNode in node.getChildNodes()){
 				IElement childElement;
 				RDFa.EvalContext oldContext=context;
 				if(childNode is IElement){

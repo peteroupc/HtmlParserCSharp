@@ -508,7 +508,7 @@ public sealed class TextEncoding {
 	public static string[] getSupportedEncodings(){
 		List<string> values=new List<string>(new HashSet<string>(encodingMap.Values));
 		values.Sort();
-		return PeterO.Support.Collections.ToArray(values);
+		return values.ToArray();
 	}
 
 	/**

@@ -1,10 +1,14 @@
-// Modified by Peter O. to use generics; also
-// moved from org.json.  Still in the public domain.
+// Modified by Peter O. to use generics, among
+// other things; also moved from org.json.  
+// Still in the public domain;
+// public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
 namespace com.upokecenter.json {
 using System;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
+
+
 
 
 
@@ -48,7 +52,7 @@ public class JSONObject {
 
 	/**
 	 * JSONObject.NULL is equivalent to the value that JavaScript calls null,
-	 * whilst Java's null is equivalent to the value that JavaScript calls
+	 * whereas Java's null is equivalent to the value that JavaScript calls
 	 * undefined.
 	 */
 	private sealed class Null {
@@ -227,6 +231,16 @@ public class JSONObject {
 	}
 
 
+	private void addCommentIfAny(JSONTokener x) {
+		if((x.getOptions()&OPTION_ADD_COMMENTS)!=0){
+			// Parse and add the comment if any
+			string comment=x.nextComment();
+			if(comment.Length>0){
+				myHashMap.Add("@comment", comment);
+			}
+		}		
+	}
+
 	/**
 	 * Construct a JSONObject from a JSONTokener.
 	 * @param x A JSONTokener _object containing the source _string.
@@ -242,23 +256,33 @@ public class JSONObject {
 		if (x.nextClean() != '{')
 			throw x.syntaxError("A JSONObject must begin with '{'");
 		while (true) {
+			addCommentIfAny(x);
 			c = x.nextClean();
 			switch (c) {
-			case (char)0:
+			case -1:
 				throw x.syntaxError("A JSONObject must end with '}'");
 			case '}':
 				return;
 			default:
 				x.back();
+				addCommentIfAny(x);
 				key = x.nextValue().ToString();
+				if((x.getOptions() & OPTION_NO_DUPLICATES)!=0 &&
+						myHashMap.ContainsKey(key)){
+					throw x.syntaxError("Key already exists: "+key);
+				}
 				break;
 			}
+			addCommentIfAny(x);
 			if (x.nextClean() != ':')
 				throw x.syntaxError("Expected a ':' after a key");
 			// NOTE: Will overwrite existing value. --Peter O.
+			addCommentIfAny(x);
 			myHashMap.Add(key, x.nextValue());
+			addCommentIfAny(x);
 			switch (x.nextClean()) {
 			case ',':
+				addCommentIfAny(x);
 				if (x.nextClean() == '}')
 					return;
 				x.back();
@@ -283,6 +307,37 @@ public class JSONObject {
 
 
 	/**
+	 * No duplicates are allowed in the JSON _string.
+	 */
+	public static readonly int OPTION_NO_DUPLICATES = 1;
+	/**
+	 * Will parse Shell-style comments (beginning with "#").
+	 */
+	public static readonly int OPTION_SHELL_COMMENTS = 2;
+	/**
+	 * Will add a "@comment" property to all objects with
+	 * comments associated with them. Only applies to JSON
+	 * objects, not JSON arrays.
+	 */
+	public static readonly int OPTION_ADD_COMMENTS = 4;
+
+
+	/**
+	 * Construct a JSONObject from a _string.
+	 *
+	 * @param _string    A _string beginning
+	 *  with <code>{</code>&nbsp;<small>(left brace)</small> and ending
+	 *  with <code>}</code>&nbsp;<small>(right brace)</small>.
+	 * @param option Options for parsing the _string. Currently
+	 * OPTION_NO_DUPLICATES, OPTION_SHELL_COMMENTS, and/or
+	 * OPTION_ADD_COMMENTS.
+	 *  @exception Json.InvalidJsonException The _string must be properly formatted.
+	 */
+	public JSONObject(string _string, int options)  {
+		this(new JSONTokener(_string,options));
+	}
+
+	/**
 	 * Construct a JSONObject from a _string.
 	 *
 	 * @param _string    A _string beginning
@@ -290,9 +345,8 @@ public class JSONObject {
 	 *  with <code>}</code>&nbsp;<small>(right brace)</small>.
 	 *  @exception Json.InvalidJsonException The _string must be properly formatted.
 	 */
-	public JSONObject(string _string) : this(new JSONTokener(_string)) {
+	public JSONObject(string _string) : this(_string,0) {
 	}
-
 
 	/**
 	 * Accumulate values under a key. It is similar to the put method except
@@ -532,7 +586,7 @@ public int length() {
 	 */
 	public JSONArray names() {
 		JSONArray ja = new JSONArray();
-		foreach(string key in keys()) {
+		foreach(var key in keys()) {
 			ja.put(key);
 		}
 		if (ja.Length == 0)
@@ -845,7 +899,7 @@ public int length() {
 		StringBuilder sb = new StringBuilder();
 
 		sb.Append('{');
-		foreach(string s in keys()){
+		foreach(var s in keys()){
 			if (o != null) {
 				sb.Append(',');
 			}
@@ -904,7 +958,7 @@ public int length() {
 			pad += ' ';
 		}
 		sb.Append("{\n");
-		foreach(string s in keys()) {
+		foreach(var s in keys()) {
 			Object o = myHashMap[s];
 			if (o != null) {
 				if (sb.Length > 2) {
@@ -928,6 +982,29 @@ public int length() {
 		}
 		sb.Append('}');
 		return sb.ToString();
+	}
+
+	public static void main(string[] args) {
+		string json="["+
+			      "{ # foo\n\"foo-key\":\"foo-value\"},\n"+
+			      "{ /* This is a\n # multiline comment.*/\n\"bar-key\":\"bar-value\"}]";
+		Console.WriteLine(json);
+	    JSONArray obj=new JSONArray(json,
+	            JSONObject.OPTION_SHELL_COMMENTS | // Support SHELL-style comments
+	            JSONObject.OPTION_ADD_COMMENTS // Incorporate comments in the JSON _object
+	    );
+	    Console.WriteLine(obj); // Output the JSON _object
+		// Objects with comments associated with them will
+		// now contain a "@comment" key; get the JSON Pointers
+		// (RFC6901) to these objects and remove the "@comment" keys.
+		IDictionary<string,Object> pointers=JSONPointer.getPointersWithKeyAndRemove(obj,"@comment");
+		// For each JSON Pointer, get its corresponding _object.
+		// They will always be JSONObjects.
+		foreach(var pointer in pointers.Keys){
+			JSONObject subobj=(JSONObject)JSONPointer.getObject(obj,pointer);
+			Console.WriteLine(subobj); // Output the _object
+			Console.WriteLine(pointers[pointer]); // Output the key's value
+		}
 	}
 }
 }

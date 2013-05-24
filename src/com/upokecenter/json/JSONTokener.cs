@@ -1,7 +1,9 @@
-// Modified by Peter O. to use generics; also
-// moved from org.json.  Still in the public domain.
-// Modified by Peter O. to use int and -1 as the terminating
-// value rather than char and 0.
+// Modified by Peter O. to use generics and 
+// to use int and -1 as the terminating
+// value rather than char and 0, among
+// other things; also moved from org.json.  
+// Still in the public domain;
+// public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
 namespace com.upokecenter.json {
 using System;
 using System.Globalization;
@@ -18,7 +20,7 @@ using System.Text;
  * @author JSON.org
  * @version 0.1
  */
-public class JSONTokener {
+class JSONTokener {
 
 	/**
 	 * Get the hex value of a character (base16).
@@ -98,15 +100,17 @@ public class JSONTokener {
 	private string mySource;
 
 
+	private int options;
 
 	/**
 	 * Construct a JSONTokener from a _string.
 	 *
 	 * @param s     A source _string.
 	 */
-	public JSONTokener(string s) {
+	public JSONTokener(string s, int options) {
 		myIndex = 0;
 		mySource = s;
+		this.options=options;
 	}
 
 
@@ -175,26 +179,56 @@ public class JSONTokener {
 			throw syntaxError("Substring bounds error");
 		myIndex += n;
 		return mySource.Substring(i,(j)-(i));
+	}	
+
+	public int getOptions(){
+		return options;
 	}
 
-
 	/**
-	 * Get the next char in the _string, skipping whitespace
-	 * and comments (slashslash and slashstar).
-	 * @
-	 * @return  A character, or 0 if there are no more characters.
+	 * Get the next comment or comments in the _string, if any.
+	 * (Added by Peter O., 5/6/2013)
 	 */
-	public int nextClean()  {
+	public string nextComment()  {
+		StringBuilder builder=new StringBuilder();
 		while (true) {
 			int c = next();
-			if (c == '/') {
+			if(c=='#' && (options & JSONObject.OPTION_SHELL_COMMENTS)!=0){
+				// Shell-style single-line comment
+				bool haveChar=false;
+				while(true) {
+					c = next();
+					if(c != '\n' && c != '\r' && c != -1){
+						if(haveChar || c>' '){
+							if(!haveChar && builder.Length>0)
+								builder.Append(' '); // append space if comment is continuing
+							builder.Append((char)c);
+							haveChar=true;
+						}
+					} else
+						break; // end of line
+				}
+			}
+			else if (c == '/') {
 				switch (next()) {
-				case '/':
-					do {
+				case '/':{ // single-line comment
+					bool haveChar=false;
+					while(true) {
 						c = next();
-					} while (c != '\n' && c != '\r' && c != -1);
+						if(c != '\n' && c != '\r' && c != -1){
+							if(haveChar || c>' '){
+								if(!haveChar && builder.Length>0)
+									builder.Append(' '); // append space if comment is continuing
+								builder.Append((char)c);
+								haveChar=true;
+							}
+						} else
+							break; // end of line
+					}
 					break;
-				case '*':
+				}
+				case '*':{ // multi-line comment
+					bool haveChar=false;
 					while (true) {
 						c = next();
 						if (c == -1)
@@ -205,13 +239,40 @@ public class JSONTokener {
 							}
 							back();
 						}
+						if(haveChar || c>' '){
+							if(!haveChar && builder.Length>0)
+								builder.Append(' '); // append space if comment is continuing
+							builder.Append((char)c);
+							haveChar=true;
+						}
 					}
 					break;
+				}
 				default:
 					back();
-					return '/';
+					return builder.ToString();
 				}
-			} else if (c == -1 || c > ' ')
+			} else if (c == -1){
+				return builder.ToString(); // reached end of _string
+			} else if(c>' '){
+				// reached an ordinary character
+				back();
+				return builder.ToString();
+			}
+		}
+	}
+
+	/**
+	 * Get the next char in the _string, skipping whitespace
+	 * and comments (slashslash and slashstar).
+	 * @
+	 * @return  A character, or 0 if there are no more characters.
+	 */
+	public int nextClean()  {
+		nextComment();
+		while (true) {
+			int c = next();
+			if (c == -1 || c > ' ')
 				return c;
 		}
 	}

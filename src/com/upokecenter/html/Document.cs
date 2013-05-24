@@ -48,7 +48,7 @@ internal class Document : Node, IDocument {
 				nodes.Add(e);
 			}
 		}
-		foreach(INode node in c.getChildNodes()){
+		foreach(var node in c.getChildNodes()){
 			collectElements(node,s,nodes);
 		}
 	}
@@ -67,7 +67,7 @@ internal class Document : Node, IDocument {
 				nodes.Add(e);
 			}
 		}
-		foreach(INode node in c.getChildNodes()){
+		foreach(var node in c.getChildNodes()){
 			collectElements(node,s,nodes);
 		}
 	}
@@ -82,7 +82,7 @@ internal class Document : Node, IDocument {
 
 
 	public IElement getDocumentElement() {
-		foreach(INode node in getChildNodes()){
+		foreach(var node in getChildNodes()){
 			if(node is IElement)
 				return (IElement)node;
 		}
@@ -92,7 +92,7 @@ internal class Document : Node, IDocument {
 	public IElement getElementById(string id) {
 		if(id==null)
 			throw new ArgumentException();
-		foreach(INode node in getChildNodes()){
+		foreach(var node in getChildNodes()){
 			if(node is IElement){
 				if(id.Equals(((IElement)node).getId()))
 					return (IElement)node;
@@ -147,7 +147,7 @@ internal class Document : Node, IDocument {
 
 	internal override string toDebugString(){
 		StringBuilder builder=new StringBuilder();
-		foreach(Node node in getChildNodesInternal()){
+		foreach(var node in getChildNodesInternal()){
 			string str=node.toDebugString();
 			if(str==null) {
 				continue;

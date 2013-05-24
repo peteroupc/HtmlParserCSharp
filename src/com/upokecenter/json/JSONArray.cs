@@ -1,5 +1,8 @@
-// Modified by Peter O. to use generics; also
-// moved from org.json.  Still in the public domain.
+// Modified by Peter O. to use generics, among
+// other things; also moved from org.json.  
+// Still in the public domain;
+// public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
+
 namespace com.upokecenter.json {
 using System;
 using System.Text;
@@ -46,7 +49,6 @@ using System.Collections.Generic;
  * @version 0.1
  */
 public class JSONArray {
-
 
 	/**
 	 * The getArrayList where the JSONArray's properties are kept.
@@ -108,11 +110,10 @@ public class JSONArray {
 
 	public JSONArray(IList<string> collection) {
 		myArrayList = new List<Object>();
-		foreach(string str in collection){
+		foreach(var str in collection){
 			myArrayList.Add(str);
 		}
 	}
-
 	/**
 	 * Construct a JSONArray from a source _string.
 	 * @param _string     A _string that begins with
@@ -120,7 +121,21 @@ public class JSONArray {
 	 *  and ends with <code>]</code>&nbsp;<small>(right bracket)</small>.
 	 * @exception Json.InvalidJsonException The _string must conform to JSON syntax.
 	 */
-	public JSONArray(string _string) : this(new JSONTokener(_string)) {
+	public JSONArray(string _string, int options)  {
+		this(new JSONTokener(_string,options));
+	}
+
+	/**
+	 * Construct a JSONArray from a source _string.
+	 * @param _string     A _string that begins with
+	 * <code>[</code>&nbsp;<small>(left bracket)</small>
+	 *  and ends with <code>]</code>&nbsp;<small>(right bracket)</small>.
+	 * @param option Options for parsing the _string. Currently
+	 * JSONObject.OPTION_NO_DUPLICATES, JSONObject.OPTION_SHELL_COMMENTS, and/or
+	 * JSONObject.OPTION_ADD_COMMENTS.
+	 * @exception Json.InvalidJsonException The _string must conform to JSON syntax.
+	 */
+	public JSONArray(string _string) : this(_string,0) {
 	}
 
 	public JSONArray add(int index, bool value) {

@@ -48,7 +48,7 @@ internal class Element : Node, IElement {
 		Element ret=new Element();
 		ret.name=token.getName();
 		ret.attributes=new List<Attr>();
-		foreach(Attr attribute in token.getAttributes()){
+		foreach(var attribute in token.getAttributes()){
 			ret.attributes.Add(new Attr(attribute));
 		}
 		ret._namespace=_namespace;
@@ -85,7 +85,7 @@ internal class Element : Node, IElement {
 				nodes.Add(e);
 			}
 		}
-		foreach(INode node in c.getChildNodes()){
+		foreach(var node in c.getChildNodes()){
 			collectElements(node,s,nodes);
 		}
 	}
@@ -103,13 +103,13 @@ internal class Element : Node, IElement {
 				nodes.Add(e);
 			}
 		}
-		foreach(INode node in c.getChildNodes()){
+		foreach(var node in c.getChildNodes()){
 			collectElements(node,s,nodes);
 		}
 	}
 
 	public string getAttribute(string name) {
-		foreach(IAttr attr in getAttributes()){
+		foreach(var attr in getAttributes()){
 			if(attr.getName().Equals(name))
 				return attr.getValue();
 		}
@@ -117,7 +117,7 @@ internal class Element : Node, IElement {
 	}
 
 	public string getAttributeNS(string _namespace, string localName) {
-		foreach(IAttr attr in getAttributes()){
+		foreach(var attr in getAttributes()){
 			if((localName==null ? attr.getLocalName()==null : localName.Equals(attr.getLocalName())) &&
 					(_namespace==null ? attr.getNamespaceURI()==null : _namespace.Equals(attr.getNamespaceURI())))
 				return attr.getValue();
@@ -131,7 +131,7 @@ internal class Element : Node, IElement {
 	public IElement getElementById(string id) {
 		if(id==null)
 			throw new ArgumentException();
-		foreach(INode node in getChildNodes()){
+		foreach(var node in getChildNodes()){
 			if(node is IElement){
 				if(id.Equals(((IElement)node).getId()))
 					return (IElement)node;
@@ -151,11 +151,11 @@ internal class Element : Node, IElement {
 		IList<IElement> ret=new List<IElement>();
 		if(((Document) getOwnerDocument()).isHtmlDocument()){
 			string lowerTagName=StringUtility.toLowerCaseAscii(tagName);
-			foreach(INode node in getChildNodes()){
+			foreach(var node in getChildNodes()){
 				collectElementsHtml(node,tagName,lowerTagName,ret);
 			}
 		} else {
-			foreach(INode node in getChildNodes()){
+			foreach(var node in getChildNodes()){
 				collectElements(node,tagName,ret);
 			}
 		}
@@ -212,7 +212,7 @@ internal class Element : Node, IElement {
 
 	public override sealed string getTextContent(){
 		StringBuilder builder=new StringBuilder();
-		foreach(INode node in getChildNodes()){
+		foreach(var node in getChildNodes()){
 			if(node.getNodeType()!=NodeType.COMMENT_NODE){
 				builder.Append(node.getTextContent());
 			}
@@ -234,7 +234,7 @@ internal class Element : Node, IElement {
 	}
 
 	internal void mergeAttributes(HtmlParser.StartTagToken token){
-		foreach(IAttr attr in token.getAttributes()){
+		foreach(var attr in token.getAttributes()){
 			string s=getAttribute(attr.getName());
 			if(s==null){
 				setAttribute(attr.getName(),attr.getValue());
@@ -242,7 +242,7 @@ internal class Element : Node, IElement {
 		}
 	}
 	internal void setAttribute(string _string, string value) {
-		foreach(IAttr attr in getAttributes()){
+		foreach(var attr in getAttributes()){
 			if(attr.getName().Equals(_string)){
 				((Attr)attr).setValue(value);
 			}
@@ -275,7 +275,7 @@ internal class Element : Node, IElement {
 		builder.Append("<"+extra+name.ToString()+">\n");
 		List<IAttr> attribs=new List<IAttr>(getAttributes());
 		attribs.Sort(new AttributeNameComparator());
-		foreach(IAttr attribute in attribs){
+		foreach(var attribute in attribs){
 			//Console.WriteLine("%s %s",attribute.getNamespace(),attribute.getLocalName());
 			if(attribute.getNamespaceURI()!=null){
 				string extra1="";
@@ -291,7 +291,7 @@ internal class Element : Node, IElement {
 				builder.Append("  "+attribute.getName().ToString()+"=\""+attribute.getValue().ToString().Replace("\n","~~~~")+"\"\n");
 			}
 		}
-		foreach(Node node in getChildNodesInternal()){
+		foreach(var node in getChildNodesInternal()){
 			string str=node.toDebugString();
 			if(str==null) {
 				continue;

@@ -1,6 +1,10 @@
 /*
-Written in 2013 by Peter Occil.  Released to the public domain.
-Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
+Written in 2013 by Peter Occil.  
+Any copyright is dedicated to the Public Domain.
+http://creativecommons.org/publicdomain/zero/1.0/
+
+If you like this, you should donate to Peter O.
+at: http://upokecenter.com/d/
  */
 namespace com.upokecenter.util {
 using System;
@@ -666,7 +670,7 @@ public sealed class URL {
 							MemoryOutputStream baos=new MemoryOutputStream();
 							encoder.encode(baos,buffer.array(),0,buffer.Count,encodingError);
 							byte[] bytes=baos.toByteArray();
-							foreach(byte ch in bytes) {
+							foreach(var ch in bytes) {
 								if(ch<0x21 || ch>0x7e || ch==0x22 || ch==0x23 ||
 										ch==0x3c || ch==0x3e || ch==0x60){
 									percentEncode(query,ch);
@@ -800,7 +804,7 @@ public sealed class URL {
 		if(path.Count==0){
 			builder.Append('/');
 		} else {
-			foreach(string segment in path){
+			foreach(var segment in path){
 				builder.Append('/');
 				builder.Append(segment);
 			}
@@ -837,7 +841,7 @@ public sealed class URL {
 		}
 		string[] strings=StringUtility.splitAt(input,delimiter);
 		IList<string[]> pairs=new List<string[]>();
-		foreach(string str in strings){
+		foreach(var str in strings){
 			if(str.Length==0) {
 				continue;
 			}
@@ -861,7 +865,7 @@ public sealed class URL {
 			pairs.Add(pair);
 		}
 		try {
-			foreach(string[] pair in pairs){
+			foreach(var pair in pairs){
 				pair[0]=percentDecode(pair[0],encoding);
 				pair[1]=percentDecode(pair[1],encoding);
 			}
@@ -971,7 +975,7 @@ public sealed class URL {
 		StringBuilder builder=new StringBuilder();
 		bool first=true;
 		MemoryOutputStream baos=new MemoryOutputStream();
-		foreach(string[] pair in pairs){
+		foreach(var pair in pairs){
 			if(!first){
 				builder.Append(delimiter==null ? "&" : delimiter);
 			}

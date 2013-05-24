@@ -40,7 +40,7 @@ internal class HttpHeadersFromMap : IHttpHeaders {
 		this.requestMethod=requestMethod;
 		list=new List<string>();
 		List<string> keyset=new List<string>();
-		foreach(string s in this.map.Keys){
+		foreach(var s in this.map.Keys){
 			if(s==null){
 				// Add status line (also has the side
 				// effect that it will appear first in the list)
@@ -56,10 +56,10 @@ internal class HttpHeadersFromMap : IHttpHeaders {
 		}
 		keyset.Sort();
 		// Add the remaining headers in sorted order
-		foreach(string s in keyset){
+		foreach(var s in keyset){
 			IList<string> v=this.map[s];
 			if(v!=null && v.Count>0){
-				foreach(string ss in v){
+				foreach(var ss in v){
 					list.Add(s);
 					list.Add(ss);
 				}

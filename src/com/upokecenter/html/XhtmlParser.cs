@@ -192,7 +192,7 @@ internal class XhtmlParser {
 							document,baseurl,document.getBaseURI()));
 				}
 			}
-			foreach(Element baseElement in xmlBaseElements){
+			foreach(var baseElement in xmlBaseElements){
 				string xmlbase=baseElement.getAttribute("xml:base");
 				if(!string.IsNullOrEmpty(xmlbase)) {
 					baseElement.setBaseURI(xmlbase);

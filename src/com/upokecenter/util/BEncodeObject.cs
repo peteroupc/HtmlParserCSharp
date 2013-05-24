@@ -1,6 +1,10 @@
 /*
-Written in 2013 by Peter Occil.  Released to the public domain.
-Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
+Written in 2013 by Peter Occil.  
+Any copyright is dedicated to the Public Domain.
+http://creativecommons.org/publicdomain/zero/1.0/
+
+If you like this, you should donate to Peter O.
+at: http://upokecenter.com/d/
  */
 
 namespace com.upokecenter.util {
@@ -436,7 +440,7 @@ public sealed class BEncodeObject {
 			return beo; // integer and _string objects are immutable
 		if(beo.obj is IDictionary<string,BEncodeObject>){
 			BEncodeObject newbeo=BEncodeObject.newDictionary();
-			foreach(string key in ((IDictionary<string,BEncodeObject>)beo.obj).Keys){
+			foreach(var key in ((IDictionary<string,BEncodeObject>)beo.obj).Keys){
 				newbeo.getDictionary().Add(key,
 						((IDictionary<string,BEncodeObject>)beo.obj)[key]);
 			}
@@ -444,7 +448,7 @@ public sealed class BEncodeObject {
 		}
 		if(beo.obj is IList<BEncodeObject>){
 			BEncodeObject newbeo=BEncodeObject.newList();
-			foreach(BEncodeObject value in ((IList<BEncodeObject>)beo.obj)){
+			foreach(var value in ((IList<BEncodeObject>)beo.obj)){
 				newbeo.getList().Add(value);
 			}
 			return newbeo;
@@ -567,7 +571,7 @@ public int size(){
 		} else if(obj is IDictionary<string,BEncodeObject>){
 			stream.WriteByte(unchecked((byte)((byte)'d')));
 			IDictionary<string,BEncodeObject> map=(IDictionary<string,BEncodeObject>)obj;
-			foreach(string key in map.Keys){
+			foreach(var key in map.Keys){
 				long length=getUtf8Length(key);
 				if(length<0)
 					throw new BEncodeException("invalid string");
@@ -580,7 +584,7 @@ public int size(){
 		} else if(obj is IList<BEncodeObject>){
 			stream.WriteByte(unchecked((byte)((byte)'l')));
 			IList<BEncodeObject> list=(IList<BEncodeObject>)obj;
-			foreach(BEncodeObject value in list){
+			foreach(var value in list){
 				value.write(stream);
 			}
 			stream.WriteByte(unchecked((byte)((byte)'e')));

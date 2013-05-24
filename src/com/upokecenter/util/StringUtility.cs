@@ -1,6 +1,10 @@
 /*
-Written in 2013 by Peter Occil.  Released to the public domain.
-Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
+Written in 2013 by Peter Occil.  
+Any copyright is dedicated to the Public Domain.
+http://creativecommons.org/publicdomain/zero/1.0/
+
+If you like this, you should donate to Peter O.
+at: http://upokecenter.com/d/
  */
 namespace com.upokecenter.util {
 using System;
@@ -150,7 +154,7 @@ public sealed class StringUtility {
 				index=index2+delimLength;
 			}
 		}
-		return PeterO.Support.Collections.ToArray(strings);
+		return strings.ToArray();
 	}
 	/**
 	 * 
@@ -201,7 +205,7 @@ public sealed class StringUtility {
 				return new string[]{s.Substring(lastIndex,(index)-(lastIndex))};
 			strings.Add(s.Substring(lastIndex,(index)-(lastIndex)));
 		}
-		return PeterO.Support.Collections.ToArray(strings);
+		return strings.ToArray();
 	}
 
 	/**
@@ -253,7 +257,7 @@ public sealed class StringUtility {
 				return new string[]{s.Substring(lastIndex,(index)-(lastIndex))};
 			strings.Add(s.Substring(lastIndex,(index)-(lastIndex)));
 		}
-		return PeterO.Support.Collections.ToArray(strings);
+		return strings.ToArray();
 	}
 	public static bool startsWith(string str, string prefix, int index){
 		if(str==null || prefix==null || index<0 || index>=str.Length)

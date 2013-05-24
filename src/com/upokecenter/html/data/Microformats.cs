@@ -137,7 +137,7 @@ public sealed class Microformats {
 
 	private static IList<IElement> getChildElements(INode e){
 		IList<IElement> elements=new List<IElement>();
-		foreach(INode child in e.getChildNodes()){
+		foreach(var child in e.getChildNodes()){
 			if(child is IElement) {
 				elements.Add((IElement)child);
 			}
@@ -152,13 +152,13 @@ public sealed class Microformats {
 		// Replace old microformats class names with
 		// their modern versions
 		IList<string> retList=new List<string>();
-		foreach(string element2 in rel) {
+		foreach(var element2 in rel) {
 			retList.Add(element2);
 		}
-		foreach(string element2 in ret) {
+		foreach(var element2 in ret) {
 			string legacyLabel=legacyLabelsMap[element2];
 			if(complexLegacyMap.ContainsKey(element2)){
-				foreach(string item in complexLegacyMap[element2]){
+				foreach(var item in complexLegacyMap[element2]){
 					retList.Add(item);
 				}
 			}
@@ -172,7 +172,7 @@ public sealed class Microformats {
 			ISet<string> stringSet=new HashSet<string>(retList);
 			return PeterO.Support.Collections.ToArray(stringSet);
 		} else
-			return PeterO.Support.Collections.ToArray(retList);
+			return retList.ToArray();
 	}
 
 	private static string getDTValue(IElement root, int[] source) {
@@ -194,7 +194,7 @@ public sealed class Microformats {
 		if(valueElements.Count==0)
 			// No value elements, get the text content
 			return getDTValueContent(root);
-		foreach(IElement valueElement in valueElements){
+		foreach(var valueElement in valueElements){
 			string text=getDTValueContent(valueElement);
 			if(matchDateTimePattern(text, // check date or date+time
 					new string[]{"%Y-%M-%d","%Y-%D"},
@@ -295,7 +295,7 @@ public sealed class Microformats {
 	}
 
 	private static IElement getFirstChildElement(INode e){
-		foreach(INode child in e.getChildNodes()){
+		foreach(var child in e.getChildNodes()){
 			if(child is IElement)
 				return ((IElement)child);
 		}
@@ -469,14 +469,14 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 				StringUtility.toLowerCaseAscii(element.getAttribute("rel")));
 		if(ret.Length==0)return ret;
 		IList<string> retList=new List<string>();
-		foreach(string element2 in ret) {
+		foreach(var element2 in ret) {
 			retList.Add(element2);
 		}
 		if(retList.Count>=2){
 			ISet<string> stringSet=new HashSet<string>(retList);
 			return PeterO.Support.Collections.ToArray(stringSet);
 		} else
-			return PeterO.Support.Collections.ToArray(retList);
+			return retList.ToArray();
 	}
 
 	private static string getTrimmedTextContent(IElement element){
@@ -520,7 +520,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 
 	private static IList<IElement> getValueClasses(IElement root){
 		IList<IElement> elements=new List<IElement>();
-		foreach(IElement element in getChildElements(root)){
+		foreach(var element in getChildElements(root)){
 			getValueClassInner(element,elements);
 		}
 		return elements;
@@ -529,7 +529,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 	private static void getValueClassInner(IElement root, IList<IElement> elements){
 		string[] cls=getClassNames(root);
 		// Check if this is a value
-		foreach(string c in cls){
+		foreach(var c in cls){
 			if(c.Equals("value")){
 				elements.Add(root);
 				return;
@@ -539,7 +539,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 			}
 		}
 		// Not a value; check if this is a property
-		foreach(string c in cls){
+		foreach(var c in cls){
 			if(c.StartsWith("p-",StringComparison.Ordinal) ||
 					c.StartsWith("e-",StringComparison.Ordinal) ||
 					c.StartsWith("dt-",StringComparison.Ordinal) ||
@@ -547,7 +547,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 				// don't traverse
 				return;
 		}
-		foreach(IElement element in getChildElements(root)){
+		foreach(var element in getChildElements(root)){
 			getValueClassInner(element,elements);
 		}
 	}
@@ -564,7 +564,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 		} else {
 			StringBuilder builder=new StringBuilder();
 			bool first=true;
-			foreach(IElement element in elements){
+			foreach(var element in elements){
 				if(!first) {
 					builder.Append(' ');
 				}
@@ -599,7 +599,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 		string attr=e.getAttribute("class");
 		if(attr==null || attr.Length<className.Length)return false;
 		string[] cls=StringUtility.splitAtSpaces(attr);
-		foreach(string c in cls){
+		foreach(var c in cls){
 			if(c.Equals(className))return true;
 		}
 		return false;
@@ -607,7 +607,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 
 	private static bool hasSingleChildElementNamed(INode e, string name){
 		bool seen=false;
-		foreach(INode child in e.getChildNodes()){
+		foreach(var child in e.getChildNodes()){
 			if(child is IElement){
 				if(seen)return false;
 				if(!StringUtility.toLowerCaseAscii(((IElement)child).getLocalName()).Equals(name))
@@ -802,7 +802,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 		int oldIndex=index;
 		if(datePatterns!=null){
 			// match the date patterns, if any
-			foreach(string pattern in datePatterns){
+			foreach(var pattern in datePatterns){
 				// reset components
 				int endIndex=isDatePattern(value,index,pattern,c);
 				if(endIndex>=0){
@@ -826,7 +826,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 			c[0]=c[1]=c[2]=c[3]=c[4]=c[5]=c[6]=c[7]=Int32.MinValue;
 		}
 		// match the time pattern
-		foreach(string pattern in timePatterns){
+		foreach(var pattern in timePatterns){
 			// reset components
 			int endIndex=isDatePattern(value,index,pattern,c2);
 			if(endIndex==value.Length){
@@ -849,7 +849,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 		bool hasTag=false;
 		bool hasSelf=false;
 		bool hasBookmark=false;
-		foreach(string element in ret) {
+		foreach(var element in ret) {
 			if(!hasTag && "tag".Equals(element)){
 				relList.Add("p-category");
 				hasTag=true;
@@ -865,7 +865,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 				hasBookmark=true;
 			}
 		}
-		return PeterO.Support.Collections.ToArray(relList);
+		return relList.ToArray();
 	}
 	private static void propertyWalk(IElement root,
 			JSONObject properties, JSONArray children){
@@ -873,7 +873,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 		if(className.Length>0){
 			IList<string> types=new List<string>();
 			bool hasProperties=false;
-			foreach(string cls in className){
+			foreach(var cls in className){
 				if(cls.StartsWith("p-",StringComparison.Ordinal) && properties!=null){
 					hasProperties=true;
 				} else if(cls.StartsWith("u-",StringComparison.Ordinal) && properties!=null){
@@ -889,7 +889,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 			if(types.Count==0 && hasProperties){
 				// has properties and isn't a microformat
 				// root
-				foreach(string cls in className){
+				foreach(var cls in className){
 					if(cls.StartsWith("p-",StringComparison.Ordinal)){
 						string value=getPValue(root);
 						if(!StringUtility.isNullOrSpaces(value)) {
@@ -917,7 +917,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 				// for holding child microformats with no
 				// property class
 				JSONArray subChildren=new JSONArray();
-				foreach(INode child in root.getChildNodes()){
+				foreach(var child in root.getChildNodes()){
 					if(child is IElement) {
 						propertyWalk((IElement)child,
 								subProperties,subChildren);
@@ -956,7 +956,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 				}
 				obj.put("properties", subProperties);
 				if(hasProperties){
-					foreach(string cls in className){
+					foreach(var cls in className){
 						if(cls.StartsWith("p-",StringComparison.Ordinal)){ // property
 							JSONObject clone=copyJson(obj);
 							clone.put("value",getPValue(root));
@@ -981,7 +981,7 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 				return;
 			}
 		}
-		foreach(INode child in root.getChildNodes()){
+		foreach(var child in root.getChildNodes()){
 			if(child is IElement) {
 				propertyWalk((IElement)child,properties,children);
 			}
@@ -994,12 +994,12 @@ if(!(day<=31 ))throw new InvalidOperationException(month+" "+day);
 		if(className.Length>0){
 			string href=getHref(root);
 			if(!StringUtility.isNullOrSpaces(href)){
-				foreach(string cls in className){
+				foreach(var cls in className){
 					accumulateValue(properties,cls,href);
 				}
 			}
 		}
-		foreach(INode child in root.getChildNodes()){
+		foreach(var child in root.getChildNodes()){
 			if(child is IElement) {
 				relWalk((IElement)child,properties);
 			}

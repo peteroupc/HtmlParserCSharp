@@ -374,7 +374,7 @@ if(!(month>=1 && month<=12 ))throw new InvalidOperationException(Convert.ToStrin
 				index=skipLws(str,index,endIndex,null);
 			}
 		}
-		return PeterO.Support.Collections.ToArray(strings);
+		return strings.ToArray();
 	}
 
 	public static string getMediaType(string str){
@@ -392,10 +392,6 @@ if(!(month>=1 && month<=12 ))throw new InvalidOperationException(Convert.ToStrin
 	 * value if the media type is ill-formed; rather, this function
 	 * is useful more to check if a media type is well-formed.
 	 * <br><br>
-	 * This function should not be used to extract the media
-	 * type from a data URL _string; use skipDataUrlContentType
-	 * instead on those strings.
-	 *
 	 * @param str a _string containing a MIME media type.
 	 * @param index the index into the _string where the
 	 * media type begins. Specify 0 for the beginning of the
@@ -908,7 +904,7 @@ if(!(month>=1 && month<=12 ))throw new InvalidOperationException(Convert.ToStrin
 	 * 4.1.2).  Note that only ASCII characters are allowed
 	 * in a mailbox _string under that specification.
 	 * Length restrictions on "local parts" and "domains"
-	 * under section 4.5.3 arechecked.
+	 * under section 4.5.3 are checked.
 	 * 
 	 * @param s a _string to check
 	 * @return true if the _string is a well-formed

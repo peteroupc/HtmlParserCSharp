@@ -540,7 +540,7 @@ sealed class HtmlParser {
 
 	private void adjustForeignAttributes(StartTagToken token){
 		IList<Attr> attributes=token.getAttributes();
-		foreach(Attr attr in attributes){
+		foreach(var attr in attributes){
 			string name=attr.getName();
 			if(name.Equals("xlink:actuate") ||
 					name.Equals("xlink:arcrole") ||
@@ -568,7 +568,7 @@ sealed class HtmlParser {
 
 	private void adjustMathMLAttributes(StartTagToken token){
 		IList<Attr> attributes=token.getAttributes();
-		foreach(Attr attr in attributes){
+		foreach(var attr in attributes){
 			if(attr.getName().Equals("definitionurl")){
 				attr.setName("definitionURL");
 			}
@@ -578,7 +578,7 @@ sealed class HtmlParser {
 
 	private void adjustSvgAttributes(StartTagToken token){
 		IList<Attr> attributes=token.getAttributes();
-		foreach(Attr attr in attributes){
+		foreach(var attr in attributes){
 			string name=attr.getName();
 			if(name.Equals("attributename")){ attr.setName("attributeName"); }
 			else if(name.Equals("attributetype")){ attr.setName("attributeType");  }
@@ -923,7 +923,7 @@ sealed class HtmlParser {
 						document.setMode(DocumentMode.QuirksMode);
 					}
 					else if(doctypePublic.Length>0){
-						foreach(string id in quirksModePublicIdPrefixes){
+						foreach(var id in quirksModePublicIdPrefixes){
 							if(doctypePublicLC.StartsWith(id,StringComparison.Ordinal)){
 								document.setMode(DocumentMode.QuirksMode);
 								break;
@@ -1333,7 +1333,7 @@ sealed class HtmlParser {
 				}
 				return true;
 			} else if(token==TOKEN_EOF){
-				foreach(Element e in openElements){
+				foreach(var e in openElements){
 					string name=e.getLocalName();
 					if(!"dd".Equals(name) &&
 							!"dt".Equals(name) &&
@@ -1618,7 +1618,7 @@ sealed class HtmlParser {
 					applyStartTag("hr",insMode);
 					applyStartTag("label",insMode);
 					StartTagToken isindex=new StartTagToken("input");
-					foreach(IAttr attr in tag.getAttributes()){
+					foreach(var attr in tag.getAttributes()){
 						string attrname=attr.getName();
 						if(!"name".Equals(attrname) &&
 								!"action".Equals(attrname) &&
@@ -1758,7 +1758,7 @@ sealed class HtmlParser {
 						error=true;
 						return false;
 					}
-					foreach(Element e in openElements){
+					foreach(var e in openElements){
 						string name2=e.getLocalName();
 						if(!"dd".Equals(name2) &&
 								!"dt".Equals(name2) &&
@@ -1929,7 +1929,7 @@ sealed class HtmlParser {
 							commonAncestor.appendChild(lastNode);
 						}
 						Element e2=Element.fromToken(formatting.token);
-						foreach(Node child in new List<Node>(furthestBlock.getChildNodesInternal())){
+						foreach(var child in new List<Node>(furthestBlock.getChildNodesInternal())){
 							furthestBlock.removeChild(child);
 							// NOTE: Because 'e' can only be a formatting
 							// element, the foster parenting rule doesn't
@@ -3260,7 +3260,7 @@ sealed class HtmlParser {
 	}
 
 	private FormattingElement getFormattingElement(Element node) {
-		foreach(FormattingElement fe in formattingElements){
+		foreach(var fe in formattingElements){
 			if(!fe.isMarker() && node.Equals(fe.element))
 				return fe;
 		}
@@ -3341,7 +3341,7 @@ sealed class HtmlParser {
 	}
 	private bool hasHtmlElementInButtonScope(string name){
 		bool found=false;
-		foreach(Element e in openElements){
+		foreach(var e in openElements){
 			if(e.getLocalName().Equals(name)){
 				found=true;
 			}
@@ -3733,7 +3733,7 @@ sealed class HtmlParser {
 	}
 	internal string nodesToDebugString(IList<Node> nodes){
 		StringBuilder builder=new StringBuilder();
-		foreach(Node node in nodes){
+		foreach(var node in nodes){
 			string str=node.toDebugString();
 			string[] strarray=StringUtility.splitAt(str,"\n");
 			int len=strarray.Length;
@@ -5630,7 +5630,7 @@ sealed class HtmlParser {
 	}
 	private void removeFormattingElement(Element aElement) {
 		FormattingElement f=null;
-		foreach(FormattingElement fe in formattingElements){
+		foreach(var fe in formattingElements){
 			if(!fe.isMarker() && aElement.Equals(fe.element)){
 				f=fe;
 				break;

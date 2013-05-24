@@ -408,19 +408,19 @@ public sealed class DownloadHelper {
 			if(incompleteName[0]){
 				List<PeterO.Support.File> list=new List<PeterO.Support.File>();
 				CacheFilter filter=new CacheFilter(cacheFileName);
-				foreach(PeterO.Support.File f in pathForCache.listFiles()){
+				foreach(var f in pathForCache.listFiles()){
 					if(filter.accept(pathForCache,f.getName())){
 						list.Add(f);
 					}
 				}
-				cacheFiles=PeterO.Support.Collections.ToArray(list);
+				cacheFiles=list.ToArray();
 			} else if(!getStream){
 				crinfo.trueCachedFile=cacheFiles[0];
 				crinfo.trueCacheInfoFile=new PeterO.Support.File(crinfo.trueCachedFile.ToString()+".cache");
 				return crinfo;
 			}
 			//Console.WriteLine("%s, getStream=%s",(cacheFiles),getStream);
-			foreach(PeterO.Support.File cacheFile in cacheFiles){
+			foreach(var cacheFile in cacheFiles){
 				if(cacheFile.isFile() && getStream){
 					bool fresh=false;
 					IHttpHeaders headers=null;
@@ -465,7 +465,7 @@ public sealed class DownloadHelper {
 					} else {
 						PeterO.Support.InputStream stream=null;
 						try {
-							stream=new PeterO.Support.BufferedInputStream(new PeterO.Support.WrappedInputStream(new System.IO.FileStream(cacheFile.ToString(),System.IO.FileMode.Open)),8192);
+							stream=new PeterO.Support.BufferedInputStream(new PeterO.Support.WrappedInputStream(new FileStream(cacheFile.ToString(),FileMode.Open)),8192);
 							crinfo.cr=DownloadHelperImpl.newCacheResponse(stream,
 									headers);
 							//Console.WriteLine("headerfields: %s",headers.getHeaderFields());
@@ -540,7 +540,7 @@ public sealed class DownloadHelper {
 			int count=0;
 			IList<PeterO.Support.File> files=new List<PeterO.Support.File>();
 			recursiveListFiles(cache,files);
-			foreach(PeterO.Support.File file in files){
+			foreach(var file in files){
 				if(file.isFile()){
 					length+=file.length();
 					if(length>maximumSize){
@@ -553,7 +553,7 @@ public sealed class DownloadHelper {
 			if(count<=1||!exceeded)return;
 			long threshold=oldest+Math.Abs(oldest-DateTimeUtility.getCurrentDate())/2;
 			count=0;
-			foreach(PeterO.Support.File file in files){
+			foreach(var file in files){
 				if(file.lastModified()<threshold){
 					if(file.isDirectory()){
 						if(file.delete()) {
@@ -578,7 +578,7 @@ public sealed class DownloadHelper {
 
 
 	private static void recursiveListFiles(PeterO.Support.File file, IList<PeterO.Support.File> files){
-		foreach(PeterO.Support.File f in file.listFiles()){
+		foreach(var f in file.listFiles()){
 			if(f.isDirectory()){
 				recursiveListFiles(f,files);
 			}

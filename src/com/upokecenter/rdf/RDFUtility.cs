@@ -4,7 +4,9 @@
 namespace com.upokecenter.rdf {
 using System;
 using System.Collections.Generic;
-using com.upokecenter.json;
+
+
+
 
 
 public sealed class RDFUtility {
@@ -13,7 +15,7 @@ public sealed class RDFUtility {
 		if(graph1.Equals(graph2))return true;
 		// Graphs must have the same size to be isomorphic
 		if(graph1.Count!=graph2.Count)return false;
-		foreach(RDFTriple triple in graph1){
+		foreach(var triple in graph1){
 			// do a strict comparison
 			if(triple.getSubject().getKind()!=RDFTerm.BLANK &&
 					triple.getObject().getKind()!=RDFTerm.BLANK){
@@ -22,7 +24,7 @@ public sealed class RDFUtility {
 			} else {
 				// do a lax comparison
 				bool found=false;
-				foreach(RDFTriple triple2 in graph2){
+				foreach(var triple2 in graph2){
 					if(laxEqual(triple,triple2)){
 						found=true;
 						break;
@@ -73,10 +75,11 @@ public sealed class RDFUtility {
 	 * @param triples
 	 * 
 	 */
-	public static JSONObject RDFtoJSON(ISet<RDFTriple> triples){
+  /*
+	public static com.upokecenter.json.JSONObject RDFtoJSON(ISet<RDFTriple> triples){
 		IDictionary<RDFTerm,IList<RDFTriple>> subjects=new PeterO.Support.LenientDictionary<RDFTerm,IList<RDFTriple>>();
-		JSONObject rootJson=new JSONObject();
-		foreach(RDFTriple triple in triples){
+		com.upokecenter.json.JSONObject rootJson=new com.upokecenter.json.JSONObject();
+		foreach(var triple in triples){
 			IList<RDFTriple> subjectList=subjects[triple.getSubject()];
 			if(subjectList==null){
 				subjectList=new List<RDFTriple>();
@@ -84,10 +87,10 @@ public sealed class RDFUtility {
 			}
 			subjectList.Add(triple);
 		}
-		foreach(RDFTerm subject in subjects.Keys){
-			JSONObject subjectJson=new JSONObject();
+		foreach(var subject in subjects.Keys){
+			com.upokecenter.json.JSONObject subjectJson=new com.upokecenter.json.JSONObject();
 			IDictionary<RDFTerm,IList<RDFTerm>> predicates=new PeterO.Support.LenientDictionary<RDFTerm,IList<RDFTerm>>();
-			foreach(RDFTriple triple in triples){
+			foreach(var triple in triples){
 				IList<RDFTerm> subjectList=predicates[triple.getPredicate()];
 				if(subjectList==null){
 					subjectList=new List<RDFTerm>();
@@ -95,10 +98,10 @@ public sealed class RDFUtility {
 				}
 				subjectList.Add(triple.getObject());
 			}
-			foreach(RDFTerm predicate in predicates.Keys){
-				JSONArray valueArray=new JSONArray();
-				foreach(RDFTerm obj in predicates[predicate]){
-					JSONObject valueJson=new JSONObject();
+			foreach(var predicate in predicates.Keys){
+				com.upokecenter.json.JSONArray valueArray=new com.upokecenter.json.JSONArray();
+				foreach(var obj in predicates[predicate]){
+					com.upokecenter.json.JSONObject valueJson=new com.upokecenter.json.JSONObject();
 					if(obj.getKind()==RDFTerm.IRI){
 						valueJson.put("type","uri");
 						valueJson.put("value",obj.getValue());
@@ -125,7 +128,7 @@ public sealed class RDFUtility {
 		}
 		return rootJson;
 	}
-
+   */
 	private RDFUtility(){}
 }
 

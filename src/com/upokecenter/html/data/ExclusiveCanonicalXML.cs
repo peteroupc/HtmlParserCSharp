@@ -96,7 +96,7 @@ sealed class ExclusiveCanonicalXML {
 		if(prefixList==null) {
 			prefixList=new PeterO.Support.LenientDictionary<string,string>();
 		} else {
-			foreach(string prefix in prefixList.Keys){
+			foreach(var prefix in prefixList.Keys){
 				string nsvalue=prefixList[prefix];
 				checkNamespacePrefix(prefix,nsvalue);
 			}
@@ -105,7 +105,7 @@ sealed class ExclusiveCanonicalXML {
 		stack.Add(item);
 		if(node is IDocument){
 			bool beforeElement=true;
-			foreach(INode child in node.getChildNodes()){
+			foreach(var child in node.getChildNodes()){
 				if(child is IElement){
 					beforeElement=false;
 					canonicalize(child,builder,stack,prefixList,true,withComments);
@@ -116,7 +116,7 @@ sealed class ExclusiveCanonicalXML {
 		} else if(includeRoot){
 			canonicalize(node,builder,stack,prefixList,true,withComments);
 		} else {
-			foreach(INode child in node.getChildNodes()){
+			foreach(var child in node.getChildNodes()){
 				canonicalize(child,builder,stack,prefixList,true,withComments);
 			}
 		}
@@ -161,7 +161,7 @@ sealed class ExclusiveCanonicalXML {
 			if(addPrefixes && prefixList.Count>0){
 				declaredNames=new HashSet<string>();
 			}
-			foreach(IAttr attr in e.getAttributes()){
+			foreach(var attr in e.getAttributes()){
 				string name=attr.getName();
 				string nsvalue=null;
 				if("xmlns".Equals(name)){
@@ -182,7 +182,7 @@ sealed class ExclusiveCanonicalXML {
 			}
 			if(declaredNames!=null){
 				// add declared prefixes to list
-				foreach(string prefix in prefixList.Keys){
+				foreach(var prefix in prefixList.Keys){
 					if(prefix==null || declaredNames.Contains(prefix)) {
 						continue;
 					}
@@ -194,7 +194,7 @@ sealed class ExclusiveCanonicalXML {
 				}
 			}
 			attrs.Sort(attrNamespaceComparer);
-			foreach(IAttr attr in attrs){
+			foreach(var attr in attrs){
 				string prefix=attr.getLocalName();
 				if(attr.getPrefix().Length==0){
 					prefix="";
@@ -238,7 +238,7 @@ sealed class ExclusiveCanonicalXML {
 			namespaceStack.Add(nsRendered);
 			attrs.Clear();
 			// All other attributes
-			foreach(IAttr attr in e.getAttributes()){
+			foreach(var attr in e.getAttributes()){
 				string name=attr.getName();
 				if(!("xmlns".Equals(name) ||
 						(name.StartsWith("xmlns:",StringComparison.Ordinal) && name.Length>6))){
@@ -247,12 +247,12 @@ sealed class ExclusiveCanonicalXML {
 				}
 			}
 			attrs.Sort(attrComparer);
-			foreach(IAttr attr in attrs){
+			foreach(var attr in attrs){
 				renderAttribute(builder,
 						attr.getPrefix(),attr.getLocalName(),attr.getValue());
 			}
 			builder.Append('>');
-			foreach(INode child in node.getChildNodes()){
+			foreach(var child in node.getChildNodes()){
 				canonicalize(child,builder,namespaceStack,prefixList,false,withComments);
 			}
 			namespaceStack.RemoveAt(namespaceStack.Count-1);
@@ -336,7 +336,7 @@ sealed class ExclusiveCanonicalXML {
 		}
 		if(s.Equals(prefix))return true;
 		if(s.Length>0){
-			foreach(IAttr attr in element.getAttributes()){
+			foreach(var attr in element.getAttributes()){
 				prefix=attr.getPrefix();
 				if(prefix==null) {
 					continue;

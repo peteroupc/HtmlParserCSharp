@@ -54,7 +54,7 @@ public class RDFa : IRDFParser {
 	private static readonly string RDFA_DEFAULT_PREFIX = "http://www.w3.org/1999/xhtml/vocab#";
 	private static string getTextNodeText(INode node){
 		StringBuilder builder=new StringBuilder();
-		foreach(INode child in node.getChildNodes()){
+		foreach(var child in node.getChildNodes()){
 			if(child.getNodeType()==NodeType.TEXT_NODE){
 				builder.Append(((IText)child).getData());
 			} else {
@@ -174,7 +174,7 @@ public class RDFa : IRDFParser {
 		if(key==null)
 			return map[null];
 		key=StringUtility.toLowerCaseAscii(key);
-		foreach(string k in map.Keys){
+		foreach(var k in map.Keys){
 			if(key.Equals(StringUtility.toLowerCaseAscii(k)))
 				return map[k];
 		}
@@ -316,7 +316,7 @@ iri.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 			strings.Add(StringUtility.toLowerCaseAscii(prefix.ToString()));
 			strings.Add(iri.ToString());
 		}
-		return PeterO.Support.Collections.ToArray(strings);
+		return strings.ToArray();
 	}
 
 	private int blankNode;
@@ -390,7 +390,7 @@ iri.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 						"stylesheet","subsection","top",
 						"up","p3pv1"
 				};
-				foreach(string term in terms){
+				foreach(var term in terms){
 					this.context.termMap.Add(term,"http://www.w3.org/1999/xhtml/vocab#"+term);
 				}
 			}
@@ -587,7 +587,7 @@ if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(
 			context.baseURI=URIUtility.relativeResolve(attr, context.baseURI);
 		}
 		// Support deprecated XML namespaces
-		foreach(IAttr attrib in node.getAttributes()){
+		foreach(var attrib in node.getAttributes()){
 			string name=StringUtility.toLowerCaseAscii(attrib.getName());
 			//Console.WriteLine(attrib);
 			if(name.Equals("xmlns")){
@@ -776,7 +776,7 @@ if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(
 		// Step 7
 		if(typedResource!=null){
 			string[] types=StringUtility.splitAtNonFFSpaces(node.getAttribute("typeof"));
-			foreach(string type in types){
+			foreach(var type in types){
 				string iri=getTermOrCurieOrAbsIri(type,
 						iriMapLocal,termMapLocal,localDefaultVocab);
 				if(iri!=null){
@@ -796,7 +796,7 @@ if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(
 			string inlist=node.getAttribute("inlist");
 			if(inlist!=null && rel!=null){
 				string[] types=StringUtility.splitAtNonFFSpaces(rel);
-				foreach(string type in types){
+				foreach(var type in types){
 					string iri=getTermOrCurieOrAbsIri(type,
 							iriMapLocal,termMapLocal,localDefaultVocab);
 					if(iri!=null){
@@ -815,7 +815,7 @@ if(!(refIndex+refLength<=attribute.Length ))throw new InvalidOperationException(
 				#if DEBUG
 if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newSubject!=null");
 #endif
-				foreach(string type in types){
+				foreach(var type in types){
 					string iri=getTermOrCurieOrAbsIri(type,
 							iriMapLocal,termMapLocal,localDefaultVocab);
 					if(iri!=null){
@@ -826,7 +826,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 					}
 				}
 				types=StringUtility.splitAtNonFFSpaces(rev);
-				foreach(string type in types){
+				foreach(var type in types){
 					string iri=getTermOrCurieOrAbsIri(type,
 							iriMapLocal,termMapLocal,localDefaultVocab);
 					if(iri!=null){
@@ -844,7 +844,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 			bool inlist=(node.getAttribute("inlist"))!=null;
 			bool hasPredicates=false;
 			// Defines predicates
-			foreach(string type in types){
+			foreach(var type in types){
 				string iri=getTermOrCurieOrAbsIri(type,
 						iriMapLocal,termMapLocal,localDefaultVocab);
 				if(iri!=null){
@@ -873,7 +873,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 				}
 			}
 			types=StringUtility.splitAtNonFFSpaces(rev);
-			foreach(string type in types){
+			foreach(var type in types){
 				string iri=getTermOrCurieOrAbsIri(type,
 						iriMapLocal,termMapLocal,localDefaultVocab);
 				if(iri!=null){
@@ -898,7 +898,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 		//Console.WriteLine("datatype=[%s] prop=%s vocab=%s",
 		//	datatype,property,localDefaultVocab);
 		//Console.WriteLine("datatypeValue=[%s]",datatypeValue);
-		foreach(string pred in preds){
+		foreach(var pred in preds){
 			string iri=getTermOrCurieOrAbsIri(pred,
 					iriMapLocal,termMapLocal,localDefaultVocab);
 			if(iri!=null){
@@ -983,7 +983,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 		}
 		// Step 12
 		if(!skipElement && newSubject!=null){
-			foreach(IncompleteTriple triple in context.incompleteTriples){
+			foreach(var triple in context.incompleteTriples){
 				if(triple.direction==ChainingDirection.None){
 					IList<RDFTerm> list=triple.list;
 					list.Add(newSubject);
@@ -1000,7 +1000,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 			}
 		}
 		// Step 13
-		foreach(INode childNode in node.getChildNodes()){
+		foreach(var childNode in node.getChildNodes()){
 			IElement childElement;
 			EvalContext oldContext=context;
 			if(childNode is IElement){
@@ -1036,7 +1036,7 @@ if(!(newSubject!=null))throw new InvalidOperationException("doesn't satisfy newS
 			context=oldContext;
 		}
 		// Step 14
-		foreach(string iri in listMapLocal.Keys){
+		foreach(var iri in listMapLocal.Keys){
 			if(!context.listMap.ContainsKey(iri)){
 				IList<RDFTerm> list=listMapLocal[iri];
 				if(list.Count==0){

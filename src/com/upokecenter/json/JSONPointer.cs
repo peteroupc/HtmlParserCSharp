@@ -1,11 +1,16 @@
 /*
-Written in 2013 by Peter Occil.  Released to the public domain.
-Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
+Written in 2013 by Peter Occil.  
+Any copyright is dedicated to the Public Domain.
+http://creativecommons.org/publicdomain/zero/1.0/
+
+If you like this, you should donate to Peter O.
+at: http://upokecenter.com/d/
  */
 namespace com.upokecenter.json {
 using System;
 using System.Text;
 using System.Globalization;
+using System.Collections.Generic;
 
 
 
@@ -239,6 +244,131 @@ if(!(refValue!=null))throw new InvalidOperationException("doesn't satisfy refVal
 			return ((JSONObject)jsonobj)[refValue];
 		else
 			return (refValue.Length==0) ? jsonobj : null;
+	}
+	
+
+	/**
+	 * Gets all children of the specified JSON _object
+	 * that contain the specified key.   The method will
+	 * not remove matching keys. As an example, consider
+	 * this _object:
+	 * <pre>
+	 * [{"key":"value1","foo":"foovalue"},
+	 *  {"key":"value2","bar":"barvalue"},
+	 *  {"baz":"bazvalue"}]
+	 * </pre>
+	 * If getPointersToKey is called on this _object
+	 * with a keyToFind called "key", we get the following
+	 * Map as the return value:
+	 * <pre>
+	 * {
+	 * "/0" => "value1", // "/0" points to {"foo":"foovalue"}
+	 * "/1" => "value2" // "/1" points to {"bar":"barvalue"}
+	 * }
+	 * </pre>
+	 * and the JSON _object will change to the following:
+	 * <pre>
+	 * [{"foo":"foovalue"},
+	 *  {"bar":"barvalue"},
+	 *  {"baz","bazvalue"}]
+	 * </pre>
+	 * 
+	 * @param root _object to search
+	 * @param keyToFind the key to search for.
+	 * @return a map:<ul>
+	 *  <li>The keys in the map are JSON Pointers to the objects
+	 *  within <i>root</i>
+	 *  that contained a key named <i>keyToFind</i>.
+	 *  To get the actual JSON _object, call JSONPointer.getObject,
+	 *  passing <i>root</i> and the pointer as arguments.</li>
+	 *  <li>The values in the map are the values of each of
+	 *  those keys named <i>keyToFind</i>.</li>
+	 *  </ul>
+	 *  The JSON Pointers are relative to the root
+	 * _object.
+	 */
+	public static IDictionary<string,Object> getPointersWithKeyAndRemove(Object root, string keyToFind){
+		IDictionary<string,Object> list=new PeterO.Support.LenientDictionary<string,Object>();
+		getPointersWithKey(root,keyToFind,"",list,true);
+		return list;
+	}
+
+	/**
+	 * Gets all children of the specified JSON _object
+	 * that contain the specified key.   The method will
+	 * remove matching keys. As an example, consider
+	 * this _object:
+	 * <pre>
+	 * [{"key":"value1","foo":"foovalue"},
+	 *  {"key":"value2","bar":"barvalue"},
+	 *  {"baz":"bazvalue"}]
+	 * </pre>
+	 * If getPointersToKey is called on this _object
+	 * with a keyToFind called "key", we get the following
+	 * Map as the return value:
+	 * <pre>
+	 * {
+	 * "/0" => "value1", // "/0" points to {"key":"value1","foo":"foovalue"}
+	 * "/1" => "value2" // "/1" points to {"key":"value2","bar":"barvalue"}
+	 * }
+	 * </pre>
+	 * and the JSON _object will remain unchanged.
+	 * 
+	 * 
+	 * @param root _object to search
+	 * @param keyToFind the key to search for.
+	 * @return a map:<ul>
+	 *  <li>The keys in the map are JSON Pointers to the objects
+	 *  within <i>root</i>
+	 *  that contained a key named <i>keyToFind</i>.
+	 *  To get the actual JSON _object, call JSONPointer.getObject,
+	 *  passing <i>root</i> and the pointer as arguments.</li>
+	 *  <li>The values in the map are the values of each of
+	 *  those keys named <i>keyToFind</i>.</li>
+	 *  </ul>
+	 *  The JSON Pointers are relative to the root
+	 * _object.
+	 */
+	public static IDictionary<string,Object> getPointersWithKey(Object root, string keyToFind){
+		IDictionary<string,Object> list=new PeterO.Support.LenientDictionary<string,Object>();
+		getPointersWithKey(root,keyToFind,"",list,false);
+		return list;
+	}
+
+	private static void getPointersWithKey(
+			Object root,
+			string keyToFind,
+			string currentPointer,
+			IDictionary<string,Object> pointerList,
+			bool remove){
+		if(root is JSONObject){
+			JSONObject rootObj=((JSONObject)root);
+			if(rootObj.has(keyToFind)){
+				// Key found in this _object,
+				// add this _object's JSON pointer
+				Object pointerKey=rootObj[keyToFind];
+				pointerList.Add(currentPointer,pointerKey);
+				// and remove the key from the _object
+				// if necessary
+				if(remove)
+					rootObj.remove(keyToFind);
+			}
+			// Search the key's values
+			foreach(var key in rootObj.keys()){
+				string ptrkey=key;
+				ptrkey=ptrkey.Replace((CharSequence)"~","~0");
+				ptrkey=ptrkey.Replace((CharSequence)"/","~1");
+				getPointersWithKey(rootObj[key],keyToFind,
+						currentPointer+"/"+ptrkey,pointerList,remove);
+			}
+		}
+		else if(root is JSONArray){
+			for(int i=0;i<((JSONArray)root).Length;i++){
+				string ptrkey=Convert.ToString(i,CultureInfo.InvariantCulture);
+				getPointersWithKey(((JSONArray)root)[i],keyToFind,
+						currentPointer+"/"+ptrkey,pointerList,remove);
+			}
+		}
 	}
 }
 

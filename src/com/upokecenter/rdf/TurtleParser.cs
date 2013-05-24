@@ -1064,7 +1064,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 				// just a blank node property list;
 				// generate a blank node as the subject
 				RDFTerm blankNode=allocateBlankNode();
-				foreach(TurtleProperty prop in subject.getProperties()){
+				foreach(var prop in subject.getProperties()){
 					emitRDFTriple(blankNode,prop.pred,prop.obj,triples);
 				}
 				return;

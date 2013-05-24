@@ -101,7 +101,7 @@ internal class CacheControl {
 				templist.Add(list[i+1]);
 			}
 			// Make lists unmodifiable
-			foreach(string key in new List<string>(map.Keys)){
+			foreach(var key in new List<string>(map.Keys)){
 				map.Add(key,PeterO.Support.Collections.UnmodifiableList(map[key]));
 			}
 			return PeterO.Support.Collections.UnmodifiableMap(map);
@@ -188,7 +188,7 @@ internal class CacheControl {
 			jsonobj.put("code",o.code);
 			jsonobj.put("age",Convert.ToString(o.age,CultureInfo.InvariantCulture));
 			JSONArray jsonarr=new JSONArray();
-			foreach(string header in o.headers){
+			foreach(var header in o.headers){
 				jsonarr.put(header);
 			}
 			jsonobj.put("headers",jsonarr);
@@ -196,7 +196,7 @@ internal class CacheControl {
 		}
 	}
 	public static CacheControl fromFile(PeterO.Support.File f) {
-		PeterO.Support.WrappedInputStream fs=new PeterO.Support.WrappedInputStream(new System.IO.FileStream(f.ToString(),System.IO.FileMode.Open));
+		PeterO.Support.WrappedInputStream fs=new PeterO.Support.WrappedInputStream(new FileStream(f.ToString(),FileMode.Open));
 		try {
 			return new CacheControlSerializer().readObjectFromStream(fs);
 		} finally {
