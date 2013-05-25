@@ -1,7 +1,7 @@
 namespace com.upokecenter.html {
 using System;
 
-/**
+/*
  * Represents one of the attributes within an HTML element.
  * 
  * @author Peter

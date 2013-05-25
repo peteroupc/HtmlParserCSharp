@@ -13,8 +13,8 @@ using com.upokecenter.util;
  * http://www.w3.org/TR/xml-exc-c14n/
  * 
  * @author Peter
- *
  */
+ 
 sealed class ExclusiveCanonicalXML {
 	private sealed class AttrComparer : IComparer<IAttr> {
 		public int Compare(IAttr arg0, IAttr arg1) {

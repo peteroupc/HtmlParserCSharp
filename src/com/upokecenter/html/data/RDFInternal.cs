@@ -14,7 +14,6 @@ sealed class RDFInternal {
 	 * already allocated.  This method will modify this
 	 * _object as needed to allocate new blank nodes.
 	 */
-	//
 	internal static void replaceBlankNodes(ISet<RDFTriple> triples,
 			IDictionary<string,RDFTerm> bnodeLabels){
 		if(bnodeLabels.Count==0)

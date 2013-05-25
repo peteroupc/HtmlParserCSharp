@@ -9,7 +9,7 @@ using com.upokecenter.util;
 //Written by Peter Occil, 2013. In the public domain.
 //Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
 
-/**
+*
  * 
  * A parser for Turtle, a syntax for writing
  * Resource Description Framework (RDF) graphs
@@ -19,7 +19,7 @@ using com.upokecenter.util;
  * 
  * @author Peter
  *
- */
+ 
 public class TurtleParser : IRDFParser {
 
 	private class TurtleObject {

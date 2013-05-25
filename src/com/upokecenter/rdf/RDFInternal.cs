@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 
 sealed class RDFInternal {
-	/**
+	*
 	 *  Replaces certain blank nodes with blank nodes whose
 	 *  names meet the N-Triples requirements
 	 * @param triples A set of RDF triples
@@ -17,7 +17,7 @@ sealed class RDFInternal {
 	 * _object as needed to allocate new blank nodes.
 	 */
 	//
-	internal static void replaceBlankNodes(ISet<RDFTriple> triples,
+	/*internal static void replaceBlankNodes(ISet<RDFTriple> triples,
 			IDictionary<string,RDFTerm> bnodeLabels){
 		if(bnodeLabels.Count==0)
 			return;

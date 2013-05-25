@@ -36,7 +36,7 @@ public sealed class RDFUtility {
 		return true;
 	}
 
-	/**
+	*
 	 * A lax comparer of RDF triples which doesn't compare
 	 * blank node labels
 	 * 
@@ -128,7 +128,7 @@ public sealed class RDFUtility {
 		}
 		return rootJson;
 	}
-   */
+   
 	private RDFUtility(){}
 }
 

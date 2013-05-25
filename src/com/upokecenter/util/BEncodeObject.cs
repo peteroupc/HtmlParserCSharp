@@ -581,7 +581,7 @@ public int size(){
 				map[key].write(stream);
 			}
 			stream.WriteByte(unchecked((byte)((byte)'e')));
-		} else if(obj is IList<BEncodeObject>){
+		} else if(obj is List/*<BEncodeObject><Object>*/){
 			stream.WriteByte(unchecked((byte)((byte)'l')));
 			IList<BEncodeObject> list=(IList<BEncodeObject>)obj;
 			foreach(var value in list){

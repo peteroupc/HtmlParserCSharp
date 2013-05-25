@@ -1,4 +1,4 @@
-/*
+
 Written in 2013 by Peter Occil.  
 Any copyright is dedicated to the Public Domain.
 http://creativecommons.org/publicdomain/zero/1.0/
@@ -12,9 +12,6 @@ using System.IO;
 
 public class BEncodeException : Exception {
 
-	/**
-	 * 
-	 */
 	
 
 	public BEncodeException(string _string) : base(_string) {

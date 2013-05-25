@@ -5,7 +5,7 @@ http://creativecommons.org/publicdomain/zero/1.0/
 
 If you like this, you should donate to Peter O.
 at: http://upokecenter.com/d/
- */
+*/
 namespace com.upokecenter.io {
 using System;
 using System.IO;
@@ -37,7 +37,7 @@ public interface ICharacterInput {
 	 * @return The number of Unicode characters read,
 	 * or -1 if the end of the input is reached
 	 * @ if an I/O error occurs.
-	 */
+	 
 	 int read(int[] buf, int offset, int unitCount)
 			;
 }
