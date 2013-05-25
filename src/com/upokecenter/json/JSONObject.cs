@@ -11,8 +11,6 @@ using System.Collections.Generic;
 
 
 
-
-
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its
  * external form is a _string wrapped in curly braces with colons between the
@@ -283,8 +281,14 @@ public class JSONObject {
 			switch (x.nextClean()) {
 			case ',':
 				addCommentIfAny(x);
-				if (x.nextClean() == '}')
-					return;
+				if (x.nextClean() == '}'){
+          if((x.getOptions() & OPTION_TRAILING_COMMAS)==0){
+					// 2013-05-24 -- Peter O. Disallow trailing comma.
+          throw x.syntaxError("Trailing comma");
+          } else {
+            return;
+          }
+        }
 				x.back();
 				break;
 			case '}':
@@ -306,6 +310,10 @@ public class JSONObject {
 	}
 
 
+  /**
+  * Trailing commas are allowed in the JSON _string.
+  */
+  public static readonly int OPTION_TRAILING_COMMAS = 8;
 	/**
 	 * No duplicates are allowed in the JSON _string.
 	 */
