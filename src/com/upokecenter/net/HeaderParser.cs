@@ -58,7 +58,7 @@ public sealed class HeaderParser {
 	private static void appendParameterValue(string str, StringBuilder builder){
 		// if _string is a valid MIME token, the return value
 		// will be the end of the _string
-		if(skipMimeToken(str,0,str.Length,null)==str.Length){
+		if(skipMimeToken(str,0,str.Length,null,false)==str.Length){
 			// append the _string as is
 			builder.Append(str);
 			return;
@@ -525,7 +525,7 @@ if(!(month>=1 && month<=12 ))throw new InvalidOperationException(Convert.ToStrin
 				index=skipCFWS(data,index,endIndex,null);
 			}
 			StringBuilder builder=new StringBuilder();
-			int afteratt=skipMimeToken(data,index,endIndex,builder);
+			int afteratt=skipMimeTypeSubtype(data,index,endIndex,builder);
 			if(afteratt==index) // ill-formed attribute
 				return null;
 			string attribute=builder.ToString();
@@ -552,7 +552,7 @@ if(!(month>=1 && month<=12 ))throw new InvalidOperationException(Convert.ToStrin
 			builder.Clear();
 			// try getting the value unquoted
 			// Note we don't use getAtom
-			qs=skipMimeToken(data,index,endIndex,isToken ? builder : null);
+			qs=skipMimeToken(data,index,endIndex,isToken ? builder : null,httpRules);
 			if(qs!=index){
 				if(isToken)
 					return builder.ToString();
@@ -872,7 +872,7 @@ if(!(month>=1 && month<=12 ))throw new InvalidOperationException(Convert.ToStrin
 			} else {
 				index=skipCFWS(data,index,endIndex,null);
 			}
-			int afteratt=skipMimeToken(data,index,endIndex,null);
+			int afteratt=skipMimeTypeSubtype(data,index,endIndex,null);
 			if(afteratt==index) // ill-formed attribute
 				return false;
 			index=afteratt;
@@ -891,7 +891,7 @@ if(!(month>=1 && month<=12 ))throw new InvalidOperationException(Convert.ToStrin
 				continue;
 			}
 			// try getting the value unquoted
-			qs=skipMimeToken(data,index,endIndex,null);
+			qs=skipMimeToken(data,index,endIndex,null,httpRules);
 			if(qs!=index){
 				index=qs;
 				continue;
@@ -2145,13 +2145,17 @@ if(!(str!=null))throw new InvalidOperationException("doesn't satisfy str!=null")
 		}
 		return i2;
 	}
-	internal static int skipMimeToken(string str, int index, int endIndex, StringBuilder builder){
+	internal static int skipMimeToken(string str, int index, int endIndex, 
+     StringBuilder builder, bool httpRules){
 		int i=index;
 		while(i<endIndex){
 			char c=str[i];
 			if(c<=0x20 || c>=0x7F || ((c&0x7F)==c && "()<>@,;:\\\"/[]?=".IndexOf(c)>=0)) {
 				break;
 			}
+      if(httpRules && (c=='{' || c=='}')){
+        break;
+      }
 			if(builder!=null) {
 				builder.Append(c);
 			}

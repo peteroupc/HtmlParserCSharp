@@ -831,10 +831,7 @@ sealed class HtmlParser {
 					SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())){
 				popCurrentNode();
 			} else {
-				// NOTE: The HTML spec here is unfortunately too strict
-				// in that it doesn't allow an ASCII case-insensitive
-				// comparison (for example, with SVG foreignObject)
-				if(!getCurrentNode().getLocalName().Equals(name)) {
+				if(!StringUtility.toLowerCaseAscii(getCurrentNode().getLocalName()).Equals(name)) {
 					error=true;
 				}
 				int originalSize=openElements.Count;
@@ -1369,7 +1366,6 @@ sealed class HtmlParser {
 						"bgsound".Equals(name)||
 						"basefont".Equals(name)||
 						"link".Equals(name)||
-						"menuitem".Equals(name)||
 						"noframes".Equals(name)||
 						"script".Equals(name)||
 						"style".Equals(name)||
@@ -1596,6 +1592,7 @@ sealed class HtmlParser {
 					}
 				} else if("param".Equals(name)||
 						"source".Equals(name)||
+						"menuitem".Equals(name)||
 						"track".Equals(name)
 						){
 					addHtmlElementNoPush(tag);
