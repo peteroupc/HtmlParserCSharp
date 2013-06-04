@@ -1123,7 +1123,10 @@ sealed class HtmlParser {
 							if(!string.IsNullOrEmpty(value) &&
 									value.IndexOf(',')<0){
 								string[] data=StringUtility.splitAtSpaces(value);
-								document.defaultLanguage=(data.Length==0) ? "" : data[0];
+								string deflang=(data.Length==0) ? "" : data[0];
+								if(!string.IsNullOrEmpty(deflang)){
+									document.defaultLanguage=deflang;
+								}
 							}
 						}
 

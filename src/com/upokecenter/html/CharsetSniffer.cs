@@ -1006,7 +1006,9 @@ CultureInfo.CurrentCulture.Name.Substring(
 			return "text/plain";
 		// Image types
 		if(matchesPattern(new byte[]{0,0,1,0},header,0,count))
-			return "image/vnd.microsoft.icon";
+			return "image/x-icon"; // icon
+		if(matchesPattern(new byte[]{0,0,2,0},header,0,count))
+			return "image/x-icon"; // cursor
 		if(matchesPattern(new byte[]{0x42,0x4d},header,0,count))
 			return "image/bmp";
 		if(matchesPattern(new byte[]{0x47,0x49,0x46,0x38,0x37,0x61},header,0,count))
