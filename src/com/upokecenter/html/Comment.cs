@@ -30,31 +30,31 @@ THE SOFTWARE.
 namespace com.upokecenter.html {
 using System;
 internal class Comment : Node, IComment {
-	string data;
+  string data;
 
-	internal Comment() : base(NodeType.COMMENT_NODE) {
-	}
-
-
-	public string getData(){
-		return data;
-	}
-
-	public override string getNodeName(){
-		return "#comment";
-	}
-
-	public override string getTextContent(){
-		return null;
-	}
+  internal Comment() : base(NodeType.COMMENT_NODE) {
+  }
 
 
-	internal void setData(string data){
-		this.data=data;
-	}
-	internal override string toDebugString(){
-		return "<!-- "+getData().ToString().Replace("\n","~~~~")+" -->\n";
-	}
+  public string getData(){
+    return data;
+  }
+
+  public override string getNodeName(){
+    return "#comment";
+  }
+
+  public override string getTextContent(){
+    return null;
+  }
+
+
+  internal void setData(string data){
+    this.data=data;
+  }
+  internal override string toDebugString(){
+    return "<!-- "+getData().ToString().Replace("\n","~~~~")+" -->\n";
+  }
 
 }
 }

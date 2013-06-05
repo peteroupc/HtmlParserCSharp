@@ -33,143 +33,143 @@ using System.Text;
 using System.Collections.Generic;
 using com.upokecenter.util;
 internal class Document : Node, IDocument {
-	internal DocumentType doctype;
-	internal string encoding;
-	private DocumentMode docmode=DocumentMode.NoQuirksMode;
+  internal DocumentType doctype;
+  internal string encoding;
+  private DocumentMode docmode=DocumentMode.NoQuirksMode;
 
-	internal string address;
+  internal string address;
 
-	internal string defaultLanguage;
+  internal string defaultLanguage;
 
-	internal Document() : base(NodeType.DOCUMENT_NODE) {
-	}
+  internal Document() : base(NodeType.DOCUMENT_NODE) {
+  }
 
-	private void collectElements(INode c, string s, IList<IElement> nodes){
-		if(c.getNodeType()==NodeType.ELEMENT_NODE){
-			Element e=(Element)c;
-			if(s==null || e.getLocalName().Equals(s)){
-				nodes.Add(e);
-			}
-		}
-		foreach(var node in c.getChildNodes()){
-			collectElements(node,s,nodes);
-		}
-	}
-
-
-	private void collectElementsHtml(INode c, string s,
-			string sLowercase, IList<IElement> nodes){
-		if(c.getNodeType()==NodeType.ELEMENT_NODE){
-			Element e=(Element)c;
-			if(s==null){
-				nodes.Add(e);
-			} else if(HtmlParser.HTML_NAMESPACE.Equals(e.getNamespaceURI()) &&
-					e.getLocalName().Equals(sLowercase)){
-				nodes.Add(e);
-			} else if(e.getLocalName().Equals(s)){
-				nodes.Add(e);
-			}
-		}
-		foreach(var node in c.getChildNodes()){
-			collectElements(node,s,nodes);
-		}
-	}
-
-	public string getCharacterSet() {
-		return (encoding==null) ? "utf-8" : encoding;
-	}
-
-	public IDocumentType getDoctype(){
-		return doctype;
-	}
+  private void collectElements(INode c, string s, IList<IElement> nodes){
+    if(c.getNodeType()==NodeType.ELEMENT_NODE){
+      Element e=(Element)c;
+      if(s==null || e.getLocalName().Equals(s)){
+        nodes.Add(e);
+      }
+    }
+    foreach(var node in c.getChildNodes()){
+      collectElements(node,s,nodes);
+    }
+  }
 
 
-	public IElement getDocumentElement() {
-		foreach(var node in getChildNodes()){
-			if(node is IElement)
-				return (IElement)node;
-		}
-		return null;
-	}
+  private void collectElementsHtml(INode c, string s,
+      string sLowercase, IList<IElement> nodes){
+    if(c.getNodeType()==NodeType.ELEMENT_NODE){
+      Element e=(Element)c;
+      if(s==null){
+        nodes.Add(e);
+      } else if(HtmlParser.HTML_NAMESPACE.Equals(e.getNamespaceURI()) &&
+          e.getLocalName().Equals(sLowercase)){
+        nodes.Add(e);
+      } else if(e.getLocalName().Equals(s)){
+        nodes.Add(e);
+      }
+    }
+    foreach(var node in c.getChildNodes()){
+      collectElements(node,s,nodes);
+    }
+  }
 
-	public IElement getElementById(string id) {
-		if(id==null)
-			throw new ArgumentException();
-		foreach(var node in getChildNodes()){
-			if(node is IElement){
-				if(id.Equals(((IElement)node).getId()))
-					return (IElement)node;
-				IElement element=((IElement)node).getElementById(id);
-				if(element!=null)return element;
-			}
-		}
-		return null;
-	}
-	public IList<IElement> getElementsByTagName(string tagName) {
-		if(tagName==null)
-			throw new ArgumentException();
-		if(tagName.Equals("*")) {
-			tagName=null;
-		}
-		IList<IElement> ret=new List<IElement>();
-		if(isHtmlDocument()){
-			collectElementsHtml(this,tagName,
-					StringUtility.toLowerCaseAscii(tagName),ret);
-		} else {
-			collectElements(this,tagName,ret);
-		}
-		return ret;
-	}
+  public string getCharacterSet() {
+    return (encoding==null) ? "utf-8" : encoding;
+  }
 
-	public override string getLanguage(){
-		return (defaultLanguage==null) ? "" : defaultLanguage;
-	}
+  public IDocumentType getDoctype(){
+    return doctype;
+  }
 
-	internal DocumentMode getMode() {
-		return docmode;
-	}
 
-	public override string getNodeName(){
-		return "#document";
-	}
+  public IElement getDocumentElement() {
+    foreach(var node in getChildNodes()){
+      if(node is IElement)
+        return (IElement)node;
+    }
+    return null;
+  }
 
-	public override IDocument getOwnerDocument(){
-		return null;
-	}
+  public IElement getElementById(string id) {
+    if(id==null)
+      throw new ArgumentException();
+    foreach(var node in getChildNodes()){
+      if(node is IElement){
+        if(id.Equals(((IElement)node).getId()))
+          return (IElement)node;
+        IElement element=((IElement)node).getElementById(id);
+        if(element!=null)return element;
+      }
+    }
+    return null;
+  }
+  public IList<IElement> getElementsByTagName(string tagName) {
+    if(tagName==null)
+      throw new ArgumentException();
+    if(tagName.Equals("*")) {
+      tagName=null;
+    }
+    IList<IElement> ret=new List<IElement>();
+    if(isHtmlDocument()){
+      collectElementsHtml(this,tagName,
+          StringUtility.toLowerCaseAscii(tagName),ret);
+    } else {
+      collectElements(this,tagName,ret);
+    }
+    return ret;
+  }
 
-	public string getURL() {
-		return address;
-	}
-	internal bool isHtmlDocument(){
-		return true;
-	}
+  public override string getLanguage(){
+    return (defaultLanguage==null) ? "" : defaultLanguage;
+  }
 
-	internal void setMode(DocumentMode mode) {
-		docmode=mode;
-	}
+  internal DocumentMode getMode() {
+    return docmode;
+  }
 
-	internal override string toDebugString(){
-		StringBuilder builder=new StringBuilder();
-		foreach(var node in getChildNodesInternal()){
-			string str=node.toDebugString();
-			if(str==null) {
-				continue;
-			}
-			string[] strarray=StringUtility.splitAt(str,"\n");
-			int len=strarray.Length;
-			if(len>0 && strarray[len-1].Length==0)
-			{
-				len--; // ignore trailing empty _string
-			}
-			for(int i=0;i<len;i++){
-				string el=strarray[i];
-				builder.Append("| ");
-				builder.Append(el.Replace("~~~~","\n"));
-				builder.Append("\n");
-			}
-		}
-		return builder.ToString();
-	}
+  public override string getNodeName(){
+    return "#document";
+  }
+
+  public override IDocument getOwnerDocument(){
+    return null;
+  }
+
+  public string getURL() {
+    return address;
+  }
+  internal bool isHtmlDocument(){
+    return true;
+  }
+
+  internal void setMode(DocumentMode mode) {
+    docmode=mode;
+  }
+
+  internal override string toDebugString(){
+    StringBuilder builder=new StringBuilder();
+    foreach(var node in getChildNodesInternal()){
+      string str=node.toDebugString();
+      if(str==null) {
+        continue;
+      }
+      string[] strarray=StringUtility.splitAt(str,"\n");
+      int len=strarray.Length;
+      if(len>0 && strarray[len-1].Length==0)
+      {
+        len--; // ignore trailing empty _string
+      }
+      for(int i=0;i<len;i++){
+        string el=strarray[i];
+        builder.Append("| ");
+        builder.Append(el.Replace("~~~~","\n"));
+        builder.Append("\n");
+      }
+    }
+    return builder.ToString();
+  }
 
 }
 }

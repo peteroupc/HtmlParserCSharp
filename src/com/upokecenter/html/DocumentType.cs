@@ -35,39 +35,39 @@ using System.Text;
 
 sealed class DocumentType : Node, IDocumentType {
 
-	internal string publicId;
-	internal string systemId;
-	internal string name;
+  internal string publicId;
+  internal string systemId;
+  internal string name;
 
-	public DocumentType() : base(NodeType.DOCUMENT_TYPE_NODE) {
-	}
-	public string getName() {
-		return name;
-	}
-	public override sealed string getNodeName(){
-		return getName();
-	}
-	public string getPublicId() {
-		return publicId;
-	}
-	public string getSystemId() {
-		return systemId;
-	}
+  public DocumentType() : base(NodeType.DOCUMENT_TYPE_NODE) {
+  }
+  public string getName() {
+    return name;
+  }
+  public override sealed string getNodeName(){
+    return getName();
+  }
+  public string getPublicId() {
+    return publicId;
+  }
+  public string getSystemId() {
+    return systemId;
+  }
 
-	public override sealed string getTextContent(){
-		return null;
-	}
+  public override sealed string getTextContent(){
+    return null;
+  }
 
-	internal override sealed string toDebugString(){
-		StringBuilder builder=new StringBuilder();
-		builder.Append("<!DOCTYPE "+name);
-		if((publicId!=null && publicId.Length>0) ||
-				(systemId!=null && systemId.Length>0)){
-			builder.Append(publicId!=null && publicId.Length>0 ? " \""+publicId.Replace("\n","~~~~")+"\"" : " \"\"");
-			builder.Append(systemId!=null && systemId.Length>0 ? " \""+systemId.Replace("\n","~~~~")+"\"" : " \"\"");
-		}
-		builder.Append(">\n");
-		return builder.ToString();
-	}
+  internal override sealed string toDebugString(){
+    StringBuilder builder=new StringBuilder();
+    builder.Append("<!DOCTYPE "+name);
+    if((publicId!=null && publicId.Length>0) ||
+        (systemId!=null && systemId.Length>0)){
+      builder.Append(publicId!=null && publicId.Length>0 ? " \""+publicId.Replace("\n","~~~~")+"\"" : " \"\"");
+      builder.Append(systemId!=null && systemId.Length>0 ? " \""+systemId.Replace("\n","~~~~")+"\"" : " \"\"");
+    }
+    builder.Append(">\n");
+    return builder.ToString();
+  }
 }
 }

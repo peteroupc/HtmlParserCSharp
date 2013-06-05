@@ -31,24 +31,24 @@ namespace com.upokecenter.html {
 using System;
 using com.upokecenter.util;
 internal class Text : Node, IText {
-	public IntList text=new IntList();
-	public Text() : base(NodeType.TEXT_NODE) {
-	}
+  public IntList text=new IntList();
+  public Text() : base(NodeType.TEXT_NODE) {
+  }
 
-	public string getData(){
-		return text.ToString();
-	}
+  public string getData(){
+    return text.ToString();
+  }
 
-	public string getName(){
-		return "#text";
-	}
+  public string getName(){
+    return "#text";
+  }
 
-	public override string getTextContent(){
-		return text.ToString();
-	}
+  public override string getTextContent(){
+    return text.ToString();
+  }
 
-	internal override string toDebugString(){
-		return "\""+text.ToString().Replace("\n","~~~~")+"\"\n";
-	}
+  internal override string toDebugString(){
+    return "\""+text.ToString().Replace("\n","~~~~")+"\"\n";
+  }
 }
 }

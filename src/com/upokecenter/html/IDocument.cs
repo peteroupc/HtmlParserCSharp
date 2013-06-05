@@ -40,43 +40,43 @@ using System.Collections.Generic;
  *
  */
 public interface IDocument : INode {
-	/**
-	 * 
-	 * Gets the character encoding used in this document.
-	 * 
-	 * @return A character encoding name.
-	 */
-	string getCharacterSet();
-	/**
-	 * 
-	 * Gets the document type of this document, if any.
-	 * 
-	 * 
-	 */
-	 IDocumentType getDoctype();
-	/**
-	 * 
-	 * Gets the root element of this document.
-	 * 
-	 * 
-	 */
-	 IElement getDocumentElement();
-	IElement getElementById(string id);
-	/**
-	 * 
-	 * Gets all descendents, both direct and indirect, that have
-	 * the specified tag name, using ASCII case-insensitive matching.
-	 * 
-	 * @param _string A tag name.
-	 * 
-	 */
-	IList<IElement> getElementsByTagName(string _string);
-	/**
-	 * Gets the document's address
-	 * 
-	 * @return An absolute URL.
-	 */
-	string getURL();
+  /**
+   * 
+   * Gets the character encoding used in this document.
+   * 
+   * @return A character encoding name.
+   */
+  string getCharacterSet();
+  /**
+   * 
+   * Gets the document type of this document, if any.
+   * 
+   * 
+   */
+   IDocumentType getDoctype();
+  /**
+   * 
+   * Gets the root element of this document.
+   * 
+   * 
+   */
+   IElement getDocumentElement();
+  IElement getElementById(string id);
+  /**
+   * 
+   * Gets all descendents, both direct and indirect, that have
+   * the specified tag name, using ASCII case-insensitive matching.
+   * 
+   * @param _string A tag name.
+   * 
+   */
+  IList<IElement> getElementsByTagName(string _string);
+  /**
+   * Gets the document's address
+   * 
+   * @return An absolute URL.
+   */
+  string getURL();
 }
 
 }

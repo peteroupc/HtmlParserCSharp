@@ -40,89 +40,89 @@ using System.Collections.Generic;
  */
 public interface IElement : INode {
 
-	/**
-	 * 
-	 * Gets an attribute declared on this element.
-	 * 
-	 * @param name an attribute name.
-	 * @return the attribute's value, or null if the attribute doesn't
-	 * exist.
-	 */
-	string getAttribute(string name);
+  /**
+   * 
+   * Gets an attribute declared on this element.
+   * 
+   * @param name an attribute name.
+   * @return the attribute's value, or null if the attribute doesn't
+   * exist.
+   */
+  string getAttribute(string name);
 
-	/**
-	 * 
-	 * Gets an attribute of this element, with the given _namespace
-	 * name and local name.
-	 * 
-	 * @param _namespace the attribute's _namespace name.
-	 * @param name the attribute's local name.
-	 * @return the attribute's value, or null if the attribute doesn't
-	 * exist.
-	 */
-	string getAttributeNS(string _namespace, string name);
-	/**
-	 * Gets a list of all attributes declared on this element.
-	 */
-	IList<IAttr> getAttributes();
-	/**
-	 * Gets all descendents, both direct and indirect, that have
-	 * the specified id, using case-sensitive matching.
-	 * 
-	 * @param id
-	 * 
-	 */
-	IElement getElementById(string id);
-	/**
-	 * 
-	 * Gets all descendents, both direct and indirect, that have
-	 * the specified tag name, using ASCII case-insensitive matching.
-	 * 
-	 * @param tagName A tag name.
-	 */
-	IList<IElement> getElementsByTagName(string tagName);
-	/**
-	 * Gets the value of the id attribute on this element.
-	 * 
-	 * @return the value of the id attribute, or null if it
-	 * doesn't exist.
-	 */
-	string getId();
-	/**
-	 * Gets a serialized form of this HTML element.
-	 * 
-	 * @return a _string consisting of the serialized
-	 * form of this element's children, in HTML.
-	 */
-	string getInnerHTML();
+  /**
+   * 
+   * Gets an attribute of this element, with the given _namespace
+   * name and local name.
+   * 
+   * @param _namespace the attribute's _namespace name.
+   * @param name the attribute's local name.
+   * @return the attribute's value, or null if the attribute doesn't
+   * exist.
+   */
+  string getAttributeNS(string _namespace, string name);
+  /**
+   * Gets a list of all attributes declared on this element.
+   */
+  IList<IAttr> getAttributes();
+  /**
+   * Gets all descendents, both direct and indirect, that have
+   * the specified id, using case-sensitive matching.
+   * 
+   * @param id
+   * 
+   */
+  IElement getElementById(string id);
+  /**
+   * 
+   * Gets all descendents, both direct and indirect, that have
+   * the specified tag name, using ASCII case-insensitive matching.
+   * 
+   * @param tagName A tag name.
+   */
+  IList<IElement> getElementsByTagName(string tagName);
+  /**
+   * Gets the value of the id attribute on this element.
+   * 
+   * @return the value of the id attribute, or null if it
+   * doesn't exist.
+   */
+  string getId();
+  /**
+   * Gets a serialized form of this HTML element.
+   * 
+   * @return a _string consisting of the serialized
+   * form of this element's children, in HTML.
+   */
+  string getInnerHTML();
 
-	/**
-	 * 
-	 * Gets the element's local name.  For elements with no
-	 * _namespace, this will equal the element's tag name.
-	 * 
-	 * @return the element's local name. This method doesn't
-	 * convert it to uppercase even for HTML elements, unlike
-	 * getTagName.
-	 */
-	string getLocalName();
+  /**
+   * 
+   * Gets the element's local name.  For elements with no
+   * _namespace, this will equal the element's tag name.
+   * 
+   * @return the element's local name. This method doesn't
+   * convert it to uppercase even for HTML elements, unlike
+   * getTagName.
+   */
+  string getLocalName();
 
-	/**
-	 * 
-	 * Gets the _namespace name of this element.  For HTML elements,
-	 * it will equal "http://www.w3.org/1999/xhtml".
-	 * 
-	 */
-	string getNamespaceURI();
-	string getPrefix();
-	/**
-	 * 
-	 * Gets the name of the element as used on its HTML tags.
-	 * 
-	 * @return the element's tag name.  For HTML elements,
-	 * an uppercase version of the name will be returned.
-	 */
-	string getTagName();
+  /**
+   * 
+   * Gets the _namespace name of this element.  For HTML elements,
+   * it will equal "http://www.w3.org/1999/xhtml".
+   * 
+   */
+  string getNamespaceURI();
+  string getPrefix();
+  /**
+   * 
+   * Gets the name of the element as used on its HTML tags.
+   * 
+   * @return the element's tag name.  For HTML elements,
+   * an uppercase version of the name will be returned.
+   */
+  string getTagName();
 }
 
 }

@@ -38,13 +38,13 @@ using System;
  *
  */
 public interface IText : INode {
-	/**
-	 * 
-	 * Gets this node's text.
-	 * 
-	 * 
-	 */
-	 string getData();
+  /**
+   * 
+   * Gets this node's text.
+   * 
+   * 
+   */
+   string getData();
 }
 
 }

@@ -42,56 +42,56 @@ using System.Collections.Generic;
 public interface INode {
 
 
-	/**
-	 * Returns the _base URL of this node.  URLs on this
-	 * node are resolved relative to this URL.
-	 */
-	string getBaseURI();
-	/**
-	 * 
-	 * Gets the direct children of this node.
-	 * 
-	 * @return A list of the direct children of this node.
-	 */
-	IList<INode> getChildNodes();
-	/**
-	 * Gets the language of this node.  Not defined in the DOM specification.
-	 */
-	string getLanguage();
-	/**
-	 * Gets the name of this node.  For HTML elements, this will
-	 * be the same as the tag name.
-	 */
-	string getNodeName();
-	/**
-	 * 
-	 * Returns the type of node represented by this _object.
-	 * 
-	 * @return A node type integer; see NodeType.
-	 */
-	int getNodeType();
-	/**
-	 * 
-	 * Gets the document that owns this node.
-	 * 
-	 * @return the owner document, or null if this is a document _object.
-	 */
-	IDocument getOwnerDocument();
-	/**
-	 * 
-	 * Gets the parent node of this node.
-	 * 
-	 * @return the parent node, or null if this is the root node.
-	 */
-	INode getParentNode();
-	/**
-	 * 
-	 * Gets all the text found within this element.
-	 * 
-	 * @return All the concatenated text, except comments, for Element
-	 * nodes; or the text of Comment nodes; or null otherwise.
-	 */
-	string getTextContent();
+  /**
+   * Returns the _base URL of this node.  URLs on this
+   * node are resolved relative to this URL.
+   */
+  string getBaseURI();
+  /**
+   * 
+   * Gets the direct children of this node.
+   * 
+   * @return A list of the direct children of this node.
+   */
+  IList<INode> getChildNodes();
+  /**
+   * Gets the language of this node.  Not defined in the DOM specification.
+   */
+  string getLanguage();
+  /**
+   * Gets the name of this node.  For HTML elements, this will
+   * be the same as the tag name.
+   */
+  string getNodeName();
+  /**
+   * 
+   * Returns the type of node represented by this _object.
+   * 
+   * @return A node type integer; see NodeType.
+   */
+  int getNodeType();
+  /**
+   * 
+   * Gets the document that owns this node.
+   * 
+   * @return the owner document, or null if this is a document _object.
+   */
+  IDocument getOwnerDocument();
+  /**
+   * 
+   * Gets the parent node of this node.
+   * 
+   * @return the parent node, or null if this is the root node.
+   */
+  INode getParentNode();
+  /**
+   * 
+   * Gets all the text found within this element.
+   * 
+   * @return All the concatenated text, except comments, for Element
+   * nodes; or the text of Comment nodes; or null otherwise.
+   */
+  string getTextContent();
 }
 
 }

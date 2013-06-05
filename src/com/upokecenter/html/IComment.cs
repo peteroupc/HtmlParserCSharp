@@ -38,10 +38,10 @@ using System;
  *
  */
 public interface IComment : INode {
-	/**
-	 * Gets the comment's text.
-	 */
-	 string getData();
+  /**
+   * Gets the comment's text.
+   */
+   string getData();
 }
 
 }

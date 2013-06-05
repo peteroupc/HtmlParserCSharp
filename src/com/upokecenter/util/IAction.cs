@@ -18,11 +18,11 @@ using System;
  * @param An arbitrary<T> _object type.
  */
 public interface IAction<T> {
-	/**
-	 * Does an arbitrary action.
-	 * @param parameters An array of parameters that the action accepts.
-	 */
-	 void action(params T[] parameters);
+  /**
+   * Does an arbitrary action.
+   * @param parameters An array of parameters that the action accepts.
+   */
+   void action(params T[] parameters);
 }
 
 }
