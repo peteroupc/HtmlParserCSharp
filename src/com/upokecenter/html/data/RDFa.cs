@@ -241,7 +241,7 @@ public class RDFa : IRDFParser {
         } else if(isNCNameStartChar(c)){
           // start of NCName
           if(c<=0xFFFF){ prefix.Append((char)(c)); }
-else {
+else if(c<=0x10FFFF){
 prefix.Append((char)((((c-0x10000)>>10)&0x3FF)+0xD800));
 prefix.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 }
@@ -258,7 +258,7 @@ prefix.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
         } else if(isNCNameChar(c)){
           // continuation of NCName
           if(c<=0xFFFF){ prefix.Append((char)(c)); }
-else {
+else if(c<=0x10FFFF){
 prefix.Append((char)((((c-0x10000)>>10)&0x3FF)+0xD800));
 prefix.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 }
@@ -281,7 +281,7 @@ prefix.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
         } else {
           // start of IRI
           if(c<=0xFFFF){ iri.Append((char)(c)); }
-else {
+else if(c<=0x10FFFF){
 iri.Append((char)((((c-0x10000)>>10)&0x3FF)+0xD800));
 iri.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 }
@@ -304,7 +304,7 @@ iri.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
         } else {
           // continuation of IRI
           if(c<=0xFFFF){ iri.Append((char)(c)); }
-else {
+else if(c<=0x10FFFF){
 iri.Append((char)((((c-0x10000)>>10)&0x3FF)+0xD800));
 iri.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 }

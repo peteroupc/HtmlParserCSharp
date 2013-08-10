@@ -911,7 +911,8 @@ sealed class HtmlParser {
         document.doctype=doctypeNode;
         document.appendChild(doctypeNode);
         string doctypePublicLC=null;
-        if(!matchesHtml||doctype.forceQuirks){
+        if(!"about:srcdoc".Equals(document.address)){
+          if(!matchesHtml||doctype.forceQuirks){
           document.setMode(DocumentMode.QuirksMode);
         }
         else {
@@ -953,6 +954,7 @@ sealed class HtmlParser {
             document.setMode(DocumentMode.LimitedQuirksMode);
           }
         }
+      }
         insertionMode=InsertionMode.BeforeHtml;
         return true;
       }

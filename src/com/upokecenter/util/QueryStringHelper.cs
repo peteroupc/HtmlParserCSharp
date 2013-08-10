@@ -141,7 +141,7 @@ public sealed class QueryStringHelper
               bytesNeeded=0;
               // append the Unicode character
               if(ret<=0xFFFF){ retString.Append((char)(ret)); }
-else {
+else if(ret<=0x10FFFF){
 retString.Append((char)((((ret-0x10000)>>10)&0x3FF)+0xD800));
 retString.Append((char)((((ret-0x10000))&0x3FF)+0xDC00));
 }

@@ -35,7 +35,7 @@ internal class Attr : IAttr {
     name=new StringBuilder();
     value=new StringBuilder();
     if(ch<=0xFFFF){ name.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 name.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 name.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
@@ -49,7 +49,7 @@ name.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
     if(nameString!=null)
       throw new InvalidOperationException();
     if(ch<=0xFFFF){ name.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 name.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 name.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
@@ -59,7 +59,7 @@ name.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
     if(valueString!=null)
       throw new InvalidOperationException();
     if(ch<=0xFFFF){ value.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 value.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 value.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }

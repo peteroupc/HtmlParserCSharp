@@ -340,7 +340,7 @@ public class TurtleParser : IRDFParser {
         (startChar<'0' || startChar>'9'))
       throw new ParserException();
     if(startChar<=0xFFFF){ ilist.Append((char)(startChar)); }
-else {
+else if(startChar<=0x10FFFF){
 ilist.Append((char)((((startChar-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((startChar-0x10000))&0x3FF)+0xDC00));
 }
@@ -358,14 +358,14 @@ ilist.Append((char)((((startChar-0x10000))&0x3FF)+0xDC00));
           input.moveBack(1);
         }
         if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
         lastIsPeriod=true;
       } else if(isNameChar(ch)){
         if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
@@ -457,7 +457,7 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
       if(ch<=0x20 || ((ch&0x7F)==ch && "><\\\"{}|^`".IndexOf((char)ch)>=0))
         throw new ParserException();
       if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
@@ -474,7 +474,7 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
       int c2=input.read();
       if(c2>='A' && c2<='Z'){
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }
@@ -482,7 +482,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
         hyphen=false;
       } else if(c2>='a' && c2<='z'){
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }
@@ -490,7 +490,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
         hyphen=false;
       } else if(haveHyphen && (c2>='0' && c2<='9')){
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }
@@ -499,7 +499,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
       } else if(c2=='-'){
         if(hyphen||!haveString)throw new ParserException();
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }
@@ -524,7 +524,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
     StringBuilder ilist=new StringBuilder();
     // include the first character
     if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
@@ -536,7 +536,7 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
       if(haveDigits && (ch1=='e' || ch1=='E')){
         // Parse exponent
         if(ch1<=0xFFFF){ ilist.Append((char)(ch1)); }
-else {
+else if(ch1<=0x10FFFF){
 ilist.Append((char)((((ch1-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
 }
@@ -544,7 +544,7 @@ ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
         haveDigits=false;
         if(ch1=='+' || ch1=='-' || (ch1>='0' && ch1<='9')){
           if(ch1<=0xFFFF){ ilist.Append((char)(ch1)); }
-else {
+else if(ch1<=0x10FFFF){
 ilist.Append((char)((((ch1-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
 }
@@ -559,7 +559,7 @@ ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
           if(ch1>='0' && ch1<='9'){
             haveDigits=true;
             if(ch1<=0xFFFF){ ilist.Append((char)(ch1)); }
-else {
+else if(ch1<=0x10FFFF){
 ilist.Append((char)((((ch1-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
 }
@@ -575,7 +575,7 @@ ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
       } else if(ch1>='0' && ch1<='9'){
         haveDigits=true;
         if(ch1<=0xFFFF){ ilist.Append((char)(ch1)); }
-else {
+else if(ch1<=0x10FFFF){
 ilist.Append((char)((((ch1-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
 }
@@ -596,7 +596,7 @@ ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
           input.moveBack(1);
         }
         if(ch1<=0xFFFF){ ilist.Append((char)(ch1)); }
-else {
+else if(ch1<=0x10FFFF){
 ilist.Append((char)((((ch1-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
 }
@@ -757,17 +757,17 @@ ilist.Append((char)((((ch1-0x10000))&0x3FF)+0xDC00));
         if(toHexValue(a)<0 ||
             toHexValue(b)<0)throw new ParserException();
         if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
         if(a<=0xFFFF){ ilist.Append((char)(a)); }
-else {
+else if(a<=0x10FFFF){
 ilist.Append((char)((((a-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((a-0x10000))&0x3FF)+0xDC00));
 }
         if(b<=0xFFFF){ ilist.Append((char)(b)); }
-else {
+else if(b<=0x10FFFF){
 ilist.Append((char)((((b-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((b-0x10000))&0x3FF)+0xDC00));
 }
@@ -778,7 +778,7 @@ ilist.Append((char)((((b-0x10000))&0x3FF)+0xDC00));
         ch=input.read();
         if(((ch&0x7F)==ch && "_~.-!$&'()*+,;=/?#@%".IndexOf((char)ch)>=0)){
           if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
@@ -815,7 +815,7 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
       }
       first=false;
       if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
@@ -913,7 +913,7 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
     bool first=true;
     if(startChar>=0){
       if(startChar<=0xFFFF){ ilist.Append((char)(startChar)); }
-else {
+else if(startChar<=0x10FFFF){
 ilist.Append((char)((((startChar-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((startChar-0x10000))&0x3FF)+0xDC00));
 }
@@ -934,7 +934,7 @@ ilist.Append((char)((((startChar-0x10000))&0x3FF)+0xDC00));
         throw new ParserException();
       first=false;
       if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
@@ -983,20 +983,20 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
         c2=readUnicodeEscape(true);
         if(quotecount>=2) {
           if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
         }
         if(quotecount>=1) {
           if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
         }
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }
@@ -1012,20 +1012,20 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
           throw new ParserException();
         if(quotecount>=2) {
           if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
         }
         if(quotecount>=1) {
           if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
         }
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }

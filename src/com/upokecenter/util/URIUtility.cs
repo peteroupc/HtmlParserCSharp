@@ -1,5 +1,11 @@
-// Written by Peter Occil, 2013. In the public domain.
-// Public domain dedication: http://creativecommons.org/publicdomain/zero/1.0/
+/*
+Written in 2013 by Peter Occil.  
+Any copyright is dedicated to the Public Domain.
+http://creativecommons.org/publicdomain/zero/1.0/
+
+If you like this, you should donate to Peter O.
+at: http://upokecenter.com/d/
+*/
 namespace com.upokecenter.util {
 using System;
 using System.Text;
@@ -165,7 +171,7 @@ public sealed class URIUtility {
             percentEncodeUtf8(builder,c);
           } else {
             if(c<=0xFFFF){ builder.Append((char)(c)); }
-else {
+else if(c<=0x10FFFF){
 builder.Append((char)((((c-0x10000)>>10)&0x3FF)+0xD800));
 builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 }
@@ -179,7 +185,7 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
           if(components!=null && index>=components[2] && index<components[3]){
             // within the authority component, so don't percent-encode
             if(c<=0xFFFF){ builder.Append((char)(c)); }
-else {
+else if(c<=0x10FFFF){
 builder.Append((char)((((c-0x10000)>>10)&0x3FF)+0xD800));
 builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 }
@@ -189,7 +195,7 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
           }
         } else {
           if(c<=0xFFFF){ builder.Append((char)(c)); }
-else {
+else if(c<=0x10FFFF){
 builder.Append((char)((((c-0x10000)>>10)&0x3FF)+0xD800));
 builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 }
@@ -201,7 +207,7 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
           if(components!=null && index>=components[2] && index<components[3]){
             // within the authority component, so don't percent-encode
             if(c<=0xFFFF){ builder.Append((char)(c)); }
-else {
+else if(c<=0x10FFFF){
 builder.Append((char)((((c-0x10000)>>10)&0x3FF)+0xD800));
 builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 }
@@ -211,7 +217,7 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
           }
         } else {
           if(c<=0xFFFF){ builder.Append((char)(c)); }
-else {
+else if(c<=0x10FFFF){
 builder.Append((char)((((c-0x10000)>>10)&0x3FF)+0xD800));
 builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 }
@@ -410,8 +416,6 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
     StringBuilder builder=new StringBuilder();
     int index=0;
     while(index<len){
-      //Console.WriteLine("input %s",path.Substring(index));
-      //Console.WriteLine("output %s",builder.ToString());
       char c=path[index];
       if((index+3<=len && c=='/' &&
           path[index+1]=='.' &&
@@ -497,7 +501,6 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
 
   private static int parseDecOctet(string s, int index,
       int endOffset, int c, int delim){
-    //Console.WriteLine("pdo %c",(char)c);
     if(c>='1' && c<='9' && index+2<endOffset &&
         (s[index+1]>='0' && s[index+1]<='9') &&
         s[index+2]==delim)
@@ -574,7 +577,6 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
       bool expectColon=false;
       while(index<endOffset){
         char c=s[index];
-        //Console.WriteLine("%c %d",c,(phase1+(phased ? 1 : 0)+phase2));
         if(c==':' && !expectHex){
           if((phase1+(phased ? 1 : 0)+phase2)>=8)
             return -1;
@@ -586,8 +588,6 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
           }
           expectHex=true;
           expectColon=false;
-          //    Console.WriteLine("colon %d [%d %d] %s",
-          //      phase1+(phased ? 1 : 0)+phase2,phase1,phase2,s.Substring(index));
           continue;
         } else if((c>='0' && c<='9') && !expectColon &&
             (phased || (phase1+(phased ? 1 : 0)+phase2)==6)){
@@ -596,7 +596,6 @@ builder.Append((char)((((c-0x10000))&0x3FF)+0xDC00));
           if(decOctet>=0){
             if((phase1+(phased ? 1 : 0)+phase2)>6)
               // IPv4 address illegal at this point
-              //Console.WriteLine("Illegal IPv4");
               return -1;
             else {
               // Parse the rest of the IPv4 address

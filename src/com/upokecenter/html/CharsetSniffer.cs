@@ -796,15 +796,18 @@ sealed class CharsetSniffer {
     string country=StringUtility.toUpperCaseAscii(CultureInfo.CurrentCulture.Name.IndexOf('-')<0 ? "" : 
 CultureInfo.CurrentCulture.Name.Substring(
 1+CultureInfo.CurrentCulture.Name.IndexOf('-')));
-    if(lang.Equals("be"))
-      return new EncodingConfidence("iso-8859-5");
-    if(lang.Equals("bg") || lang.Equals("ru") || lang.Equals("uk"))
+    if(lang.Equals("ar") || lang.Equals("fa"))
+      return new EncodingConfidence("windows-1256");
+    if(lang.Equals("bg") || lang.Equals("ru") || lang.Equals("uk") || lang.Equals("sr"))
       return new EncodingConfidence("windows-1251");
-    if(lang.Equals("cs") || lang.Equals("hu") || lang.Equals("pl") || lang.Equals("sl"))
+    if(lang.Equals("cs") || lang.Equals("hr") || lang.Equals("sk"))
+      return new EncodingConfidence("windows-1250");
+    if(lang.Equals("hu") || lang.Equals("pl") || lang.Equals("sl"))
       return new EncodingConfidence("iso-8859-2");
     if(lang.Equals("ja"))
       return new EncodingConfidence("shift_jis");
-    if(lang.Equals("zh") && (country.Equals("CN") || country.Equals("CHS") || country.Equals("HANS")))
+    if(lang.Equals("zh") && (country.Equals("CN") || 
+          country.Equals("CHS") || country.Equals("HANS")))
       return new EncodingConfidence("gb18030");
     else if(lang.Equals("zh"))
       return new EncodingConfidence("big5");
@@ -812,24 +815,15 @@ CultureInfo.CurrentCulture.Name.Substring(
       return new EncodingConfidence("windows-874");
     if(lang.Equals("ko"))
       return new EncodingConfidence("euc-kr");
-    if(lang.Equals("ku"))
+    if(lang.Equals("ku") || lang.Equals("tr"))
       return new EncodingConfidence("windows-1254");
-    if(lang.Equals("lt"))
+    if(lang.Equals("lt") || lang.Equals("et") || lang.Equals("lv"))
       return new EncodingConfidence("windows-1257");
-    if(lang.Equals("sk"))
-      return new EncodingConfidence("windows-1250");
-    if(lang.Equals("lv"))
-      return new EncodingConfidence("iso-8859-13");
+    if(lang.Equals("vi"))
+      return new EncodingConfidence("windows-1258");
     if(lang.Equals("iw") || lang.Equals("he"))
-      // NOTE: Java's two-letter code for Hebrew
+      // NOTE: iw is Java's two-letter code for Hebrew
       return new EncodingConfidence("windows-1255");
-    if(maybeUtf8>=0){
-      if(lang.Equals("ar")||lang.Equals("cy")||lang.Equals("fa")||
-          lang.Equals("hr")||lang.Equals("kk")||lang.Equals("mk")||
-          lang.Equals("or")||lang.Equals("ro")||lang.Equals("sr")||
-          lang.Equals("vi"))
-        return EncodingConfidence.UTF8_TENTATIVE;
-    }
     return new EncodingConfidence("windows-1252");
   }
 

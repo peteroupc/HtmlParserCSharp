@@ -134,7 +134,7 @@ public sealed class NTriplesParser : IRDFParser {
         (startChar>='a' && startChar<='z')))
       throw new ParserException();
     if(startChar<=0xFFFF){ ilist.Append((char)(startChar)); }
-else {
+else if(startChar<=0x10FFFF){
 ilist.Append((char)((((startChar-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((startChar-0x10000))&0x3FF)+0xDC00));
 }
@@ -145,7 +145,7 @@ ilist.Append((char)((((startChar-0x10000))&0x3FF)+0xDC00));
           (ch>='a' && ch<='z') ||
           (ch>='0' && ch<='9')){
         if(ch<=0xFFFF){ ilist.Append((char)(ch)); }
-else {
+else if(ch<=0x10FFFF){
 ilist.Append((char)((((ch-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
 }
@@ -174,7 +174,7 @@ ilist.Append((char)((((ch-0x10000))&0x3FF)+0xDC00));
           colon=true;
         }
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }
@@ -191,7 +191,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
           colon=true;
         }
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }
@@ -211,7 +211,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
       int c2=input.read();
       if(c2>='a' && c2<='z'){
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }
@@ -219,7 +219,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
         hyphen=false;
       } else if(haveHyphen && (c2>='0' && c2<='9')){
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }
@@ -228,7 +228,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
       } else if(c2=='-'){
         if(hyphen||!haveString)throw new ParserException();
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }
@@ -276,7 +276,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
       else if(c2=='\\'){
         c2=readUnicodeEscape(true);
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }
@@ -284,7 +284,7 @@ ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
         return ilist.ToString();
       else {
         if(c2<=0xFFFF){ ilist.Append((char)(c2)); }
-else {
+else if(c2<=0x10FFFF){
 ilist.Append((char)((((c2-0x10000)>>10)&0x3FF)+0xD800));
 ilist.Append((char)((((c2-0x10000))&0x3FF)+0xDC00));
 }
