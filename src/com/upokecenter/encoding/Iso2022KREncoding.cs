@@ -34,7 +34,6 @@ using System.IO;
 
 sealed class Iso2022KREncoding : ITextEncoder, ITextDecoder {
 
-
   int lead=0;
 
   int state=0;

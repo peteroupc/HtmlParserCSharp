@@ -292,8 +292,8 @@ public sealed class TextEncoding {
     encodingMap.Add("ksc5601","euc-kr");
     encodingMap.Add("ksc_5601","euc-kr");
     encodingMap.Add("windows-949","euc-kr");
-    encodingMap.Add("csiso2022kr","iso-2022-kr");
-    encodingMap.Add("iso-2022-kr","iso-2022-kr");
+    encodingMap.Add("csiso2022kr","replacement");
+    encodingMap.Add("iso-2022-kr","replacement");
     encodingMap.Add("iso-2022-cn","replacement");
     encodingMap.Add("iso-2022-cn-ext","replacement");
     encodingMap.Add("utf-16be","utf-16be");
@@ -421,8 +421,6 @@ public sealed class TextEncoding {
       return new JapaneseEUCEncoding();
     if(name.Equals("euc-kr"))
       return new KoreanEUCEncoding();
-    if(name.Equals("iso-2022-kr"))
-      return new Iso2022KREncoding();
     return null;
   }
 
@@ -462,8 +460,6 @@ public sealed class TextEncoding {
       return new JapaneseEUCEncoding();
     if(name.Equals("euc-kr"))
       return new KoreanEUCEncoding();
-    if(name.Equals("iso-2022-kr"))
-      return new Iso2022KREncoding();
     return null;
   }
 
