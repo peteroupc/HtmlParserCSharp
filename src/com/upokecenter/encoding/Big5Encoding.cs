@@ -1,8 +1,6 @@
 /*
 If you like this, you should donate to Peter O.
-at: http://upokecenter.com/d/
-
-
+at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -20,127 +18,125 @@ all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 namespace com.upokecenter.encoding {
 using System;
 using System.IO;
 
-
-
 sealed class Big5Encoding : ITextEncoder, ITextDecoder {
-
-  int lead=0;
+  int lead = 0;
   int nextChar=-1;
 
-  public int decode(PeterO.Support.InputStream stream)  {
+  public int decode(PeterO.Support.InputStream stream) {
     return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
   }
 
-  public int decode(PeterO.Support.InputStream stream, IEncodingError error)  {
-    int[] value=new int[1];
-    int c=decode(stream,value,0,1, error);
-    if(c<=0)return -1;
-    return value[0];
+  public int decode(PeterO.Support.InputStream stream, IEncodingError error) {
+    int[] value = new int[1];
+    int c = decode(stream, value, 0, 1, error);
+    return (c <= 0) ? (-1) : (value[0]);
   }
 
-  public int decode(PeterO.Support.InputStream stream, int[] buffer, int offset, int length)
-       {
-    return decode(stream, buffer, offset, length, TextEncoding.ENCODING_ERROR_THROW);
+  public int decode(PeterO.Support.InputStream stream, int[] buffer, int
+    offset, int length) {
+    return decode(stream, buffer, offset, length,
+      TextEncoding.ENCODING_ERROR_THROW);
   }
 
-  public int decode(PeterO.Support.InputStream stream, int[] buffer, int offset, int length, IEncodingError error)
-       {
-    if(stream==null || buffer==null || offset<0 || length<0 ||
-        offset+length>buffer.Length)
-      throw new ArgumentException();
-    int count=0;
-    while(length>0){
-      if(nextChar>=0){
+  public int decode(PeterO.Support.InputStream stream, int[] buffer, int
+    offset, int length, IEncodingError error) {
+    if (stream == null || buffer == null || offset<0 || length<0 ||
+        offset + length>buffer.Length) {
+ throw new ArgumentException();
+}
+    int count = 0;
+    while (length>0) {
+      if (nextChar >= 0) {
         buffer[offset++]=nextChar;
-        count++;
-        length--;
+        ++count;
+        --length;
         nextChar=-1;
         continue;
       }
-      int b=stream.ReadByte();
-      if(b<0 && lead==0){
+      int b = stream.ReadByte();
+      if (b<0 && lead == 0) {
         break;
-      } else if(b<0){
-        lead=0;
-        int o=error.emitDecoderError(buffer, offset, length);
+      } else if (b< 0) {
+        lead = 0;
+        int o = error.emitDecoderError(buffer, offset, length);
         offset+=o;
         count+=o;
         length-=o;
         continue;
       }
-      if(lead!=0){
-        int thislead=lead;
+      if (lead != 0) {
+        int thislead = lead;
         int pointer=-1;
-        lead=0;
-        int thisoffset=(b<0x7F) ? 0x40 : 0x62;
-        if((b>=0x40 && b<=0x7E) || (b>=0xA1 && b<=0xFE)){
+        lead = 0;
+        int thisoffset=(b<0x7f) ? 0x40 : 0x62;
+        if ((b >= 0x40 && b <= 0x7e) || (b >= 0xa1 && b <= 0xfe)) {
           pointer=(thislead-0x81)*157+(b-thisoffset);
-          if(pointer==1133 || pointer==1135){
+          if (pointer == 1133 || pointer == 1135) {
             buffer[offset++]=(0xca);
-            count++;
-            length--;
-            if(length<=0){
-              nextChar=((pointer==1133) ? 0x304 : 0x30C);
+            ++count;
+            --length;
+            if (length <= 0) {
+              nextChar=((pointer == 1133) ? 0x304 : 0x30c);
               break;
             } else {
-              buffer[offset++]=((pointer==1133) ? 0x304 : 0x30C);
-              count++;
-              length--;
+              buffer[offset++]=((pointer == 1133) ? 0x304 : 0x30c);
+              ++count;
+              --length;
               continue;
             }
-          } else if(pointer==1164 || pointer==1166){
+          } else if (pointer == 1164 || pointer == 1166) {
             buffer[offset++]=(0xea);
-            count++;
-            length--;
-            if(length<=0){
-              nextChar=((pointer==1164) ? 0x304 : 0x30C);
+            ++count;
+            --length;
+            if (length <= 0) {
+              nextChar=((pointer == 1164) ? 0x304 : 0x30c);
               break;
             } else {
-              buffer[offset++]=((pointer==1164) ? 0x304 : 0x30C);
-              count++;
-              length--;
+              buffer[offset++]=((pointer == 1164) ? 0x304 : 0x30c);
+              ++count;
+              --length;
               continue;
             }
           }
         }
-        int cp=Big5.indexToCodePoint(pointer);
-        if(pointer<0){
+        int cp = Big5.indexToCodePoint(pointer);
+        if (pointer< 0) {
           stream.reset();
         }
-        if(cp<=0){
-          int o=error.emitDecoderError(buffer, offset, length);
+        if (cp <= 0) {
+          int o = error.emitDecoderError(buffer, offset, length);
           offset+=o;
           count+=o;
           length-=o;
           continue;
         } else {
           buffer[offset++]=(cp);
-          count++;
-          length--;
+          ++count;
+          --length;
           continue;
         }
       }
-      if(b<0x7F){
+      if (b<0x7f) {
         buffer[offset++]=(b);
-        count++;
-        length--;
+        ++count;
+        --length;
         continue;
-      } else if(b>=0x81 && b<=0xFE){
+      } else if (b >= 0x81 && b <= 0xfe) {
         stream.mark(2);
-        lead=b;
+        lead = b;
         continue;
       } else {
-        int o=error.emitDecoderError(buffer, offset, length);
+        int o = error.emitDecoderError(buffer, offset, length);
         offset+=o;
         count+=o;
         length-=o;
@@ -150,42 +146,43 @@ sealed class Big5Encoding : ITextEncoder, ITextDecoder {
     return count>0 ? count : -1;
   }
 
-  public void encode(Stream stream, int[] buffer, int offset, int length)
-       {
-    encode(stream,buffer,offset,length,TextEncoding.ENCODING_ERROR_THROW);
+  public void encode(Stream stream, int[] buffer, int offset, int length) {
+    encode(stream, buffer, offset, length, TextEncoding.ENCODING_ERROR_THROW);
   }
 
   public void encode(Stream stream, int[] buffer, int offset, int length,
-      IEncodingError error)
-           {
-    if(stream==null || buffer==null)throw new ArgumentException();
-    if(offset<0 || length<0 || offset+length>buffer.Length)
-      throw new ArgumentOutOfRangeException();
-    for(int i=0;i<buffer.Length;i++){
-      int cp=buffer[offset+i];
-      if(cp<0 || cp>=0x110000){
+      IEncodingError error) {
+    if (stream == null || buffer == null) {
+ throw new ArgumentException();
+}
+    if (offset<0 || length<0 || offset + length>buffer.Length) {
+ throw new ArgumentOutOfRangeException();
+}
+    for (int i = 0;i<buffer.Length; ++i) {
+      int cp = buffer[offset + i];
+      if (cp<0 || cp >= 0x110000) {
         error.emitEncoderError(stream, cp);
         continue;
       }
-      if(cp<=0x7F){
+      if (cp <= 0x7f) {
         stream.WriteByte(unchecked((byte)(cp)));
         break;
       }
-      int pointer=Big5.codePointToIndex(cp);
-      if(pointer<0){
+      int pointer = Big5.codePointToIndex(cp);
+      if (pointer< 0) {
         error.emitEncoderError(stream, cp);
         continue;
       }
-      int lead=pointer/157+0x81;
-      if(lead<0xa1){
+      int lead = pointer/157 + 0x81;
+      if (lead<0xa1) {
         // NOTE: Encoding specification says to
         // "[a]void emitting Hong Kong Supplementary
         // Character Set extensions literally."
         error.emitEncoderError(stream, cp);
         continue;
       }
-      int trail=pointer%157;
-      if(trail<0x3f) {
+      int trail = pointer%157;
+      if (trail<0x3f) {
         trail+=0x40;
       } else {
         trail+=0x62;
@@ -195,5 +192,4 @@ sealed class Big5Encoding : ITextEncoder, ITextDecoder {
     }
   }
 }
-
 }

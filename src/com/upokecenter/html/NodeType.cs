@@ -1,8 +1,6 @@
 /*
 If you like this, you should donate to Peter O.
-at: http://upokecenter.com/d/
-
-
+at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -20,45 +18,34 @@ all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
 namespace com.upokecenter.html {
 using System;
 
-/**
- * 
- * Contains constants for node types.
- * 
- * @author Peter
- *
- */
+    /// <summary>* Contains constants for node types. @author
+    /// Peter.</summary>
 public sealed class NodeType {
-  /**
-   * A document node.
-   */
-  public static readonly int DOCUMENT_NODE=9;
-  /**
-   * A comment node.
-   */
-  public static readonly int COMMENT_NODE=8;
-  /**
-   * An HTML element node.
-   */
-  public static readonly int ELEMENT_NODE=1;
-  /**
-   * A node containing text.
-   */
-  public static readonly int TEXT_NODE=3;
-  /**
-   * A DOCTYPE node.
-   */
-  public static readonly int DOCUMENT_TYPE_NODE = 10;
-  public static readonly int PROCESSING_INSTRUCTION_NODE = 7;
-  private NodeType(){}
+    /// <summary>A document node.</summary>
+  public const int DOCUMENT_NODE = 9;
+
+    /// <summary>A comment node.</summary>
+  public const int COMMENT_NODE = 8;
+
+    /// <summary>An HTML element node.</summary>
+  public const int ELEMENT_NODE = 1;
+
+    /// <summary>A node containing text.</summary>
+  public const int TEXT_NODE = 3;
+
+    /// <summary>A DOCTYPE node.</summary>
+  public const int DOCUMENT_TYPE_NODE = 10;
+  public const int PROCESSING_INSTRUCTION_NODE = 7;
+  private NodeType() {}
 }
 }

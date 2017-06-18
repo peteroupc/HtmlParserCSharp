@@ -1,8 +1,6 @@
 /*
 If you like this, you should donate to Peter O.
-at: http://upokecenter.com/d/
-
-
+at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -20,10 +18,10 @@ all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 namespace com.upokecenter.net {
@@ -31,14 +29,11 @@ using System;
 using System.IO;
 
 public interface IOnFinishedListener<T> {
-  /**
-   * Processes the data on the UI thread after it's downloaded.
-   * @param url URL of the data.
-   * @param value Data processed by 'processResponse'.
-   * @param exception If this value is non-null, an error has occurred
-   * and this exception contains further information on the error,
-   * and 'value' will be null.
-   */
+    /// <summary>Processes the data on the UI thread after it's downloaded.
+    /// @param url URL of the data. @param value Data processed by
+    /// 'processResponse'. @param exception If this value is non-null, an
+    /// error has occurred and this exception contains further information
+    /// on the error, and 'value' will be null.</summary>
    void onFinished(string url, T value, IOException exception);
 }
 }

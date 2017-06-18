@@ -1,6 +1,6 @@
 HTML5 parser for C#, translated from the original Java.
 
-Takes an input stream or a file and returns an HTML document tree.  
+Takes an input stream or a file and returns an HTML document tree.
 The API is currently only a subset of the DOM.  Example:
 
     IDocument doc=HtmlDocument.parseFile(filename);
@@ -11,5 +11,4 @@ The API is currently only a subset of the DOM.  Example:
 Copyright (C) 2013 Peter Occil.  Licensed under the Expat License.
 
 Sample code on this README file is dedicated to the public domain under CC0:
-http://creativecommons.org/publicdomain/zero/1.0/
-
+[http://creativecommons.org/publicdomain/zero/1.0/](http://creativecommons.org/publicdomain/zero/1.0/)

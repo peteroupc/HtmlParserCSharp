@@ -1,8 +1,6 @@
 /*
 If you like this, you should donate to Peter O.
-at: http://upokecenter.com/d/
-
-
+at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -20,10 +18,10 @@ all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
@@ -31,67 +29,40 @@ namespace com.upokecenter.html {
 using System;
 using System.Collections.Generic;
 
-/**
- * 
- * Represents a node in the document _object model (DOM).  All DOM
- * objects implement this interface.
- * 
- * @author Peter
- *
- */
+    /// <summary>* Represents a node in the document _object model (DOM).
+    /// All DOM objects implement this interface. @author Peter.</summary>
 public interface INode {
-
-
-  /**
-   * Returns the _base URL of this node.  URLs on this
-   * node are resolved relative to this URL.
-   */
+    /// <summary>Returns the _base URL of this node. URLs on this node are
+    /// resolved relative to this URL.</summary>
   string getBaseURI();
-  /**
-   * 
-   * Gets the direct children of this node.
-   * 
-   * @return A list of the direct children of this node.
-   */
+
+    /// <summary>* Gets the direct children of this node. @return A list of
+    /// the direct children of this node.</summary>
   IList<INode> getChildNodes();
-  /**
-   * Gets the language of this node.  Not defined in the DOM specification.
-   */
+
+    /// <summary>Gets the language of this node. Not defined in the DOM
+    /// specification.</summary>
   string getLanguage();
-  /**
-   * Gets the name of this node.  For HTML elements, this will
-   * be the same as the tag name.
-   */
+
+    /// <summary>Gets the name of this node. For HTML elements, this will
+    /// be the same as the tag name.</summary>
   string getNodeName();
-  /**
-   * 
-   * Returns the type of node represented by this _object.
-   * 
-   * @return A node type integer; see NodeType.
-   */
+
+    /// <summary>* Returns the type of node represented by this _object.
+    /// @return A node type integer; see NodeType.</summary>
   int getNodeType();
-  /**
-   * 
-   * Gets the document that owns this node.
-   * 
-   * @return the owner document, or null if this is a document _object.
-   */
+
+    /// <summary>* Gets the document that owns this node. @return the owner
+    /// document, or null if this is a document _object.</summary>
   IDocument getOwnerDocument();
-  /**
-   * 
-   * Gets the parent node of this node.
-   * 
-   * @return the parent node, or null if this is the root node.
-   */
+
+    /// <summary>* Gets the parent node of this node. @return the parent
+    /// node, or null if this is the root node.</summary>
   INode getParentNode();
-  /**
-   * 
-   * Gets all the text found within this element.
-   * 
-   * @return All the concatenated text, except comments, for Element
-   * nodes; or the text of Comment nodes; or null otherwise.
-   */
+
+    /// <summary>* Gets all the text found within this element. @return All
+    /// the concatenated text, except comments, for Element nodes; or the
+    /// text of Comment nodes; or null otherwise.</summary>
   string getTextContent();
 }
-
 }

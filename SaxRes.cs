@@ -1,12 +1,11 @@
-// NO WARRANTY!  This code is in the Public Domain.
+// NO WARRANTY! This code is in the Public Domain.
 // Written by Karl Waclawek (karl@waclawek.net).
 
 using System;
-using System.Resources;
 using System.Reflection;
+using System.Resources;
 
-namespace Org.System.Xml.Sax
-{
+namespace Org.System.Xml.Sax {
   /**<summary>Identifies localized string constants.</summary> */
   public enum RsId
   {
@@ -31,22 +30,22 @@ namespace Org.System.Xml.Sax
   }
 
   /**<summary>Enables access to localized resources.</summary> */
-  public class Resources
-  {
+  public class Resources {
     private static ResourceManager rm;
 
     private Resources() {}
 
     /// <summary>Returns localized string constants.</summary>
-    public static string GetString(RsId id)
-    {
+    /// <param name='id'>Not documented yet.</param>
+    /// <returns>A string object.</returns>
+    public static string GetString(RsId id) {
       string name = Enum.GetName(typeof(RsId), id);
       return rm.GetString(name);
     }
 
-    static Resources()
-    {
-      rm = new ResourceManager("Org.System.Xml.Sax.Sax", Assembly.GetExecutingAssembly());
+    static Resources() {
+      rm = new ResourceManager("Org.System.Xml.Sax.Sax",
+        Assembly.GetExecutingAssembly());
     }
   }
 }

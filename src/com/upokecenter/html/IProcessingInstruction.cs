@@ -5,5 +5,4 @@ public interface IProcessingInstruction : INode {
    string getData();
    string getTarget();
 }
-
 }

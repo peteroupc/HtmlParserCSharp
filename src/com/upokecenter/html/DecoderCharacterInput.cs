@@ -1,8 +1,6 @@
 /*
 If you like this, you should donate to Peter O.
-at: http://upokecenter.com/d/
-
-
+at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -20,10 +18,10 @@ all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
@@ -36,27 +34,27 @@ using com.upokecenter.io;
 sealed class DecoderCharacterInput : ICharacterInput {
   private PeterO.Support.InputStream input;
   private ITextDecoder decoder;
-  private IEncodingError error=TextEncoding.ENCODING_ERROR_REPLACE;
+  private IEncodingError error = TextEncoding.ENCODING_ERROR_REPLACE;
 
-  public DecoderCharacterInput(PeterO.Support.InputStream input, ITextDecoder decoder) {
-    this.input=input;
-    this.decoder=decoder;
+  public DecoderCharacterInput(PeterO.Support.InputStream input,
+    ITextDecoder decoder) {
+    this.input = input;
+    this.decoder = decoder;
   }
 
-  public DecoderCharacterInput(PeterO.Support.InputStream input, ITextDecoder decoder, IEncodingError error) {
-    this.input=input;
-    this.decoder=decoder;
-    this.error=error;
+  public DecoderCharacterInput(PeterO.Support.InputStream input,
+    ITextDecoder decoder, IEncodingError error) {
+    this.input = input;
+    this.decoder = decoder;
+    this.error = error;
   }
 
-  public int read()  {
-    return decoder.decode(input,error);
+  public int read() {
+    return decoder.decode(input, error);
   }
 
-  public int read(int[] buf, int offset, int unitCount)  {
-    return decoder.decode(input,buf,offset,unitCount,error);
+  public int read(int[] buf, int offset, int unitCount) {
+    return decoder.decode(input, buf, offset, unitCount, error);
   }
-
 }
-
 }

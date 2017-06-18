@@ -1,8 +1,6 @@
 /*
 If you like this, you should donate to Peter O.
-at: http://upokecenter.com/d/
-
-
+at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -20,31 +18,25 @@ all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 namespace com.upokecenter.net {
 using System;
 using System.IO;
 
-
 public interface IResponseListener<T> {
-  /**
-   * Processes the Web response on a background thread.
-   * Please note: For the response to be cacheable, the entire
-   * stream must be read to the end.
-   * @param url URL of the resource. This may not be the same
-   * as the URL that the resource actually resolves to. For that,
-   * call the getUrl() method of the _headers_ _object.
-   * @param stream Input stream for the response body.
-   *   The listener must not close the stream.
-   * @param headers Contains the headers returned by the response.
-   * 
-   * @
-   */
+    /// <summary>Processes the Web response on a background thread. Please
+    /// note: For the response to be cacheable, the entire stream must be
+    /// read to the end. @param url URL of the resource. This may not be
+    /// the same as the URL that the resource actually resolves to. For
+    /// that, call the getUrl() method of the _headers_ _object. @param
+    /// stream Input stream for the response body. The listener must not
+    /// close the stream. @param headers Contains the headers returned by
+    /// the response. @.</summary>
    T processResponse(string url,
       PeterO.Support.InputStream stream, IHttpHeaders headers) ;
 }

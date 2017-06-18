@@ -1,8 +1,6 @@
 /*
 If you like this, you should donate to Peter O.
-at: http://upokecenter.com/d/
-
-
+at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -20,10 +18,10 @@ all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
@@ -33,9 +31,9 @@ using System;
 sealed class EncodingConfidence {
   int confidence;
   string encoding;
-  public static readonly int Irrelevant=0;
-  public static readonly int Tentative=1;
-  public static readonly int Certain=2;
+  public const int Irrelevant = 0;
+  public const int Tentative = 1;
+  public const int Certain = 2;
   public static readonly EncodingConfidence UTF16BE=
       new EncodingConfidence("utf-16be",Certain);
   public static readonly EncodingConfidence UTF16LE=
@@ -45,13 +43,13 @@ sealed class EncodingConfidence {
 
   public static readonly EncodingConfidence UTF8_TENTATIVE=
       new EncodingConfidence("utf-8",Tentative);
-  public EncodingConfidence(string e){
-    encoding=e;
-    confidence=Tentative;
+  public EncodingConfidence(string e) {
+    encoding = e;
+    confidence = Tentative;
   }
-  public EncodingConfidence(string e, int c){
-    encoding=e;
-    confidence=c;
+  public EncodingConfidence(string e, int c) {
+    encoding = e;
+    confidence = c;
   }
   public int getConfidence() {
     return confidence;
@@ -60,8 +58,8 @@ sealed class EncodingConfidence {
     return encoding;
   }
   public override sealed string ToString() {
-    return "EncodingConfidence [confidence=" + confidence + ", encoding="
-        + encoding + "]";
+    return "EncodingConfidence [confidence=" + confidence + ", encoding="+
+        encoding + "]";
   }
 }
 }

@@ -1,8 +1,6 @@
 /*
 If you like this, you should donate to Peter O.
-at: http://upokecenter.com/d/
-
-
+at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -20,44 +18,28 @@ all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
 namespace com.upokecenter.html {
 using System;
 
-/**
- * 
- * Represents the HTML "!DOCTYPE" tag.
- * 
- * @author Peter
- *
- */
+    /// <summary>* Represents the HTML "!DOCTYPE" tag. @author
+    /// Peter.</summary>
 public interface IDocumentType : INode {
-  /**
-   * Gets the name of this document type.  For HTML documents,
-   * this should be "html".
-   * 
-   * 
-   */
+    /// <summary>Gets the name of this document type. For HTML documents,
+    /// this should be "html".</summary>
    string getName();
-  /**
-   * 
-   * Gets the  identifier of this document type.
-   * 
-   * 
-   */
+
+    /// <summary>* Gets the identifier of this document type.</summary>
    string getPublicId();
-  /**
-   * Gets the system identifier of this document type.
-   * 
-   * 
-   */
+
+    /// <summary>Gets the system identifier of this document
+    /// type.</summary>
    string getSystemId();
 }
-
 }

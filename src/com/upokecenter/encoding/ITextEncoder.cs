@@ -1,8 +1,6 @@
 /*
 If you like this, you should donate to Peter O.
-at: http://upokecenter.com/d/
-
-
+at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -20,48 +18,35 @@ all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 namespace com.upokecenter.encoding {
 using System;
 using System.IO;
 
-/**
- * 
- * Converts Unicode characters to bytes.
- * @author Peter
- *
- */
+    /// <summary>* Converts Unicode characters to bytes. @author
+    /// Peter.</summary>
 public interface ITextEncoder {
-  /**
-   * Writes Unicode characters as bytes in an output stream.
-   * 
-   * @param stream stream where bytes will be written
-   * @param buffer an array of Unicode characters
-   * @param offset offset into the array
-   * @param length number of characters to write
-   * @ if there are characters that can't be
-   * converted to bytes, or if another I/O error occurs.
-   */
+    /// <summary>Writes Unicode characters as bytes in an output stream.
+    /// @param stream stream where bytes will be written @param buffer an
+    /// array of Unicode characters @param offset offset into the array
+    /// @param length number of characters to write @ if there are
+    /// characters that can't be converted to bytes, or if another I/O
+    /// error occurs.</summary>
    void encode(Stream stream, int[] buffer, int offset, int length) ;
 
-  /**
-   * Writes Unicode characters as bytes in an output stream.
-   * 
-   * @param stream stream where bytes will be written
-   * @param buffer an array of Unicode characters
-   * @param offset offset into the array
-   * @param length number of characters to write
-   * @param error error handler to use.  If there are characters
-   * that can't be converted to bytes, this _object's emitEncoderError
-   * method is called.
-   * @ if an I/O error occurs
-   */
-   void encode(Stream stream, int[] buffer, int offset, int length, IEncodingError error) ;
+    /// <summary>Writes Unicode characters as bytes in an output stream.
+    /// @param stream stream where bytes will be written @param buffer an
+    /// array of Unicode characters @param offset offset into the array
+    /// @param length number of characters to write @param error error
+    /// handler to use. If there are characters that can't be converted to
+    /// bytes, this _object's emitEncoderError method is called. @ if an
+    /// I/O error occurs.</summary>
+   void encode(Stream stream, int[] buffer, int offset, int length,
+     IEncodingError error) ;
 }
-
 }

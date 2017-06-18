@@ -1,8 +1,6 @@
 /*
 If you like this, you should donate to Peter O.
-at: http://upokecenter.com/d/
-
-
+at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -20,22 +18,22 @@ all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
 namespace com.upokecenter.html {
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
 using com.upokecenter.util;
 internal class Document : Node, IDocument {
   internal DocumentType doctype;
   internal string encoding;
-  private DocumentMode docmode=DocumentMode.NoQuirksMode;
+  private DocumentMode docmode = DocumentMode.NoQuirksMode;
 
   internal string address;
 
@@ -44,34 +42,33 @@ internal class Document : Node, IDocument {
   internal Document() : base(NodeType.DOCUMENT_NODE) {
   }
 
-  private void collectElements(INode c, string s, IList<IElement> nodes){
-    if(c.getNodeType()==NodeType.ELEMENT_NODE){
+  private void collectElements(INode c, string s, IList<IElement> nodes) {
+    if (c.getNodeType() == NodeType.ELEMENT_NODE) {
       Element e=(Element)c;
-      if(s==null || e.getLocalName().Equals(s)){
+      if (s == null || e.getLocalName().Equals(s)) {
         nodes.Add(e);
       }
     }
-    foreach(var node in c.getChildNodes()){
-      collectElements(node,s,nodes);
+    foreach (var node in c.getChildNodes()) {
+      collectElements(node, s, nodes);
     }
   }
 
-
   private void collectElementsHtml(INode c, string s,
-      string sLowercase, IList<IElement> nodes){
-    if(c.getNodeType()==NodeType.ELEMENT_NODE){
+      string sLowercase, IList<IElement> nodes) {
+    if (c.getNodeType() == NodeType.ELEMENT_NODE) {
       Element e=(Element)c;
-      if(s==null){
+      if (s == null) {
         nodes.Add(e);
-      } else if(HtmlParser.HTML_NAMESPACE.Equals(e.getNamespaceURI()) &&
-          e.getLocalName().Equals(sLowercase)){
+      } else if (HtmlParser.HTML_NAMESPACE.Equals(e.getNamespaceURI()) &&
+          e.getLocalName().Equals(sLowercase)) {
         nodes.Add(e);
-      } else if(e.getLocalName().Equals(s)){
+      } else if (e.getLocalName().Equals(s)) {
         nodes.Add(e);
       }
     }
-    foreach(var node in c.getChildNodes()){
-      collectElements(node,s,nodes);
+    foreach (var node in c.getChildNodes()) {
+      collectElements(node, s, nodes);
     }
   }
 
@@ -79,49 +76,52 @@ internal class Document : Node, IDocument {
     return (encoding==null) ? "utf-8" : encoding;
   }
 
-  public IDocumentType getDoctype(){
+  public IDocumentType getDoctype() {
     return doctype;
   }
 
-
   public IElement getDocumentElement() {
-    foreach(var node in getChildNodes()){
-      if(node is IElement)
-        return (IElement)node;
+    foreach (var node in getChildNodes()) {
+      if (node is IElement) {
+ return (IElement)node;
+}
     }
     return null;
   }
 
   public IElement getElementById(string id) {
-    if(id==null)
-      throw new ArgumentException();
-    foreach(var node in getChildNodes()){
-      if(node is IElement){
-        if(id.Equals(((IElement)node).getId()))
-          return (IElement)node;
+    if (id == null) {
+ throw new ArgumentException();
+}
+    foreach (var node in getChildNodes()) {
+      if (node is IElement) {
+        if (id.Equals(((IElement)node).getId())) return (IElement)node;
         IElement element=((IElement)node).getElementById(id);
-        if(element!=null)return element;
+        if (element != null) {
+ return element;
+}
       }
     }
     return null;
   }
   public IList<IElement> getElementsByTagName(string tagName) {
-    if(tagName==null)
-      throw new ArgumentException();
-    if(tagName.Equals("*")) {
-      tagName=null;
+    if (tagName == null) {
+ throw new ArgumentException();
+}
+    if (tagName.Equals("*")) {
+      tagName = null;
     }
-    IList<IElement> ret=new List<IElement>();
-    if(isHtmlDocument()){
-      collectElementsHtml(this,tagName,
-          StringUtility.toLowerCaseAscii(tagName),ret);
+    IList<IElement> ret = new List<IElement>();
+    if (isHtmlDocument()) {
+      collectElementsHtml(this, tagName,
+          StringUtility.toLowerCaseAscii(tagName), ret);
     } else {
-      collectElements(this,tagName,ret);
+      collectElements(this, tagName, ret);
     }
     return ret;
   }
 
-  public override string getLanguage(){
+  public override string getLanguage() {
     return (defaultLanguage==null) ? "" : defaultLanguage;
   }
 
@@ -129,40 +129,39 @@ internal class Document : Node, IDocument {
     return docmode;
   }
 
-  public override string getNodeName(){
+  public override string getNodeName() {
     return "#document";
   }
 
-  public override IDocument getOwnerDocument(){
+  public override IDocument getOwnerDocument() {
     return null;
   }
 
   public string getURL() {
     return address;
   }
-  internal bool isHtmlDocument(){
+  internal bool isHtmlDocument() {
     return true;
   }
 
   internal void setMode(DocumentMode mode) {
-    docmode=mode;
+    docmode = mode;
   }
 
-  internal override string toDebugString(){
-    StringBuilder builder=new StringBuilder();
-    foreach(var node in getChildNodesInternal()){
-      string str=node.toDebugString();
-      if(str==null) {
+  internal override string toDebugString() {
+    StringBuilder builder = new StringBuilder();
+    foreach (var node in getChildNodesInternal()) {
+      string str = node.toDebugString();
+      if (str == null) {
         continue;
       }
       string[] strarray=StringUtility.splitAt(str,"\n");
-      int len=strarray.Length;
-      if(len>0 && strarray[len-1].Length==0)
-      {
-        len--; // ignore trailing empty _string
+      int len = strarray.Length;
+      if (len>0 && strarray[len-1].Length == 0) {
+        --len;  // ignore trailing empty _string
       }
-      for(int i=0;i<len;i++){
-        string el=strarray[i];
+      for (int i = 0; i < len; ++i) {
+        string el = strarray[i];
         builder.Append("| ");
         builder.Append(el.Replace("~~~~","\n"));
         builder.Append("\n");
@@ -170,6 +169,5 @@ internal class Document : Node, IDocument {
     }
     return builder.ToString();
   }
-
 }
 }

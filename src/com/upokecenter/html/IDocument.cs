@@ -1,8 +1,6 @@
 /*
 If you like this, you should donate to Peter O.
-at: http://upokecenter.com/d/
-
-
+at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -20,10 +18,10 @@ all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
@@ -31,52 +29,28 @@ namespace com.upokecenter.html {
 using System;
 using System.Collections.Generic;
 
-/**
- * 
- * Represents an HTML document.  This is the root of
- * the document hierarchy.
- * 
- * @author Peter
- *
- */
+    /// <summary>* Represents an HTML document. This is the root of the
+    /// document hierarchy. @author Peter.</summary>
 public interface IDocument : INode {
-  /**
-   * 
-   * Gets the character encoding used in this document.
-   * 
-   * @return A character encoding name.
-   */
+    /// <summary>* Gets the character encoding used in this document.
+    /// @return A character encoding name.</summary>
   string getCharacterSet();
-  /**
-   * 
-   * Gets the document type of this document, if any.
-   * 
-   * 
-   */
+
+    /// <summary>* Gets the document type of this document, if
+    /// any.</summary>
    IDocumentType getDoctype();
-  /**
-   * 
-   * Gets the root element of this document.
-   * 
-   * 
-   */
+
+    /// <summary>* Gets the root element of this document.</summary>
    IElement getDocumentElement();
   IElement getElementById(string id);
-  /**
-   * 
-   * Gets all descendents, both direct and indirect, that have
-   * the specified tag name, using ASCII case-insensitive matching.
-   * 
-   * @param _string A tag name.
-   * 
-   */
+
+    /// <summary>* Gets all descendents, both direct and indirect, that
+    /// have the specified tag name, using ASCII case-insensitive matching.
+    /// @param _string A tag name.</summary>
   IList<IElement> getElementsByTagName(string _string);
-  /**
-   * Gets the document's address
-   * 
-   * @return An absolute URL.
-   */
+
+    /// <summary>Gets the document's address @return An absolute
+    /// URL.</summary>
   string getURL();
 }
-
 }
