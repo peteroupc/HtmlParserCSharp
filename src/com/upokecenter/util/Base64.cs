@@ -45,11 +45,13 @@ public class Base64 {
 
   /* ******** S T A N D A R D B A S E 6 4 A L P H A B E T ******** */
 
-  private static readonly byte WHITE_SPACE_ENC = 251;  // Indicates white
-    space in encoding
+  private static readonly byte WHITE_SPACE_ENC = 251;  
+    // Indicates white
+    // space in encoding
 
-  private static readonly byte EQUALS_SIGN_ENC = 255;  // Indicates equals
-    sign in encoding
+  private static readonly byte EQUALS_SIGN_ENC = 255;  
+    // Indicates equals
+    // sign in encoding
 
   /* ******** U R L S A F E B A S E 6 4 A L P H A B E T ******** */
 
@@ -240,8 +242,9 @@ public class Base64 {
     var outBuff = new byte[ len34 ];  // Upper limit on size of output
     var outBuffPosn = 0;  // Keep track of where we're writing
 
-    var b4 = new byte[4];  // Four byte buffer from source, eliminating white
-      space
+    var b4 = new byte[4];  
+      // Four byte buffer from source, eliminating white
+      // space
     var b4Posn = 0;  // Keep track of four byte input buffer
     var i = 0;  // Source array counter
     byte sbiDecode = 0;  // Special value from DECODABET

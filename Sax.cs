@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections;
-using System.Configuration;
+//using System.Configuration;
 using System.IO;
 using System.Reflection;
 using GUID = System.Runtime.InteropServices.GuidAttribute;
@@ -1123,14 +1123,14 @@ namespace Org.System.Xml.Sax {
   }
 
   /**<summary>Base class for all SAX exceptions.</summary>
-* <remarks>The .NET <see cref="ApplicationException" /> class already
+* <remarks>The .NET <see cref="Exception" /> class already
      implements
    * all of the (here missing) methods and properties, including the various
    * constructors, desribed in the corresponding Java docs for
    * <see href="http://www.saxproject.org/apidoc/org/xml/sax/SAXException.html">
    * SAXException</see>.</remarks>
    */
-  public class SaxException: ApplicationException
+  public class SaxException: Exception
   {
     public SaxException() { }
 

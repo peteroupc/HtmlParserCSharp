@@ -34,13 +34,14 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
     return (isDisabled()) ? (stream.available()) : (0);
   }
 
-  public override sealed void Close() {
+  public new void Dispose() {
     disabled = true;
     pos = 0;
     endpos = 0;
     buffer = null;
     markpos=-1;
-    stream.Close();
+    stream.Dispose();
+      base.Dispose ();
   }
 
     /// <summary>Disables buffering of future bytes read from the
@@ -137,7 +138,7 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 }
     //if (buffer != null) {
   //Console.WriteLine("buffer %s end=%s len=%s",pos,endpos,buffer.Length);
-}
+//}
     if (disabled) {
  // Buffering disabled, so read directly from stream
       return stream.ReadByte();
@@ -189,7 +190,7 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
     }
     //if (buffer != null) {
   //Console.WriteLine("buffer(3arg) %s end=%s len=%s",pos,endpos,buffer.Length);
-}
+//}
     if (disabled) {
       // Buffering disabled, read as much as possible from the buffer
       if (pos<endpos) {

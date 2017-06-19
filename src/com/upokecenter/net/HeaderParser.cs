@@ -385,10 +385,11 @@ if (!(month >= 1 && month <= 12)) {
     if (i2<endIndex) {
       // if not at end
       int i3 = skipCFWS(str, i2, endIndex, null);
-      if (i3==endIndex || (i3<endIndex && str[i3]!=';' && str[i3]!=',')) {
-  // at end, or not followed by ";
-}" or ",", so not a media type
-        return "";
+        if (i3 == endIndex || (i3 < endIndex && str [i3] != ';' && str [i3] != ',')) {
+          // at end, or not followed by ";"
+          // or ",", so not a media type
+          return "";
+        }
     }
     return StringUtility.toLowerCaseAscii(str.Substring(index, (i2)-(index)));
   }
@@ -880,10 +881,11 @@ if (!(month >= 1 && month <= 12)) {
       string data,
       int index,
       int endIndex,
- bool httpRules  // true: use RFC2616 (HTTP/1.1) rules; false: use RFC5322
-        rules
+ bool httpRules 
 ) {
-    if (data == null) {
+            // httpRules true: use RFC2616 (HTTP/1.1) rules; false: use RFC5322
+            //rules
+            if (data == null) {
  return false;
 }
     string mediaType = getMediaType(data, index, endIndex);
@@ -1299,9 +1301,8 @@ StringComparison.Ordinal)||v.StartsWith("Fri",
             if ((phase1+(phased ? 2 : 0)+phase2)>6) {
  // IPv4 address illegal at this point
               //Console.WriteLine("Illegal IPv4");
- }
               return -1;
-            else {
+              } else {
               // Parse the rest of the IPv4 address
               phase2+=2;
               if (decOctet >= 100) {
@@ -1793,12 +1794,12 @@ if (!(index >= startIndex)) {
         return startIndex;
       }
     } else {
-      // No media type, try checking if it really is blank
-      if (index<endIndex && (str[index]==',' || str[index]==';')) {
-  // it's blank;
-} assume text/plain
-        return skipDataUrlParameters(str, index, endIndex, builder, true);
-      else {
+        // No media type, try checking if it really is blank
+        if (index < endIndex && (str [index] == ',' || str [index] == ';')) {
+          // it's blank;
+          // assume text/plain
+          return skipDataUrlParameters (str, index, endIndex, builder, true);
+        } else {
         if (builder != null) {
           builder.Length=(oldpos);
         }
@@ -2629,8 +2630,9 @@ if (!(str != null)) {
       string s,
       int index,
       int endIndex,
-      StringBuilder builder,  // receives the unescaped version of the _string
-      QuotedStringRule rule  // rule to follow for quoted _string) {
+      StringBuilder builder, 
+      QuotedStringRule rule  
+    ) {
     int startIndex = index;
     int bLength=(builder == null) ? 0 : builder.Length;
     index=(rule != QuotedStringRule.Rfc5322) ? index :

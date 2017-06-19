@@ -674,8 +674,9 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
       if (elements.Count == 1 &&
      StringUtility.toLowerCaseAscii(elements[0].getLocalName()).Equals("img"
 )) {
-        string pValue = getPValue(elements[0]);  // try to get the ALT/TITLE
-          from the image
+                    // try to get the ALT/TITLE
+                    //from the image
+                    string pValue = getPValue(elements[0]);  
         if (StringUtility.isNullOrSpaces(pValue)) {
           pValue = getPValue(root);  // if empty, get text from link instead
         }
@@ -1084,13 +1085,13 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
               JSONObject clone = copyJson(obj);
               clone.put("value",getUValue(root));
               accumulateValue(properties, cls.Substring(2), clone);
-        } else if (cls.StartsWith("dt-",StringComparison.Ordinal)) { //
-              date/time
+        } else if (cls.StartsWith("dt-",StringComparison.Ordinal)) { 
+              // date/time
               JSONObject clone = copyJson(obj);
               clone.put("value",getDTValue(root,getLastKnownTime(properties)));
               accumulateValue(properties, cls.Substring(3), clone);
-         } else if (cls.StartsWith("e-",StringComparison.Ordinal)) { //
-              date/time
+         } else if (cls.StartsWith("e-",StringComparison.Ordinal)) { 
+              // date/time
               JSONObject clone = copyJson(obj);
               clone.put("value",getEValue(root));
               accumulateValue(properties, cls.Substring(2), clone);

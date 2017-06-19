@@ -9,7 +9,7 @@ using System;
 using System.Globalization;
 using System.Text;
 
-class JSONTokener {
+public class JSONTokener {
     /// <summary>Get the hex value of a character (base16). @param c A
     /// character between '0' and '9' or between 'A' and 'F' or between 'a'
     /// and 'f'. @return An int between 0 and 15, or -1 if c was not a hex

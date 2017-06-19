@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C1046EBC-7CAE-457E-A677-421CD1E2A289}</ProjectGuid>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <UseMSBuildEngine>true</UseMSBuildEngine>
+    <OutputType>Library</OutputType>
+    <RootNamespace>HtmlParserCSharp</RootNamespace>
+    <AssemblyName>HtmlParserCSharp</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\com\upokecenter\html\Attr.cs" />
+    <Compile Include="src\com\upokecenter\encoding\Big5.cs" />
+    <Compile Include="src\com\upokecenter\encoding\Big5Encoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\GBK.cs" />
+    <Compile Include="src\com\upokecenter\encoding\GbkEncoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\HzGb2312Encoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\IEncodingError.cs" />
+    <Compile Include="src\com\upokecenter\encoding\ITextDecoder.cs" />
+    <Compile Include="src\com\upokecenter\encoding\ITextEncoder.cs" />
+    <Compile Include="src\com\upokecenter\encoding\Iso2022JPEncoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\Iso2022KREncoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\JIS0208.cs" />
+    <Compile Include="src\com\upokecenter\encoding\JIS0212.cs" />
+    <Compile Include="src\com\upokecenter\encoding\JapaneseEUCEncoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\Korean.cs" />
+    <Compile Include="src\com\upokecenter\encoding\KoreanEUCEncoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\ReplacementDecoder.cs" />
+    <Compile Include="src\com\upokecenter\encoding\ShiftJISEncoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\SingleByteEncoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\TextEncoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\Utf16Encoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\Utf32Encoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\Utf8Encoding.cs" />
+    <Compile Include="src\com\upokecenter\encoding\XUserDefinedEncoding.cs" />
+    <Compile Include="src\com\upokecenter\html\CharsetSniffer.cs" />
+    <Compile Include="src\com\upokecenter\html\Comment.cs" />
+    <Compile Include="src\com\upokecenter\html\DecoderCharacterInput.cs" />
+    <Compile Include="src\com\upokecenter\html\Document.cs" />
+    <Compile Include="src\com\upokecenter\html\DocumentMode.cs" />
+    <Compile Include="src\com\upokecenter\html\DocumentType.cs" />
+    <Compile Include="src\com\upokecenter\html\Element.cs" />
+    <Compile Include="src\com\upokecenter\html\EncodingConfidence.cs" />
+    <Compile Include="src\com\upokecenter\html\Html5Decoder.cs" />
+    <Compile Include="src\com\upokecenter\html\HtmlDocument.cs" />
+    <Compile Include="src\com\upokecenter\html\HtmlEntities.cs" />
+    <Compile Include="src\com\upokecenter\html\HtmlParser.cs" />
+    <Compile Include="src\com\upokecenter\html\IAttr.cs" />
+    <Compile Include="src\com\upokecenter\html\IComment.cs" />
+    <Compile Include="src\com\upokecenter\html\IDocument.cs" />
+    <Compile Include="src\com\upokecenter\html\IDocumentType.cs" />
+    <Compile Include="src\com\upokecenter\html\IElement.cs" />
+    <Compile Include="src\com\upokecenter\html\INode.cs" />
+    <Compile Include="src\com\upokecenter\html\IProcessingInstruction.cs" />
+    <Compile Include="src\com\upokecenter\html\IText.cs" />
+    <Compile Include="src\com\upokecenter\html\Node.cs" />
+    <Compile Include="src\com\upokecenter\html\NodeType.cs" />
+    <Compile Include="src\com\upokecenter\html\Text.cs" />
+    <Compile Include="src\com\upokecenter\html\XhtmlParser.cs" />
+    <Compile Include="src\com\upokecenter\html\data\ExclusiveCanonicalXML.cs" />
+    <Compile Include="src\com\upokecenter\html\data\Microdata.cs" />
+    <Compile Include="src\com\upokecenter\html\data\Microformats.cs" />
+    <Compile Include="src\com\upokecenter\html\data\RDFInternal.cs" />
+    <Compile Include="src\com\upokecenter\html\data\RDFa.cs" />
+    <Compile Include="src\com\upokecenter\html\data\RDFa1.cs" />
+    <Compile Include="src\com\upokecenter\io\ConditionalBufferInputStream.cs" />
+    <Compile Include="src\com\upokecenter\io\ICharacterInput.cs" />
+    <Compile Include="src\com\upokecenter\io\IMarkableCharacterInput.cs" />
+    <Compile Include="src\com\upokecenter\io\IntArrayCharacterInput.cs" />
+    <Compile Include="src\com\upokecenter\io\MemoryOutputStream.cs" />
+    <Compile Include="src\com\upokecenter\io\StackableCharacterInput.cs" />
+    <Compile Include="src\com\upokecenter\io\StreamUtility.cs" />
+    <Compile Include="src\com\upokecenter\io\StringCharacterInput.cs" />
+    <Compile Include="src\com\upokecenter\io\Utf8CharacterInput.cs" />
+    <Compile Include="src\com\upokecenter\json\JSONArray.cs" />
+    <Compile Include="src\com\upokecenter\json\JSONObject.cs" />
+    <Compile Include="src\com\upokecenter\json\JSONPatch.cs" />
+    <Compile Include="src\com\upokecenter\json\JSONPointer.cs" />
+    <Compile Include="src\com\upokecenter\json\JSONTokener.cs" />
+    <Compile Include="src\com\upokecenter\net\CacheControl.cs" />
+    <Compile Include="src\com\upokecenter\net\DownloadHelper.cs" />
+    <Compile Include="src\com\upokecenter\net\HeaderParser.cs" />
+    <Compile Include="src\com\upokecenter\net\HttpHeadersFromMap.cs" />
+    <Compile Include="src\com\upokecenter\net\IDownloadEventListener.cs" />
+    <Compile Include="src\com\upokecenter\net\IHttpHeaders.cs" />
+    <Compile Include="src\com\upokecenter\net\IOnFinishedListener.cs" />
+    <Compile Include="src\com\upokecenter\net\IResponseListener.cs" />
+    <Compile Include="src\com\upokecenter\net\NoConnectionException.cs" />
+    <Compile Include="src\com\upokecenter\util\ActionList.cs" />
+    <Compile Include="src\com\upokecenter\util\BEncodeException.cs" />
+    <Compile Include="src\com\upokecenter\util\BEncodeObject.cs" />
+    <Compile Include="src\com\upokecenter\util\Base64.cs" />
+    <Compile Include="src\com\upokecenter\util\ByteList.cs" />
+    <Compile Include="src\com\upokecenter\util\IAction.cs" />
+    <Compile Include="src\com\upokecenter\util\IBoundAction.cs" />
+    <Compile Include="src\com\upokecenter\util\IndexedObjectList.cs" />
+    <Compile Include="src\com\upokecenter\util\IntList.cs" />
+    <Compile Include="src\com\upokecenter\util\QueryStringHelper.cs" />
+    <Compile Include="src\com\upokecenter\util\RandomGen.cs" />
+    <Compile Include="src\com\upokecenter\util\StringUtility.cs" />
+    <Compile Include="src\com\upokecenter\util\SunriseSunset.cs" />
+    <Compile Include="src\com\upokecenter\util\URIUtility.cs" />
+    <Compile Include="src\com\upokecenter\util\URL.cs" />
+    <Compile Include="DateTimeUtility.cs" />
+    <Compile Include="DownloadHelperImpl.cs" />
+    <Compile Include="HttpHeaders.cs" />
+    <Compile Include="JsonParser.cs" />
+    <Compile Include="Sax.cs" />
+    <Compile Include="SaxHelpers.cs" />
+    <Compile Include="SaxReader.cs" />
+    <Compile Include="SaxRes.cs" />
+    <Compile Include="Support.cs" />
+    <Compile Include="src\com\upokecenter\rdf\RDFInternal.cs" />
+    <Compile Include="src\com\upokecenter\rdf\RDFTerm.cs" />
+    <Compile Include="src\com\upokecenter\rdf\RDFTriple.cs" />
+    <Compile Include="src\com\upokecenter\rdf\RDFUtility.cs" />
+    <Compile Include="src\com\upokecenter\rdf\IRDFParser.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+</Project>

@@ -817,51 +817,51 @@ public int length() {
     return ToString(indentFactor, 0);
   }
 
-  internal string ToString(int indentFactor, int indent) {
-    int i;
-    string       pad = "";
-    var sb = new StringBuilder();
-    indent += indentFactor;
-    for (i = 0; i < indent; i += 1) {
-      pad += ' ';
-    }
-    sb.Append("{\n");
-    foreach (var s in keys()) {
-      Object o = myHashMap[s];
-      if (o != null) {
-        if (sb.Length > 2) {
-          sb.Append(",\n");
-        }
-        sb.Append(pad);
-        sb.Append(quote(s));
-        sb.Append(": ");
-        if (o is string) {
-          sb.Append(quote((string)o));
-        } else if (o is int || o is double || o is float || o is long || o
-          is decimal || o is short || o is byte || o is UInt16 || o is
-          UInt32 || o is UInt64) {
-          sb.Append(numberToString(o));
-        } else if (o is JSONObject) {
-          sb.Append(((JSONObject)o).ToString(indentFactor, indent));
-        } else if (o is JSONArray) {
-          sb.Append(((JSONArray)o).ToString(indentFactor, indent));
-        } else {
-          sb.Append(o.ToString());
+    internal string ToString (int indentFactor, int indent)
+    {
+      int i;
+      string pad = "";
+      var sb = new StringBuilder ();
+      indent += indentFactor;
+      for (i = 0; i < indent; i += 1) {
+        pad += ' ';
+      }
+      sb.Append ("{\n");
+      foreach (var s in keys ()) {
+        Object o = myHashMap [s];
+        if (o != null) {
+          if (sb.Length > 2) {
+            sb.Append (",\n");
+          }
+          sb.Append (pad);
+          sb.Append (quote (s));
+          sb.Append (": ");
+          if (o is string) {
+            sb.Append (quote ((string)o));
+          } else if (o is int || o is double || o is float || o is long || o
+            is decimal || o is short || o is byte || o is UInt16 || o is
+            UInt32 || o is UInt64) {
+            sb.Append (numberToString (o));
+          } else if (o is JSONObject) {
+            sb.Append (((JSONObject)o).ToString (indentFactor, indent));
+          } else if (o is JSONArray) {
+            sb.Append (((JSONArray)o).ToString (indentFactor, indent));
+          } else {
+            sb.Append (o.ToString ());
+          }
         }
       }
+      sb.Append ('}');
+      return sb.ToString ();
     }
-    sb.Append('}');
-    return sb.ToString();
-  }
-
+    /*
   public static void main(string[] args) {
     string json="["+ "{ # foo\n\"foo-key\":\"foo-value\"},\n"+
-  "{ /* This is a\n # multiline comment.*/\n\"bar-key\":\"bar-value\"}]" ;
+  "{ /* This is a\n # multiline comment.*" + "/\n\"bar-key\":\"bar-value\"}]" ;
     Console.WriteLine(json);
       JSONArray obj = new JSONArray(json,
               JSONObject.OPTION_SHELL_COMMENTS |  // Support SHELL-style comments
-     JSONObject.OPTION_ADD_COMMENTS  // Incorporate comments in the JSON
-                _object
+     JSONObject.OPTION_ADD_COMMENTS  // Incorporate comments in the JSON object
 );
       Console.WriteLine(obj);  // Output the JSON _object
     // Objects with comments associated with them will
@@ -877,5 +877,6 @@ public int length() {
       Console.WriteLine(pointers[pointer]);  // Output the key's value
     }
   }
+  */
 }
 }

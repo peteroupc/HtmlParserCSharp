@@ -588,7 +588,7 @@ sealed class CharsetSniffer {
           data[position]==0x3c && (data[position + 1]&0xff) == 0x2f &&
           (((data[position + 2]&0xff) >= 0x41 && (data[position + 2]&0xff) <= 0x5a) ||
    ((data[position + 2]&0xff) >= 0x61 && (data[position + 2]&0xff) <= 0x7a))) || //
-                </X
+//</X
               (position + 2 <= count && data[position]==0x3c &&
            (((data[position + 1]&0xff) >= 0x41 && (data[position + 1]&0xff) <= 0x5a)
                 ||
@@ -816,7 +816,7 @@ sealed class CharsetSniffer {
         }
         //if (failedCount>0) {
   //Console.WriteLine("failed: %d",failedCount);
-}
+//}
         for (int i = 0;i<streams.Length; ++i) {
           if (nowFailed[i]) {
             nonascii[i]=0;
@@ -850,10 +850,11 @@ sealed class CharsetSniffer {
     string
   lang = StringUtility.toLowerCaseAscii(CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
     string
-  country=StringUtility.toUpperCaseAscii(CultureInfo.CurrentCulture.Name.IndexOf('-'
-)<0 ? "" :
+  country=StringUtility.toUpperCaseAscii(CultureInfo.CurrentCulture.Name.IndexOf(
+      '-')<0 ? "" :
 CultureInfo.CurrentCulture.Name.Substring(
   1+CultureInfo.CurrentCulture.Name.IndexOf('-')));
+    
     if (lang.Equals("ar") || lang.Equals("fa")) {
  return new EncodingConfidence("windows-1256");
 }

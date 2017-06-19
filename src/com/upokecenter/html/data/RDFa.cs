@@ -504,13 +504,14 @@ if (!(refIndex + refLength <= attribute.Length)) {
  throw new InvalidOperationException(attribute);
 }
 #endif
-        if (refLength == 0) {
- // use an empty blank node: the CURIE syntax
-          // allows an empty reference;
- } see the comment
-          // in generateBlankNode for why "//" appears
-          // at the beginning
-          return getNamedBlankNode("//empty");
+          if (refLength == 0) {
+            // use an empty blank node: the CURIE syntax
+            // allows an empty reference;
+            //see the comment
+            // in generateBlankNode for why "//" appears
+            // at the beginning
+            return getNamedBlankNode ("//empty");
+          }
         return
   getNamedBlankNode(attribute.Substring(refIndex, (refIndex + refLength)-(refIndex)));
       }

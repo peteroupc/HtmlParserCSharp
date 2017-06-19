@@ -161,14 +161,16 @@ IList<IDictionary<string, string>> stack = new
         string name = attr.getName();
         string nsvalue = null;
         if ("xmlns".Equals(name)) {
-          attrs.Add(attr);  // add default _namespace if (declaredNames != null) {
+          attrs.Add(attr);  // add default namespace 
+            if (declaredNames != null) {
             declaredNames.Add("");
           }
           nsvalue = attr.getValue();
           checkNamespacePrefix("",nsvalue);
 } else if (name.StartsWith("xmlns:",StringComparison.Ordinal) &&
           name.Length>6) {
-          attrs.Add(attr);  // add prefix _namespace if (declaredNames != null) {
+          attrs.Add(attr);  // add prefix namespace 
+            if (declaredNames != null) {
             declaredNames.Add(attr.getLocalName());
           }
           nsvalue = attr.getValue();
@@ -316,20 +318,20 @@ IList<IDictionary<string, string>> stack = new
     if (prefix.Equals("xmlns")) {
  throw new ArgumentException("'xmlns' _namespace declared");
 }
-    if (prefix.Equals("xml") && !"http://www.w3.org/XML/1998/_namespace"
+    if (prefix.Equals("xml") && !"http://www.w3.org/XML/1998/namespace"
       .Equals(nsvalue)) {
- throw new ArgumentException("'xml' bound to wrong _namespace name");
+ throw new ArgumentException("'xml' bound to wrong namespace name");
 }
-    if (!"xml" .Equals(prefix) && "http://www.w3.org/XML/1998/_namespace"
+    if (!"xml" .Equals(prefix) && "http://www.w3.org/XML/1998/namespace"
       .Equals(nsvalue)) {
- throw new ArgumentException("'xml' bound to wrong _namespace name");
+ throw new ArgumentException("'xml' bound to wrong namespace name");
 }
     if ("http://www.w3.org/2000/xmlns/".Equals(nsvalue)) {
- throw new ArgumentException("'prefix' bound to xmlns _namespace name");
+ throw new ArgumentException("'prefix' bound to xmlns namespace name");
 }
     if (!String.IsNullOrEmpty(nsvalue)) {
       if (!URIUtility.hasSchemeForURI(nsvalue)) {
- throw new ArgumentException(nsvalue+" is not a valid _namespace URI.");
+ throw new ArgumentException(nsvalue+" is not a valid namespace URI.");
 }
     } else if (!"".Equals(prefix)) {
  throw new ArgumentException("can't undeclare a prefix");

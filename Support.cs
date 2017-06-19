@@ -361,9 +361,9 @@ public sealed class LenientDictionary<TKey, TValue> :
       this.wrapped = wrapped;
     }
 
-    public override sealed void Close() {
-      wrapped.Close();
-      base.Close();
+    public new void Dispose() {
+      wrapped.Dispose();
+      base.Dispose();
     }
 
     public override sealed int ReadByte() {
@@ -401,16 +401,14 @@ public sealed class LenientDictionary<TKey, TValue> :
     public ByteArrayInputStream(byte[] buffer) : this(buffer, 0, buffer.Length) {
     }
 
-    public ByteArrayInputStream(byte[] buffer, int index, int length) {
-      if (buffer == null || index<0 || length<0 || index + length>buffer.Length) {
- throw new ArgumentException();
-}
+    public ByteArrayInputStream (byte [] buffer, int index, int length)
+    {
+      if (buffer == null || index < 0 || length < 0 || index + length > buffer.Length) {
+        throw new ArgumentException ();
+      }
       this.buffer = buffer;
       this.pos = index;
       this.endpos = index + length;
-    }
-
-    public override sealed void Close() {
     }
 
     public override sealed int available() {
@@ -532,10 +530,11 @@ public sealed class LenientDictionary<TKey, TValue> :
       this.stream = input;
     }
 
-    public override sealed void Close() {
+    public new void Dispose() {
       pos = 0;
       endpos = 0;
-      this.stream.Close();
+      this.stream.Dispose();
+      base.Dispose ();
     }
 
     public override sealed int available() {
@@ -774,11 +773,9 @@ public sealed class LenientDictionary<TKey, TValue> :
       return false;
     }
 
-    public virtual long skip(long count) {
+    public virtual long skip (long count)
+    {
       return 0;
-    }
-
-    public override void Close() {
     }
 
     //------------------------------------------

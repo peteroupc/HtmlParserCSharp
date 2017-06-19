@@ -185,7 +185,7 @@ namespace PeterO.Support {
         throw new NotSupportedException();
       }
     }
-
+    /*
     public class Resolver : XmlResolver {
       public override object GetEntity(Uri absoluteUri, string role, Type
         ofObjectToReturn) {
@@ -198,13 +198,15 @@ namespace PeterO.Support {
         }
       }
     }
+    */
 
     public void Parse(InputSource input) {
       if (input is InputSource<Stream>) {
         InputSource<Stream> iss=(InputSource<Stream>)input;
         XmlReaderSettings settings = new XmlReaderSettings();
-        settings.ProhibitDtd = false;
-        settings.XmlResolver = new Resolver();
+        settings.DtdProcessing = DtdProcessing.Ignore;
+//        settings.ProhibitDtd = false;
+//        settings.XmlResolver = new Resolver();
         XmlReader reader = XmlReader.Create(
           new StreamReader(new InputStreamWrapper(iss.Source), System.Text.Encoding.GetEncoding(input.Encoding)),
           settings);

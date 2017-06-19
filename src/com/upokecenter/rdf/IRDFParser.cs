@@ -11,7 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-public interface IRDFParser {
-   ISet<RDFTriple> parse() ;
+    /// <include file='../../docs.xml'
+    /// path='docs/doc[@name="T:PeterO.Rdf.IRDFParser"]/*'/>
+  public interface IRDFParser {
+    /// <include file='../../docs.xml'
+    /// path='docs/doc[@name="M:PeterO.Rdf.IRDFParser.Parse"]/*'/>
+   ISet<RDFTriple> Parse();
 }
 }
