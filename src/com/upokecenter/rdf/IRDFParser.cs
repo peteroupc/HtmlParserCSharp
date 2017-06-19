@@ -16,6 +16,6 @@ using System.IO;
   public interface IRDFParser {
     /// <include file='../../docs.xml'
     /// path='docs/doc[@name="M:PeterO.Rdf.IRDFParser.Parse"]/*'/>
-   ISet<RDFTriple> Parse();
+   ISet<RDFTriple> parse();
 }
 }

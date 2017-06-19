@@ -1,9 +1,10 @@
 namespace com.upokecenter.html.data {
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using com.upokecenter.html;
-using com.upokecenter.json;
+using PeterO.Cbor;
 using com.upokecenter.util;
 
 public sealed class Microformats {
@@ -12,7 +13,8 @@ public sealed class Microformats {
 
   static Microformats() {
     complexLegacyMap.Add("adr",new string[] { "p-adr","h-adr"});
-    complexLegacyMap.Add("affiliation",new string[] { "p-affiliation","h-card"});
+  complexLegacyMap.Add("affiliation" ,new string[] { "p-affiliation",
+"h-card" });
     complexLegacyMap.Add("author",new string[] { "p-author","h-card"});
     complexLegacyMap.Add("contact",new string[] { "p-contact","h-card"});
     complexLegacyMap.Add("education",new string[] { "p-education","h-event"});
@@ -20,7 +22,7 @@ public sealed class Microformats {
     complexLegacyMap.Add("fn",new string[] { "p-item","h-item","p-name"});
     complexLegacyMap.Add("geo",new string[] { "p-geo","h-geo"});
   complexLegacyMap.Add("location" ,new string[] { "p-location" ,"h-card",
-"h-adr" });
+  "h-adr" });
     complexLegacyMap.Add("photo",new string[] { "p-item","h-item","u-photo"});
     complexLegacyMap.Add("review",new string[] { "p-review","h-review"});
     complexLegacyMap.Add("reviewer",new string[] { "p-reviewer","h-card"});
@@ -72,12 +74,13 @@ public sealed class Microformats {
     0, 31, 29, 31, 30, 31, 30, 31, 31, 30,
     31, 30, 31 };
 
-  private static void accumulateValue(JSONObject obj, string key, Object value) {
-    JSONArray arr = null;
-    if (obj.has(key)) {
-      arr = obj.getJSONArray(key);
+private static void accumulateValue(PeterO.Cbor.CBORObject obj, string key, Object
+    value) {
+    PeterO.Cbor.CBORObject arr = null;
+      if (obj.ContainsKey(key)) {
+      arr = obj[key];
     } else {
-      arr = new JSONArray();
+      arr = PeterO.Cbor.CBORObject.NewArray();
       obj.put(key, arr);
     }
     arr.put(value);
@@ -140,9 +143,9 @@ public sealed class Microformats {
     }
   }
 
-  private static JSONObject copyJson(JSONObject obj) {
+  private static PeterO.Cbor.CBORObject copyJson(PeterO.Cbor.CBORObject obj) {
     try {
-      return new JSONObject(obj.ToString());
+      return new PeterO.Cbor.CBORObject(obj.ToString());
     } catch (Json.InvalidJsonException) {
       return null;
     }
@@ -206,7 +209,7 @@ public sealed class Microformats {
   private static string getDTValue(IElement root, int[] source) {
     IList<IElement> valueElements = getValueClasses(root);
     bool haveDate = false, haveTime = false, haveTimeZone = false;
-    int[] components = new int[] { Int32.MinValue,
+    var components = new int[] { Int32.MinValue,
         Int32.MinValue,
         Int32.MinValue,
         Int32.MinValue,
@@ -351,13 +354,13 @@ public sealed class Microformats {
     return (href==null || href.Length==0) ? ("") : (href);
   }
 
-  private static int[] getLastKnownTime(JSONObject obj) {
+  private static int[] getLastKnownTime(PeterO.Cbor.CBORObject obj) {
     if (obj.has("start")) {
-      JSONArray arr=obj.getJSONArray("start");
+      PeterO.Cbor.CBORObject arr=obj.getJson("start");
       //Console.WriteLine("start %s",arr);
       Object result = arr[arr.Length-1];
       if (result is string) {
-        int[] components = new int[] { Int32.MinValue,
+        var components = new int[] { Int32.MinValue,
             Int32.MinValue,
             Int32.MinValue,
             Int32.MinValue,
@@ -393,11 +396,12 @@ public sealed class Microformats {
     /// all Microformats items. Each item will have a "type" and
     /// "properties" properties. @param root the document to scan. @return
     /// a JSON _object containing Microformats metadata.</summary>
-    /// <param name='root'>Not documented yet.</param>
-    /// <returns>A JSONObject object.</returns>
+    /// <param name='root'>The parameter <paramref name='root'/> is not
+    /// documented yet.</param>
+    /// <returns>A PeterO.Cbor.CBORObject object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
-  public static JSONObject getMicroformatsJSON(IDocument root) {
+  public static PeterO.Cbor.CBORObject getMicroformatsJSON(IDocument root) {
     if ((root) == null) {
  throw new ArgumentNullException("root");
 }
@@ -409,16 +413,17 @@ public sealed class Microformats {
     /// Microformats items. Each item will have a "type" and "properties"
     /// properties. @param root the element to scan. @return a JSON _object
     /// containing Microformats metadata.</summary>
-    /// <param name='root'>Not documented yet.</param>
-    /// <returns>A JSONObject object.</returns>
+    /// <param name='root'>The parameter <paramref name='root'/> is not
+    /// documented yet.</param>
+    /// <returns>A PeterO.Cbor.CBORObject object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
-  public static JSONObject getMicroformatsJSON(IElement root) {
+  public static PeterO.Cbor.CBORObject getMicroformatsJSON(IElement root) {
     if ((root) == null) {
  throw new ArgumentNullException("root");
 }
-    JSONObject obj = new JSONObject();
-    JSONArray items = new JSONArray();
+    var obj = PeterO.Cbor.CBORObject.NewMap();
+    var items = PeterO.Cbor.CBORObject.NewArray();
     propertyWalk(root, null, items);
     obj.put("items", items);
     return obj;
@@ -432,7 +437,7 @@ if (!(day >= 0)) {
 #endif
     int[] dayArray = ((year & 3) != 0 || (year % 100 == 0 && year % 400 != 0)) ?
         normalDays : leapDays;
-    int month = 1;
+    var month = 1;
     while (day <= 0 || day>dayArray[month]) {
       if (day>dayArray[month]) {
         day-=dayArray[month];
@@ -475,22 +480,22 @@ if (!(day <= 31)) {
           (root.getAttribute("alt")) : (getValueContent(root,false));
   }
 
-  public static JSONObject getRelJSON(IDocument root) {
+  public static PeterO.Cbor.CBORObject getRelJSON(IDocument root) {
     if ((root) == null) {
  throw new ArgumentNullException("root");
 }
     return getRelJSON(root.getDocumentElement());
   }
 
-  public static JSONObject getRelJSON(IElement root) {
+  public static PeterO.Cbor.CBORObject getRelJSON(IElement root) {
     if ((root) == null) {
  throw new ArgumentNullException("root");
 }
-    JSONObject obj = new JSONObject();
-    JSONArray items = new JSONArray();
-    JSONObject item = new JSONObject();
+    var obj = PeterO.Cbor.CBORObject.NewMap();
+    var items = PeterO.Cbor.CBORObject.NewArray();
+    var item = PeterO.Cbor.CBORObject.NewMap();
     accumulateValue(item,"type","rel");
-    JSONObject props = new JSONObject();
+    var props = PeterO.Cbor.CBORObject.NewMap();
     relWalk(root, props);
     item.put("properties", props);
     items.put(item);
@@ -518,8 +523,8 @@ if (!(day <= 31)) {
 
   private static string getTrimmedTextContent(IElement element) {
     string trimmed = StringUtility.trimSpaces(element.getTextContent());
-    StringBuilder builder = new StringBuilder();
-    bool whitespace = false;
+    var builder = new StringBuilder();
+    var whitespace = false;
     for (int i = 0;i<trimmed.Length; ++i) {
       char c = trimmed[i];
       if (c == 0x09||c == 0x0a||c == 0x0c||c == 0x0d||c == 0x20) {
@@ -539,7 +544,8 @@ if (!(day <= 31)) {
     /// tries to find the URL from the element's attributes, if possible;
     /// otherwise from the element's text. @param e an HTML element.
     /// @return a URL, or the empty _string if none was found.</summary>
-    /// <param name='e'>Not documented yet.</param>
+    /// <param name='e'>The parameter <paramref name='e'/> is not
+    /// documented yet.</param>
     /// <returns>A string object.</returns>
   private static string getUValue(IElement e) {
     string url = getHref(e);
@@ -595,14 +601,13 @@ if (!(day <= 31)) {
     if (elements.Count == 0) {
  // No value elements, get the text content
       return getValueElementContent(root);
- }
-    else if (elements.Count == 1) {
+  } else if (elements.Count == 1) {
       // One value element
       IElement valueElement = elements[0];
       return getValueElementContent(valueElement);
     } else {
-      StringBuilder builder = new StringBuilder();
-      bool first = true;
+      var builder = new StringBuilder();
+      var first = true;
       foreach (var element in elements) {
         if (!first) {
           builder.Append(' ');
@@ -619,8 +624,7 @@ if (!(day <= 31)) {
  // If element has the value-title class, use
       // the title instead
       return valueOrEmpty(valueElement.getAttribute("title"));
- }
-    else if (elementName(valueElement).Equals("img") ||
+  } else if (elementName(valueElement).Equals("img") ||
         elementName(valueElement).Equals("area")) {
       string s=valueElement.getAttribute("alt");
       return (s==null) ? "" : s;
@@ -650,33 +654,32 @@ if (!(day <= 31)) {
   }
 
   private static bool hasSingleChildElementNamed(INode e, string name) {
-    bool seen = false;
+    var seen = false;
     foreach (var child in e.getChildNodes()) {
       if (child is IElement) {
         if (seen) {
  return false;
 }
 if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
-          .Equals(name))
-          return false;
+          .Equals(name)) return false;
         seen = true;
       }
     }
     return seen;
   }
 
-  private static bool implyForLink(IElement root, JSONObject subProperties) {
+  private static bool implyForLink(IElement root, PeterO.Cbor.CBORObject subProperties) {
     if (StringUtility.toLowerCaseAscii(root.getLocalName()).Equals("a") &&
         root.getAttribute("href")!=null) {
       // get the link's URL
       setValueIfAbsent(subProperties,"url", getUValue(root));
       IList<IElement> elements = getChildElements(root);
       if (elements.Count == 1 &&
-     StringUtility.toLowerCaseAscii(elements[0].getLocalName()).Equals("img"
-)) {
+     StringUtility.toLowerCaseAscii(elements[0].getLocalName()).Equals(
+  "img")) {
                     // try to get the ALT/TITLE
                     //from the image
-                    string pValue = getPValue(elements[0]);  
+                    string pValue = getPValue(elements[0]);
         if (StringUtility.isNullOrSpaces(pValue)) {
           pValue = getPValue(root);  // if empty, get text from link instead
         }
@@ -705,7 +708,7 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
     if (value == null) {
  return -1;
 }
-    int patternValue = 0;
+    var patternValue = 0;
     int valueIndex = index;
     for (int patternIndex = 0;patternIndex<pattern.Length;
         patternIndex++) {
@@ -720,10 +723,11 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
  return -1;
 }
         pc = pattern[patternIndex];
-        if (pc=='D') {// day of year; expect three digits
-          if (valueIndex + 3>value.Length) {
- return -1;
-}
+        if (pc=='D') {
+            // day of year -- expect three digits
+              if (valueIndex + 3 > value.Length) {
+                return -1;
+              }
           vc = value[valueIndex++];
           if (vc<'0' || vc>'9') {
  return -1;
@@ -743,7 +747,8 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
  return -1;
 }
           components[2]=patternValue;
-        } else if (pc=='Y') {// year; expect four digits
+        } else if (pc=='Y') {
+    // year -- expect four digits
           if (valueIndex + 4>value.Length) {
  return -1;
 }
@@ -790,7 +795,7 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
           if (valueIndex + 3>value.Length) {
  return -1;
 }
-          bool negative = false;
+          var negative = false;
           vc = value[valueIndex++];
           if (vc!='+' && vc!='-') {
  return -1;
@@ -906,9 +911,9 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
     if (!useDate && !useTime && !useTimezone) {
  return false;
 }
-    int[] c = new int[8];
-    int[] c2 = new int[8];
-    int index = 0;
+    var c = new int[8];
+    var c2 = new int[8];
+    var index = 0;
     int oldIndex = index;
     if (datePatterns != null) {
       // match the date patterns, if any
@@ -962,9 +967,9 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
  return ret;
 }
     IList<string> relList = new List<string>();
-    bool hasTag = false;
-    bool hasSelf = false;
-    bool hasBookmark = false;
+    var hasTag = false;
+    var hasSelf = false;
+    var hasBookmark = false;
     foreach (var element in ret) {
       if (!hasTag && "tag".Equals(element)) {
         relList.Add("p-category");
@@ -984,11 +989,11 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
     return relList.ToArray();
   }
   private static void propertyWalk(IElement root,
-      JSONObject properties, JSONArray children) {
+      PeterO.Cbor.CBORObject properties, PeterO.Cbor.CBORObject children) {
     string[] className = getClassNames(root);
     if (className.Length>0) {
       IList<string> types = new List<string>();
-      bool hasProperties = false;
+      var hasProperties = false;
       foreach (var cls in className) {
         if (cls.StartsWith("p-",StringComparison.Ordinal) && properties!=null) {
           hasProperties = true;
@@ -1028,14 +1033,14 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
       } else if (types.Count>0) {
         // this is a child microformat
         // with no properties
-        JSONObject obj = new JSONObject();
-        obj.put("type", new JSONArray(types));
+        var obj = PeterO.Cbor.CBORObject.NewMap();
+        obj.put("type", new PeterO.Cbor.CBORObject(types));
         // for holding child elements with
         // properties
-        JSONObject subProperties = new JSONObject();
+        var subProperties = PeterO.Cbor.CBORObject.NewMap();
         // for holding child microformats with no
         // property class
-        JSONArray subChildren = new JSONArray();
+        var subChildren = PeterO.Cbor.CBORObject.NewArray();
         foreach (var child in root.getChildNodes()) {
           if (child is IElement) {
             propertyWalk((IElement)child,
@@ -1059,8 +1064,8 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
             }
           }
           // Also imply u-photo
-        if (StringUtility.toLowerCaseAscii(root.getLocalName()).Equals("img"
-) &&
+        if (StringUtility.toLowerCaseAscii(root.getLocalName()).Equals(
+  "img") &&
               root.getAttribute("src")!=null) {
             setValueIfAbsent(subProperties,"photo", getUValue(root));
           }
@@ -1078,21 +1083,21 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
         if (hasProperties) {
           foreach (var cls in className) {
             if (cls.StartsWith("p-",StringComparison.Ordinal)) {  // property
-              JSONObject clone = copyJson(obj);
+              PeterO.Cbor.CBORObject clone = copyJson(obj);
               clone.put("value",getPValue(root));
               accumulateValue(properties, cls.Substring(2), clone);
             } else if (cls.StartsWith("u-",StringComparison.Ordinal)) {  // URL
-              JSONObject clone = copyJson(obj);
+              PeterO.Cbor.CBORObject clone = copyJson(obj);
               clone.put("value",getUValue(root));
               accumulateValue(properties, cls.Substring(2), clone);
-        } else if (cls.StartsWith("dt-",StringComparison.Ordinal)) { 
+        } else if (cls.StartsWith("dt-",StringComparison.Ordinal)) {
               // date/time
-              JSONObject clone = copyJson(obj);
+              PeterO.Cbor.CBORObject clone = copyJson(obj);
               clone.put("value",getDTValue(root,getLastKnownTime(properties)));
               accumulateValue(properties, cls.Substring(3), clone);
-         } else if (cls.StartsWith("e-",StringComparison.Ordinal)) { 
+         } else if (cls.StartsWith("e-",StringComparison.Ordinal)) {
               // date/time
-              JSONObject clone = copyJson(obj);
+              PeterO.Cbor.CBORObject clone = copyJson(obj);
               clone.put("value",getEValue(root));
               accumulateValue(properties, cls.Substring(2), clone);
             }
@@ -1111,7 +1116,7 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
   }
 
   private static void relWalk(IElement root,
-      JSONObject properties) {
+      PeterO.Cbor.CBORObject properties) {
     string[] className = getRelNames(root);
     if (className.Length>0) {
       string href = getHref(root);
@@ -1128,18 +1133,18 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
     }
   }
 
-private static void setValueIfAbsent(JSONObject obj, string key, Object
+private static void setValueIfAbsent(PeterO.Cbor.CBORObject obj, string key, Object
     value) {
     if (!obj.has(key)) {
-      JSONArray arr = null;
-      arr = new JSONArray();
+      PeterO.Cbor.CBORObject arr = null;
+      arr = PeterO.Cbor.CBORObject.NewArray();
       obj.put(key, arr);
       arr.put(value);
     }
   }
 
   private static string toDateTimeString(int[] components) {
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     if (components[0]!=Int32.MinValue) {  // has a date
       // add year
       append4d(builder, components[0]);

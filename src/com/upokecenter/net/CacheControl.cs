@@ -118,7 +118,8 @@ internal class CacheControl {
   private class CacheControlSerializer {
  public CacheControl readObjectFromStream(PeterO.Support.InputStream stream) {
       try {
-        JSONObject jsonobj = new JSONObject(StreamUtility.streamToString(stream));
+        PeterO.Cbor.CBORObject jsonobj = new PeterO.Cbor.CBORObject.FromJSONString(
+            StreamUtility.streamToString(stream));
         CacheControl cc = new CacheControl();
         cc.cacheability=jsonobj.getInt("cacheability");
         cc.noStore=jsonobj.getBoolean("noStore");
@@ -141,7 +142,7 @@ internal class CacheControl {
           cc.requestMethod = StringUtility.toLowerCaseAscii(cc.requestMethod);
         }
         cc.headers = new List<string>();
-        JSONArray jsonarr=jsonobj.getJSONArray("headers");
+        PeterO.Cbor.CBORObject jsonarr=jsonobj.getPeterO.Cbor.CBORObject("headers");
         for (int i = 0;i<jsonarr.Length; ++i) {
           string str = jsonarr.getString(i);
           if (str != null && (i%2) != 0) {
@@ -172,7 +173,7 @@ internal class CacheControl {
       }
     }
     public void writeObjectToStream(CacheControl o, Stream stream) {
-      JSONObject jsonobj = new JSONObject();
+      PeterO.Cbor.CBORObject jsonobj = PeterO.Cbor.CBORObject.NewMap();
       jsonobj.put("cacheability",o.cacheability);
       jsonobj.put("noStore",o.noStore);
       jsonobj.put("noTransform",o.noTransform);
@@ -188,7 +189,7 @@ internal class CacheControl {
       jsonobj.put("requestMethod",o.requestMethod);
       jsonobj.put("code",o.code);
       jsonobj.put("age",Convert.ToString(o.age,CultureInfo.InvariantCulture));
-      JSONArray jsonarr = new JSONArray();
+      PeterO.Cbor.CBORObject jsonarr = PeterO.Cbor.CBORObject.NewArray();
       foreach (var header in o.headers) {
         jsonarr.put(header);
       }

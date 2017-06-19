@@ -14,7 +14,7 @@ using System.Text;
 public sealed class StreamUtility {
 public static void copyStream(PeterO.Support.InputStream stream, Stream
     output) {
-    byte[] buffer = new byte[8192];
+    var buffer = new byte[8192];
     while (true) {
       int count = stream.Read(buffer, 0, buffer.Length);
       if (count< 0) {
@@ -32,20 +32,20 @@ public static void copyStream(PeterO.Support.InputStream stream, Stream
       return streamToString(input);
     } finally {
       if (input != null) {
-        input.Close();
+        input.Dispose();
       }
     }
   }
 
   public static void inputStreamToFile(PeterO.Support.InputStream stream,
     PeterO.Support.File file) {
-    FileStream output = null;
+    Stream output = null;
     try {
       output = new FileStream((file).ToString(), FileMode.Create);
       copyStream(stream, output);
     } finally {
       if (output != null) {
-        output.Close();
+        output.Dispose();
       }
     }
   }
@@ -55,7 +55,7 @@ public static void copyStream(PeterO.Support.InputStream stream, Stream
  return;
 }
     while (true) {
-      byte[] x = new byte[1024];
+      var x = new byte[1024];
       try {
         int c = stream.Read(x, 0, x.Length);
         if (c< 0) {
@@ -75,7 +75,7 @@ public static void copyStream(PeterO.Support.InputStream stream, Stream
     PeterO.Support.InputStream stream) {
     TextReader reader = new
       StreamReader(stream, System.Text.Encoding.GetEncoding(charset));
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     var buffer = new char[4096];
     while (true) {
       int count = reader.Read(buffer, 0, (buffer).Length);
@@ -93,8 +93,10 @@ public static void copyStream(PeterO.Support.InputStream stream, Stream
     /// REPLACEMENT CHARACTER when writing to the stream. @param file a
     /// filename @ if the file can't be created or another I/O error
     /// occurs.</summary>
-    /// <param name='s'>Not documented yet.</param>
-    /// <param name='file'>Not documented yet.</param>
+    /// <param name='s'>The parameter <paramref name='s'/> is not
+    /// documented yet.</param>
+    /// <param name='file'>The parameter <paramref name='file'/> is not
+    /// documented yet.</param>
   public static void stringToFile(string s, PeterO.Support.File file) {
     Stream os = null;
     try {
@@ -112,18 +114,20 @@ public static void copyStream(PeterO.Support.InputStream stream, Stream
     /// are replaced with U + FFFD REPLACEMENT CHARACTER when writing to
     /// the stream. @param stream an output stream to write to. @ if an I/O
     /// error occurs.</summary>
-    /// <param name='s'>Not documented yet.</param>
-    /// <param name='stream'>Not documented yet.</param>
+    /// <param name='s'>The parameter <paramref name='s'/> is not
+    /// documented yet.</param>
+    /// <param name='stream'>The parameter <paramref name='stream'/> is not
+    /// documented yet.</param>
   public static void stringToStream(string s, Stream stream) {
-    byte[] bytes = new byte[4];
+    var bytes = new byte[4];
     for (int index = 0;index<s.Length; ++index) {
       int c = s[index];
-      if (c >= 0xd800 && c <= 0xdbff && index + 1<s.Length &&
+      if ((c & 0xfc00) == 0xd800 && index + 1<s.Length &&
           s[index + 1]>= 0xdc00 && s[index + 1]<= 0xdfff) {
         // Get the Unicode code point for the surrogate pair
         c = 0x10000+(c-0xd800)*0x400+(s[index + 1]-0xdc00);
         ++index;
-      } else if (c >= 0xd800 && c <= 0xdfff) {
+      } else if ((c & 0xf800) == 0xd800) {
         // unpaired surrogate, write U + FFFD instead
         c = 0xfffd;
       }

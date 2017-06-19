@@ -45,11 +45,11 @@ public class Base64 {
 
   /* ******** S T A N D A R D B A S E 6 4 A L P H A B E T ******** */
 
-  private static readonly byte WHITE_SPACE_ENC = 251;  
+  private static readonly byte WHITE_SPACE_ENC = 251;
     // Indicates white
     // space in encoding
 
-  private static readonly byte EQUALS_SIGN_ENC = 255;  
+  private static readonly byte EQUALS_SIGN_ENC = 255;
     // Indicates equals
     // sign in encoding
 
@@ -63,7 +63,8 @@ public class Base64 {
   250, 250,  // Whitespace: Tab and Linefeed
     246, 246,  // Decimal 11 - 12
     250,  // Whitespace: Carriage Return
-    246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 14 - 26
+    246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,
+     /* Decimal 14 - 26 */
     246, 246, 246, 246, 246,  // Decimal 27 - 31
     250,  // Whitespace: Space
     246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 33 - 42
@@ -79,17 +80,18 @@ public class Base64 {
     246, 246, 246, 246, 246, 246,  // Decimal 91 - 96
     26,27,28,29,30,31,32,33,34,35,36,37,38,  // Letters 'a' through 'm'
     39,40,41,42,43,44,45,46,47,48,49,50,51,  // Letters 'n' through 'z'
-    246, 246, 246, 246, 246  // Decimal 123 - 127
-    , 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 128 - 139
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 140 - 152
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 153 - 165
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 166 - 178
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 179 - 191
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 192 - 204
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 205 - 217
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 218 - 230
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 231 - 243
-    246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246  // Decimal 244 - 255
+    246, 246, 246, 246, 246,  // Decimal 123 - 127
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // 
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+   /* Decimal 140 - 152 */
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+    246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246  //
   };
 
   /* ******** O R D E R E D B A S E 6 4 A L P H A B E T ******** */
@@ -101,7 +103,7 @@ public class Base64 {
   250, 250,  // Whitespace: Tab and Linefeed
     246, 246,  // Decimal 11 - 12
     250,  // Whitespace: Carriage Return
-    246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 14 - 26
+    246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
     246, 246, 246, 246, 246,  // Decimal 27 - 31
     250,  // Whitespace: Space
     246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 33 - 42
@@ -121,17 +123,17 @@ public class Base64 {
     246,  // Decimal 96
     26,27,28,29,30,31,32,33,34,35,36,37,38,  // Letters 'a' through 'm'
     39,40,41,42,43,44,45,46,47,48,49,50,51,  // Letters 'n' through 'z'
-    246, 246, 246, 246, 246  // Decimal 123 - 127
-    , 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 128 - 139
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 140 - 152
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 153 - 165
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 166 - 178
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 179 - 191
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 192 - 204
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 205 - 217
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 218 - 230
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 231 - 243
-    246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246  // Decimal 244 - 255
+    246, 246, 246, 246, 246,  // Decimal 123 - 127
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  //
+      246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+    246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246  //
   };
 
   /* ******** D E T E R M I N E W H I C H A L P H A B E T ******** */
@@ -143,7 +145,7 @@ public class Base64 {
   250, 250,  // Whitespace: Tab and Linefeed
     246, 246,  // Decimal 11 - 12
     250,  // Whitespace: Carriage Return
-    246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 14 - 26
+    246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 
     246, 246, 246, 246, 246,  // Decimal 27 - 31
     250,  // Whitespace: Space
     246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 33 - 42
@@ -163,17 +165,17 @@ public class Base64 {
     246,  // Decimal 96
     38,39,40,41,42,43,44,45,46,47,48,49,50,  // Letters 'a' through 'm'
     51,52,53,54,55,56,57,58,59,60,61,62,63,  // Letters 'n' through 'z'
-    246, 246, 246, 246, 246  // Decimal 123 - 127
- , 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 128 - 139
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 140 - 152
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 153 - 165
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 166 - 178
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 179 - 191
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 192 - 204
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 205 - 217
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 218 - 230
-  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246,  // Decimal 231 - 243
-    246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246  // Decimal 244 - 255
+    246, 246, 246, 246, 246,  // Decimal 123 - 127
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+  246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, //
+    246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246, 246  //
   };
 
     /// <summary>Low-level access to decoding ASCII characters in the form
@@ -185,7 +187,8 @@ public class Base64 {
     /// footprint (and aren't gzipping), consider this method. @param
     /// source The Base64 encoded data @return decoded data @since
     /// 2.3.1.</summary>
-    /// <param name='source'>Not documented yet.</param>
+    /// <param name='source'>The parameter <paramref name='source'/> is not
+    /// documented yet.</param>
     /// <returns>A byte array.</returns>
   public static byte[] decode(byte[] source) {
     byte[] decoded = null;
@@ -205,10 +208,14 @@ public class Base64 {
     /// options Can specify options such as alphabet type to use @return
     /// decoded data @ If bogus characters exist in source data @since
     /// 1.3.</summary>
-    /// <param name='source'>Not documented yet.</param>
-    /// <param name='off'>Not documented yet.</param>
-    /// <param name='len'>Not documented yet. (3).</param>
-    /// <param name='options'>Not documented yet. (4).</param>
+    /// <param name='source'>The parameter <paramref name='source'/> is not
+    /// documented yet.</param>
+    /// <param name='off'>The parameter <paramref name='off'/> is not
+    /// documented yet.</param>
+    /// <param name='len'>The parameter <paramref name='len'/> is not
+    /// documented yet.</param>
+    /// <param name='options'>The parameter <paramref name='options'/> is
+    /// not documented yet.</param>
     /// <returns>A byte array.</returns>
     /// <exception cref='ArgumentNullException'>The parameter is
     /// null.</exception>
@@ -223,17 +230,15 @@ public class Base64 {
             +Convert.ToString(source.Length, CultureInfo.InvariantCulture)+
   " cannot have offset of "
             +Convert.ToString(off, CultureInfo.InvariantCulture)+
- "and process "
-            +Convert.ToString(len,CultureInfo.InvariantCulture)+" bytes.");
+ "and process " +Convert.ToString(len,CultureInfo.InvariantCulture)+" bytes.");
  }
 
     if (len == 0) {
  return new byte[0];
   } else if (len < 4) {
  throw new ArgumentException(
-  "Base64-encoded _string must have at least four characters, but length specified was "
-            +
-              Convert.ToString(len, CultureInfo.InvariantCulture));
+  "Base64-encoded _string must have at least four characters, but length specified was "+
+            Convert.ToString(len, CultureInfo.InvariantCulture));
  }
 
     byte[] DECODABET = getDecodabet(options);
@@ -242,7 +247,7 @@ public class Base64 {
     var outBuff = new byte[ len34 ];  // Upper limit on size of output
     var outBuffPosn = 0;  // Keep track of where we're writing
 
-    var b4 = new byte[4];  
+    var b4 = new byte[4];
       // Four byte buffer from source, eliminating white
       // space
     var b4Posn = 0;  // Keep track of four byte input buffer
@@ -265,17 +270,18 @@ public class Base64 {
 
             // If that was the equals sign, break out of 'for' loop
             if (source[i] == EQUALS_SIGN) {
-              break;  // end if: equals sign
-            }  // end if: quartet built
-          }  // end if: equals sign or better
-        }  // end if: white space, equals sign or better
+              break;  // end if: equals sign  // end if: quartet built
+            }  // end if: equals sign or better
+          }  // end if: white space, equals sign or better
+        }
       }
       else  // There's a bad input character in the Base64 stream.
         throw new System.IO.IOException(
             "Bad Base64 input character decimal "
   +Convert.ToString(source[i]&0xff, CultureInfo.InvariantCulture)+
       " in array position "
-              +Convert.ToString(i, CultureInfo.InvariantCulture));  // each input character
+  +Convert.ToString(i, CultureInfo.InvariantCulture));  // each input
+               // character
     }
 
     var output = new byte[ outBuffPosn ];
@@ -305,11 +311,16 @@ public class Base64 {
     /// converted @ if source or destination arrays are null @ if srcOffset
     /// or destOffset are invalid or there is not enough room in the array.
     /// @since 1.3.</summary>
-    /// <param name='source'>Not documented yet.</param>
-    /// <param name='srcOffset'>Not documented yet.</param>
-    /// <param name='destination'>Not documented yet. (3).</param>
-    /// <param name='destOffset'>Not documented yet. (4).</param>
-    /// <param name='options'>Not documented yet. (5).</param>
+    /// <param name='source'>The parameter <paramref name='source'/> is not
+    /// documented yet.</param>
+    /// <param name='srcOffset'>The parameter <paramref name='srcOffset'/>
+    /// is not documented yet.</param>
+    /// <param name='destination'>The parameter <paramref
+    /// name='destination'/> is not documented yet.</param>
+    /// <param name='destOffset'>The parameter <paramref
+    /// name='destOffset'/> is not documented yet.</param>
+    /// <param name='options'>The parameter <paramref name='options'/> is
+    /// not documented yet.</param>
     /// <returns>A 32-bit signed integer.</returns>
     /// <exception cref='ArgumentNullException'>The parameter is
     /// null.</exception>
@@ -331,6 +342,7 @@ public class Base64 {
           "Source array with length "
             +Convert.ToString(source.Length, CultureInfo.InvariantCulture)+
           " cannot have offset of "
+
   +Convert.ToString(srcOffset,CultureInfo.InvariantCulture)+" and still process four bytes.");
  }
     if (destOffset < 0 || destOffset + 2 >= destination.Length) {
@@ -338,6 +350,7 @@ public class Base64 {
           "Destination array with length "
   +Convert.ToString(destination.Length, CultureInfo.InvariantCulture)+
           " cannot have offset of "
+
   +Convert.ToString(srcOffset,CultureInfo.InvariantCulture)+" and still store three bytes.");
  }
 
@@ -368,14 +381,14 @@ public class Base64 {
       int outBuff = ((DECODABET[ source[ srcOffset ] ] & 0xff) << 18)|
           ((DECODABET[ source[ srcOffset + 1 ] ] & 0xff) << 12)|
           ((DECODABET[ source[ srcOffset + 2 ] ] & 0xff) << 6)|
-          ((DECODABET[ source[ srcOffset + 3 ] ] & 0xff));
+          (DECODABET[ source[ srcOffset + 3 ] ] & 0xff);
 
       destination[ destOffset ] = (byte)(outBuff >> 16);
       destination[ destOffset + 1 ] = (byte)(outBuff >> 8);
       destination[ destOffset + 2 ] = (byte)(outBuff);
 
-      return 3;
-    }  // end decodeToBytes
+      return 3;  // end decodeToBytes
+    }
   }
 
   /* ******** D E C O D I N G M E T H O D S ******** */
@@ -387,7 +400,8 @@ public class Base64 {
     /// specify ORDERED and URL_SAFE in which case one of them will be
     /// picked, though there is no guarantee as to which one will be
     /// picked.</summary>
-    /// <param name='options'>Not documented yet.</param>
+    /// <param name='options'>The parameter <paramref name='options'/> is
+    /// not documented yet.</param>
     /// <returns>A byte array.</returns>
   private static byte[] getDecodabet(int options) {
     if ((options & URL_SAFE) == URL_SAFE) {
@@ -395,8 +409,8 @@ public class Base64 {
   } else if ((options & ORDERED) == ORDERED) {
  return _ORDERED_DECODABET;
 } else {
- return _STANDARD_DECODABET;
-}  // end getAlphabet
+ return _STANDARD_DECODABET;  // end getAlphabet
+}
   }
 
   /* ******** I N N E R C L A S S O U T P U T S T R E A M ******** */

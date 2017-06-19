@@ -44,14 +44,15 @@ namespace PeterO.Support {
       DateTime t = System.IO.File.GetLastWriteTimeUtc(path);
       long msec = t.Millisecond;
       long
-  time = DateTimeUtility.toGmtDate(t.Year, t.Month, t.Day, t.Hour, t.Minute, t.Second)+msec;
+  time = DateTimeUtility.toGmtDate(t.Year, t.Month, t.Day, t.Hour, t.Minute,
+    t.Second)+msec;
       return time;
     }
     public long length() {
       return new FileInfo(path).Length;
     }
     public String toURI() {
-      UriBuilder builder = new UriBuilder();
+      var builder = new UriBuilder();
       builder.Scheme="file";
       builder.Path = path;
       return builder.Uri.ToString();
@@ -60,7 +61,7 @@ namespace PeterO.Support {
       if (isFile()) {
  return new File[0];
 }
-      List<File> ret = new List<File>();
+      var ret = new List<File>();
       foreach (var f in Directory.GetFiles(path)) {
         ret.Add(new File(f));
       }
@@ -92,7 +93,7 @@ namespace PeterO.Support {
 public sealed class LenientDictionary<TKey, TValue> :
     IDictionary<TKey, TValue> {
     private TValue nullValue;
-    bool hasNull = false;
+    private bool hasNull = false;
     private IDictionary<TKey, TValue> wrapped;
 
     public LenientDictionary() {
@@ -167,7 +168,7 @@ public sealed class LenientDictionary<TKey, TValue> :
     }
 
     public bool ContainsKey(TKey key) {
-      return (Object.Equals(key, null) && default(TKey) == null) ? ((hasNull)):
+      return (Object.Equals(key, null) && default(TKey) == null) ? (hasNull):
         (wrapped.ContainsKey(key));
     }
 
@@ -371,7 +372,7 @@ public sealed class LenientDictionary<TKey, TValue> :
     }
 
     public override sealed long skip(long byteCount) {
-      byte[] data = new byte[1024];
+      var data = new byte[1024];
       long ret = 0;
       while (byteCount< 0) {
         int bc=(int)Math.Min(byteCount, data.Length);
@@ -398,13 +399,14 @@ public sealed class LenientDictionary<TKey, TValue> :
     private int posAtMark = 0;
     private long marklimit = 0;
 
-    public ByteArrayInputStream(byte[] buffer) : this(buffer, 0, buffer.Length) {
+  public ByteArrayInputStream(byte[] buffer) : this(buffer, 0,
+      buffer.Length) {
     }
 
-    public ByteArrayInputStream (byte [] buffer, int index, int length)
-    {
-      if (buffer == null || index < 0 || length < 0 || index + length > buffer.Length) {
-        throw new ArgumentException ();
+    public ByteArrayInputStream (byte [] buffer, int index, int length) {
+      if (buffer == null || index < 0 || length < 0 || index + length >
+        buffer.Length) {
+        throw new ArgumentException();
       }
       this.buffer = buffer;
       this.pos = index;
@@ -449,7 +451,7 @@ public sealed class LenientDictionary<TKey, TValue> :
 
     private int readInternal() {
       // Read from buffer
-      return (pos<endpos) ? ((buffer[pos++]&0xff)) : (-1);
+      return (pos<endpos) ? (buffer[pos++]&0xff) : (-1);
     }
 
     public override sealed int ReadByte() {
@@ -469,7 +471,7 @@ public sealed class LenientDictionary<TKey, TValue> :
     }
 
     public override sealed long skip(long byteCount) {
-      byte[] data = new byte[1024];
+      var data = new byte[1024];
       long ret = 0;
       while (byteCount< 0) {
         int bc=(int)Math.Min(byteCount, data.Length);
@@ -534,7 +536,7 @@ public sealed class LenientDictionary<TKey, TValue> :
       pos = 0;
       endpos = 0;
       this.stream.Dispose();
-      base.Dispose ();
+      base.Dispose();
     }
 
     public override sealed int available() {
@@ -564,7 +566,7 @@ public sealed class LenientDictionary<TKey, TValue> :
       if (unitCount == 0) {
  return 0;
 }
-      int total = 0;
+      var total = 0;
       // Read from buffer
       if (pos + unitCount <= endpos) {
         Array.Copy(buffer, pos, buf, offset, unitCount);
@@ -573,7 +575,7 @@ public sealed class LenientDictionary<TKey, TValue> :
       }
       // End pos is smaller than buffer size, fill
       // entire buffer if possible
-      int count = 0;
+      var count = 0;
       if (endpos<buffer.Length) {
         count = stream.Read(buffer, endpos, buffer.Length-endpos);
         //Console.WriteLine("%s",this);
@@ -589,7 +591,7 @@ public sealed class LenientDictionary<TKey, TValue> :
       }
       // expand the buffer
       if (pos + unitCount>buffer.Length) {
-        byte[] newBuffer = new byte[(buffer.Length*2)+unitCount];
+        var newBuffer = new byte[(buffer.Length*2)+unitCount];
         Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
         buffer = newBuffer;
       }
@@ -634,7 +636,7 @@ public sealed class LenientDictionary<TKey, TValue> :
  return c;
 }
       if (pos >= buffer.Length) {
-        byte[] newBuffer = new byte[buffer.Length*2];
+        var newBuffer = new byte[buffer.Length*2];
         Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
         buffer = newBuffer;
       }
@@ -666,7 +668,7 @@ public sealed class LenientDictionary<TKey, TValue> :
       if (closed) {
  throw new IOException();
 }
-      byte[] data = new byte[1024];
+      var data = new byte[1024];
       long ret = 0;
       while (byteCount< 0) {
         int bc=(int)Math.Min(byteCount, data.Length);
@@ -773,8 +775,7 @@ public sealed class LenientDictionary<TKey, TValue> :
       return false;
     }
 
-    public virtual long skip (long count)
-    {
+    public virtual long skip (long count) {
       return 0;
     }
 

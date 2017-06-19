@@ -89,12 +89,12 @@ public sealed class RDFUtility {
     /// subject can either be a URI or a blank node (which starts with
     /// "_:". @param triples.</summary>
   /*
-  public static com.upokecenter.json.JSONObject RDFtoJSON(ISet<RDFTriple>
+  public static com.upokecenter.json.PeterO.Cbor.CBORObject RDFtoJSON(ISet<RDFTriple>
     triples) {
     IDictionary<RDFTerm, IList<RDFTriple>> subjects = new
       PeterO.Support.LenientDictionary<RDFTerm, IList<RDFTriple>>();
-com.upokecenter.json.JSONObject rootJson = new
-      com.upokecenter.json.JSONObject();
+com.upokecenter.json.PeterO.Cbor.CBORObject rootJson = new
+      com.upokecenter.json.PeterO.Cbor.CBORObject();
     foreach (var triple in triples) {
       IList<RDFTriple> subjectList = subjects[triple.getSubject()];
       if (subjectList == null) {
@@ -104,8 +104,8 @@ com.upokecenter.json.JSONObject rootJson = new
       subjectList.Add(triple);
     }
     foreach (var subject in subjects.Keys) {
-      com.upokecenter.json.JSONObject subjectJson = new
-        com.upokecenter.json.JSONObject();
+      com.upokecenter.json.PeterO.Cbor.CBORObject subjectJson = new
+        com.upokecenter.json.PeterO.Cbor.CBORObject();
       IDictionary<RDFTerm, IList<RDFTerm>> predicates = new
         PeterO.Support.LenientDictionary<RDFTerm, IList<RDFTerm>>();
       foreach (var triple in triples) {
@@ -117,11 +117,11 @@ com.upokecenter.json.JSONObject rootJson = new
         subjectList.Add(triple.getObject());
       }
       foreach (var predicate in predicates.Keys) {
-com.upokecenter.json.JSONArray valueArray = new
-          com.upokecenter.json.JSONArray();
+com.upokecenter.json.PeterO.Cbor.CBORObject valueArray = new
+          com.upokecenter.json.PeterO.Cbor.CBORObject();
         foreach (var obj in predicates[predicate]) {
-          com.upokecenter.json.JSONObject valueJson = new
-            com.upokecenter.json.JSONObject();
+          com.upokecenter.json.PeterO.Cbor.CBORObject valueJson = new
+            com.upokecenter.json.PeterO.Cbor.CBORObject();
           if (obj.getKind() == RDFTerm.IRI) {
             valueJson.put("type","uri");
             valueJson.put("value",obj.getValue());

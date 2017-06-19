@@ -59,6 +59,7 @@ public sealed class RDFTriple {
     } else {
  return !subject.Equals(other.subject);
 }
+      return true;
   }
 
   public RDFTerm getObject() {
@@ -75,7 +76,7 @@ public sealed class RDFTriple {
 
   public override sealed int GetHashCode() {unchecked {
      var prime = 31;
- int result = prime * result + ((_object == null) ? 0 :
+ int result = prime + ((_object == null) ? 0 :
       _object.GetHashCode());
     result = prime * result+
         ((predicate == null) ? 0 : predicate.GetHashCode());
@@ -107,6 +108,7 @@ public sealed class RDFTriple {
     if (!(subject.getKind() == RDFTerm.IRI ||
         subject.getKind() == RDFTerm.BLANK)) {
  throw new
+
   ArgumentException("doesn't satisfy subject.kind==RDFTerm.IRI || subject.kind==RDFTerm.BLANK");
 }
     this.subject = subject;

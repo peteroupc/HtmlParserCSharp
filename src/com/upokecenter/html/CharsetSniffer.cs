@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using com.upokecenter.encoding;
+using PeterO.Text;
 using com.upokecenter.net;
 using com.upokecenter.util;
 
@@ -40,63 +40,65 @@ sealed class CharsetSniffer {
 
   private const int RSSFeed = 1;  // application/rss + xml
   private const int AtomFeed = 2;  // application/atom + xml
-  private static readonly byte[] rdfNamespace = new byte[] {
-    0x68, 0x74, 0x74, 0x70, 0x3a, 0x2f, 0x2f, 0x77, 0x77, 0x77, 0x2e,
+  private static readonly byte[] rdfNamespace = new byte[] { 0x68, 0x74,
+    0x74, 0x70, 0x3a, 0x2f, 0x2f, 0x77, 0x77, 0x77, 0x2e,
     0x77, 0x33, 0x2e, 0x6f, 0x72, 0x67, 0x2f, 0x31, 0x39, 0x39, 0x39,
     0x2f, 0x30, 0x32, 0x2f, 0x32, 0x32, 0x2d, 0x72, 0x64, 0x66, 0x2d,
     0x73, 0x79, 0x6e, 0x74, 0x61, 0x78, 0x2d, 0x6e, 0x73, 0x23 };
 
-  private static readonly byte[] rssNamespace = new byte[] {
-    0x68, 0x74, 0x74, 0x70, 0x3a, 0x2f, 0x2f, 0x70, 0x75, 0x72, 0x6c,
+  private static readonly byte[] rssNamespace = new byte[] { 0x68, 0x74,
+    0x74, 0x70, 0x3a, 0x2f, 0x2f, 0x70, 0x75, 0x72, 0x6c,
     0x2e, 0x6f, 0x72, 0x67, 0x2f, 0x72, 0x73, 0x73, 0x2f, 0x31, 0x2e,
     0x30, 0x2f };
-
   static byte[][] patternsHtml = new byte[][] {
-    new byte[] {
-      0x3c, 0x21, 0x44, 0x4f, 0x43, 0x54, 0x59, 0x50, 0x45, 0x20, 0x48, 0x54, 0x4d, 0x4C
-      },
-    new byte[] {
-  (byte)255, (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
-      },
-    new byte[] { 0x3c, 0x48, 0x54, 0x4d, 0x4c }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
-    new byte[] { 0x3c, 0x48, 0x45, 0x41, 0x44 }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
+    new byte[] { 0x3c, 0x21, 0x44, 0x4f, 0x43, 0x54, 0x59, 0x50, 0x45, 0x20,
+      0x48, 0x54, 0x4d, 0x4c },
+    new byte[] { (byte)255, (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+      (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)255, (byte)0xdf,
+      (byte)0xdf, (byte)0xdf, (byte)0xdf },
+    new byte[] { 0x3c, 0x48, 0x54, 0x4d, 0x4c }, new byte[] { (byte)255,
+      (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
+    new byte[] { 0x3c, 0x48, 0x45, 0x41, 0x44 }, new byte[] { (byte)255,
+      (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
     new byte[] { 0x3c, 0x53, 0x43, 0x52, 0x49, 0x50, 0x54 }, new byte[] {
-  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
-      },
+      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+      (byte)0xdf },
     new byte[] { 0x3c, 0x49, 0x46, 0x52, 0x41, 0x4d, 0x45 }, new byte[] {
-  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
-      },
-    new byte[] { 0x3c, 0x48, 0x31 }, new byte[] { (byte)255, (byte)0xdf, (byte)255 },
-    new byte[] { 0x3c, 0x44, 0x49, 0x56 }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf },
-    new byte[] { 0x3c, 0x46, 0x4f, 0x4e, 0x54 }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
+      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+      (byte)0xdf },
+    new byte[] { 0x3c, 0x48, 0x31 }, new byte[] { (byte)255, (byte)0xdf,
+      (byte)255 },
+    new byte[] { 0x3c, 0x44, 0x49, 0x56 }, new byte[] { (byte)255,
+      (byte)0xdf, (byte)0xdf, (byte)0xdf },
+    new byte[] { 0x3c, 0x46, 0x4f, 0x4e, 0x54 }, new byte[] { (byte)255,
+      (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
     new byte[] { 0x3c, 0x54, 0x41, 0x42, 0x4c, 0x45 }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
+      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+      },
     new byte[] { 0x3c, 0x41 }, new byte[] { (byte)255, (byte)0xdf },
     new byte[] { 0x3c, 0x53, 0x54, 0x59, 0x4c, 0x45 }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
-    new byte[] { 0x3c, 0x54, 0x49, 0x54, 0x4c, 0x45 }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
-    new byte[] { 0x3c, 0x42 }, new byte[] { (byte)255, (byte)0xdf },
-    new byte[] { 0x3c, 0x42, 0x4f, 0x44, 0x59 }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
-  new byte[] { 0x3c, 0x42, 0x52 }, new byte[] { (byte)255, (byte)0xdf, (byte)0xdf
+      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
       },
+    new byte[] { 0x3c, 0x54, 0x49, 0x54, 0x4c, 0x45 }, new byte[] {
+      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+      },
+    new byte[] { 0x3c, 0x42 }, new byte[] { (byte)255, (byte)0xdf },
+    new byte[] { 0x3c, 0x42, 0x4f, 0x44, 0x59 }, new byte[] { (byte)255,
+      (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
+  new byte[] { 0x3c, 0x42, 0x52 }, new byte[] { (byte)255, (byte)0xdf,
+    (byte)0xdf },
     new byte[] { 0x3c, 0x50 }, new byte[] { (byte)255, (byte)0xdf },
-    new byte[] { 0x3c, 0x21, 0x2d, 0x2d }, new byte[] {
-      (byte)255, (byte)255, (byte)255, (byte)255 },
+    new byte[] { 0x3c, 0x21, 0x2d, 0x2d }, new byte[] { (byte)255,
+      (byte)255, (byte)255, (byte)255 },
   };
   static byte[][] patternsXml = new byte[][] {
-    new byte[] { 0x3c, 0x3f, 0x78, 0x6d, 0x6c }, new byte[] {
-      (byte)255, (byte)255, (byte)255, (byte)255, (byte)255 },
+    new byte[] { 0x3c, 0x3f, 0x78, 0x6d, 0x6c }, new byte[] { (byte)255,
+      (byte)255, (byte)255, (byte)255, (byte)255 },
   };
 
   static byte[][] patternsPdf = new byte[][] {
-    new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2d }, new byte[] {
-      (byte)255, (byte)255, (byte)255, (byte)255, (byte)255 }
+    new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2d }, new byte[] { (byte)255,
+      (byte)255, (byte)255, (byte)255, (byte)255 }
   };
 
   static byte[][] patternsPs = new byte[][] {
@@ -108,7 +110,7 @@ sealed class CharsetSniffer {
  return value;
 }
     // We assume value is lower-case here
-    int index = 0;
+    var index = 0;
     int length = value.Length;
     char c=(char)0;
     while (true) {
@@ -178,7 +180,7 @@ sealed class CharsetSniffer {
     if (endIndex<0 || endIndex<offset) {
  return -1;
 }
-    bool found = false;
+    var found = false;
     for (int i = offset; i < endIndex; ++i) {
       found = true;
       for (int j = 0;j<pattern.Length; ++j) {
@@ -280,9 +282,9 @@ sealed class CharsetSniffer {
     if (position >= length || data[position]==0x3f) {
  return position;
 }
-    bool empty = true;
-    bool tovalue = false;
-    int b = 0;
+    var empty = true;
+    var tovalue = false;
+    var b = 0;
     // Skip attribute name
     while (true) {
       if (position >= length) {
@@ -298,7 +300,8 @@ sealed class CharsetSniffer {
         ++position;
         tovalue = true;
         break;
-      } else if (b == 0x09 || b == 0x0a || b == 0x0c || b == 0x0d || b == 0x20) {
+    } else if (b == 0x09 || b == 0x0a || b == 0x0c || b == 0x0d || b ==
+        0x20) {
         break;
       } else if (b == 0x2f || b == 0x3e) {
  return position;
@@ -406,7 +409,8 @@ sealed class CharsetSniffer {
         return position;
       }
       b=(data[position]&0xff);
-      if (b == 0x09 || b == 0x0a || b == 0x0c || b == 0x0d || b == 0x20 || b == 0x3e) {
+      if (b == 0x09 || b == 0x0a || b == 0x0c || b == 0x0d || b == 0x20 || b
+        == 0x3e) {
  return position;
 }
       if (attrValue != null) {
@@ -450,9 +454,9 @@ sealed class CharsetSniffer {
  return sniffUnknownContentType(input, true);
 }
       if (type.Equals("text/html")) {
-        byte[] header = new byte[512];
+        var header = new byte[512];
         input.mark(514);
-        int count = 0;
+        var count = 0;
         try {
           count = input.Read(header, 0, 512);
         } finally {
@@ -476,7 +480,7 @@ sealed class CharsetSniffer {
   public static EncodingConfidence sniffEncoding(PeterO.Support.InputStream
     stream, string encoding) {
     stream.mark(3);
-    int b = 0;
+    var b = 0;
     try {
       int b1 = stream.ReadByte();
       int b2 = stream.ReadByte();
@@ -500,21 +504,22 @@ sealed class CharsetSniffer {
 }
     }
     // At this point, the confidence is tentative
-    byte[] data = new byte[1024];
+    var data = new byte[1024];
     stream.mark(1028);
-    int count = 0;
+    var count = 0;
     try {
       count = stream.Read(data, 0, 1024);
     } finally {
       stream.reset();
     }
-    int position = 0;
+    var position = 0;
     while (position<count) {
       if (position + 4 <= count &&
           data[position + 0]==0x3c && (data[position + 1]&0xff) == 0x21 &&
-          (data[position + 2]&0xff) == 0x2d && (data[position + 3]&0xff) == 0x2d) {
+      (data[position + 2]&0xff) == 0x2d && (data[position + 3]&0xff) ==
+            0x2d) {
         // Skip comment
-        int hyphenCount = 2;
+        var hyphenCount = 2;
         position+=4;
         while (position<count) {
           int c=(data[position]&0xff);
@@ -528,28 +533,33 @@ sealed class CharsetSniffer {
           ++position;
         }
   } else if (position + 6 <= count && data[position]==0x3c &&
-          ((data[position + 1]&0xff) == 0x4d || (data[position + 1]&0xff) == 0x6d) &&
-          ((data[position + 2]&0xff) == 0x45 || (data[position + 2]&0xff) == 0x65) &&
-          ((data[position + 3]&0xff) == 0x54 || (data[position + 3]&0xff) == 0x74) &&
+    ((data[position + 1]&0xff) == 0x4d || (data[position + 1]&0xff) == 0x6d)
+            &&
+    ((data[position + 2]&0xff) == 0x45 || (data[position + 2]&0xff) == 0x65)
+            &&
+    ((data[position + 3]&0xff) == 0x54 || (data[position + 3]&0xff) == 0x74)
+            &&
           (data[position + 4]==0x41 || data[position + 4]==0x61) &&
- (data[position + 5]==0x09 || data[position + 5]==0x0a || data[position + 5]==0x0D
+ (data[position + 5]==0x09 || data[position + 5]==0x0a || data[position +
+   5]==0x0D
             ||
     data[position + 5]==0x0c || data[position + 5]==0x20 ||
             data[position + 5]==0x2f)
 ) {
         // META tag
-        bool haveHttpEquiv = false;
-        bool haveContent = false;
-        bool haveCharset = false;
-        bool gotPragma = false;
-        int needPragma = 0;  // need pragma null
+        var haveHttpEquiv = false;
+        var haveContent = false;
+        var haveCharset = false;
+        var gotPragma = false;
+        var needPragma = 0;  // need pragma null
         string charset = null;
-        StringBuilder attrName = new StringBuilder();
-        StringBuilder attrValue = new StringBuilder();
+        var attrName = new StringBuilder();
+        var attrValue = new StringBuilder();
         position+=5;
         while (true) {
           int
-  newpos = CharsetSniffer.readAttribute(data, count, position, attrName, attrValue);
+  newpos = CharsetSniffer.readAttribute(data, count, position, attrName,
+    attrValue);
           if (newpos == position) {
             break;
           }
@@ -576,7 +586,8 @@ sealed class CharsetSniffer {
           }
           position = newpos;
         }
-        if (needPragma == 0 || (needPragma == 2 && !gotPragma) || charset == null) {
+   if (needPragma == 0 || (needPragma == 2 && !gotPragma) || charset ==
+          null) {
           ++position;
         } else {
           if ("utf-16le".Equals(charset) || "utf-16be".Equals(charset)) {
@@ -586,13 +597,17 @@ sealed class CharsetSniffer {
         }
   } else if ((position + 3 <= count &&
           data[position]==0x3c && (data[position + 1]&0xff) == 0x2f &&
-          (((data[position + 2]&0xff) >= 0x41 && (data[position + 2]&0xff) <= 0x5a) ||
-   ((data[position + 2]&0xff) >= 0x61 && (data[position + 2]&0xff) <= 0x7a))) || //
+   (((data[position + 2]&0xff) >= 0x41 && (data[position + 2]&0xff) <= 0x5a)
+            ||
+   ((data[position + 2]&0xff) >= 0x61 && (data[position + 2]&0xff) <=
+     0x7a))) || //
 //</X
               (position + 2 <= count && data[position]==0x3c &&
-           (((data[position + 1]&0xff) >= 0x41 && (data[position + 1]&0xff) <= 0x5a)
+      (((data[position + 1]&0xff) >= 0x41 && (data[position + 1]&0xff) <=
+             0x5a)
                 ||
-       ((data[position + 1]&0xff) >= 0x61 && (data[position + 1]&0xff) <= 0x7a)))  // <X
+       ((data[position + 1]&0xff) >= 0x61 && (data[position + 1]&0xff) <=
+         0x7a)))  // <X
 ) {
         // </X
         while (position<count) {
@@ -613,9 +628,9 @@ sealed class CharsetSniffer {
           position = newpos;
         }
         ++position;
-  } else if (position + 2 <= count &&
-          data[position]==0x3c &&
-          ((data[position + 1]&0xff) == 0x21 || (data[position + 1]&0xff) == 0x3f ||
+  } else if (position + 2 <= count && data[position]==0x3c &&
+     ((data[position + 1]&0xff) == 0x21 || (data[position + 1]&0xff) == 0x3f
+            ||
           (data[position + 1]&0xff) == 0x2f)) {
         // <! or </ or <?
         while (position<count) {
@@ -629,7 +644,7 @@ sealed class CharsetSniffer {
         ++position;
       }
     }
-    int maybeUtf8 = 0;
+    var maybeUtf8 = 0;
     // Check for UTF-8
     position = 0;
     while (position<count) {
@@ -639,13 +654,15 @@ sealed class CharsetSniffer {
         continue;
       }
       if (position + 2 <= count && (b >= 0xc2 && b <= 0xdf) &&
-          ((data[position + 1]&0xff) >= 0x80 && (data[position + 1]&0xff) <= 0xbf)
+       ((data[position + 1]&0xff) >= 0x80 && (data[position + 1]&0xff) <=
+            0xbf)
 ) {
         //Console.WriteLine("%02X %02X",data[position],data[position+1]);
         position+=2;
         maybeUtf8 = 1;
       } else if (position + 3 <= count && (b >= 0xe0 && b <= 0xef) &&
-          ((data[position + 2]&0xff) >= 0x80 && (data[position + 2]&0xff) <= 0xbf)) {
+    ((data[position + 2]&0xff) >= 0x80 && (data[position + 2]&0xff) <=
+            0xbf)) {
         int startbyte=(b == 0xe0) ? 0xa0 : 0x80;
         int endbyte=(b == 0xed) ? 0x9f : 0xbf;
         //Console.WriteLine("%02X %02X %02X"
@@ -657,10 +674,11 @@ sealed class CharsetSniffer {
         }
         position+=3;
         maybeUtf8 = 1;
-      } else if (position + 4 <= count &&
-          (b >= 0xf0 && b <= 0xf4) &&
-          ((data[position + 2]&0xff) >= 0x80 && (data[position + 2]&0xff) <= 0xbf) &&
-          ((data[position + 3]&0xff) >= 0x80 && (data[position + 3]&0xff) <= 0xbf)) {
+      } else if (position + 4 <= count && (b >= 0xf0 && b <= 0xf4) &&
+    ((data[position + 2]&0xff) >= 0x80 && (data[position + 2]&0xff) <= 0xbf)
+            &&
+    ((data[position + 3]&0xff) >= 0x80 && (data[position + 3]&0xff) <=
+            0xbf)) {
         int startbyte=(b == 0xf0) ? 0x90 : 0x80;
         int endbyte=(b == 0xf4) ? 0x8f : 0xbf;
         //Console.WriteLine("%02X %02X %02X %02X"
@@ -686,14 +704,14 @@ sealed class CharsetSniffer {
  return EncodingConfidence.UTF8_TENTATIVE;
 }
     // Check for other multi-byte encodings
-    bool hasHighByte = false;
-    bool notKREUC = false;
-    bool notJPEUC = false;
-    bool notShiftJIS = false;
-    bool notBig5 = false;
-    int maybeHz = 0;
-    bool notGbk = false;
-    int maybeIso2022 = 0;
+    var hasHighByte = false;
+    var notKREUC = false;
+    var notJPEUC = false;
+    var notShiftJIS = false;
+    var notBig5 = false;
+    var maybeHz = 0;
+    var notGbk = false;
+    var maybeIso2022 = 0;
     position = 0;
     while (position<count) {
       b=(data[position]&0xff);
@@ -758,12 +776,11 @@ sealed class CharsetSniffer {
       decoders.Add("hz-gb-2312");
     }
     if (decoders.Count>0) {
-      int[] kana = new int[decoders.Count];
-      int[] nonascii = new int[decoders.Count];
-      bool[] nowFailed = new bool[decoders.Count];
-      PeterO.Support.ByteArrayInputStream[] streams = new
-        PeterO.Support.ByteArrayInputStream[decoders.Count];
-      ITextDecoder[] decoderObjects = new ITextDecoder[decoders.Count];
+      var kana = new int[decoders.Count];
+      var nonascii = new int[decoders.Count];
+      var nowFailed = new bool[decoders.Count];
+      var streams = new PeterO.Support.ByteArrayInputStream[decoders.Count];
+      var decoderObjects = new ITextDecoder[decoders.Count];
       for (int i = 0;i<decoders.Count; ++i) {
         streams[i]=new PeterO.Support.ByteArrayInputStream(data, 0, count);
         decoderObjects[i]=TextEncoding.getDecoder(decoders[i]);
@@ -772,7 +789,7 @@ sealed class CharsetSniffer {
       string validEncoding = null;
       while (true) {
         totalValid = 0;
-        int totalRunning = 0;
+        var totalRunning = 0;
         for (int i = 0;i<streams.Length; ++i) {
           if (streams[i]==null) {
             if (decoders[i]!=null) {
@@ -848,13 +865,15 @@ sealed class CharsetSniffer {
     }
     // Fall back
     string
-  lang = StringUtility.toLowerCaseAscii(CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
+  lang =
+  StringUtility.toLowerCaseAscii(CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
     string
-  country=StringUtility.toUpperCaseAscii(CultureInfo.CurrentCulture.Name.IndexOf(
+
+  country = StringUtility.toUpperCaseAscii(CultureInfo.CurrentCulture.Name.IndexOf(
       '-')<0 ? "" :
 CultureInfo.CurrentCulture.Name.Substring(
   1+CultureInfo.CurrentCulture.Name.IndexOf('-')));
-    
+
     if (lang.Equals("ar") || lang.Equals("fa")) {
  return new EncodingConfidence("windows-1256");
 }
@@ -924,9 +943,10 @@ CultureInfo.CurrentCulture.Name.Substring(
       }
       while (index<endPos) {
         if (index + 3 <= endPos &&(header[index]&0xff) == 0x21 &&
-            (header[index + 1]&0xff) == 0x2d && (header[index + 2]&0xff) == 0x2d) {
+        (header[index + 1]&0xff) == 0x2d && (header[index + 2]&0xff) ==
+              0x2d) {
           // Skip comment
-          int hyphenCount = 0;
+          var hyphenCount = 0;
           index+=3;
           while (index<endPos) {
             int c=(header[index]&0xff);
@@ -952,7 +972,7 @@ CultureInfo.CurrentCulture.Name.Substring(
           }
           break;
         } else if (index+1<= endPos && (header[index]&0xFF)=='?') {
-          int charCount = 0;
+          var charCount = 0;
           ++index;
           while (index<endPos) {
             int c=(header[index]&0xff);
@@ -994,9 +1014,9 @@ CultureInfo.CurrentCulture.Name.Substring(
   }
 
   private static string sniffTextOrBinary(PeterO.Support.InputStream input) {
-    byte[] header = new byte[512];
+    var header = new byte[512];
     input.mark(514);
-    int count = 0;
+    var count = 0;
     try {
       count = input.Read(header, 0, 512);
     } finally {
@@ -1012,10 +1032,11 @@ CultureInfo.CurrentCulture.Name.Substring(
         header[2]==(byte)0xbf) {
  return "text/plain";
 }
-    bool binary = false;
+    var binary = false;
     for (int i = 0; i < count; ++i) {
       int b=(header[i]&0xff);
-      if (!(b >= 0x20 || b == 0x09 || b == 0x0a || b == 0x0c || b == 0x0d || b == 0x1b)) {
+      if (!(b >= 0x20 || b == 0x09 || b == 0x0a || b == 0x0c || b == 0x0d ||
+        b == 0x1b)) {
         binary = true;
         break;
       }
@@ -1025,8 +1046,8 @@ CultureInfo.CurrentCulture.Name.Substring(
 
   private static string sniffUnknownContentType(PeterO.Support.InputStream
     input, bool sniffScriptable) {
-    byte[] header = new byte[512];
-    int count = 0;
+    var header = new byte[512];
+    var count = 0;
     input.mark(514);
     try {
       count = input.Read(header, 0, 512);
@@ -1034,7 +1055,7 @@ CultureInfo.CurrentCulture.Name.Substring(
       input.reset();
     }
     if (sniffScriptable) {
-      int index = 0;
+      var index = 0;
       while (index<count) {
         if (header[index]!=0x09 && header[index]!=0x0a &&
             header[index]!=0x0c && header[index]!=0x0d &&
@@ -1087,12 +1108,12 @@ CultureInfo.CurrentCulture.Name.Substring(
     if (matchesPattern(new byte[] { 0x42, 0x4d }, header, 0, count)) {
  return "image/bmp";
 }
-    if (matchesPattern(new byte[] { 0x47, 0x49, 0x46, 0x38, 0x37, 0x61
-      }, header, 0, count)) {
+    if (matchesPattern(new byte[] { 0x47, 0x49, 0x46, 0x38, 0x37, 0x61 },
+      header, 0, count)) {
  return "image/gif";
 }
-    if (matchesPattern(new byte[] { 0x47, 0x49, 0x46, 0x38, 0x39, 0x61
-      }, header, 0, count)) {
+    if (matchesPattern(new byte[] { 0x47, 0x49, 0x46, 0x38, 0x39, 0x61 },
+      header, 0, count)) {
  return "image/gif";
 }
     if (matchesPattern(new byte[] { 0x52, 0x49, 0x46, 0x46 },
@@ -1101,21 +1122,21 @@ CultureInfo.CurrentCulture.Name.Substring(
             header, 8, count-8)) {
  return "image/webp";
 }
-    if (matchesPattern(new byte[] {
-      (byte)0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a }, header, 0, count)) {
+    if (matchesPattern(new byte[] { (byte)0x89, 0x50, 0x4e, 0x47, 0x0d,
+      0x0a, 0x1a, 0x0a }, header, 0, count)) {
  return "image/png";
 }
-    if (matchesPattern(new byte[] { (byte)0xff, (byte)0xd8, (byte)0xff
-      }, header, 0, count)) {
+    if (matchesPattern(new byte[] { (byte)0xff, (byte)0xd8, (byte)0xff },
+      header, 0, count)) {
  return "image/jpeg";
 }
     // Audio and video types
-    if (matchesPattern(new byte[] { 0x1a, 0x45, (byte)0xdf, (byte)0xa3
-      }, header, 0, count)) {
+    if (matchesPattern(new byte[] { 0x1a, 0x45, (byte)0xdf, (byte)0xa3 },
+      header, 0, count)) {
  return "video/webm";
 }
-    if (matchesPattern(new byte[] { 0x2e, 0x7e, (byte)0x6e, (byte)0x64
-      }, header, 0, count)) {
+    if (matchesPattern(new byte[] { 0x2e, 0x7e, (byte)0x6e, (byte)0x64 },
+      header, 0, count)) {
  return "audio/basic";
 }
     if (matchesPattern(new byte[] { (byte)'F' ,(byte)'O' ,(byte)'R'
@@ -1124,8 +1145,8 @@ CultureInfo.CurrentCulture.Name.Substring(
           ,(byte)'F' },header,8,count-8)) {
  return "audio/aiff";
 }
-    if (matchesPattern(new byte[] { (byte)'I' ,(byte)'D' ,(byte)'3'
-      }, header, 0, count)) {
+    if (matchesPattern(new byte[] { (byte)'I' ,(byte)'D' ,(byte)'3' },
+      header, 0, count)) {
  return "audio/mpeg";
 }
     if (matchesPattern(new byte[] { (byte)'O' ,(byte)'g' ,(byte)'g'
@@ -1159,7 +1180,7 @@ CultureInfo.CurrentCulture.Name.Substring(
             header[10]==(byte)'4') {
  return "video/mp4";
 }
-        int index = 16;
+        var index = 16;
         while (index<boxSize) {
           if ((header[index]&0xFF)=='m' && (header[index+1]&0xFF)=='p' &&
               (header[index+2]&0xFF)=='4') {
@@ -1180,10 +1201,11 @@ CultureInfo.CurrentCulture.Name.Substring(
       ,(byte)' ' ,0x1a,7,0 },header,0,count)) {
  return "application/x-rar-compressed";
 }
-    bool binary = false;
+    var binary = false;
     for (int i = 0; i < count; ++i) {
       int b=(header[i]&0xff);
-      if (!(b >= 0x20 || b == 0x09 || b == 0x0a || b == 0x0c || b == 0x0d || b == 0x1b)) {
+      if (!(b >= 0x20 || b == 0x09 || b == 0x0a || b == 0x0c || b == 0x0d ||
+        b == 0x1b)) {
         binary = true;
         break;
       }

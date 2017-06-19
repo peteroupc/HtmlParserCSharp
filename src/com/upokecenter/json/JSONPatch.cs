@@ -22,15 +22,15 @@ public class JSONPatch {
       o = value;
     } else {
       JSONPointer pointer = JSONPointer.fromPointer(o, path);
-      if (pointer.getParent() is JSONArray) {
+      if (pointer.getParent() is PeterO.Cbor.CBORObject) {
         int index = pointer.getIndex();
         if (index< 0) {
  throw new ArgumentException("patch "+opStr+" path");
 }
-        ((JSONArray)pointer.getParent()).add(index, value);
-      } else if (pointer.getParent() is JSONObject) {
+        ((PeterO.Cbor.CBORObject)pointer.getParent()).add(index, value);
+      } else if (pointer.getParent() is PeterO.Cbor.CBORObject) {
         string key = pointer.getKey();
-        ((JSONObject)pointer.getParent()).put(key, value);
+        ((PeterO.Cbor.CBORObject)pointer.getParent()).put(key, value);
       } else {
  throw new ArgumentException("patch "+opStr+" path");
 }
@@ -38,13 +38,13 @@ public class JSONPatch {
     return o;
   }
 
-  private static Object cloneJsonObject(Object o) {
+  private static Object cloneCbor(Object o) {
     try {
-      if (o is JSONArray) {
- return new JSONArray(o.ToString());
+      if (o is PeterO.Cbor.CBORObject) {
+ return new PeterO.Cbor.CBORObject(o.ToString());
 }
-      if (o is JSONObject) {
- return new JSONObject(o.ToString());
+      if (o is PeterO.Cbor.CBORObject) {
+ return new PeterO.Cbor.CBORObject(o.ToString());
 }
     } catch (Json.InvalidJsonException) {
       return o;
@@ -52,28 +52,24 @@ public class JSONPatch {
     return o;
   }
 
-  private static string getString(JSONObject o, string key) {
-    try {
-      return o.getString(key);
-    } catch (System.Collections.Generic.KeyNotFoundException) {
-      return null;
-    }
+  private static string getString(PeterO.Cbor.CBORObject o, string key) {
+      return o.ContainsKey (key) ? o [key].AsString() : null;
   }
 
-  public static Object patch(Object o, JSONArray patch) {
+  public static Object patch(Object o, PeterO.Cbor.CBORObject patch) {
     // clone the _object in case of failure
-    o = cloneJsonObject(o);
+    o = clonePeterO.Cbor.CBORObject(o);
     for (int i = 0;i<patch.Length; ++i) {
       Object op = patch[i];
-      if (!(op is JSONObject)) {
+      if (!(op is PeterO.Cbor.CBORObject)) {
  throw new ArgumentException("patch");
 }
       if (o == null) {
  throw new InvalidOperationException("patch");
 }
-      JSONObject patchOp=(JSONObject)op;
+      PeterO.Cbor.CBORObject patchOp=(PeterO.Cbor.CBORObject)op;
       // NOTE: This algorithm requires "op" to exist
-      // only once; the JSONObject, however, does not
+      // only once; the PeterO.Cbor.CBORObject, however, does not
       // allow duplicates
       string opStr=getString(patchOp,"op");
       if (opStr == null) {
@@ -121,7 +117,7 @@ public class JSONPatch {
  throw new ArgumentException("patch "+opStr);
 }
         Object movedObj = removeOperation(o, opStr, fromPath);
-        o = addOperation(o, opStr, path, cloneJsonObject(movedObj));
+        o = addOperation(o, opStr, path, clonePeterO.Cbor.CBORObject(movedObj));
       } else if ("copy".Equals(opStr)) {
         string path=patchOp.getString("path");
         if (path == null) {
@@ -137,7 +133,7 @@ public class JSONPatch {
    +opStr+" " +fromPath);
 }
         Object copiedObj = pointer.getValue();
-        o = addOperation(o, opStr, path, cloneJsonObject(copiedObj));
+        o = addOperation(o, opStr, path, clonePeterO.Cbor.CBORObject(copiedObj));
       } else if ("test".Equals(opStr)) {
         string path=patchOp.getString("path");
         if (path == null) {
@@ -160,7 +156,7 @@ public class JSONPatch {
 }
       }
     }
-    return (o == null) ? JSONObject.NULL : o;
+    return (o == null) ? PeterO.Cbor.CBORObject.NULL : o;
   }
 
   private static Object removeOperation(
@@ -179,10 +175,10 @@ public class JSONPatch {
    +opStr+" " +path);
 }
       o = pointer.getValue();
-      if (pointer.getParent() is JSONArray) {
-        ((JSONArray)pointer.getParent()).removeAt(pointer.getIndex());
-      } else if (pointer.getParent() is JSONObject) {
-        ((JSONObject)pointer.getParent()).remove(pointer.getKey());
+      if (pointer.getParent() is PeterO.Cbor.CBORObject) {
+        ((PeterO.Cbor.CBORObject)pointer.getParent()).removeAt(pointer.getIndex());
+      } else if (pointer.getParent() is PeterO.Cbor.CBORObject) {
+        ((PeterO.Cbor.CBORObject)pointer.getParent()).remove(pointer.getKey());
       }
       return o;
     }
@@ -204,15 +200,15 @@ public class JSONPatch {
  throw new System.Collections.Generic.KeyNotFoundException("patch "
    +opStr+" " +path);
 }
-      if (pointer.getParent() is JSONArray) {
+      if (pointer.getParent() is PeterO.Cbor.CBORObject) {
         int index = pointer.getIndex();
         if (index< 0) {
  throw new ArgumentException("patch "+opStr+" path");
 }
-        ((JSONArray)pointer.getParent()).put(index, value);
-      } else if (pointer.getParent() is JSONObject) {
+        ((PeterO.Cbor.CBORObject)pointer.getParent()).put(index, value);
+      } else if (pointer.getParent() is PeterO.Cbor.CBORObject) {
         string key = pointer.getKey();
-        ((JSONObject)pointer.getParent()).put(key, value);
+        ((PeterO.Cbor.CBORObject)pointer.getParent()).put(key, value);
       } else {
  throw new ArgumentException("patch "+opStr+" path");
 }

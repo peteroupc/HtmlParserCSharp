@@ -5,15 +5,14 @@ using System.IO;
 using System.Text;
 using Org.System.Xml.Sax;
 using Org.System.Xml.Sax.Helpers;
-using com.upokecenter.encoding;
+using PeterO.Text;
 using com.upokecenter.net;
 using com.upokecenter.util;
 internal class XhtmlParser {
   internal class ProcessingInstruction : Node, IProcessingInstruction {
     public string target, data;
 
-  public ProcessingInstruction() :
-      base(NodeType.PROCESSING_INSTRUCTION_NODE) {
+  public ProcessingInstruction() : base(NodeType.PROCESSING_INSTRUCTION_NODE) {
     }
 
     public string getData() {
@@ -31,7 +30,7 @@ internal class XhtmlParser {
     private Document document;
     internal string baseurl;
     internal string encoding;
-    bool useEntities = false;
+    internal bool useEntities = false;
     public XhtmlContentHandler(XhtmlParser parser) {
       elements = new List<Element>();
       xmlBaseElements = new List<Element>();
@@ -42,7 +41,7 @@ internal class XhtmlParser {
     }
 
     public override void Comment(char[] arg0, int arg1, int arg2) {
-      Comment cmt = new Comment();
+      var cmt = new Comment();
       cmt.setData(new String(arg0, arg1, arg2));
       getCurrentNode().appendChild(cmt);
     }
@@ -56,7 +55,8 @@ internal class XhtmlParser {
     }
 
     private Node getCurrentNode() {
-      return (elements.Count == 0) ? (document) : (elements[elements.Count-1]);
+        return (elements.Count == 0) ?
+          (Node)(document) : (Node)(elements[elements.Count-1]);
     }
 
     internal Document getDocument() {
@@ -79,7 +79,7 @@ internal class XhtmlParser {
   Node lastChild=(childNodes.Count == 0) ? null :
         childNodes[childNodes.Count-1];
       if (lastChild == null || lastChild.getNodeType() != NodeType.TEXT_NODE) {
-        Text textNode = new Text();
+        var textNode = new Text();
         node.appendChild(textNode);
         return textNode;
       } else {
@@ -92,7 +92,7 @@ internal class XhtmlParser {
     }
 
     public override void ProcessingInstruction(string arg0, string arg1) {
-      ProcessingInstruction pi = new ProcessingInstruction();
+      var pi = new ProcessingInstruction();
       pi.target = arg0;
       pi.data = arg1;
       getCurrentNode().appendChild(pi);
@@ -110,7 +110,7 @@ internal class XhtmlParser {
     }
 
     public override void SkippedEntity(string arg0) {
-      Console.WriteLine(arg0);
+      //Console.WriteLine(arg0);
       if (useEntities) {
         int entity = HtmlEntities.getHtmlEntity(arg0);
         if (entity< 0) {
@@ -124,7 +124,7 @@ internal class XhtmlParser {
     }
 
     public override void StartDtd(string name, string pubid, string sysid) {
-      DocumentType doctype = new DocumentType();
+      var doctype = new DocumentType();
       doctype.name = name;
       doctype.publicId = pubid;
       doctype.systemId = sysid;
@@ -136,8 +136,7 @@ internal class XhtmlParser {
           "-//W3C//DTD XHTML Basic 1.0//EN".Equals(pubid) ||
           "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN".Equals(pubid) ||
       "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
-            .Equals(pubid) ||
-          "-//W3C//DTD MathML 2.0//EN".Equals(pubid) ||
+            .Equals(pubid) || "-//W3C//DTD MathML 2.0//EN".Equals(pubid) ||
           "-//WAPFORUM//DTD XHTML Mobile 1.0//EN".Equals(pubid)) {
         useEntities = true;
       }
@@ -146,7 +145,7 @@ internal class XhtmlParser {
     public override void StartElement(string uri, string localName, string arg2,
         IAttributes arg3) {
       string prefix = getPrefix(arg2);
-      Element element = new Element();
+      var element = new Element();
       element.setLocalName(localName);
       if (prefix.Length>0) {
         element.setPrefix(prefix);
@@ -157,7 +156,7 @@ internal class XhtmlParser {
       getCurrentNode().appendChild(element);
       for (int i = 0;i<arg3.Length; ++i) {
         string _namespace = arg3.GetUri(i);
-        Attr attr = new Attr();
+        var attr = new Attr();
         attr.setName(arg3.GetQName(i));  // Sets prefix and local name
         attr.setNamespace(_namespace);
         attr.setValue(arg3.GetValue(i));
@@ -199,8 +198,8 @@ internal class XhtmlParser {
     }
   }
   private static string sniffEncoding(PeterO.Support.InputStream s) {
-    byte[] data = new byte[4];
-    int count = 0;
+    var data = new byte[4];
+    var count = 0;
     s.mark(data.Length + 2);
     try {
       count = s.Read(data, 0, data.Length);
@@ -234,14 +233,14 @@ internal class XhtmlParser {
       } finally {
         s.reset();
       }
-      int i = 4;
+      var i = 4;
       if (i + 1>count) {
  return "utf-8";
 }
       if (data[i++]!='l') {
  return "utf-8";  // l in <?xml
 }
-      bool space = false;
+      var space = false;
       while (i<count) {
         if (data[i]==0x09||data[i]==0x0a||data[i]==0x0d||data[i]==0x20) {
   { space = true;
@@ -283,7 +282,9 @@ internal class XhtmlParser {
  return "utf-8";
 }
       while (i<count) {
-        if (data[i]==ch) { i++; break; }
+        if (data[i]==ch) {
+  { i++;
+} break; }
         ++i;
       }
       space = false;
@@ -327,22 +328,22 @@ internal class XhtmlParser {
       if (ch!='"' && ch!='\'') {
  return "utf-8";
 }
-      StringBuilder builder = new StringBuilder();
+      var builder = new StringBuilder();
       while (i<count) {
         if (data[i]==ch) {
-          string encoding = TextEncoding.resolveEncoding(builder.ToString());
+            string encoding = Encodings.ResolveAlias(builder.ToString());
           if (encoding == null) {
  return null;
 }
-          return (encoding.Equals("utf-16le") || encoding.Equals("utf-16be"
-)) ? (null) : (builder.ToString());
+          return (encoding.Equals("UTF-16LE") || encoding.Equals(
+  "UTF-16BE")) ? (null) : (builder.ToString());
         }
         builder.Append((char)data[i]);
         ++i;
       }
-      return "utf-8";
+      return "UTF-8";
     }
-    return "utf-8";
+    return "UTF-8";
   }
 
   private string address;
@@ -395,20 +396,21 @@ internal class XhtmlParser {
     }
     reader.ContentHandler=(handler);
     reader.EntityResolver=(handler);
-    charset = TextEncoding.resolveEncoding(charset);
+    charset = Encodings.ResolveAlias(charset);
     if (charset == null) {
       charset = sniffEncoding(source);
       if (charset == null) {
         charset="utf-8";
       }
     }
+            charset = Encodings.ResolveAlias (charset);
     this.isource = new InputSource<Stream>(source);
     this.isource.Encoding=(charset);
     this.encoding = charset;
   }
 
   public IDocument parse() {
-    Document doc = new Document();
+    var doc = new Document();
     doc.address = address;
     handler.baseurl = doc.address;
     handler.setDocument(doc);

@@ -28,8 +28,7 @@ THE SOFTWARE.
 namespace com.upokecenter.html {
 using System;
 using System.IO;
-using com.upokecenter.encoding;
-using com.upokecenter.io;
+using PeterO.Text;
 
 sealed class DecoderCharacterInput : ICharacterInput {
   private PeterO.Support.InputStream input;

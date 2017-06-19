@@ -9,7 +9,7 @@ using com.upokecenter.rdf;
 using com.upokecenter.util;
 internal class RDFa1 : IRDFParser {
   private static string getTextNodeText(INode node) {
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     foreach (var child in node.getChildNodes()) {
       if (child.getNodeType() == NodeType.TEXT_NODE) {
         builder.Append(((IText)child).getData());
@@ -62,12 +62,12 @@ internal class RDFa1 : IRDFParser {
     while (index<sLength) {
       // Get the next Unicode character
       int c = s[index];
-      if (c >= 0xd800 && c <= 0xdbff && index + 1<sLength &&
+      if ((c & 0xfc00) == 0xd800 && index + 1<sLength &&
           s[index + 1]>= 0xdc00 && s[index + 1]<= 0xdfff) {
         // Get the Unicode code point for the surrogate pair
         c = 0x10000+(c-0xd800)*0x400+(s[index + 1]-0xdc00);
         ++index;
-      } else if (c >= 0xd800 && c <= 0xdfff) {
+      } else if ((c & 0xf800) == 0xd800) {
  // error
         return -1;
  }
@@ -120,7 +120,8 @@ internal class RDFa1 : IRDFParser {
  return true;
 }
     int[]
-  indexes = URIUtility.splitIRI(s, offset, length, URIUtility.ParseMode.IRIStrict);
+  indexes = URIUtility.splitIRI(s, offset, length,
+    URIUtility.ParseMode.IRIStrict);
     if (indexes == null) {
  return false;
 }
@@ -149,7 +150,8 @@ internal class RDFa1 : IRDFParser {
 }
     this.context.parentSubject = RDFTerm.fromIRI(this.context.baseURI);
     this.context.parentObject = null;
-    this.context.iriMap = new PeterO.Support.LenientDictionary<string, string>();
+  this.context.iriMap = new PeterO.Support.LenientDictionary<string,
+      string>();
     this.context.listMap = new
       PeterO.Support.LenientDictionary<string, IList<RDFTerm>>();
     this.context.incompleteTriples = new List<RDFa.IncompleteTriple>();
@@ -190,11 +192,8 @@ internal class RDFa1 : IRDFParser {
       refIndex+=(prefix + 1);
       refLength-=(prefix + 1);
       prefixIri = prefixMapping[prefixName];
-      if (prefix == 0) {
-        prefixIri = RDFA_DEFAULT_PREFIX;
-      } else {
-        prefixIri = prefixMapping[prefixName];
-      }
+      prefixIri = (prefix == 0) ? (RDFA_DEFAULT_PREFIX) :
+        (prefixMapping[prefixName]);
       if (prefixIri==null || "_".Equals(prefixName)) {
  return null;
 }
@@ -206,7 +205,8 @@ internal class RDFa1 : IRDFParser {
 }
     if (prefix >= 0) {
  return
-  relativeResolve(prefixIri + attribute.Substring(refIndex, (refIndex + refLength)-(refIndex)))
+  relativeResolve(prefixIri + attribute.Substring(refIndex, (refIndex +
+    refLength)-(refIndex)))
    .getValue();
 } else {
  return null;
@@ -233,11 +233,8 @@ internal class RDFa1 : IRDFParser {
           attribute.Substring(refIndex, (refIndex + prefix)-(refIndex)));
       refIndex+=(prefix + 1);
       refLength-=(prefix + 1);
-      if (prefix == 0) {
-        prefixIri = RDFA_DEFAULT_PREFIX;
-      } else {
-        prefixIri = prefixMapping[prefixName];
-      }
+      prefixIri = (prefix == 0) ? (RDFA_DEFAULT_PREFIX) :
+        (prefixMapping[prefixName]);
       if (prefixIri==null && !"_".Equals(prefixName)) {
  return null;
 }
@@ -266,7 +263,8 @@ if (!(refIndex + refLength <= attribute.Length)) {
             return getNamedBlankNode ("b:empty");
           }
         return
-  getNamedBlankNode(attribute.Substring(refIndex, (refIndex + refLength)-(refIndex)));
+  getNamedBlankNode(attribute.Substring(refIndex, (refIndex +
+    refLength)-(refIndex)));
       }
       #if DEBUG
 if (!(refIndex >= 0)) {
@@ -277,7 +275,8 @@ if (!(refIndex + refLength <= attribute.Length)) {
 }
 #endif
       return
-  relativeResolve(prefixIri + attribute.Substring(refIndex, (refIndex + refLength)-(refIndex)));
+  relativeResolve(prefixIri + attribute.Substring(refIndex, (refIndex +
+    refLength)-(refIndex)));
     } else {
  return null;
 }
@@ -303,7 +302,8 @@ if (!(refIndex + refLength <= attribute.Length)) {
  return null;
 }
     int lastIndex = attribute.Length-1;
-    if (attribute.Length>= 2 && attribute[0]=='[' && attribute[lastIndex]==']') {
+  if (attribute.Length>= 2 && attribute[0]=='[' && attribute[lastIndex]==']'
+) {
       RDFTerm curie = getCurieOrBnode(attribute, 1, attribute.Length-2,
           prefixMapping);
       return curie;
@@ -363,7 +363,8 @@ if (!(refIndex + refLength <= attribute.Length)) {
 }
     }
   }
-  private void miniRdfXmlChild(IElement node, RDFTerm subject, string language) {
+private void miniRdfXmlChild(IElement node, RDFTerm subject, string
+    language) {
     string nsname = node.getNamespaceURI();
     if (node.getAttribute("xml:lang")!=null) {
       language=node.getAttribute("xml:lang");
@@ -373,11 +374,9 @@ if (!(refIndex + refLength <= attribute.Length)) {
     if (!hasNonTextChildNodes(node)) {
       string content = getTextNodeText(node);
       RDFTerm literal;
-      if (!String.IsNullOrEmpty(language)) {
-        literal = RDFTerm.fromLangString(content, language);
-      } else {
-        literal = RDFTerm.fromTypedString(content);
-      }
+      literal = (!String.IsNullOrEmpty(language)) ?
+        (RDFTerm.fromLangString(content, language)) :
+        (RDFTerm.fromTypedString(content));
       outputGraph.Add(new RDFTriple(subject, predicate, literal));
     } else {
       string parseType=node.getAttributeNS(RDF_NAMESPACE, "parseType");
@@ -402,11 +401,12 @@ if (!(refIndex + refLength <= attribute.Length)) {
       List<RDFa.IncompleteTriple>();
     string localLanguage = context.language;
     RDFTerm newSubject = null;
-    bool recurse = true;
-    bool skipElement = false;
+    var recurse = true;
+    var skipElement = false;
     RDFTerm currentObject = null;
     IDictionary<string, string> namespacesLocal=
-        new PeterO.Support.LenientDictionary<string, string>(context.namespaces);
+      new PeterO.Support.LenientDictionary<string,
+          string>(context.namespaces);
     IDictionary<string, string> iriMapLocal=
         new PeterO.Support.LenientDictionary<string, string>(context.iriMap);
     string attr = null;
@@ -526,8 +526,8 @@ if (!(refIndex + refLength <= attribute.Length)) {
     }
     // Step 6
     if (newSubject != null) {
-  string[] types=StringUtility.splitAtNonFFSpaces(node.getAttribute("typeof"
-));
+  string[] types = StringUtility.splitAtNonFFSpaces(node.getAttribute(
+  "typeof"));
       foreach (var type in types) {
         string iri = getCurie(type, iriMapLocal);
         if (iri != null) {
@@ -570,7 +570,7 @@ if (!(newSubject != null)) {
     } else {
       // Step 8
       string[] types = StringUtility.splitAtNonFFSpaces(rel);
-      bool hasPredicates = false;
+      var hasPredicates = false;
       // Defines predicates
       foreach (var type in types) {
         string iri = getRelTermOrCurie(type,
@@ -580,7 +580,7 @@ if (!(newSubject != null)) {
             hasPredicates = true;
             currentObject = generateBlankNode();
           }
-          RDFa.IncompleteTriple inc = new RDFa.IncompleteTriple();
+          var inc = new RDFa.IncompleteTriple();
           inc.predicate = RDFTerm.fromIRI(iri);
           inc.direction = RDFa.ChainingDirection.Forward;
           incompleteTriplesLocal.Add(inc);
@@ -595,7 +595,7 @@ if (!(newSubject != null)) {
             hasPredicates = true;
             currentObject = generateBlankNode();
           }
-          RDFa.IncompleteTriple inc = new RDFa.IncompleteTriple();
+          var inc = new RDFa.IncompleteTriple();
           inc.predicate = RDFTerm.fromIRI(iri);
           inc.direction = RDFa.ChainingDirection.Reverse;
           incompleteTriplesLocal.Add(inc);
@@ -622,17 +622,13 @@ if (!(newSubject != null)) {
         if (datatypeValue != null && datatypeValue.Length>0 &&
             !datatypeValue.Equals(RDF_XMLLITERAL)) {
           string literal = content;
-          if (literal == null) {
-            literal = getTextNodeText(node);
-          }
+          literal = literal ?? (getTextNodeText(node));
           currentProperty = RDFTerm.fromTypedString(literal, datatypeValue);
         } else if (node.getAttribute("content")!=null ||
             !hasNonTextChildNodes(node) ||
             (datatypeValue != null && datatypeValue.Length == 0)) {
           string literal=node.getAttribute("content");
-          if (literal == null) {
-            literal = getTextNodeText(node);
-          }
+          literal = literal ?? (getTextNodeText(node));
           currentProperty=(!String.IsNullOrEmpty(localLanguage)) ?
               RDFTerm.fromLangString(literal, localLanguage) :
                 RDFTerm.fromTypedString(literal);
@@ -640,9 +636,7 @@ if (!(newSubject != null)) {
             (datatypeValue == null || datatypeValue.Equals(RDF_XMLLITERAL))) {
           // XML literal
           recurse = false;
-          if (datatypeValue == null) {
-            datatypeValue = RDF_XMLLITERAL;
-          }
+          datatypeValue = datatypeValue ?? (RDF_XMLLITERAL);
           try {
             string literal = ExclusiveCanonicalXML.canonicalize(node,
                 false, namespacesLocal);
@@ -696,7 +690,7 @@ if (!(newSubject != null)) {
             context = ec;
             process(childElement, false);
           } else {
-            RDFa.EvalContext ec = new RDFa.EvalContext();
+            var ec = new RDFa.EvalContext();
             ec.baseURI = oldContext.baseURI;
             ec.iriMap = iriMapLocal;
             ec.namespaces = namespacesLocal;

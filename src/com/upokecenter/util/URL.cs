@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using com.upokecenter.encoding;
+using PeterO.Text;
 using com.upokecenter.io;
 
     /// <summary>* A URL _object under the WHATWG's URL specification. See

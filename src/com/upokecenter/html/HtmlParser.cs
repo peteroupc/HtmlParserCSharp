@@ -30,7 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using com.upokecenter.encoding;
+using PeterO.Text;
 using com.upokecenter.io;
 using com.upokecenter.net;
 using com.upokecenter.util;

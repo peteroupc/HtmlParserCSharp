@@ -66,10 +66,8 @@ public sealed class DownloadHelper {
     }
 
     public string getHeaderField(int name) {
-      if (name == 0) {
- return getHeaderField(null);
-}
-      return (name==1) ? (getHeaderField("content-type")) : (null);
+      return (name == 0) ? (getHeaderField(null)) : ((name == 1) ?
+        (getHeaderField("content-type")) : (null));
     }
 
     public string getHeaderField(string name) {
@@ -85,10 +83,7 @@ public sealed class DownloadHelper {
     }
 
     public string getHeaderFieldKey(int name) {
-      if (name == 0) {
- return null;
-}
-      return (name==1) ? ("content-type") : (null);
+      return (name == 0) ? (null) : ((name==1) ? ("content-type") : (null));
     }
 
     public IDictionary<string, IList<string>> getHeaderFields() {
@@ -197,8 +192,7 @@ public sealed class DownloadHelper {
       if ("date".Equals(StringUtility.toLowerCaseAscii(name))) {
  return HeaderParser.formatHttpDate(date);
 }
-      return ("content-length"
-        .Equals(StringUtility.toLowerCaseAscii(name))) ?
+      return ("content-length" .Equals(StringUtility.toLowerCaseAscii(name))) ?
         (Convert.ToString(length, CultureInfo.InvariantCulture)) : (null);
     }
 
@@ -212,10 +206,7 @@ public sealed class DownloadHelper {
       if (name == 0) {
  return null;
 }
-      if (name == 1) {
- return "date";
-}
-      return (name==2) ? ("content-length") : (null);
+      return (name == 1) ? ("date") : ((name==2) ? ("content-length") : (null));
     }
 
     public IDictionary<string, IList<string>> getHeaderFields() {
@@ -223,8 +214,12 @@ public sealed class DownloadHelper {
         PeterO.Support.LenientDictionary<string, IList<string>>();
       map.Add(null, asReadOnlyList(new string[] { getHeaderField(null)}));
       map.Add("date",asReadOnlyList(new string[] { getHeaderField("date")}));
-      map.Add("content-length",asReadOnlyList(new
-        string[] { getHeaderField("content-length")}));
+      {
+object objectTemp = "content-length";
+object objectTemp2 = asReadOnlyList(new
+        string[] { getHeaderField("content-length")});
+map.Add(objectTemp, objectTemp2);
+}
       return PeterO.Support.Collections.UnmodifiableMap(map);
     }
 
@@ -251,8 +246,10 @@ public sealed class DownloadHelper {
     /// returned by the callback's processResponse method. @ if an I/O
     /// error occurs, particularly network errors. @ if urlString is
     /// null.</summary>
-    /// <param name='urlString'>Not documented yet.</param>
-    /// <param name='callback'>Not documented yet.</param>
+    /// <param name='urlString'>The parameter <paramref name='urlString'/>
+    /// is not documented yet.</param>
+    /// <param name='callback'>The parameter <paramref name='callback'/> is
+    /// not documented yet.</param>
     /// <returns>A T object.</returns>
   public static T downloadUrl<T>(
       string urlString,
@@ -277,9 +274,12 @@ public sealed class DownloadHelper {
     /// connection fails. @return the _object returned by the callback's
     /// processResponse method. @ if an I/O error occurs, particularly
     /// network errors. @ if urlString is null.</summary>
-    /// <param name='urlString'>Not documented yet.</param>
-    /// <param name='callback'>Not documented yet.</param>
-    /// <param name='handleErrorResponses'>Not documented yet. (3).</param>
+    /// <param name='urlString'>The parameter <paramref name='urlString'/>
+    /// is not documented yet.</param>
+    /// <param name='callback'>The parameter <paramref name='callback'/> is
+    /// not documented yet.</param>
+    /// <param name='handleErrorResponses'>The parameter <paramref
+    /// name='handleErrorResponses'/> is not documented yet.</param>
     /// <returns>A T object.</returns>
   public static T downloadUrl<T>(
       string urlString,
@@ -386,18 +386,18 @@ public sealed class DownloadHelper {
       string urlString,
       PeterO.Support.File pathForCache,
       bool getStream) {
-    bool[] incompleteName = new bool[1];
+    var incompleteName = new bool[1];
      string cacheFileName=getCacheFileName(urlString,incompleteName)+".htm";
     PeterO.Support.File trueCachedFile = null;
     PeterO.Support.File trueCacheInfoFile = null;
-    CacheResponseInfo crinfo = new CacheResponseInfo();
+    var crinfo = new CacheResponseInfo();
     if (pathForCache != null && pathForCache.isDirectory()) {
-      PeterO.Support.File[] cacheFiles = new PeterO.Support.File[] {
+      var cacheFiles = new PeterO.Support.File[] {
           new PeterO.Support.File(pathForCache, cacheFileName)
       };
       if (incompleteName[0]) {
         List<PeterO.Support.File> list = new List<PeterO.Support.File>();
-        CacheFilter filter = new CacheFilter(cacheFileName);
+        var filter = new CacheFilter(cacheFileName);
         foreach (var f in pathForCache.listFiles()) {
           if (filter.accept(pathForCache, f.getName())) {
             list.Add(f);
@@ -413,9 +413,9 @@ public sealed class DownloadHelper {
       //Console.WriteLine("%s, getStream=%s",(cacheFiles),getStream);
       foreach (var cacheFile in cacheFiles) {
         if (cacheFile.isFile() && getStream) {
-          bool fresh = false;
+          var fresh = false;
           IHttpHeaders headers = null;
-          PeterO.Support.File cacheInfoFile = new
+    var cacheInfoFile = new
             PeterO.Support.File(cacheFile.ToString()+".cache");
           if (cacheInfoFile.isFile()) {
             try {
@@ -445,7 +445,8 @@ public sealed class DownloadHelper {
           } else {
             long maxAgeMillis = 24L*3600L*1000L;
             long
-  timeDiff = Math.Abs(cacheFile.lastModified()-(DateTimeUtility.getCurrentDate()));
+  timeDiff =
+    Math.Abs(cacheFile.lastModified()-(DateTimeUtility.getCurrentDate()));
             fresh=(timeDiff <= maxAgeMillis);
             headers = new FileBasedHeaders(urlString, cacheFile.Length);
           }
@@ -472,7 +473,7 @@ public sealed class DownloadHelper {
             } finally {
               if (stream != null) {
                 try {
-  stream.Close();
+  stream.Dispose();
 } catch (IOException) {}
               }
             }
@@ -483,7 +484,7 @@ public sealed class DownloadHelper {
     if (pathForCache != null) {
       if (trueCachedFile == null) {
         if (incompleteName[0]) {
-          int i = 0;
+          var i = 0;
           do {
             trueCachedFile = new PeterO.Support.File(pathForCache,
            cacheFileName+"-"
@@ -502,7 +503,7 @@ public sealed class DownloadHelper {
     return crinfo;
   }
   private static string getCacheFileName(string uri, bool[] incomplete) {
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     for (int i = 0;i<uri.Length; ++i) {
       char c = uri[i];
       if (c<= 0x20 || c==127 || c=='$' || c=='/' || c=='\\' || c==':' ||
@@ -536,9 +537,9 @@ public sealed class DownloadHelper {
 }
     while (true) {
       long length = 0;
-      bool exceeded = false;
+      var exceeded = false;
       long oldest = Int64.MaxValue;
-      int count = 0;
+      var count = 0;
       IList<PeterO.Support.File> files = new List<PeterO.Support.File>();
       recursiveListFiles(cache, files);
       foreach (var file in files) {
@@ -554,7 +555,8 @@ public sealed class DownloadHelper {
       if (count <= 1||!exceeded) {
  return;
 }
-      long threshold = oldest + Math.Abs(oldest-DateTimeUtility.getCurrentDate())/2;
+ long threshold = oldest +
+        Math.Abs(oldest-DateTimeUtility.getCurrentDate())/2;
       count = 0;
       foreach (var file in files) {
         if (file.lastModified()<threshold) {

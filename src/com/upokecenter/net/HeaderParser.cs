@@ -68,7 +68,8 @@ public sealed class HeaderParser {
     /// HTTP/1.1 (RFC2616). @param date the number of milliseconds since
     /// midnight, January 1, 1970 GMT. @return a _string formatted under
     /// the rules of HTTP/1.1.</summary>
-    /// <param name='date'>Not documented yet.</param>
+    /// <param name='date'>The parameter <paramref name='date'/> is not
+    /// documented yet.</param>
     /// <returns>A string object.</returns>
   public static string formatHttpDate(long date) {
     int[] components = DateTimeUtility.getGmtDateComponents(date);
@@ -93,7 +94,8 @@ public sealed class HeaderParser {
     #if DEBUG
 if (!(dayofweek != null)) {
  throw new
-  InvalidOperationException(Convert.ToString(dow, CultureInfo.InvariantCulture));
+InvalidOperationException(Convert.ToString(dow,
+    CultureInfo.InvariantCulture));
 }
 #endif
     string[] months= {
@@ -104,11 +106,12 @@ if (!(dayofweek != null)) {
     #if DEBUG
 if (!(month >= 1 && month <= 12)) {
  throw new
-  InvalidOperationException(Convert.ToString(month, CultureInfo.InvariantCulture));
+  InvalidOperationException(Convert.ToString(month,
+    CultureInfo.InvariantCulture));
 }
 #endif
     string monthstr = months[month];
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     builder.Append(dayofweek);
     builder.Append((char)('0'+((components[2]/10)%10)));
     builder.Append((char)('0'+((components[2])%10)));
@@ -146,9 +149,12 @@ if (!(month >= 1 && month <= 12)) {
     /// ill-formed (RFC2045 sec. 5.2), or if the media type is "text/plain"
     /// or "text/xml" and doesn't have a charset parameter (see RFC2046 and
     /// RFC3023, respectively), or the empty _string otherwise.</summary>
-    /// <param name='data'>Not documented yet.</param>
-    /// <param name='index'>Not documented yet.</param>
-    /// <param name='endIndex'>Not documented yet. (3).</param>
+    /// <param name='data'>The parameter <paramref name='data'/> is not
+    /// documented yet.</param>
+    /// <param name='index'>The parameter <paramref name='index'/> is not
+    /// documented yet.</param>
+    /// <param name='endIndex'>The parameter <paramref name='endIndex'/> is
+    /// not documented yet.</param>
     /// <returns>A string object.</returns>
   public static string getCharset(string data, int index, int endIndex) {
     if (data == null) {
@@ -187,7 +193,7 @@ if (!(month >= 1 && month <= 12)) {
     // assumes "data" consists of just the path extracted from a URL/URI
     int index = HeaderParser.skipDataUrlContentType(dataPath,
       0, dataPath.Length, null);
-    bool base64 = false;
+    var base64 = false;
   if (com.upokecenter.util.StringUtility.startsWith(dataPath,";base64,",
  index)) {
       index+=7;
@@ -195,7 +201,7 @@ if (!(month >= 1 && month <= 12)) {
     }
     if (index<dataPath.Length && dataPath[index]==',') {
       ++index;
-      ByteList mos = new ByteList();
+      var mos = new ByteList();
       int len = dataPath.Length;
       for (int j = index; j < len; ++j) {
         int c = dataPath[j];
@@ -256,7 +262,8 @@ if (!(month >= 1 && month <= 12)) {
     /// returns an empty _string. If the data URL's tMIME type is blank,
     /// the return value will be equal to
     /// "text/plain;charset=us-ascii".</summary>
-    /// <param name='dataURL'>Not documented yet.</param>
+    /// <param name='dataURL'>The parameter <paramref name='dataURL'/> is
+    /// not documented yet.</param>
     /// <returns>A string object.</returns>
   public static string getDataURLContentType(string dataURL) {
     int[] components = URIUtility.splitIRI(dataURL);
@@ -276,7 +283,7 @@ if (!(month >= 1 && month <= 12)) {
   }
 
   private static string getDataURLContentTypeInternal(string dataPath) {
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     HeaderParser.skipDataUrlContentType(dataPath, 0, dataPath.Length, builder);
     return builder.ToString();
   }
@@ -313,7 +320,8 @@ if (!(month >= 1 && month <= 12)) {
     /// is null, if there are no language tags, or at least one language
     /// tag in the given _string is invalid under Best Current Practice 47.
     /// The language tags will be converted to ASCII lower-case.</summary>
-    /// <param name='str'>Not documented yet.</param>
+    /// <param name='str'>The parameter <paramref name='str'/> is not
+    /// documented yet.</param>
     /// <returns>A string[] object.</returns>
   public static string[] getLanguages(string str) {
     return (str == null) ? (emptyStringArray) :
@@ -385,7 +393,8 @@ if (!(month >= 1 && month <= 12)) {
     if (i2<endIndex) {
       // if not at end
       int i3 = skipCFWS(str, i2, endIndex, null);
-        if (i3 == endIndex || (i3 < endIndex && str [i3] != ';' && str [i3] != ',')) {
+ if (i3 == endIndex || (i3 < endIndex && str [i3] != ';' && str [i3] != ','
+)) {
           // at end, or not followed by ";"
           // or ",", so not a media type
           return "";
@@ -415,11 +424,16 @@ if (!(month >= 1 && month <= 12)) {
     /// RFC2231 sec. 3 are supported. @return the parameter, or null if the
     /// parameter doesn't exist or the media type _string is
     /// ill-formed.</summary>
-    /// <param name='data'>Not documented yet.</param>
-    /// <param name='index'>Not documented yet.</param>
-    /// <param name='endIndex'>Not documented yet. (3).</param>
-    /// <param name='parameter'>Not documented yet. (4).</param>
-    /// <param name='httpRules'>Not documented yet. (5).</param>
+    /// <param name='data'>The parameter <paramref name='data'/> is not
+    /// documented yet.</param>
+    /// <param name='index'>The parameter <paramref name='index'/> is not
+    /// documented yet.</param>
+    /// <param name='endIndex'>The parameter <paramref name='endIndex'/> is
+    /// not documented yet.</param>
+    /// <param name='parameter'>The parameter <paramref name='parameter'/>
+    /// is not documented yet.</param>
+    /// <param name='httpRules'>The parameter <paramref name='httpRules'/>
+    /// is not documented yet.</param>
     /// <returns>A string object.</returns>
   private static string getMimeParameter(
       string data,
@@ -430,11 +444,12 @@ if (!(month >= 1 && month <= 12)) {
     if (data == null || parameter == null) {
  return null;
 }
-    string ret = getMimeParameterRaw(data, index, endIndex, parameter, httpRules);
+ string ret = getMimeParameterRaw(data, index, endIndex, parameter,
+      httpRules);
     if (!httpRules && ret == null) {
       ret=getMimeParameterRaw(data,index,endIndex,parameter+"*0",httpRules);
       if (ret != null) {
-        int pindex = 1;
+        var pindex = 1;
         // Support parameter continuations under RFC2184 sec. 3
         while (true) {
           string ret2 = getMimeParameterRaw(
@@ -462,9 +477,12 @@ if (!(month >= 1 && month <= 12)) {
     /// the media type begins. @param parameter a parameter name. @return
     /// the parameter, or null if the parameter doesn't exist or the media
     /// type _string is ill-formed.</summary>
-    /// <param name='data'>Not documented yet.</param>
-    /// <param name='index'>Not documented yet.</param>
-    /// <param name='parameter'>Not documented yet. (3).</param>
+    /// <param name='data'>The parameter <paramref name='data'/> is not
+    /// documented yet.</param>
+    /// <param name='index'>The parameter <paramref name='index'/> is not
+    /// documented yet.</param>
+    /// <param name='parameter'>The parameter <paramref name='parameter'/>
+    /// is not documented yet.</param>
     /// <returns>A string object.</returns>
   public static string getMimeParameter(string data, int index, string
     parameter) {
@@ -491,21 +509,15 @@ if (!(month >= 1 && month <= 12)) {
       // RFC5322 uses skipCFWS when skipping whitespace;
       // HTTP currently uses skipLws, though that may change
       // to skipWsp in a future revision of HTTP
-      if (httpRules) {
-        index = skipLws(data, index, endIndex, null);
-      } else {
-        index = skipCFWS(data, index, endIndex, null);
-      }
+      index = (httpRules) ? (skipLws(data, index, endIndex, null)) :
+        (skipCFWS(data, index, endIndex, null));
       if (index>= endIndex || data[index]!=';') {
  return null;
 }
       ++index;
-      if (httpRules) {
-        index = skipLws(data, index, endIndex, null);
-      } else {
-        index = skipCFWS(data, index, endIndex, null);
-      }
-      StringBuilder builder = new StringBuilder();
+      index = (httpRules) ? (skipLws(data, index, endIndex, null)) :
+        (skipCFWS(data, index, endIndex, null));
+      var builder = new StringBuilder();
       int afteratt = skipMimeTypeSubtype(data, index, endIndex, builder);
       if (afteratt == index) {
  // ill-formed attribute
@@ -519,7 +531,8 @@ if (!(month >= 1 && month <= 12)) {
       if (data[index]!='=') {
  return null;
 }
-      bool isToken = StringUtility.toLowerCaseAscii(attribute).Equals(parameter);
+    bool isToken =
+        StringUtility.toLowerCaseAscii(attribute).Equals(parameter);
       ++index;
       if (index >= endIndex) {
  return "";
@@ -542,7 +555,8 @@ if (!(month >= 1 && month <= 12)) {
       builder.Clear();
       // try getting the value unquoted
       // Note we don't use getAtom
-      qs = skipMimeToken(data, index, endIndex, isToken ? builder : null, httpRules);
+qs = skipMimeToken(data, index, endIndex, isToken ? builder : null,
+        httpRules);
       if (qs != index) {
         if (isToken) {
  return builder.ToString();
@@ -558,7 +572,7 @@ if (!(month >= 1 && month <= 12)) {
   private static int getPositiveNumber(string v, int index) {
     int length = v.Length;
     char c=(char)0;
-    bool haveNumber = false;
+    var haveNumber = false;
     int startIndex = index;
     string number = null;
     while (index<length) {  // skip whitespace
@@ -570,7 +584,8 @@ if (!(month >= 1 && month <= 12)) {
         try {
           number = v.Substring(startIndex, (index)-(startIndex));
           return
-  Int32.Parse(number, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+  Int32.Parse(number, NumberStyles.AllowLeadingSign,
+    CultureInfo.InvariantCulture);
         } catch (FormatException) {
           return Int32.MaxValue;
         }
@@ -582,14 +597,15 @@ if (!(month >= 1 && month <= 12)) {
     try {
       number = v.Substring(startIndex, (length)-(startIndex));
       return
-  Int32.Parse(number, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+  Int32.Parse(number, NumberStyles.AllowLeadingSign,
+    CultureInfo.InvariantCulture);
     } catch (FormatException) {
       return Int32.MaxValue;
     }
   }
 
   internal static int getResponseCode(string s) {
-    int index = 0;
+    var index = 0;
     int length = s.Length;
     if (s.IndexOf("HTTP/",index,StringComparison.Ordinal)!=index) {
  return -1;
@@ -636,22 +652,19 @@ if (!(month >= 1 && month <= 12)) {
     if (s == null) {
  return false;
 }
-    StringBuilder loc = new StringBuilder();
-    StringBuilder dom = new StringBuilder();
+    var loc = new StringBuilder();
+    var dom = new StringBuilder();
     int index = skipAddrSpec(s, 0, s.Length, loc, dom);
     if (index != s.Length) {
  return false;
 }
     string locString = loc.ToString();
     string domString = dom.ToString();
-    if (locString.Length == 0) {
- return false;
-}
-    return domString.Length == 0;
+    return (locString.Length == 0) ? (false) : (domString.Length == 0);
   }
 
   public static bool isValidLanguageTag(string str) {
-    int index = 0;
+    var index = 0;
     int endIndex = str.Length;
     int startIndex = index;
     if (index + 1<endIndex) {
@@ -691,18 +704,17 @@ if (!(month >= 1 && month <= 12)) {
         }
         // match grandfathered language tags
         if (str.Equals("sgn-be-fr") || str.Equals("sgn-be-nl") ||
-          str.Equals("sgn-ch-de") ||
-            str.Equals("en-gb-oed")) {
+          str.Equals("sgn-ch-de") || str.Equals("en-gb-oed")) {
  return true;
 }
         // More complex cases
         string[] splitString = StringUtility.splitAt(
-            str.Substring(startIndex,(endIndex)-(startIndex)),
+            str.Substring(startIndex, (endIndex)-(startIndex)),
             "-");
         if (splitString.Length == 0) {
  return false;
 }
-        int splitIndex = 0;
+        var splitIndex = 0;
         int splitLength = splitString.Length;
         int len = lengthIfAllAlpha(splitString[splitIndex]);
         if (len<2 || len>8) {
@@ -744,9 +756,7 @@ if (!(month >= 1 && month <= 12)) {
           string curString = splitString[splitIndex];
           len = lengthIfAllAlphaNum(curString);
           if (len >= 5 && len <= 8) {
-            if (variants == null) {
-              variants = new List<string>();
-            }
+            variants = variants ?? (new List<string>());
             if (!variants.Contains(curString)) {
               variants.Add(curString);
             } else {
@@ -754,9 +764,7 @@ if (!(month >= 1 && month <= 12)) {
 }
             ++splitIndex;
           } else if (len==4 && (curString[0]>= '0' && curString[0]<= '9')) {
-            if (variants == null) {
-              variants = new List<string>();
-            }
+            variants = variants ?? (new List<string>());
             if (!variants.Contains(curString)) {
               variants.Add(curString);
             } else {
@@ -776,16 +784,14 @@ if (!(month >= 1 && month <= 12)) {
           int curIndex = splitIndex;
           if (lengthIfAllAlphaNum(curString) == 1 &&
               !curString.Equals("x")) {
-            if (variants == null) {
-              variants = new List<string>();
-            }
+            variants = variants ?? (new List<string>());
             if (!variants.Contains(curString)) {
               variants.Add(curString);
             } else {
  return false;  // extension already exists
 }
             ++splitIndex;
-            bool havetoken = false;
+            var havetoken = false;
             while (splitIndex<splitLength) {
               curString = splitString[splitIndex];
               len = lengthIfAllAlphaNum(curString);
@@ -809,7 +815,7 @@ if (!(month >= 1 && month <= 12)) {
           int curIndex = splitIndex;
           if (splitString[splitIndex].Equals("x")) {
             ++splitIndex;
-            bool havetoken = false;
+            var havetoken = false;
             while (splitIndex<splitLength) {
               len = lengthIfAllAlphaNum(splitString[splitIndex]);
               if (len >= 1 && len <= 8) {
@@ -830,7 +836,7 @@ if (!(month >= 1 && month <= 12)) {
         // private use
         ++index;
         while (index<endIndex) {
-          int count = 0;
+          var count = 0;
           if (str[index]!='-') {
  return false;
 }
@@ -874,15 +880,15 @@ if (!(month >= 1 && month <= 12)) {
   }
 
   public static bool isValidMediaType(string data) {
-    return (data == null) ? (false) : (isValidMediaType(data, 0, data.Length, true));
+    return (data == null) ? (false) : (isValidMediaType(data, 0,
+      data.Length, true));
   }
 
   public static bool isValidMediaType(
       string data,
       int index,
       int endIndex,
- bool httpRules 
-) {
+      bool httpRules) {
             // httpRules true: use RFC2616 (HTTP/1.1) rules; false: use RFC5322
             //rules
             if (data == null) {
@@ -897,11 +903,8 @@ if (!(month >= 1 && month <= 12)) {
       // RFC5322 uses skipCFWS when skipping whitespace;
       // HTTP currently uses skipLws, though that may change
       // to skipWsp in a future revision of HTTP
-      if (httpRules) {
-        index = skipLws(data, index, endIndex, null);
-      } else {
-        index = skipCFWS(data, index, endIndex, null);
-      }
+      index = (httpRules) ? (skipLws(data, index, endIndex, null)) :
+        (skipCFWS(data, index, endIndex, null));
       if (index >= endIndex) {
  return false;
 }
@@ -909,11 +912,8 @@ if (!(month >= 1 && month <= 12)) {
  return false;
 }
       ++index;
-      if (httpRules) {
-        index = skipLws(data, index, endIndex, null);
-      } else {
-        index = skipCFWS(data, index, endIndex, null);
-      }
+      index = (httpRules) ? (skipLws(data, index, endIndex, null)) :
+        (skipCFWS(data, index, endIndex, null));
       int afteratt = skipMimeTypeSubtype(data, index, endIndex, null);
       if (afteratt == index) {
  // ill-formed attribute
@@ -956,7 +956,8 @@ if (!(month >= 1 && month <= 12)) {
     /// under section 4.5.3 are checked. @param s a _string to check
     /// @return true if the _string is a well-formed mailbox under SMTP, or
     /// false otherwise.</summary>
-    /// <param name='s'>Not documented yet.</param>
+    /// <param name='s'>The parameter <paramref name='s'/> is not
+    /// documented yet.</param>
     /// <returns>True if the _string is a well-formed email address under
     /// the Simple Mail Transfer Protocol, RFC5321 (matching the production
     /// "Mailbox" in section 4; otherwise, false.</returns>
@@ -1003,7 +1004,7 @@ if (!(month >= 1 && month <= 12)) {
   }
 
   private static int parse2Digit(string v, int index) {
-    int value = 0;
+    var value = 0;
     char c=(char)0;
     if (index<v.Length && (c=v[index])>= '0' && c<= '9') {
       value+=10*(c-'0'); index++;
@@ -1019,7 +1020,7 @@ if (!(month >= 1 && month <= 12)) {
   }
 
   private static int parse4Digit(string v, int index) {
-    int value = 0;
+    var value = 0;
     char c=(char)0;
     if (index<v.Length && (c=v[index])>= '0' && c<= '9') {
       value+=1000*(c-'0'); index++;
@@ -1073,18 +1074,20 @@ if (!(month >= 1 && month <= 12)) {
     /// defaultValue a value to return if the _string isn't a valid date.
     /// @return number of milliseconds since midnight, January 1,
     /// 1970.</summary>
-    /// <param name='v'>Not documented yet.</param>
-    /// <param name='defaultValue'>Not documented yet.</param>
+    /// <param name='v'>The parameter <paramref name='v'/> is not
+    /// documented yet.</param>
+    /// <param name='defaultValue'>The parameter <paramref
+    /// name='defaultValue'/> is not documented yet.</param>
     /// <returns>A 64-bit signed integer.</returns>
   public static long parseHttpDate(string v, long defaultValue) {
     if (v == null) {
  return defaultValue;
 }
-    int index = 0;
-    bool rfc850 = false;
-    bool asctime = false;
+    var index = 0;
+    var rfc850 = false;
+    var asctime = false;
     if (v.StartsWith("Mon" ,StringComparison.Ordinal)||v.StartsWith("Sun",
-StringComparison.Ordinal)||v.StartsWith("Fri",
+  StringComparison.Ordinal)||v.StartsWith("Fri",
  StringComparison.Ordinal)) {
       if (com.upokecenter.util.StringUtility.startsWith(v,"day,",3)) {
         rfc850 = true;
@@ -1266,11 +1269,11 @@ StringComparison.Ordinal)||v.StartsWith("Fri",
         (s[index+3]=='6' ||s[index+3]=='6') && (s[index+4]==':') &&
         (s[index+5]==':' || isHexChar(s[index+5]))) {
       // IPv6 Address
-      int phase1 = 0;
-      int phase2 = 0;
-      bool phased = false;
-      bool expectHex = false;
-      bool expectColon = false;
+      var phase1 = 0;
+      var phase2 = 0;
+      var phased = false;
+      var expectHex = false;
+      var expectColon = false;
       index+=5;
       while (index<endOffset) {
         char c = s[index];
@@ -1388,9 +1391,9 @@ StringComparison.Ordinal)||v.StartsWith("Fri",
     int i2 = skipSubdomain(s, index, endOffset, null, true);
     if (i2 != index) {
       if (i2<endOffset && s[i2]==':') {
-        i2 = i2 + 1;
+        ++i2;
         // future extension
-        bool haveString = false;
+        var haveString = false;
         while (i2<endOffset) {
           char c = s[i2];
           if (c==']') {
@@ -1478,7 +1481,7 @@ StringComparison.Ordinal)||v.StartsWith("Fri",
       (12) : (-1);
   }
   private static int parsePadded2Digit(string v, int index) {
-    int value = 0;
+    var value = 0;
     char c=(char)0;
     if (index<v.Length && v[index]==' ') {
       value = 0; index++;
@@ -1497,7 +1500,7 @@ StringComparison.Ordinal)||v.StartsWith("Fri",
   internal static int parseToken(string str, int index, string token, bool
     optionalQuoted) {
     int length = str.Length;
-    int j = 0;
+    var j = 0;
     int startIndex = index;
     for (int i = index;i<length && j<token.Length;i++, j++) {
       char c = str[i];
@@ -1534,7 +1537,7 @@ StringComparison.Ordinal)||v.StartsWith("Fri",
   internal static int parseTokenWithDelta(string str, int index, string
     token, int[] result) {
     int length = str.Length;
-    int j = 0;
+    var j = 0;
     int startIndex = index;
     result[0]=-1;
     for (int i = index;i<length && j<token.Length;i++, j++) {
@@ -1622,7 +1625,7 @@ StringComparison.Ordinal)||v.StartsWith("Fri",
       int endIndex, StringBuilder builder) {
     int startIndex = index;
     index = skipCFWS(s, index, endIndex, null);
-    bool haveAtom = false;
+    var haveAtom = false;
     while (index<endIndex) {
       char c = s[index];
       if (isAtext(c)) {
@@ -1632,7 +1635,8 @@ StringComparison.Ordinal)||v.StartsWith("Fri",
         ++index;
         haveAtom = true;
       } else {
-        return (!haveAtom) ? (startIndex) : (skipCFWS(s, index, endIndex, null));
+      return (!haveAtom) ? (startIndex) : (skipCFWS(s, index, endIndex,
+          null));
       }
     }
     return (haveAtom) ? index : startIndex;
@@ -1645,9 +1649,12 @@ StringComparison.Ordinal)||v.StartsWith("Fri",
     /// purposes of this method. @param the index where CFWS ends. Will be
     /// the same as _index_ if _index_ doesn't point to a comment or
     /// folding whitespace.</summary>
-    /// <param name='s'>Not documented yet.</param>
-    /// <param name='index'>Not documented yet.</param>
-    /// <param name='endIndex'>Not documented yet. (3).</param>
+    /// <param name='s'>The parameter <paramref name='s'/> is not
+    /// documented yet.</param>
+    /// <param name='index'>The parameter <paramref name='index'/> is not
+    /// documented yet.</param>
+    /// <param name='endIndex'>The parameter <paramref name='endIndex'/> is
+    /// not documented yet.</param>
     /// <returns>A 32-bit signed integer.</returns>
   internal static int skipCFWS(string s, int index, int endIndex) {
     int retIndex = index;
@@ -1720,7 +1727,8 @@ if (!(index >= startIndex)) {
  return index + 1;
 }
       // obs-ctext
-      if ((c<0x20 && c != 0x00 && c != 0x09 && c != 0x0a && c != 0x0d) || c == 0x7f) {
+      if ((c<0x20 && c != 0x00 && c != 0x09 && c != 0x0a && c != 0x0d) || c
+        == 0x7f) {
  return index + 2;
 }
     }
@@ -2082,8 +2090,8 @@ if (!(str != null)) {
       int endIndex, StringBuilder builder, bool withCFWS) {
     int startIndex = index;
     index=(withCFWS) ? skipCFWS(s, index, endIndex, null) : index;
-    bool haveAtom = false;
-    bool haveDot = false;
+    var haveAtom = false;
+    var haveDot = false;
     while (index<endIndex) {
       char c = s[index];
       if (c=='.') {
@@ -2142,10 +2150,10 @@ if (!(str != null)) {
       StringBuilder builder,
       int kind) {
     int i = index;
-    bool start = true;
-    bool quoted = false;
+    var start = true;
+    var quoted = false;
     int startIndex = index;
-    int count = 0;
+    var count = 0;
     while (i<endIndex) {
       char c = str[i];
       // check for percent-encoded characters
@@ -2191,19 +2199,19 @@ if (!(str != null)) {
         } else if (c=='"') {
  // end of quoted _string
           return i + 1;
- }
-        else if (c==127 || (c<32 && c!='\t')) {
+  } else if (c==127 || (c<32 && c!='\t')) {
  // ill-formed
           return startIndex;
- }
-        else {
+ } else {
           if (builder != null) {
             builder.Append(c);
           }
         }
       } else {
-        if (kind == 1 || kind == 2) {  // kind is parameter name or parameter value
-          // unquoted _string case
+    if (kind == 1 || kind == 2) {  
+            // kind is parameter name or parameter
+          // value
+          // unquoted string case
  if (c<= 0x20 || c>= 0x7F || ((c&0x7F)==c && "()<>@,;:\\\"/[]?="
             .IndexOf(c) >= 0)) {
             break;
@@ -2213,7 +2221,8 @@ if (!(str != null)) {
           }
         } else {  // kind is 0, type or subtype
           // See RFC6838
-          if ((c>= 'A' && c<= 'Z') || (c>= 'a' && c<= 'z') || (c>= '0' && c<= '9')) {
+    if ((c>= 'A' && c<= 'Z') || (c>= 'a' && c<= 'z') || (c>= '0' && c<=
+            '9')) {
             if (builder != null) {
               builder.Append(c);
             }
@@ -2281,7 +2290,8 @@ if (!(str != null)) {
     ++index;
     while (index<endIndex) {
       c = str[index];
-      if (!((c>= 'A' && c<= 'Z') || (c>= 'a' && c<= 'z') || (c>= '0' && c<= '9')||
+   if (!((c>= 'A' && c<= 'Z') || (c>= 'a' && c<= 'z') || (c>= '0' && c<=
+        '9')||
         c=='-')) {
         break;
       }
@@ -2415,11 +2425,12 @@ if (!(str != null)) {
   private static int skipMimeTypeSubtype(string str, int index, int
     endIndex, StringBuilder builder) {
     int i = index;
-    int count = 0;
+    var count = 0;
     while (i<str.Length) {
       char c = str[i];
       // See RFC6838
-      if ((c>= 'A' && c<= 'Z') || (c>= 'a' && c<= 'z') || (c>= '0' && c<= '9')) {
+    if ((c>= 'A' && c<= 'Z') || (c>= 'a' && c<= 'z') || (c>= '0' && c<=
+        '9')) {
         if (builder != null) {
           builder.Append(c);
         }
@@ -2528,7 +2539,8 @@ if (!(str != null)) {
  return index + 1;
 }
       // obs-ctext
-      if ((c<0x20 && c != 0x00 && c != 0x09 && c != 0x0a && c != 0x0d) || c == 0x7f) {
+      if ((c<0x20 && c != 0x00 && c != 0x09 && c != 0x0a && c != 0x0d) || c
+        == 0x7f) {
  return index + 1;
 }
     }
@@ -2545,7 +2557,7 @@ if (!(str != null)) {
       return;
     }
     b.Append('"');
-    int index = 0;
+    var index = 0;
     int endIndex = s.Length;
     if (index<endIndex) {
       char c = s[index];
@@ -2623,16 +2635,16 @@ if (!(str != null)) {
   // quoted-_string (RFC5322 sec. 3.2.4)
   internal static int skipQuotedString(string s, int index,
       int endIndex, StringBuilder builder) {
-    return skipQuotedString(s, index, endIndex, builder, QuotedStringRule.Rfc5322);
+return skipQuotedString(s, index, endIndex, builder,
+      QuotedStringRule.Rfc5322);
   }
 
   internal static int skipQuotedString(
       string s,
       int index,
       int endIndex,
-      StringBuilder builder, 
-      QuotedStringRule rule  
-    ) {
+      StringBuilder builder,
+      QuotedStringRule rule) {
     int startIndex = index;
     int bLength=(builder == null) ? 0 : builder.Length;
     index=(rule != QuotedStringRule.Rfc5322) ? index :
@@ -2689,8 +2701,8 @@ if (!(str != null)) {
     if (index >= endIndex) {
  return index;
 }
-    bool hyphen = false;
-    bool haveString = false;
+    var hyphen = false;
+    var haveString = false;
     while (index<endIndex) {
       char c = s[index];
       if (c=='-') {
@@ -2703,7 +2715,8 @@ if (!(str != null)) {
         }
         ++index;
         haveString = true;
-      } else if ((c>= 'A' && c<= 'Z') || (c>= 'a' && c<= 'z') || (c>= '0' && c<= '9')) {
+      } else if ((c>= 'A' && c<= 'Z') || (c>= 'a' && c<= 'z') || (c>= '0'&&
+        c<= '9')) {
         hyphen = false;
         if (builder != null) {
           builder.Append(c);
@@ -2729,7 +2742,8 @@ if (!(str != null)) {
     if (i2 != index) {
  return i2;
 }
-    i2 = skipQuotedString(s, index, endIndex, builder, QuotedStringRule.Rfc5322);
+  i2 = skipQuotedString(s, index, endIndex, builder,
+      QuotedStringRule.Rfc5322);
     return i2;
   }
   // skip space and tab characters

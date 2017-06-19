@@ -991,6 +991,7 @@ namespace Org.System.Xml.Sax {
 * casting to the correct type occurs only once, on initial
      retrieval.</remarks>
    * <seealso
+
   href="http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#getProperty(java.lang.String)"
      >
    * XMLReader.getProperty on www.saxproject.org</seealso>

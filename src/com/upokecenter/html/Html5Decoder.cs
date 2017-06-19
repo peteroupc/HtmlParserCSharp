@@ -28,7 +28,7 @@ THE SOFTWARE.
 namespace com.upokecenter.html {
 using System;
 using System.IO;
-using com.upokecenter.encoding;
+using PeterO.Text;
 internal class Html5Decoder : ITextDecoder {
   ITextDecoder decoder = null;
   bool havebom = false;

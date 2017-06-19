@@ -85,27 +85,26 @@ sealed class ExclusiveCanonicalXML {
     if ((node) == null) {
  throw new ArgumentNullException("node");
 }
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
 IList<IDictionary<string, string>> stack = new
       List<IDictionary<string, string>>();
-    if (prefixList == null) {
-      prefixList = new PeterO.Support.LenientDictionary<string, string>();
-    } else {
+    prefixList = prefixList ?? (new PeterO.Support.LenientDictionary<string,
+      string>());
       foreach (var prefix in prefixList.Keys) {
         string nsvalue = prefixList[prefix];
         checkNamespacePrefix(prefix, nsvalue);
-      }
     }
     PeterO.Support.LenientDictionary<string, string> item = new
       PeterO.Support.LenientDictionary<string, string>();
     stack.Add(item);
     if (node is IDocument) {
-      bool beforeElement = true;
+      var beforeElement = true;
       foreach (var child in node.getChildNodes()) {
         if (child is IElement) {
           beforeElement = false;
           canonicalize(child, builder, stack, prefixList, true, withComments);
-        } else if (withComments || child.getNodeType() != NodeType.COMMENT_NODE) {
+     } else if (withComments || child.getNodeType() !=
+          NodeType.COMMENT_NODE) {
           canonicalizeOutsideElement(child, builder, beforeElement);
         }
       }
@@ -145,14 +144,14 @@ IList<IDictionary<string, string>> stack = new
       IElement e=((IElement)node);
   IDictionary<string, string>
         nsRendered = namespaceStack[namespaceStack.Count-1];
-      bool copied = false;
+      var copied = false;
       builder.Append('<');
       if (e.getPrefix() != null && e.getPrefix().Length>0) {
         builder.Append(e.getPrefix());
         builder.Append(':');
       }
       builder.Append(e.getLocalName());
-      List<IAttr> attrs = new List<IAttr>();
+      var attrs = new List<IAttr>();
       ISet<string> declaredNames = null;
       if (addPrefixes && prefixList.Count>0) {
         declaredNames = new HashSet<string>();
@@ -161,7 +160,7 @@ IList<IDictionary<string, string>> stack = new
         string name = attr.getName();
         string nsvalue = null;
         if ("xmlns".Equals(name)) {
-          attrs.Add(attr);  // add default namespace 
+          attrs.Add(attr);  // add default namespace
             if (declaredNames != null) {
             declaredNames.Add("");
           }
@@ -169,7 +168,7 @@ IList<IDictionary<string, string>> stack = new
           checkNamespacePrefix("",nsvalue);
 } else if (name.StartsWith("xmlns:",StringComparison.Ordinal) &&
           name.Length>6) {
-          attrs.Add(attr);  // add prefix namespace 
+          attrs.Add(attr);  // add prefix namespace
             if (declaredNames != null) {
             declaredNames.Add(attr.getLocalName());
           }
@@ -199,9 +198,8 @@ IList<IDictionary<string, string>> stack = new
         string value = attr.getValue();
         bool isEmpty = String.IsNullOrEmpty(prefix);
         bool isEmptyDefault=(isEmpty && String.IsNullOrEmpty(value));
-        bool renderNamespace = false;
+        var renderNamespace = false;
         if (isEmptyDefault) {
-
           // condition used for Canonical XML
           //renderNamespace=(
           // (e.getParentNode() is IElement) &&
@@ -215,7 +213,8 @@ IList<IDictionary<string, string>> stack = new
               prefixList.ContainsKey("")) && nsRendered.ContainsKey("");
         } else {
           string renderedValue = nsRendered[prefix];
-          renderNamespace=(renderedValue == null || !renderedValue.Equals(value));
+       renderNamespace=(renderedValue == null ||
+            !renderedValue.Equals(value));
           // added condition for Exclusive XML Canonicalization
           renderNamespace = renderNamespace && (isVisiblyUtilized(e, prefix) ||
               prefixList.ContainsKey(prefix));

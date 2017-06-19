@@ -41,7 +41,7 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
     buffer = null;
     markpos=-1;
     stream.Dispose();
-      base.Dispose ();
+      base.Dispose();
   }
 
     /// <summary>Disables buffering of future bytes read from the
@@ -79,10 +79,7 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 
   private bool isDisabled() {
     if (disabled) {
-      if (markpos >= 0 && markpos<marklimit) {
- return false;
-}
-      return pos<endpos;
+      return (markpos >= 0 && markpos<marklimit) ? (false) : (pos<endpos);
     }
     return false;
   }
@@ -161,7 +158,7 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
  return c;
 }
     if (pos >= buffer.Length) {
-      byte[] newBuffer = new byte[buffer.Length*2];
+      var newBuffer = new byte[buffer.Length*2];
       Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
       buffer = newBuffer;
     }
@@ -180,8 +177,8 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
     if (unitCount == 0) {
  return 0;
 }
-    int total = 0;
-    int count = 0;
+    var total = 0;
+    var count = 0;
     // Read from buffer
     if (pos + unitCount <= endpos) {
       Array.Copy(buffer, pos, buf, offset, unitCount);
@@ -227,11 +224,12 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
     }
     // expand the buffer
     if (pos + unitCount>buffer.Length) {
-      byte[] newBuffer = new byte[(buffer.Length*2)+unitCount];
+      var newBuffer = new byte[(buffer.Length*2)+unitCount];
       Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
       buffer = newBuffer;
     }
-    count = stream.Read(buffer, endpos, Math.Min(unitCount, buffer.Length-endpos));
+count = stream.Read(buffer, endpos, Math.Min(unitCount,
+      buffer.Length-endpos));
     if (count>0) {
       endpos+=count;
     }
@@ -275,7 +273,7 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
     if (isDisabled()) {
  return stream.skip(byteCount);
 }
-    byte[] data = new byte[1024];
+    var data = new byte[1024];
     long ret = 0;
     while (byteCount< 0) {
       int bc=(int)Math.Min(byteCount, data.Length);

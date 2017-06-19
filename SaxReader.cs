@@ -91,11 +91,7 @@ namespace PeterO.Support {
       private IList<String[]> attributes;
 
       private AttributeList(bool blank) {
-        if (blank) {
-          attributes = new String[0][];
-        } else {
-          attributes = new List<String[]>();
-        }
+        attributes = (blank) ? (new String[0][]) : (new List<String[]>());
       }
 
       public AttributeList() : this(false) {}
@@ -133,7 +129,7 @@ namespace PeterO.Support {
       }
 
       public int GetIndex(string uri, string localName) {
-        int i = 0;
+        var i = 0;
         foreach (var a in attributes) {
           if (a[1].Equals(uri) && a[2].Equals(localName)) {
  return i;
@@ -143,7 +139,7 @@ namespace PeterO.Support {
       }
 
       public int GetIndex(string qName) {
-        int i = 0;
+        var i = 0;
         foreach (var a in attributes) {
           if (a[0].Equals(qName)) {
  return i;
@@ -203,16 +199,16 @@ namespace PeterO.Support {
     public void Parse(InputSource input) {
       if (input is InputSource<Stream>) {
         InputSource<Stream> iss=(InputSource<Stream>)input;
-        XmlReaderSettings settings = new XmlReaderSettings();
+        var settings = new XmlReaderSettings();
         settings.DtdProcessing = DtdProcessing.Ignore;
-//        settings.ProhibitDtd = false;
-//        settings.XmlResolver = new Resolver();
+// settings.ProhibitDtd = false;
+// settings.XmlResolver = new Resolver();
         XmlReader reader = XmlReader.Create(
           new StreamReader(new InputStreamWrapper(iss.Source), System.Text.Encoding.GetEncoding(input.Encoding)),
           settings);
         char[] charray = null;
         status = XmlReaderStatus.Parsing;
-        bool startdoc = false;
+        var startdoc = false;
         try {
           startdoc = true;
           if (ch != null) {

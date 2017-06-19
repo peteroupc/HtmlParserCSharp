@@ -66,11 +66,11 @@ public sealed class Microdata {
     return (href==null || href.Length==0) ? ("") : (href);
   }
 
-  public static JSONObject getMicrodataJSON(IDocument document) {
+  public static PeterO.Cbor.CBORObject getMicrodataJSON(IDocument document) {
     if ((document) == null) {
  throw new ArgumentNullException("document");
 }
-    JSONObject result = new JSONObject();
+    PeterO.Cbor.CBORObject result = PeterO.Cbor.CBORObject.NewMap();
     JSONArray items = new JSONArray();
     foreach (var node in document.getElementsByTagName("*")) {
       if (node.getAttribute("itemscope")!=null &&
@@ -83,11 +83,11 @@ public sealed class Microdata {
     return result;
   }
 
-  private static JSONObject getMicrodataObject(IElement item,
+  private static PeterO.Cbor.CBORObject getMicrodataObject(IElement item,
     IList<IElement> memory) {
  string[] itemtypes=StringUtility.splitAtSpaces(item.getAttribute("itemtype"
 ));
-    JSONObject result = new JSONObject();
+    PeterO.Cbor.CBORObject result = PeterO.Cbor.CBORObject.NewMap();
     memory.Add(item);
     if (itemtypes.Length>0) {
       JSONArray array = new JSONArray();
@@ -102,7 +102,7 @@ public sealed class Microdata {
           item.getBaseURI());
       result.put("id", globalid);
     }
-    JSONObject properties = new JSONObject();
+    PeterO.Cbor.CBORObject properties = PeterO.Cbor.CBORObject.NewMap();
     foreach (var element in getMicrodataProperties(item)) {
   string[] names=StringUtility.splitAtSpaces(element.getAttribute("itemprop"
 ));

@@ -14,7 +14,7 @@ using System.Text;
 
 public sealed class JSONPointer {
   public static JSONPointer fromPointer(Object obj, string pointer) {
-    int index = 0;
+    var index = 0;
     if (pointer == null) {
  throw new ArgumentNullException("pointer");
 }
@@ -22,12 +22,12 @@ public sealed class JSONPointer {
  return new JSONPointer(obj, pointer);
 }
     while (true) {
-      if (obj is JSONArray) {
+      if (obj is PeterO.Cbor.CBORObject) {
         if (index>= pointer.Length || pointer[index]!='/') {
  throw new ArgumentException(pointer);
 }
         ++index;
-        int[] value = new int[] { 0 };
+        var value = new int[] { 0 };
         int newIndex = readPositiveInteger(pointer, index, value);
         if (value[0]< 0) {
           if (index<pointer.Length && pointer[index]=='-' &&
@@ -40,12 +40,12 @@ public sealed class JSONPointer {
         if (newIndex == pointer.Length) {
  return new JSONPointer(obj, pointer.Substring(index));
 } else {
-          obj=((JSONArray)obj)[value[0]];
+          obj=((PeterO.Cbor.CBORObject)obj)[value[0]];
           index = newIndex;
         }
         index = newIndex;
-      } else if (obj is JSONObject) {
-        if (obj.Equals(JSONObject.NULL)) {
+      } else if (obj is PeterO.Cbor.CBORObject) {
+        if (obj.Equals(PeterO.Cbor.CBORObject.NULL)) {
  throw new System.Collections.Generic.KeyNotFoundException(pointer);
 }
         if (index>= pointer.Length || pointer[index]!='/') {
@@ -54,7 +54,7 @@ public sealed class JSONPointer {
         ++index;
         string key = null;
         int oldIndex = index;
-        bool tilde = false;
+        var tilde = false;
         while (index<pointer.Length) {
           int c = pointer[index];
           if (c=='/') {
@@ -70,7 +70,7 @@ public sealed class JSONPointer {
           key = pointer.Substring(oldIndex, (index)-(oldIndex));
         } else {
           index = oldIndex;
-          StringBuilder sb = new StringBuilder();
+          var sb = new StringBuilder();
           while (index<pointer.Length) {
             int c = pointer[index];
             if (c=='/') {
@@ -99,7 +99,7 @@ public sealed class JSONPointer {
         if (index == pointer.Length) {
  return new JSONPointer(obj, key);
 } else {
-          obj=((JSONObject)obj)[key];
+          obj=((PeterO.Cbor.CBORObject)obj)[key];
         }
       } else {
  throw new System.Collections.Generic.KeyNotFoundException(pointer);
@@ -114,15 +114,17 @@ public sealed class JSONPointer {
     /// <pre>/foo/2/bar</pre> means the same as
     /// <pre>obj['foo'][2]['bar']</pre> in JavaScript. If "~" and "/" occur
     /// in a key, they must be escaped with "~0" and "~1", respectively, in
-    /// a JSON pointer. @param obj An _object, especially a JSONObject or
-    /// JSONArray @param pointer A JSON pointer according to RFC 6901.
+    /// a JSON pointer. @param obj An _object, especially a PeterO.Cbor.CBORObject or
+    /// PeterO.Cbor.CBORObject @param pointer A JSON pointer according to RFC 6901.
     /// @return An _object within the specified JSON _object, or _obj_ if
     /// pointer is the empty _string. @ if the pointer is null. @ if the
     /// pointer is invalid @ if there is no JSON _object at the given
-    /// pointer, or if _obj_ is not of type JSONObject or JSONArray, unless
+    /// pointer, or if _obj_ is not of type PeterO.Cbor.CBORObject or PeterO.Cbor.CBORObject, unless
     /// pointer is the empty _string.</summary>
-    /// <param name='obj'>Not documented yet.</param>
-    /// <param name='pointer'>Not documented yet.</param>
+    /// <param name='obj'>The parameter <paramref name='obj'/> is not
+    /// documented yet.</param>
+    /// <param name='pointer'>The parameter <paramref name='pointer'/> is
+    /// not documented yet.</param>
     /// <returns>An arbitrary object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='pointer'/> is null.</exception>
@@ -137,8 +139,8 @@ public sealed class JSONPointer {
       string str,
       int index,
       int[] result) {
-    bool haveNumber = false;
-    bool haveZeros = false;
+    var haveNumber = false;
+    var haveZeros = false;
     int oldIndex = index;
     result[0]=-1;
     while (index<str.Length) {  // skip zeros
@@ -193,15 +195,16 @@ if (!(refValue != null)) {
   }
 
   public bool exists() {
-    if (jsonobj is JSONArray) {
+    if (jsonobj is PeterO.Cbor.CBORObject) {
       if (refValue.Equals("-")) {
  return false;
 }
       int
-  value = Int32.Parse(refValue, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
-      return value >= 0 && value<((JSONArray)jsonobj).Length;
-    } else if (jsonobj is JSONObject) {
- return ((JSONObject)jsonobj).has(refValue);
+  value = Int32.Parse(refValue, NumberStyles.AllowLeadingSign,
+    CultureInfo.InvariantCulture);
+      return value >= 0 && value<((PeterO.Cbor.CBORObject)jsonobj).Length;
+    } else if (jsonobj is PeterO.Cbor.CBORObject) {
+ return ((PeterO.Cbor.CBORObject)jsonobj).has(refValue);
 } else {
  return refValue.Length == 0;
 }
@@ -213,16 +216,15 @@ if (!(refValue != null)) {
     /// array or is greater than the array's length.</summary>
     /// <returns>A 32-bit signed integer.</returns>
   public int getIndex() {
-    if (jsonobj is JSONArray) {
+    if (jsonobj is PeterO.Cbor.CBORObject) {
       if (refValue.Equals("-")) {
- return ((JSONArray)jsonobj).Length;
+ return ((PeterO.Cbor.CBORObject)jsonobj).Length;
 }
       int
-  value = Int32.Parse(refValue, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
-      if (value< 0) {
- return -1;
-}
-      return (value>((JSONArray)jsonobj).Length) ? (-1) : (value);
+  value = Int32.Parse(refValue, NumberStyles.AllowLeadingSign,
+    CultureInfo.InvariantCulture);
+      return (value< 0) ? (-1) : ((value>((PeterO.Cbor.CBORObject)jsonobj).Length) ? (-1):
+        (value));
     } else {
  return -1;
 }
@@ -240,15 +242,15 @@ if (!(refValue != null)) {
     if (refValue.Length == 0) {
  return jsonobj;
 }
-    if (jsonobj is JSONArray) {
+    if (jsonobj is PeterO.Cbor.CBORObject) {
       int index = getIndex();
-      if (index >= 0 && index<((JSONArray)jsonobj).Length) {
- return ((JSONArray)jsonobj)[index];
+      if (index >= 0 && index<((PeterO.Cbor.CBORObject)jsonobj).Length) {
+ return ((PeterO.Cbor.CBORObject)jsonobj)[index];
 } else {
  return null;
 }
-    } else if (jsonobj is JSONObject) {
- return ((JSONObject)jsonobj)[refValue];
+    } else if (jsonobj is PeterO.Cbor.CBORObject) {
+ return ((PeterO.Cbor.CBORObject)jsonobj)[refValue];
 } else {
  return (refValue.Length == 0) ? jsonobj : null;
 }
@@ -277,8 +279,10 @@ if (!(refValue != null)) {
     /// named
     /// <i>keyToFind</i>.</item></list> The JSON Pointers are relative to
     /// the root _object.</summary>
-    /// <param name='root'>Not documented yet.</param>
-    /// <param name='keyToFind'>Not documented yet.</param>
+    /// <param name='root'>The parameter <paramref name='root'/> is not
+    /// documented yet.</param>
+    /// <param name='keyToFind'>The parameter <paramref name='keyToFind'/>
+    /// is not documented yet.</param>
     /// <returns>An IDictionary(string, Object) object.</returns>
   public static IDictionary<string, Object>
     getPointersWithKeyAndRemove(Object root, string keyToFind) {
@@ -310,8 +314,10 @@ if (!(refValue != null)) {
     /// named
     /// <i>keyToFind</i>.</item></list> The JSON Pointers are relative to
     /// the root _object.</summary>
-    /// <param name='root'>Not documented yet.</param>
-    /// <param name='keyToFind'>Not documented yet.</param>
+    /// <param name='root'>The parameter <paramref name='root'/> is not
+    /// documented yet.</param>
+    /// <param name='keyToFind'>The parameter <paramref name='keyToFind'/>
+    /// is not documented yet.</param>
     /// <returns>An IDictionary(string, Object) object.</returns>
   public static IDictionary<string, Object> getPointersWithKey(Object root,
     string keyToFind) {
@@ -327,8 +333,8 @@ if (!(refValue != null)) {
       string currentPointer,
       IDictionary<string, Object> pointerList,
       bool remove) {
-    if (root is JSONObject) {
-      JSONObject rootObj=((JSONObject)root);
+    if (root is PeterO.Cbor.CBORObject) {
+      PeterO.Cbor.CBORObject rootObj=((PeterO.Cbor.CBORObject)root);
       if (rootObj.has(keyToFind)) {
         // Key found in this _object,
         // add this _object's JSON pointer
@@ -343,15 +349,15 @@ if (!(refValue != null)) {
       // Search the key's values
       foreach (var key in rootObj.keys()) {
         string ptrkey = key;
-        ptrkey=ptrkey.Replace((CharSequence)"~","~0");
-        ptrkey=ptrkey.Replace((CharSequence)"/","~1");
+        ptrkey=ptrkey.Replace("~","~0");
+        ptrkey=ptrkey.Replace("/","~1");
         getPointersWithKey(rootObj[key], keyToFind,
             currentPointer+"/"+ptrkey,pointerList,remove);
       }
-  } else if (root is JSONArray) {
-      for (int i = 0;i<((JSONArray)root).Length; ++i) {
+  } else if (root is PeterO.Cbor.CBORObject) {
+      for (int i = 0;i<((PeterO.Cbor.CBORObject)root).Length; ++i) {
         string ptrkey = Convert.ToString(i, CultureInfo.InvariantCulture);
-        getPointersWithKey(((JSONArray)root)[i], keyToFind,
+        getPointersWithKey(((PeterO.Cbor.CBORObject)root)[i], keyToFind,
             currentPointer+"/"+ptrkey,pointerList,remove);
       }
     }

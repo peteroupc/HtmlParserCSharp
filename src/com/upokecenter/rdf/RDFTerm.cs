@@ -33,7 +33,7 @@ public sealed class RDFTerm {
       if ((c>= 'A' && c<= 'Z') || (c>= 'a' && c<= 'z') ||
           (c>0 && c>= '0' && c<= '9')) {
         builder.Append((char)c);
-  } else if (c >= 0xd800 && c <= 0xdbff && i + 1<length &&
+  } else if ((c & 0xfc00) == 0xd800 && i + 1<length &&
           str[i + 1]>= 0xdc00 && str[i + 1]<= 0xdfff) {
         // Get the Unicode code point for the surrogate pair
         c = 0x10000+(c-0xd800)*0x400+(str[i + 1]-0xdc00);
@@ -57,7 +57,7 @@ public sealed class RDFTerm {
 
   private static void escapeLanguageTag(string str, StringBuilder builder) {
     int length = str.Length;
-    bool hyphen = false;
+    var hyphen = false;
     for (int i = 0; i < length; ++i) {
       int c = str[i];
       if (c>= 'A' && c<= 'Z') {
@@ -97,7 +97,7 @@ public sealed class RDFTerm {
         builder.Append("%3E");
       } else if (c >= 0x20 && c <= 0x7e) {
         builder.Append((char)c);
-  } else if (c >= 0xd800 && c <= 0xdbff && i + 1<length &&
+  } else if ((c & 0xfc00) == 0xd800 && i + 1<length &&
           str[i + 1]>= 0xdc00 && str[i + 1]<= 0xdfff) {
         // Get the Unicode code point for the surrogate pair
         c = 0x10000+(c-0xd800)*0x400+(str[i + 1]-0xdc00);
@@ -156,7 +156,7 @@ public sealed class RDFTerm {
     if ((name).Length == 0) {
  throw new ArgumentException("name is empty.");
 }
-    RDFTerm ret = new RDFTerm();
+    var ret = new RDFTerm();
     ret.kind = BLANK;
     ret.typeOrLanguage = null;
     ret.value = name;
@@ -167,7 +167,7 @@ public sealed class RDFTerm {
     if ((iri) == null) {
  throw new ArgumentNullException("iri");
 }
-    RDFTerm ret = new RDFTerm();
+    var ret = new RDFTerm();
     ret.kind = IRI;
     ret.typeOrLanguage = null;
     ret.value = iri;
@@ -184,7 +184,7 @@ public sealed class RDFTerm {
     if ((languageTag).Length == 0) {
  throw new ArgumentException("languageTag is empty.");
 }
-    RDFTerm ret = new RDFTerm();
+    var ret = new RDFTerm();
     ret.kind = LANGSTRING;
     ret.typeOrLanguage = languageTag;
     ret.value = str;
@@ -203,7 +203,7 @@ public sealed class RDFTerm {
     if ((iri).Length == 0) {
  throw new ArgumentException("iri is empty.");
 }
-    RDFTerm ret = new RDFTerm();
+    var ret = new RDFTerm();
     ret.kind = TYPEDSTRING;
     ret.typeOrLanguage = iri;
     ret.value = str;
@@ -237,6 +237,7 @@ public sealed class RDFTerm {
     } else {
  return !value.Equals(other.value);
 }
+      return true;
   }
   public int getKind() {
     return kind;
@@ -257,7 +258,7 @@ public sealed class RDFTerm {
   }
   public override sealed int GetHashCode() {unchecked {
      var prime = 31;
-    int result = prime * result + kind;
+    int result = prime + kind;
     result = prime * result+
         ((typeOrLanguage == null) ? 0 : typeOrLanguage.GetHashCode());
     result = prime * result + ((value == null) ? 0 : value.GetHashCode());
