@@ -31,9 +31,9 @@ using System.IO;
 using PeterO.Text;
 internal class Html5Decoder : ITextDecoder {
   ITextDecoder decoder = null;
-  bool havebom = false;
-  bool havecr = false;
-  bool iserror = false;
+  var havebom = false;
+  var havecr = false;
+  var iserror = false;
   public Html5Decoder(ITextDecoder decoder) {
     if (decoder == null) {
  throw new ArgumentException();
@@ -46,7 +46,7 @@ internal class Html5Decoder : ITextDecoder {
   }
 
   public int decode(PeterO.Support.InputStream stream, IEncodingError error) {
-    int[] value = new int[1];
+    var value = new int[1];
     int c = decode(stream, value, 0, 1, error);
     return (c <= 0) ? (-1) : (value[0]);
   }
@@ -66,7 +66,7 @@ internal class Html5Decoder : ITextDecoder {
     if (length == 0) {
  return 0;
 }
-    int count = 0;
+    var count = 0;
     while (length>0) {
       int c = decoder.decode(stream, error);
       if (!havebom && !havecr && c >= 0x20 && c <= 0x7e) {

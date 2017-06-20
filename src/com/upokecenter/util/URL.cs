@@ -58,7 +58,7 @@ public sealed class URL {
         stream.WriteByte(unchecked((byte)(0x3b)));
         return;
       }
-      byte[] data = new byte[8];
+      var data = new byte[8];
       int count = data.Length;
       while (codePoint>0) {
         --count;
@@ -71,7 +71,8 @@ public sealed class URL {
   }
   private static string hex="0123456789ABCDEF";
   private static IEncodingError encodingError = new EncodingError();
-  private static IEncodingError querySerializerError = new QuerySerializerError();
+  private static IEncodingError querySerializerError = new
+    QuerySerializerError();
   private static void appendOutputBytes(StringBuilder builder,
       MemoryOutputStream baos) {
     for (int i = 0;i<baos.Length; ++i) {
@@ -92,9 +93,9 @@ public sealed class URL {
   private static string hostParse(string _string) {
     if (_string.Length>0 && _string[0]=='[') {
       if (_string[_string.Length-1]!=']') {
-        int[] ipv6 = new int[8];
-        int piecePointer = 0;
-        int index = 1;
+        var ipv6 = new int[8];
+        var piecePointer = 0;
+        var index = 1;
         int compress=-1;
         int ending = _string.Length-1;
         int c=(index >= ending) ? -1 : _string[index];
@@ -111,12 +112,12 @@ public sealed class URL {
  return null;
 }
           c = _string[index];
-          if (c >= 0xd800 && c <= 0xdbff && index + 1<ending &&
+          if ((c & 0xfc00) == 0xd800 && index + 1<ending &&
               _string[index + 1]>= 0xdc00 && _string[index + 1]<= 0xdfff) {
             // Get the Unicode code point for the surrogate pair
             c = 0x10000+(c-0xd800)*0x400+(_string[index + 1]-0xdc00);
             ++index;
-          } else if (c >= 0xd800 && c <= 0xdfff) {
+          } else if ((c & 0xf800) == 0xd800) {
  // illegal surrogate
             throw new ArgumentException();
  }
@@ -129,8 +130,8 @@ public sealed class URL {
             compress = piecePointer;
             continue;
           }
-          int value = 0;
-          int length = 0;
+          var value = 0;
+          var length = 0;
           while (length< 4) {
             if (c>= 'A' && c<= 'F') {
               value=value*16+(c-'A')+10;
@@ -174,9 +175,9 @@ public sealed class URL {
           if (piecePointer>6) {
  return null;
 }
-          int dotsSeen = 0;
+          var dotsSeen = 0;
           while (index<ending) {
-            int value = 0;
+            var value = 0;
             while (c>= '0' && c<= '9') {
               value=value*10+(c-'0');
               if (value>255) {
@@ -233,11 +234,9 @@ public sealed class URL {
  return false;
 }
     if (c<0x80) {
- return((c>= 'a' && c<= 'z') ||
-          (c>= 'A' && c<= 'Z') || (c>= '0' && c<= '9') ||
+ return((c>= 'a' && c<= 'z') || (c>= 'A' && c<= 'Z') || (c>= '0' && c<= '9') ||
           ((c&0x7F)==c && "!$&'()*+,-./:;=?@_~".IndexOf((char)c)>= 0));
- }
-    else if ((c & 0xfffe) == 0xfffe) {
+  } else if ((c & 0xfffe) == 0xfffe) {
  return false;
 }
     else return ((c >= 0xa0 && c <= 0xd7ff) || (c >= 0xe000 && c <= 0xfdcf) ||
@@ -261,10 +260,10 @@ public sealed class URL {
     if (s == null) {
  throw new ArgumentException();
 }
-    int beginning = 0;
+    var beginning = 0;
     int ending = s.Length-1;
-    bool relative = false;
-    URL url = new URL();
+    var relative = false;
+    var url = new URL();
     ITextEncoder encoder = null;
     ParseState state = ParseState.SchemeStart;
     if (encoding != null) {
@@ -295,19 +294,19 @@ public sealed class URL {
     if (ending<beginning) {
       ending = beginning;
     }
-    bool atflag = false;
-    bool bracketflag = false;
-    IntList buffer = new IntList();
+    var atflag = false;
+    var bracketflag = false;
+    var buffer = new IntList();
     IntList query = null;
     IntList fragment = null;
     IntList password = null;
     IntList username = null;
     IntList schemeData = null;
-    bool error = false;
+    var error = false;
     IList<string> path = new List<string>();
     int index = beginning;
     int hostStart=-1;
-    int portstate = 0;
+    var portstate = 0;
     while (index <= ending) {
       int oldindex = index;
       int c=-1;
@@ -316,12 +315,12 @@ public sealed class URL {
         ++index;
       } else {
         c = s[index];
-        if (c >= 0xd800 && c <= 0xdbff && index + 1<ending &&
+        if ((c & 0xfc00) == 0xd800 && index + 1<ending &&
             s[index + 1]>= 0xdc00 && s[index + 1]<= 0xdfff) {
           // Get the Unicode code point for the surrogate pair
           c = 0x10000+(c-0xd800)*0x400+(s[index + 1]-0xdc00);
           ++index;
-        } else if (c >= 0xd800 && c <= 0xdfff) {
+        } else if ((c & 0xf800) == 0xd800) {
  // illegal surrogate
           throw new ArgumentException();
  }
@@ -466,11 +465,8 @@ public sealed class URL {
           if (c=='\\') {
             error = true;
           }
-          if ("file".Equals(url.scheme)) {
-            state = ParseState.FileHost;
-          } else {
-            state = ParseState.AuthorityIgnoreSlashes;
-          }
+          state = ("file" .Equals(url.scheme)) ? (ParseState.FileHost) :
+            (ParseState.AuthorityIgnoreSlashes);
         } else {
           if (baseurl != null) {
             url.host = baseurl.host;
@@ -656,7 +652,7 @@ public sealed class URL {
         break;
       case ParseState.Query:
         if (c<0 || c=='#') {
-          bool utf8 = true;
+          var utf8 = true;
           if (relative) {
             utf8 = true;
           }
@@ -674,8 +670,9 @@ public sealed class URL {
             }
           } else {
             try {
-              MemoryOutputStream baos = new MemoryOutputStream();
-              encoder.encode(baos, buffer.array(), 0, buffer.Count, encodingError);
+              var baos = new MemoryOutputStream();
+          encoder.encode(baos, buffer.array(), 0, buffer.Count,
+                encodingError);
               byte[] bytes = baos.toByteArray();
               foreach (var ch in bytes) {
                 if (ch<0x21 || ch>0x7e || ch == 0x22 || ch == 0x23 ||
@@ -804,7 +801,7 @@ public sealed class URL {
     if (schemeData != null) {
       url.schemeData = schemeData.ToString();
     }
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     if (path.Count == 0) {
       builder.Append('/');
     } else {
@@ -871,7 +868,7 @@ public sealed class URL {
           encoding = ch;
         }
       }
-      string[] pair = new string[] { name, value};
+      var pair = new string[] { name, value};
       pairs.Add(pair);
     }
     try {
@@ -893,7 +890,7 @@ public sealed class URL {
     if (s[0]!='/') {
  throw new ArgumentException();
 }
-    int i = 1;
+    var i = 1;
     while (i <= s.Length) {
       int io=s.IndexOf('/',i);
       if (io >= 0) {
@@ -909,7 +906,7 @@ public sealed class URL {
 
   private static string percentDecode(string str, string encoding) {
     int len = str.Length;
-    bool percent = false;
+    var percent = false;
     for (int i = 0; i < len; ++i) {
       char c = str[i];
       if (c=='%') {
@@ -923,7 +920,7 @@ public sealed class URL {
  return str;
 }
     ITextDecoder decoder = TextEncoding.getDecoder(encoding);
-    ByteList mos = new ByteList();
+    var mos = new ByteList();
     for (int i = 0; i < len; ++i) {
       int c = str[i];
       if (c=='%') {
@@ -988,9 +985,9 @@ public sealed class URL {
     if (encoder == null) {
  throw new ArgumentException();
 }
-    StringBuilder builder = new StringBuilder();
-    bool first = true;
-    MemoryOutputStream baos = new MemoryOutputStream();
+    var builder = new StringBuilder();
+    var first = true;
+    var baos = new MemoryOutputStream();
     foreach (var pair in pairs) {
       if (!first) {
         builder.Append(delimiter==null ? "&" : delimiter);
@@ -1177,7 +1174,7 @@ public sealed class URL {
   }
 
   public override sealed string ToString() {
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     builder.Append(scheme);
     builder.Append(':');
     if (scheme.Equals("file") || scheme.Equals("http") ||

@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using com.upokecenter.html;
 using PeterO.Cbor;
+using com.upokecenter.html;
 using com.upokecenter.util;
 
 public sealed class Microformats {
@@ -14,7 +14,7 @@ public sealed class Microformats {
   static Microformats() {
     complexLegacyMap.Add("adr",new string[] { "p-adr","h-adr"});
   complexLegacyMap.Add("affiliation" ,new string[] { "p-affiliation",
-"h-card" });
+  "h-card" });
     complexLegacyMap.Add("author",new string[] { "p-author","h-card"});
     complexLegacyMap.Add("contact",new string[] { "p-contact","h-card"});
     complexLegacyMap.Add("education",new string[] { "p-education","h-event"});
@@ -74,13 +74,14 @@ public sealed class Microformats {
     0, 31, 29, 31, 30, 31, 30, 31, 31, 30,
     31, 30, 31 };
 
-private static void accumulateValue(PeterO.Cbor.CBORObject obj, string key, Object
+private static void accumulateValue(CBORObject obj, string key,
+  Object
     value) {
-    PeterO.Cbor.CBORObject arr = null;
+    CBORObject arr = null;
       if (obj.ContainsKey(key)) {
       arr = obj[key];
     } else {
-      arr = PeterO.Cbor.CBORObject.NewArray();
+      arr = CBORObject.NewArray();
       obj.put(key, arr);
     }
     arr.put(value);
@@ -143,9 +144,9 @@ private static void accumulateValue(PeterO.Cbor.CBORObject obj, string key, Obje
     }
   }
 
-  private static PeterO.Cbor.CBORObject copyJson(PeterO.Cbor.CBORObject obj) {
+  private static CBORObject copyJson(CBORObject obj) {
     try {
-      return new PeterO.Cbor.CBORObject(obj.ToString());
+      return new CBORObject(obj.ToString());
     } catch (Json.InvalidJsonException) {
       return null;
     }
@@ -347,16 +348,16 @@ private static void accumulateValue(PeterO.Cbor.CBORObject obj, string key, Obje
     } else {
  return null;
 }
-    if (href == null || href.Length == 0) {
+    if (String.IsNullOrEmpty (href)) {
  return "";
 }
     href = HtmlDocument.resolveURL(node, href, null);
-    return (href==null || href.Length==0) ? ("") : (href);
+    return (String.IsNullOrEmpty (href)) ? ("") : (href);
   }
 
-  private static int[] getLastKnownTime(PeterO.Cbor.CBORObject obj) {
+  private static int[] getLastKnownTime(CBORObject obj) {
     if (obj.has("start")) {
-      PeterO.Cbor.CBORObject arr=obj.getJson("start");
+      CBORObject arr=obj["start"];
       //Console.WriteLine("start %s",arr);
       Object result = arr[arr.Length-1];
       if (result is string) {
@@ -398,10 +399,10 @@ private static void accumulateValue(PeterO.Cbor.CBORObject obj, string key, Obje
     /// a JSON _object containing Microformats metadata.</summary>
     /// <param name='root'>The parameter <paramref name='root'/> is not
     /// documented yet.</param>
-    /// <returns>A PeterO.Cbor.CBORObject object.</returns>
+    /// <returns>A CBORObject object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
-  public static PeterO.Cbor.CBORObject getMicroformatsJSON(IDocument root) {
+  public static CBORObject getMicroformatsJSON(IDocument root) {
     if ((root) == null) {
  throw new ArgumentNullException("root");
 }
@@ -415,15 +416,15 @@ private static void accumulateValue(PeterO.Cbor.CBORObject obj, string key, Obje
     /// containing Microformats metadata.</summary>
     /// <param name='root'>The parameter <paramref name='root'/> is not
     /// documented yet.</param>
-    /// <returns>A PeterO.Cbor.CBORObject object.</returns>
+    /// <returns>A CBORObject object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
-  public static PeterO.Cbor.CBORObject getMicroformatsJSON(IElement root) {
+  public static CBORObject getMicroformatsJSON(IElement root) {
     if ((root) == null) {
  throw new ArgumentNullException("root");
 }
-    var obj = PeterO.Cbor.CBORObject.NewMap();
-    var items = PeterO.Cbor.CBORObject.NewArray();
+    var obj = CBORObject.NewMap();
+    var items = CBORObject.NewArray();
     propertyWalk(root, null, items);
     obj.put("items", items);
     return obj;
@@ -480,22 +481,22 @@ if (!(day <= 31)) {
           (root.getAttribute("alt")) : (getValueContent(root,false));
   }
 
-  public static PeterO.Cbor.CBORObject getRelJSON(IDocument root) {
+  public static CBORObject getRelJSON(IDocument root) {
     if ((root) == null) {
  throw new ArgumentNullException("root");
 }
     return getRelJSON(root.getDocumentElement());
   }
 
-  public static PeterO.Cbor.CBORObject getRelJSON(IElement root) {
+  public static CBORObject getRelJSON(IElement root) {
     if ((root) == null) {
  throw new ArgumentNullException("root");
 }
-    var obj = PeterO.Cbor.CBORObject.NewMap();
-    var items = PeterO.Cbor.CBORObject.NewArray();
-    var item = PeterO.Cbor.CBORObject.NewMap();
+    var obj = CBORObject.NewMap();
+    var items = CBORObject.NewArray();
+    var item = CBORObject.NewMap();
     accumulateValue(item,"type","rel");
-    var props = PeterO.Cbor.CBORObject.NewMap();
+    var props = CBORObject.NewMap();
     relWalk(root, props);
     item.put("properties", props);
     items.put(item);
@@ -549,7 +550,7 @@ if (!(day <= 31)) {
     /// <returns>A string object.</returns>
   private static string getUValue(IElement e) {
     string url = getHref(e);
-    if (url == null || url.Length == 0) {
+    if (String.IsNullOrEmpty (url)) {
       url = getTrimmedTextContent(e);
       if (URIUtility.isValidIRI(url)) {
  return url;
@@ -668,7 +669,8 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
     return seen;
   }
 
-  private static bool implyForLink(IElement root, PeterO.Cbor.CBORObject subProperties) {
+  private static bool implyForLink(IElement root, CBORObject
+    subProperties) {
     if (StringUtility.toLowerCaseAscii(root.getLocalName()).Equals("a") &&
         root.getAttribute("href")!=null) {
       // get the link's URL
@@ -989,7 +991,7 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
     return relList.ToArray();
   }
   private static void propertyWalk(IElement root,
-      PeterO.Cbor.CBORObject properties, PeterO.Cbor.CBORObject children) {
+      CBORObject properties, CBORObject children) {
     string[] className = getClassNames(root);
     if (className.Length>0) {
       IList<string> types = new List<string>();
@@ -1033,14 +1035,14 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
       } else if (types.Count>0) {
         // this is a child microformat
         // with no properties
-        var obj = PeterO.Cbor.CBORObject.NewMap();
-        obj.put("type", new PeterO.Cbor.CBORObject(types));
+        var obj = CBORObject.NewMap();
+          obj["type"]=CBORObject.FromObject(types);
         // for holding child elements with
         // properties
-        var subProperties = PeterO.Cbor.CBORObject.NewMap();
+        var subProperties = CBORObject.NewMap();
         // for holding child microformats with no
         // property class
-        var subChildren = PeterO.Cbor.CBORObject.NewArray();
+        var subChildren = CBORObject.NewArray();
         foreach (var child in root.getChildNodes()) {
           if (child is IElement) {
             propertyWalk((IElement)child,
@@ -1065,8 +1067,7 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
           }
           // Also imply u-photo
         if (StringUtility.toLowerCaseAscii(root.getLocalName()).Equals(
-  "img") &&
-              root.getAttribute("src")!=null) {
+  "img") && root.getAttribute("src")!=null) {
             setValueIfAbsent(subProperties,"photo", getUValue(root));
           }
           if (!subProperties.has("photo")) {
@@ -1083,21 +1084,21 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
         if (hasProperties) {
           foreach (var cls in className) {
             if (cls.StartsWith("p-",StringComparison.Ordinal)) {  // property
-              PeterO.Cbor.CBORObject clone = copyJson(obj);
+              CBORObject clone = copyJson(obj);
               clone.put("value",getPValue(root));
               accumulateValue(properties, cls.Substring(2), clone);
             } else if (cls.StartsWith("u-",StringComparison.Ordinal)) {  // URL
-              PeterO.Cbor.CBORObject clone = copyJson(obj);
+              CBORObject clone = copyJson(obj);
               clone.put("value",getUValue(root));
               accumulateValue(properties, cls.Substring(2), clone);
         } else if (cls.StartsWith("dt-",StringComparison.Ordinal)) {
               // date/time
-              PeterO.Cbor.CBORObject clone = copyJson(obj);
+              CBORObject clone = copyJson(obj);
               clone.put("value",getDTValue(root,getLastKnownTime(properties)));
               accumulateValue(properties, cls.Substring(3), clone);
          } else if (cls.StartsWith("e-",StringComparison.Ordinal)) {
               // date/time
-              PeterO.Cbor.CBORObject clone = copyJson(obj);
+              CBORObject clone = copyJson(obj);
               clone.put("value",getEValue(root));
               accumulateValue(properties, cls.Substring(2), clone);
             }
@@ -1116,7 +1117,7 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
   }
 
   private static void relWalk(IElement root,
-      PeterO.Cbor.CBORObject properties) {
+      CBORObject properties) {
     string[] className = getRelNames(root);
     if (className.Length>0) {
       string href = getHref(root);
@@ -1133,11 +1134,12 @@ if (!StringUtility.toLowerCaseAscii(((IElement)child) .getLocalName())
     }
   }
 
-private static void setValueIfAbsent(PeterO.Cbor.CBORObject obj, string key, Object
+private static void setValueIfAbsent(CBORObject obj, string key,
+  Object
     value) {
     if (!obj.has(key)) {
-      PeterO.Cbor.CBORObject arr = null;
-      arr = PeterO.Cbor.CBORObject.NewArray();
+      CBORObject arr = null;
+      arr = CBORObject.NewArray();
       obj.put(key, arr);
       arr.put(value);
     }

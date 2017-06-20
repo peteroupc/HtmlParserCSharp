@@ -10,6 +10,7 @@ namespace com.upokecenter.io {
 using System;
 using System.IO;
 using System.Text;
+using PeterO.Text;
 
 public sealed class StreamUtility {
 public static void copyStream(PeterO.Support.InputStream stream, Stream
@@ -29,23 +30,10 @@ public static void copyStream(PeterO.Support.InputStream stream, Stream
     try {
       input = new PeterO.Support.WrappedInputStream(new
         FileStream((file).ToString(), FileMode.Open));
-      return streamToString(input);
+        return Encodings.DecodeToString (Encodings.UTF8, input);
     } finally {
       if (input != null) {
         input.Dispose();
-      }
-    }
-  }
-
-  public static void inputStreamToFile(PeterO.Support.InputStream stream,
-    PeterO.Support.File file) {
-    Stream output = null;
-    try {
-      output = new FileStream((file).ToString(), FileMode.Create);
-      copyStream(stream, output);
-    } finally {
-      if (output != null) {
-        output.Dispose();
       }
     }
   }
@@ -67,26 +55,6 @@ public static void copyStream(PeterO.Support.InputStream stream, Stream
     }
   }
 
-  public static string streamToString(PeterO.Support.InputStream stream) {
-    return streamToString("UTF-8",stream);
-  }
-
-  public static string streamToString(string charset,
-    PeterO.Support.InputStream stream) {
-    TextReader reader = new
-      StreamReader(stream, System.Text.Encoding.GetEncoding(charset));
-    var builder = new StringBuilder();
-    var buffer = new char[4096];
-    while (true) {
-      int count = reader.Read(buffer, 0, (buffer).Length);
-      if (count< 0) {
-        break;
-      }
-      builder.Append(buffer, 0, count);
-    }
-    return builder.ToString();
-  }
-
     /// <summary>* Writes a _string in UTF-8 to the specified file. If the
     /// file exists, it will be overwritten @param s a _string to write.
     /// Illegal code unit sequences are replaced with with U + FFFD
@@ -104,7 +72,7 @@ public static void copyStream(PeterO.Support.InputStream stream, Stream
       stringToStream(s, os);
     } finally {
       if (os != null) {
-        os.Close();
+        os.Dispose();
       }
     }
   }

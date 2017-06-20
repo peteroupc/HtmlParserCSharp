@@ -537,12 +537,10 @@ sealed class CharsetSniffer {
             &&
     ((data[position + 2]&0xff) == 0x45 || (data[position + 2]&0xff) == 0x65)
             &&
-    ((data[position + 3]&0xff) == 0x54 || (data[position + 3]&0xff) == 0x74)
-            &&
-          (data[position + 4]==0x41 || data[position + 4]==0x61) &&
+    ((data[position + 3]&0xff) == 0x54 || (data[position + 3]&0xff) == 0x74)&&
+            (data[position + 4]==0x41 || data[position + 4]==0x61) &&
  (data[position + 5]==0x09 || data[position + 5]==0x0a || data[position +
-   5]==0x0D
-            ||
+   5]==0x0d ||
     data[position + 5]==0x0c || data[position + 5]==0x20 ||
             data[position + 5]==0x2f)
 ) {
@@ -604,8 +602,7 @@ sealed class CharsetSniffer {
 //</X
               (position + 2 <= count && data[position]==0x3c &&
       (((data[position + 1]&0xff) >= 0x41 && (data[position + 1]&0xff) <=
-             0x5a)
-                ||
+             0x5a) ||
        ((data[position + 1]&0xff) >= 0x61 && (data[position + 1]&0xff) <=
          0x7a)))  // <X
 ) {
@@ -629,9 +626,8 @@ sealed class CharsetSniffer {
         }
         ++position;
   } else if (position + 2 <= count && data[position]==0x3c &&
-     ((data[position + 1]&0xff) == 0x21 || (data[position + 1]&0xff) == 0x3f
-            ||
-          (data[position + 1]&0xff) == 0x2f)) {
+     ((data[position + 1]&0xff) == 0x21 || (data[position + 1]&0xff) == 0x3f||
+            (data[position + 1]&0xff) == 0x2f)) {
         // <! or </ or <?
         while (position<count) {
           if (data[position]!=0x3e) {
@@ -866,10 +862,12 @@ sealed class CharsetSniffer {
     // Fall back
     string
   lang =
+
   StringUtility.toLowerCaseAscii(CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
     string
 
-  country = StringUtility.toUpperCaseAscii(CultureInfo.CurrentCulture.Name.IndexOf(
+  country =
+    StringUtility.toUpperCaseAscii(CultureInfo.CurrentCulture.Name.IndexOf(
       '-')<0 ? "" :
 CultureInfo.CurrentCulture.Name.Substring(
   1+CultureInfo.CurrentCulture.Name.IndexOf('-')));

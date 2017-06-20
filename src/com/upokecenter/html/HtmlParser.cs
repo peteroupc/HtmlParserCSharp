@@ -129,8 +129,8 @@ sealed class HtmlParser {
   internal abstract class TagToken : IToken {
     protected StringBuilder builder;
     IList<Attr> attributes = null;
-    bool selfClosing = false;
-    bool selfClosingAck = false;
+    var selfClosing = false;
+    var selfClosingAck = false;
     public TagToken(char ch) {
       builder = new StringBuilder();
       builder.Append(ch);
@@ -146,19 +146,15 @@ sealed class HtmlParser {
     }
 
     public Attr addAttribute(char ch) {
-      if (attributes == null) {
-        attributes = new List<Attr>();
-      }
-      Attr a = new Attr(ch);
+      attributes = attributes ?? (new List<Attr>());
+      var a = new Attr(ch);
       attributes.Add(a);
       return a;
     }
 
     public Attr addAttribute(int ch) {
-      if (attributes == null) {
-        attributes = new List<Attr>();
-      }
-      Attr a = new Attr(ch);
+      attributes = attributes ?? (new List<Attr>());
+      var a = new Attr(ch);
       attributes.Add(a);
       return a;
     }
@@ -576,75 +572,185 @@ private static readonly string
     IList<Attr> attributes = token.getAttributes();
     foreach (var attr in attributes) {
       string name = attr.getName();
-      if (name.Equals("attributename")) { attr.setName("attributeName");
-  } else if (name.Equals("attributetype")) { attr.setName("attributeType");
-  } else if (name.Equals("basefrequency")) { attr.setName("baseFrequency");
-  } else if (name.Equals("baseprofile")) { attr.setName("baseProfile");
-  } else if (name.Equals("calcmode")) { attr.setName("calcMode");
-  } else if (name.Equals("clippathunits")) { attr.setName("clipPathUnits");
+      if (name.Equals("attributename")) {
+  { attr.setName("attributeName");
+}
+  } else if (name.Equals("attributetype")) {
+  { attr.setName("attributeType");
+}
+  } else if (name.Equals("basefrequency")) {
+  { attr.setName("baseFrequency");
+}
+  } else if (name.Equals("baseprofile")) {
+  { attr.setName("baseProfile");
+}
+  } else if (name.Equals("calcmode")) {
+  { attr.setName("calcMode");
+}
+  } else if (name.Equals("clippathunits")) {
+  { attr.setName("clipPathUnits");
+}
   } else if (name.Equals("contentscripttype")) {
         attr.setName("contentScriptType");
-  } else if (name.Equals("contentstyletype")) { attr.setName("contentStyleType");
-  } else if (name.Equals("diffuseconstant")) { attr.setName("diffuseConstant");
-  } else if (name.Equals("edgemode")) { attr.setName("edgeMode");
+  } else if (name.Equals("contentstyletype")) {
+  { attr.setName("contentStyleType");
+}
+  } else if (name.Equals("diffuseconstant")) {
+  { attr.setName("diffuseConstant");
+}
+  } else if (name.Equals("edgemode")) {
+  { attr.setName("edgeMode");
+}
   } else if (name.Equals("externalresourcesrequired")) {
         attr.setName("externalResourcesRequired");
-  } else if (name.Equals("filterres")) { attr.setName("filterRes");
-  } else if (name.Equals("filterunits")) { attr.setName("filterUnits");
-  } else if (name.Equals("glyphref")) { attr.setName("glyphRef");
+  } else if (name.Equals("filterres")) {
+  { attr.setName("filterRes");
+}
+  } else if (name.Equals("filterunits")) {
+  { attr.setName("filterUnits");
+}
+  } else if (name.Equals("glyphref")) {
+  { attr.setName("glyphRef");
+}
   } else if (name.Equals("gradienttransform")) {
         attr.setName("gradientTransform");
-  } else if (name.Equals("gradientunits")) { attr.setName("gradientUnits");
-  } else if (name.Equals("kernelmatrix")) { attr.setName("kernelMatrix");
-  } else if (name.Equals("kernelunitlength")) { attr.setName("kernelUnitLength");
-  } else if (name.Equals("keypoints")) { attr.setName("keyPoints");
-  } else if (name.Equals("keysplines")) { attr.setName("keySplines");
-  } else if (name.Equals("keytimes")) { attr.setName("keyTimes");
-  } else if (name.Equals("lengthadjust")) { attr.setName("lengthAdjust");
+  } else if (name.Equals("gradientunits")) {
+  { attr.setName("gradientUnits");
+}
+  } else if (name.Equals("kernelmatrix")) {
+  { attr.setName("kernelMatrix");
+}
+  } else if (name.Equals("kernelunitlength")) {
+  { attr.setName("kernelUnitLength");
+}
+  } else if (name.Equals("keypoints")) {
+  { attr.setName("keyPoints");
+}
+  } else if (name.Equals("keysplines")) {
+  { attr.setName("keySplines");
+}
+  } else if (name.Equals("keytimes")) {
+  { attr.setName("keyTimes");
+}
+  } else if (name.Equals("lengthadjust")) {
+  { attr.setName("lengthAdjust");
+}
   } else if (name.Equals("limitingconeangle")) {
         attr.setName("limitingConeAngle");
-  } else if (name.Equals("markerheight")) { attr.setName("markerHeight");
-  } else if (name.Equals("markerunits")) { attr.setName("markerUnits");
-  } else if (name.Equals("markerwidth")) { attr.setName("markerWidth");
-  } else if (name.Equals("maskcontentunits")) { attr.setName("maskContentUnits");
-  } else if (name.Equals("maskunits")) { attr.setName("maskUnits");
-  } else if (name.Equals("numoctaves")) { attr.setName("numOctaves");
-  } else if (name.Equals("pathlength")) { attr.setName("pathLength");
+  } else if (name.Equals("markerheight")) {
+  { attr.setName("markerHeight");
+}
+  } else if (name.Equals("markerunits")) {
+  { attr.setName("markerUnits");
+}
+  } else if (name.Equals("markerwidth")) {
+  { attr.setName("markerWidth");
+}
+  } else if (name.Equals("maskcontentunits")) {
+  { attr.setName("maskContentUnits");
+}
+  } else if (name.Equals("maskunits")) {
+  { attr.setName("maskUnits");
+}
+  } else if (name.Equals("numoctaves")) {
+  { attr.setName("numOctaves");
+}
+  } else if (name.Equals("pathlength")) {
+  { attr.setName("pathLength");
+}
   } else if (name.Equals("patterncontentunits")) {
         attr.setName("patternContentUnits");
-  } else if (name.Equals("patterntransform")) { attr.setName("patternTransform");
-  } else if (name.Equals("patternunits")) { attr.setName("patternUnits");
-  } else if (name.Equals("pointsatx")) { attr.setName("pointsAtX");
-  } else if (name.Equals("pointsaty")) { attr.setName("pointsAtY");
-  } else if (name.Equals("pointsatz")) { attr.setName("pointsAtZ");
-  } else if (name.Equals("preservealpha")) { attr.setName("preserveAlpha");
+  } else if (name.Equals("patterntransform")) {
+  { attr.setName("patternTransform");
+}
+  } else if (name.Equals("patternunits")) {
+  { attr.setName("patternUnits");
+}
+  } else if (name.Equals("pointsatx")) {
+  { attr.setName("pointsAtX");
+}
+  } else if (name.Equals("pointsaty")) {
+  { attr.setName("pointsAtY");
+}
+  } else if (name.Equals("pointsatz")) {
+  { attr.setName("pointsAtZ");
+}
+  } else if (name.Equals("preservealpha")) {
+  { attr.setName("preserveAlpha");
+}
   } else if (name.Equals("preserveaspectratio")) {
         attr.setName("preserveAspectRatio");
-  } else if (name.Equals("primitiveunits")) { attr.setName("primitiveUnits");
-  } else if (name.Equals("refx")) { attr.setName("refX");
-  } else if (name.Equals("refy")) { attr.setName("refY");
-  } else if (name.Equals("repeatcount")) { attr.setName("repeatCount");
-  } else if (name.Equals("repeatdur")) { attr.setName("repeatDur");
+  } else if (name.Equals("primitiveunits")) {
+  { attr.setName("primitiveUnits");
+}
+  } else if (name.Equals("refx")) {
+  { attr.setName("refX");
+}
+  } else if (name.Equals("refy")) {
+  { attr.setName("refY");
+}
+  } else if (name.Equals("repeatcount")) {
+  { attr.setName("repeatCount");
+}
+  } else if (name.Equals("repeatdur")) {
+  { attr.setName("repeatDur");
+}
   } else if (name.Equals("requiredextensions")) {
         attr.setName("requiredExtensions");
-  } else if (name.Equals("requiredfeatures")) { attr.setName("requiredFeatures");
-  } else if (name.Equals("specularconstant")) { attr.setName("specularConstant");
-  } else if (name.Equals("specularexponent")) { attr.setName("specularExponent");
-  } else if (name.Equals("spreadmethod")) { attr.setName("spreadMethod");
-  } else if (name.Equals("startoffset")) { attr.setName("startOffset");
-  } else if (name.Equals("stddeviation")) { attr.setName("stdDeviation");
-  } else if (name.Equals("stitchtiles")) { attr.setName("stitchTiles");
-  } else if (name.Equals("surfacescale")) { attr.setName("surfaceScale");
-  } else if (name.Equals("systemlanguage")) { attr.setName("systemLanguage");
-  } else if (name.Equals("tablevalues")) { attr.setName("tableValues");
-  } else if (name.Equals("targetx")) { attr.setName("targetX");
-  } else if (name.Equals("targety")) { attr.setName("targetY");
-  } else if (name.Equals("textlength")) { attr.setName("textLength");
-  } else if (name.Equals("viewbox")) { attr.setName("viewBox");
-  } else if (name.Equals("viewtarget")) { attr.setName("viewTarget");
-  } else if (name.Equals("xchannelselector")) { attr.setName("xChannelSelector");
-  } else if (name.Equals("ychannelselector")) { attr.setName("yChannelSelector");
-  } else if (name.Equals("zoomandpan")) { attr.setName("zoomAndPan"); }
+  } else if (name.Equals("requiredfeatures")) {
+  { attr.setName("requiredFeatures");
+}
+  } else if (name.Equals("specularconstant")) {
+  { attr.setName("specularConstant");
+}
+  } else if (name.Equals("specularexponent")) {
+  { attr.setName("specularExponent");
+}
+  } else if (name.Equals("spreadmethod")) {
+  { attr.setName("spreadMethod");
+}
+  } else if (name.Equals("startoffset")) {
+  { attr.setName("startOffset");
+}
+  } else if (name.Equals("stddeviation")) {
+  { attr.setName("stdDeviation");
+}
+  } else if (name.Equals("stitchtiles")) {
+  { attr.setName("stitchTiles");
+}
+  } else if (name.Equals("surfacescale")) {
+  { attr.setName("surfaceScale");
+}
+  } else if (name.Equals("systemlanguage")) {
+  { attr.setName("systemLanguage");
+}
+  } else if (name.Equals("tablevalues")) {
+  { attr.setName("tableValues");
+}
+  } else if (name.Equals("targetx")) {
+  { attr.setName("targetX");
+}
+  } else if (name.Equals("targety")) {
+  { attr.setName("targetY");
+}
+  } else if (name.Equals("textlength")) {
+  { attr.setName("textLength");
+}
+  } else if (name.Equals("viewbox")) {
+  { attr.setName("viewBox");
+}
+  } else if (name.Equals("viewtarget")) {
+  { attr.setName("viewTarget");
+}
+  } else if (name.Equals("xchannelselector")) {
+  { attr.setName("xChannelSelector");
+}
+  } else if (name.Equals("ychannelselector")) {
+  { attr.setName("yChannelSelector");
+}
+  } else if (name.Equals("zoomandpan")) {
+  { attr.setName("zoomAndPan");
+} }
     }
   }
 
@@ -690,8 +796,8 @@ private static readonly string
       } else if (name.Equals("b") ||
           name.Equals("big") || name.Equals("blockquote") ||
             name.Equals("body") || name.Equals("br") ||
-          name.Equals("center") || name.Equals("code") || name.Equals("dd"
-) || name.Equals("div") ||
+          name.Equals("center") || name.Equals("code") || name.Equals(
+  "dd") || name.Equals("div") ||
           name.Equals("dl") || name.Equals("dt") || name.Equals("em") ||
             name.Equals("embed") ||
           name.Equals("h1") || name.Equals("h2") || name.Equals("h3") ||
@@ -700,14 +806,13 @@ private static readonly string
             name.Equals("hr") ||
           name.Equals("i") || name.Equals("img") || name.Equals("li") ||
             name.Equals("listing") ||
-          name.Equals("menu") || name.Equals("meta") || name.Equals("nobr"
-) || name.Equals("ol") ||
+          name.Equals("menu") || name.Equals("meta") || name.Equals(
+  "nobr") || name.Equals("ol") ||
           name.Equals("p") || name.Equals("pre") || name.Equals("ruby")||
-            name.Equals("s") ||
-          name.Equals("small") || name.Equals("span") ||
+            name.Equals("s") || name.Equals("small") || name.Equals("span") ||
             name.Equals("strong") || name.Equals("strike") ||
-          name.Equals("sub") || name.Equals("sup") || name.Equals("table"
-) || name.Equals("tt") ||
+          name.Equals("sub") || name.Equals("sup") || name.Equals(
+  "table") || name.Equals("tt") ||
           name.Equals("u") || name.Equals("ul") || name.Equals("var")) {
         error = true;
         if (context != null && !hasNativeElementInScope()) {
@@ -728,7 +833,7 @@ private static readonly string
         return applyInsertionMode(token, null);
       } else {
         string _namespace = getCurrentNode().getNamespaceURI();
-        bool mathml = false;
+        var mathml = false;
         if (SVG_NAMESPACE.Equals(_namespace)) {
           if (name.Equals("altglyph")) {
             tag.setName("altGlyph");
@@ -881,9 +986,7 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
  return applyForeignContext(token);
 }
     noforeign = false;
-    if (insMode == null) {
-      insMode = insertionMode;
-    }
+    insMode = insMode ?? (insertionMode);
     switch(insMode) {
     case InsertionMode.Initial:{
       if (token == 0x09 || token == 0x0a ||
@@ -903,13 +1006,11 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
         (doctypeSystem!=null && !"about:legacy-compat"
               .Equals(doctypeSystem))) {
  bool html4=(matchesHtml && "-//W3C//DTD HTML 4.0//EN"
-            .Equals(doctypePublic) &&
-              (doctypeSystem == null ||
+            .Equals(doctypePublic) && (doctypeSystem == null ||
                 "http://www.w3.org/TR/REC-html40/strict.dtd"
                 .Equals(doctypeSystem)));
           bool html401=(matchesHtml && "-//W3C//DTD HTML 4.01//EN"
-            .Equals(doctypePublic) &&
-              (doctypeSystem == null ||
+            .Equals(doctypePublic) && (doctypeSystem == null ||
                 "http://www.w3.org/TR/html4/strict.dtd"
                 .Equals(doctypeSystem)));
           bool xhtml=(matchesHtml && "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -930,7 +1031,7 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
         if (doctypeSystem == null) {
           doctypeSystem="";
         }
-        DocumentType doctypeNode = new DocumentType();
+        var doctypeNode = new DocumentType();
         doctypeNode.name = doctypeName;
         doctypeNode.publicId = doctypePublic;
         doctypeNode.systemId = doctypeSystem;
@@ -957,33 +1058,28 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
           }
         }
         if (document.getMode() != DocumentMode.QuirksMode) {
-          if (doctypePublicLC == null) {
-            doctypePublicLC = StringUtility.toLowerCaseAscii(doctypePublic);
-          }
+          doctypePublicLC = doctypePublicLC ??
+            (StringUtility.toLowerCaseAscii(doctypePublic));
         if ("http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd"
             .Equals(
               StringUtility.toLowerCaseAscii(doctypeSystem)) ||
               (!hasSystemId &&
   doctypePublicLC.StartsWith("-//w3c//dtd html 4.01 frameset//",
- StringComparison.Ordinal)) ||
-              (!hasSystemId &&
+ StringComparison.Ordinal)) || (!hasSystemId &&
   doctypePublicLC.StartsWith("-//w3c//dtd html 4.01 transitional//",
  StringComparison.Ordinal))) {
             document.setMode(DocumentMode.QuirksMode);
           }
         }
         if (document.getMode() != DocumentMode.QuirksMode) {
-          if (doctypePublicLC == null) {
-            doctypePublicLC = StringUtility.toLowerCaseAscii(doctypePublic);
-          }
+          doctypePublicLC = doctypePublicLC ??
+            (StringUtility.toLowerCaseAscii(doctypePublic));
           if (doctypePublicLC.StartsWith("-//w3c//dtd xhtml 1.0 frameset//",
  StringComparison.Ordinal) ||
   doctypePublicLC.StartsWith("-//w3c//dtd xhtml 1.0 transitional//",
- StringComparison.Ordinal) ||
-              (hasSystemId &&
+ StringComparison.Ordinal) || (hasSystemId &&
   doctypePublicLC.StartsWith("-//w3c//dtd html 4.01 frameset//",
- StringComparison.Ordinal)) ||
-              (hasSystemId &&
+ StringComparison.Ordinal)) || (hasSystemId &&
   doctypePublicLC.StartsWith("-//w3c//dtd html 4.01 transitional//",
  StringComparison.Ordinal))) {
             document.setMode(DocumentMode.LimitedQuirksMode);
@@ -1035,7 +1131,7 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
           return false;
         }
       }
-      Element element = new Element();
+      var element = new Element();
       element.setLocalName("html");
       element.setNamespace(HTML_NAMESPACE);
       document.appendChild(element);
@@ -1406,7 +1502,8 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
         } else if ("frameset".Equals(name)) {
           error = true;
           if (!framesetOk ||
-              openElements.Count<= 1 || !openElements[1].isHtmlElement("body")) {
+            openElements.Count<= 1 || !openElements[1].isHtmlElement("body"
+)) {
  return false;
 }
           Node parent=(Node) openElements[1].getParentNode();
@@ -1669,15 +1766,12 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
           reconstructFormatting();
           addHtmlElement(tag);
           framesetOk = false;
-          if (insertionMode == InsertionMode.InTable ||
+          insertionMode = (insertionMode == InsertionMode.InTable ||
               insertionMode == InsertionMode.InCaption ||
               insertionMode == InsertionMode.InTableBody ||
               insertionMode == InsertionMode.InRow ||
-              insertionMode == InsertionMode.InCell) {
-            insertionMode = InsertionMode.InSelectInTable;
-          } else {
-            insertionMode = InsertionMode.InSelect;
-          }
+              insertionMode == InsertionMode.InCell) ?
+                (InsertionMode.InSelectInTable) : (InsertionMode.InSelect);
         } else if ("option".Equals(name) || "optgroup".Equals(name)) {
           if (getCurrentNode().getLocalName().Equals("option")) {
             applyEndTag("option",insMode);
@@ -1917,7 +2011,7 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
             // elements and tr, the foster parenting rule
             // doesn't apply here
             furthestBlock.appendChild(e2);
-            FormattingElement newFE = new FormattingElement();
+            var newFE = new FormattingElement();
             newFE.marker = false;
             newFE.element = e2;
             newFE.token = formatting.token;
@@ -2278,8 +2372,8 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
         addCommentNodeToCurrentNode(token);
         return true;
       } else if (token == TOKEN_EOF) {
- if (getCurrentNode()==null || !getCurrentNode().getLocalName().Equals("html"
-)) {
+ if (getCurrentNode() == null || !getCurrentNode().getLocalName().Equals(
+  "html")) {
           error = true;
         }
         stopParsing();
@@ -2295,7 +2389,7 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
           pendingTableCharacters.appendInt(token);
         }
       } else {
-        bool nonspace = false;
+        var nonspace = false;
         int[] array = pendingTableCharacters.array();
         int size = pendingTableCharacters.Count;
         for (int i = 0; i < size; ++i) {
@@ -2720,8 +2814,8 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
         if (name.Equals("optgroup")) {
           if (getCurrentNode().getLocalName().Equals("option") &&
               openElements.Count >= 2 &&
-         openElements[openElements.Count-2].getLocalName().Equals("optgroup"
-)) {
+         openElements[openElements.Count-2].getLocalName().Equals(
+  "optgroup")) {
             applyEndTag("option",insMode);
           }
           if (getCurrentNode().getLocalName().Equals("optgroup")) {
@@ -2755,8 +2849,8 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
       } else if ((token&TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
         addCommentNodeToCurrentNode(token);
       } else if (token == TOKEN_EOF) {
- if (getCurrentNode()==null || !getCurrentNode().getLocalName().Equals("html"
-)) {
+ if (getCurrentNode() == null || !getCurrentNode().getLocalName().Equals(
+  "html")) {
           error = true;
         }
         stopParsing();
@@ -3005,7 +3099,8 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
   }
 
   private bool applyStartTag(string name, InsertionMode? insMode) {
-    return applyInsertionMode(getArtificialToken(TOKEN_START_TAG, name), insMode);
+ return applyInsertionMode(getArtificialToken(TOKEN_START_TAG, name),
+      insMode);
   }
 
   private void changeEncoding(string charset) {
@@ -3054,7 +3149,7 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
 
   private Comment createCommentNode(int token) {
     CommentToken comment=(CommentToken)getToken(token);
-    Comment node = new Comment();
+    var node = new Comment();
     node.setData(comment.getValue());
     return node;
   }
@@ -3129,8 +3224,7 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
       if ("dd".Equals(name)|| "dd".Equals(name)||
           "dt".Equals(name)|| "li".Equals(name)||
           "option".Equals(name)|| "optgroup".Equals(name)||
-          "p".Equals(name)|| "rp".Equals(name)||
-          "rt".Equals(name)) {
+          "p".Equals(name)|| "rp".Equals(name)|| "rt".Equals(name)) {
         popCurrentNode();
       } else {
         break;
@@ -3140,13 +3234,13 @@ if (!StringUtility.toLowerCaseAscii(getCurrentNode() .getLocalName())
 
   private int getArtificialToken(int type, string name) {
     if (type == TOKEN_END_TAG) {
-      EndTagToken token = new EndTagToken(name);
+      var token = new EndTagToken(name);
       int ret = tokens.Count|type;
       tokens.Add(token);
       return ret;
     }
     if (type == TOKEN_START_TAG) {
-      StartTagToken token = new StartTagToken(name);
+      var token = new StartTagToken(name);
       int ret = tokens.Count|type;
       tokens.Add(token);
       return ret;
@@ -3199,7 +3293,7 @@ return (openElements.Count == 0) ? (null) :
               if (j>0 && childNodes[j-1].getNodeType() == NodeType.TEXT_NODE) {
  return (Text)childNodes[j-1];
 } else {
-                Text textNode = new Text();
+                var textNode = new Text();
                 parent.insertBefore(textNode, e);
                 return textNode;
               }
@@ -3213,7 +3307,7 @@ return (openElements.Count == 0) ? (null) :
   Node lastChild=(childNodes.Count == 0) ? null :
       childNodes[childNodes.Count-1];
     if (lastChild == null || lastChild.getNodeType() != NodeType.TEXT_NODE) {
-      Text textNode = new Text();
+      var textNode = new Text();
       fosterParent.appendChild(textNode);
       return textNode;
     } else {
@@ -3233,7 +3327,7 @@ return (openElements.Count == 0) ? (null) :
   Node lastChild=(childNodes.Count == 0) ? null :
       childNodes[childNodes.Count-1];
     if (lastChild == null || lastChild.getNodeType() != NodeType.TEXT_NODE) {
-      Text textNode = new Text();
+      var textNode = new Text();
       node.appendChild(textNode);
       return textNode;
     } else {
@@ -3249,7 +3343,7 @@ return (openElements.Count == 0) ? (null) :
 }
   }
   private bool hasHtmlElementInButtonScope(string name) {
-    bool found = false;
+    var found = false;
     foreach (var e in openElements) {
       if (e.getLocalName().Equals(name)) {
         found = true;
@@ -3378,8 +3472,7 @@ return (openElements.Count == 0) ? (null) :
       if (e.isHtmlElement(name)) {
  return true;
 }
-      if (e.isHtmlElement("html")||
-          e.isHtmlElement("table")) {
+      if (e.isHtmlElement("html")|| e.isHtmlElement("table")) {
  return false;
 }
     }
@@ -3499,7 +3592,7 @@ return (openElements.Count == 0) ? (null) :
 
   private void insertFormattingMarker(StartTagToken tag,
       Element addHtmlElement) {
-    FormattingElement fe = new FormattingElement();
+    var fe = new FormattingElement();
     fe.marker = true;
     fe.element = addHtmlElement;
     fe.token = tag;
@@ -3560,11 +3653,9 @@ return (openElements.Count == 0) ? (null) :
  return false;
 }
         }
-        if (MATHML_NAMESPACE.Equals(element.getNamespaceURI()) && (
-            name.Equals("annotation-xml")) && "svg".Equals(tag.getName())) {
- return false;
-}
-        return isHtmlIntegrationPoint(element);
+        return (MATHML_NAMESPACE.Equals(element.getNamespaceURI()) && (
+            name.Equals("annotation-xml")) && "svg" .Equals(tag.getName()))?
+              (false) : (isHtmlIntegrationPoint(element));
       } else if ((token&TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
         return isMathMLTextIntegrationPoint(element) ||
             isHtmlIntegrationPoint(element);
@@ -3639,15 +3730,14 @@ return (openElements.Count == 0) ? (null) :
 }
     if (node.isMathMLElement("mi") || node.isMathMLElement("mo") ||
       node.isMathMLElement("mn") || node.isMathMLElement("ms") ||
-      node.isMathMLElement("mtext") ||
-      node.isMathMLElement("annotation-xml")) {
+      node.isMathMLElement("mtext") || node.isMathMLElement("annotation-xml")) {
  return true;
 }
-    return (node.isSvgElement("foreignObject") || node.isSvgElement("desc"
-) || node.isSvgElement("title")) ? (true) : (false);
+    return (node.isSvgElement("foreignObject") || node.isSvgElement(
+  "desc") || node.isSvgElement("title")) ? (true) : (false);
   }
   internal string nodesToDebugString(IList<Node> nodes) {
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     foreach (var node in nodes) {
       string str = node.toDebugString();
       string[] strarray=StringUtility.splitAt(str,"\n");
@@ -3694,8 +3784,8 @@ return (openElements.Count == 0) ? (null) :
       return 0x26;  // emit ampersand
     } else if (c1 == 0x23) {
       c1 = charInput.read();
-      int value = 0;
-      bool haveHex = false;
+      var value = 0;
+      var haveHex = false;
       if (c1 == 0x78 || c1 == 0x58) {
         // Hex number
         while (true) {  // skip zeros
@@ -3708,7 +3798,7 @@ return (openElements.Count == 0) ? (null) :
           }
           haveHex = true;
         }
-        bool overflow = false;
+        var overflow = false;
         while (true) {
           int number = charInput.read();
           if (number>= '0' && number<= '9') {
@@ -3752,7 +3842,7 @@ return (openElements.Count == 0) ? (null) :
           }
           haveHex = true;
         }
-        bool overflow = false;
+        var overflow = false;
         while (true) {
           int number = charInput.read();
           if (number>= '0' && number<= '9') {
@@ -3785,17 +3875,16 @@ return (openElements.Count == 0) ? (null) :
           charInput.moveBack(1);  // parse error
         }
       }
-      if (value>0x10ffff || (value >= 0xd800 && value <= 0xdfff)) {
+      if (value>0x10ffff || ((value & 0xf800) == 0xd800)) {
         error = true;
         value = 0xfffd;  // parse error
       } else if (value >= 0x80 && value<0xa0) {
         error = true;
         // parse error
-        int[] replacements = new int[] { 0x20ac, 0x81, 0x201a, 0x192, 0x201e,
-          0x2026, 0x2020, 0x2021, 0x2c6, 0x2030, 0x160, 0x2039, 0x152, 0x8d, 0x17d,
-          0x8f, 0x90, 0x2018, 0x2019, 0x201c, 0x201d,
-          0x2022, 0x2013, 0x2014, 0x2dc, 0x2122,
-          0x161, 0x203a, 0x153, 0x9d, 0x17e, 0x178 };
+        var replacements = new int[] { 0x20ac, 0x81, 0x201a, 0x192, 0x201e,
+          0x2026, 0x2020, 0x2021, 0x2c6, 0x2030, 0x160, 0x2039, 0x152, 0x8d,
+          0x17d, 0x8f, 0x90, 0x2018, 0x2019, 0x201c, 0x201d, 0x2022, 0x2013,
+          0x2014, 0x2dc, 0x2122, 0x161, 0x203a, 0x153, 0x9d, 0x17e, 0x178 };
         value = replacements[value-0x80];
       } else if (value == 0x0d) {
         // parse error
@@ -3839,7 +3928,7 @@ return (openElements.Count == 0) ? (null) :
 }
         charInput.setMarkPosition(markStart + 1);
       }
-      int count = 0;
+      var count = 0;
       for (int index = 0;index<HtmlEntities.entities.Length; ++index) {
         string entity = HtmlEntities.entities[index];
         if (entity[0]==c1) {
@@ -3860,7 +3949,7 @@ return (openElements.Count == 0) ? (null) :
           if (count<entity.Length-1) {
             continue;
           }
-          bool matched = true;
+          var matched = true;
           for (int i = 1;i<entity.Length; ++i) {
             //Console.WriteLine("%c %c | markpos=%d",
             // (char)data[i-1], entity[i], stream.getMarkPosition());
@@ -3932,7 +4021,8 @@ return (openElements.Count == 0) ? (null) :
     INode ownerDocument = context;
     INode lastForm = null;
     while (ownerDocument != null) {
-      if (lastForm == null && ownerDocument.getNodeType() == NodeType.ELEMENT_NODE) {
+if (lastForm == null && ownerDocument.getNodeType() ==
+        NodeType.ELEMENT_NODE) {
         string name=((Element)ownerDocument).getLocalName();
         if (name.Equals("form")) {
           lastForm = ownerDocument;
@@ -3965,7 +4055,7 @@ if (ownerDocument != null &&
     } else if (name2.Equals("plaintext")) {
       state = TokenizerState.PlainText;
     }
-    Element element = new Element();
+    var element = new Element();
     element.setLocalName("html");
     element.setNamespace(HTML_NAMESPACE);
     document.appendChild(element);
@@ -3984,7 +4074,7 @@ if (ownerDocument != null &&
   }
 
   public IList<Node> parseFragment(string contextName) {
-    Element element = new Element();
+    var element = new Element();
     element.setLocalName(contextName);
     element.setNamespace(HTML_NAMESPACE);
     return parseFragment(element);
@@ -4113,31 +4203,25 @@ if (ownerDocument != null &&
         charInput.setHardMark();
         int ch = charInput.read();
         if (ch>= 'A' && ch<= 'Z') {
-          EndTagToken token = new EndTagToken((char) (ch + 0x20));
+          var token = new EndTagToken((char) (ch + 0x20));
           tempBuffer.appendInt(ch);
           currentTag = token;
           currentEndTag = token;
-          if (state == TokenizerState.ScriptDataEndTagOpen) {
-            state = TokenizerState.ScriptDataEndTagName;
-          } else {
-            state = TokenizerState.ScriptDataEscapedEndTagName;
-          }
+          state = (state == TokenizerState.ScriptDataEndTagOpen) ?
+            (TokenizerState.ScriptDataEndTagName) :
+            (TokenizerState.ScriptDataEscapedEndTagName);
         } else if (ch>= 'a' && ch<= 'z') {
-          EndTagToken token = new EndTagToken((char)ch);
+          var token = new EndTagToken((char)ch);
           tempBuffer.appendInt(ch);
           currentTag = token;
           currentEndTag = token;
-          if (state == TokenizerState.ScriptDataEndTagOpen) {
-            state = TokenizerState.ScriptDataEndTagName;
-          } else {
-            state = TokenizerState.ScriptDataEscapedEndTagName;
-          }
+          state = (state == TokenizerState.ScriptDataEndTagOpen) ?
+            (TokenizerState.ScriptDataEndTagName) :
+            (TokenizerState.ScriptDataEscapedEndTagName);
         } else {
-          if (state == TokenizerState.ScriptDataEndTagOpen) {
-            state = TokenizerState.ScriptData;
-          } else {
-            state = TokenizerState.ScriptDataEscaped;
-          }
+          state = (state == TokenizerState.ScriptDataEndTagOpen) ?
+            (TokenizerState.ScriptData) :
+            (TokenizerState.ScriptDataEscaped);
           tokenQueue.Add(0x2f);
           if (ch >= 0) {
             charInput.moveBack(1);
@@ -4165,11 +4249,9 @@ if (ownerDocument != null &&
           currentTag.appendChar((char)ch);
           tempBuffer.appendInt(ch);
         } else {
-          if (state == TokenizerState.ScriptDataEndTagName) {
-            state = TokenizerState.ScriptData;
-          } else {
-            state = TokenizerState.ScriptDataEscaped;
-          }
+          state = (state == TokenizerState.ScriptDataEndTagName) ?
+            (TokenizerState.ScriptData) :
+            (TokenizerState.ScriptDataEscaped);
           tokenQueue.Add(0x2f);
           int[] array = tempBuffer.array();
           for (int i = 0;i<tempBuffer.Count; ++i) {
@@ -4188,11 +4270,9 @@ if (ownerDocument != null &&
         if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20 ||
             ch == 0x2f || ch == 0x3e) {
           string bufferString = tempBuffer.ToString();
-          if (bufferString.Equals("script")) {
-            state = TokenizerState.ScriptDataDoubleEscaped;
-          } else {
-            state = TokenizerState.ScriptDataEscaped;
-          }
+          state = (bufferString.Equals("script")) ?
+            (TokenizerState.ScriptDataDoubleEscaped) :
+            (TokenizerState.ScriptDataEscaped);
           return ch;
         } else if (ch>= 'A' && ch<= 'Z') {
           tempBuffer.appendInt(ch + 0x20);
@@ -4214,11 +4294,9 @@ if (ownerDocument != null &&
         if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20 ||
             ch == 0x2f || ch == 0x3e) {
           string bufferString = tempBuffer.ToString();
-          if (bufferString.Equals("script")) {
-            state = TokenizerState.ScriptDataEscaped;
-          } else {
-            state = TokenizerState.ScriptDataDoubleEscaped;
-          }
+          state = (bufferString.Equals("script")) ?
+            (TokenizerState.ScriptDataEscaped) :
+            (TokenizerState.ScriptDataDoubleEscaped);
           return ch;
         } else if (ch>= 'A' && ch<= 'Z') {
           tempBuffer.appendInt(ch + 0x20);
@@ -4239,11 +4317,9 @@ if (ownerDocument != null &&
         charInput.setHardMark();
         int ch = charInput.read();
         if (ch == 0x2d) {
-          if (state == TokenizerState.ScriptDataEscapeStart) {
-            state = TokenizerState.ScriptDataEscapeStartDash;
-          } else {
-            state = TokenizerState.ScriptDataEscapedDashDash;
-          }
+          state = (state == TokenizerState.ScriptDataEscapeStart) ?
+            (TokenizerState.ScriptDataEscapeStartDash) :
+            (TokenizerState.ScriptDataEscapedDashDash);
           return '-';
         } else {
           if (ch >= 0) {
@@ -4822,7 +4898,7 @@ if (ownerDocument != null &&
         int mark = charInput.setSoftMark();
         int ch = charInput.read();
         if (ch=='-' && charInput.read()=='-') {
-          CommentToken token = new CommentToken();
+          var token = new CommentToken();
           lastComment = token;
           state = TokenizerState.CommentStart;
           break;
@@ -5005,7 +5081,7 @@ if (ownerDocument != null &&
         break;
       }
       case TokenizerState.CharacterRefInAttributeValue:{
-        int allowed = 0x3e;
+        var allowed = 0x3e;
         if (lastState == TokenizerState.AttributeValueDoubleQuoted) {
           allowed='"';
         }
@@ -5017,7 +5093,8 @@ if (ownerDocument != null &&
           // more than one character in this reference
           int index = Math.Abs(ch + 1);
           currentAttribute.appendToValue(HtmlEntities.entityDoubles[index*2]);
-          currentAttribute.appendToValue(HtmlEntities.entityDoubles[index*2 + 1]);
+       currentAttribute.appendToValue(HtmlEntities.entityDoubles[index*2 +
+            1]);
         } else {
           currentAttribute.appendToValue(ch);
         }
@@ -5062,7 +5139,7 @@ if (ownerDocument != null &&
         break;
       }
       case TokenizerState.BogusComment:{
-        CommentToken comment = new CommentToken();
+        var comment = new CommentToken();
         if (bogusCommentCharacter >= 0) {
  comment.appendChar(bogusCommentCharacter == 0 ? 0xfffd :
             bogusCommentCharacter);
@@ -5090,7 +5167,7 @@ if (ownerDocument != null &&
         } else if (ch< 0) {
           error = true;
           state = TokenizerState.Data;
-          DocTypeToken token = new DocTypeToken();
+          var token = new DocTypeToken();
           token.forceQuirks = true;
           int ret = tokens.Count|token.getType();
           tokens.Add(token);
@@ -5120,7 +5197,7 @@ if (ownerDocument != null &&
         } else if (ch == 0x3e || ch< 0) {
           error = true;
           state = TokenizerState.Data;
-          DocTypeToken token = new DocTypeToken();
+          var token = new DocTypeToken();
           token.forceQuirks = true;
           int ret = tokens.Count|token.getType();
           tokens.Add(token);
@@ -5176,7 +5253,7 @@ if (ownerDocument != null &&
           tokens.Add(docTypeToken);
           return ret;
         } else {
-          int ch2 = 0;
+          var ch2 = 0;
           int pos = charInput.setSoftMark();
           if (ch=='P' || ch=='p') {
             if (((ch2=charInput.read())=='u' || ch2=='U') &&
@@ -5394,8 +5471,8 @@ if (ownerDocument != null &&
         break;
       }
       case TokenizerState.CData:{
-        IntList buffer = new IntList();
-        int phase = 0;
+        var buffer = new IntList();
+        var phase = 0;
         state = TokenizerState.Data;
         while (true) {
           int ch = charInput.read();
@@ -5419,11 +5496,9 @@ if (ownerDocument != null &&
             if (ch=='>') {
               ++phase;
               break;
-            } else if (ch==']') {
-              phase = 2;
             } else {
-              phase = 0;
-            }
+ phase = (ch==']') ? (2) : (0);
+}
           }
         }
         int[] arr = buffer.array();
@@ -5469,7 +5544,7 @@ if (ownerDocument != null &&
 
   private void pushFormattingElement(StartTagToken tag) {
     Element element = addHtmlElement(tag);
-    int matchingElements = 0;
+    var matchingElements = 0;
     int lastMatchingElement=-1;
     string name = element.getLocalName();
     for (int i = formattingElements.Count-1;i >= 0; --i) {
@@ -5482,7 +5557,7 @@ if (ownerDocument != null &&
         IList<IAttr> attribs = fe.element.getAttributes();
         IList<IAttr> myAttribs = element.getAttributes();
         if (attribs.Count == myAttribs.Count) {
-          bool match = true;
+          var match = true;
           for (int j = 0;j<myAttribs.Count; ++j) {
             string name1 = myAttribs[j].getName();
             string _namespace = myAttribs[j].getNamespaceURI();
@@ -5502,7 +5577,7 @@ if (ownerDocument != null &&
     if (matchingElements >= 3) {
       formattingElements.RemoveAt(lastMatchingElement);
     }
-    FormattingElement fe2 = new FormattingElement();
+    var fe2 = new FormattingElement();
     fe2.marker = false;
     fe2.token = tag;
     fe2.element = element;
@@ -5548,7 +5623,7 @@ if (ownerDocument != null &&
     }
   }
   private void resetInsertionMode() {
-    bool last = false;
+    var last = false;
     for (int i = openElements.Count-1;i >= 0; --i) {
       Element e = openElements[i];
       if (context != null && i == 0) {
@@ -5624,8 +5699,7 @@ if (ownerDocument != null &&
     int nextToken = charInput.read();
     if (nextToken == 0x0a) {
  return;  // ignore the token if it's 0x0A
-}
-    else if (nextToken == 0x26) {  // start of character reference
+  } else if (nextToken == 0x26) {  // start of character reference
       int charref = parseCharacterReference(-1);
       if (charref< 0) {
         // more than one character in this reference
@@ -5634,8 +5708,7 @@ if (ownerDocument != null &&
         tokenQueue.Add(HtmlEntities.entityDoubles[index*2 + 1]);
       } else if (charref == 0x0a) {
  return;  // ignore the token
-}
-      else {
+} else {
         tokenQueue.Add(charref);
       }
     } else {
@@ -5660,7 +5733,8 @@ if (ownerDocument != null &&
       docbase = baseurl;
     } else {
       if (baseurl != null && baseurl.Length>0) {
-        document.setBaseURI(HtmlDocument.resolveURL(document, baseurl, docbase));
+      document.setBaseURI(HtmlDocument.resolveURL(document, baseurl,
+          docbase));
       }
     }
     openElements.Clear();

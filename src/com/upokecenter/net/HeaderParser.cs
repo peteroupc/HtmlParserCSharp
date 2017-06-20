@@ -531,8 +531,7 @@ if (!(month >= 1 && month <= 12)) {
       if (data[index]!='=') {
  return null;
 }
-    bool isToken =
-        StringUtility.toLowerCaseAscii(attribute).Equals(parameter);
+    bool isToken = StringUtility.toLowerCaseAscii(attribute).Equals(parameter);
       ++index;
       if (index >= endIndex) {
  return "";
@@ -2208,7 +2207,7 @@ if (!(str != null)) {
           }
         }
       } else {
-    if (kind == 1 || kind == 2) {  
+    if (kind == 1 || kind == 2) {
             // kind is parameter name or parameter
           // value
           // unquoted string case
@@ -2291,8 +2290,7 @@ if (!(str != null)) {
     while (index<endIndex) {
       c = str[index];
    if (!((c>= 'A' && c<= 'Z') || (c>= 'a' && c<= 'z') || (c>= '0' && c<=
-        '9')||
-        c=='-')) {
+        '9')|| c=='-')) {
         break;
       }
       ++index;

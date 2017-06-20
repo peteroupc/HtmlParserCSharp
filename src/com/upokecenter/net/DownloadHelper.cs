@@ -138,7 +138,7 @@ public sealed class DownloadHelper {
     }
 
     public string getHeaderFieldKey(int name) {
-      return (name == 0) ? (null) : (null);
+      return null;
     }
 
     public IDictionary<string, IList<string>> getHeaderFields() {
@@ -203,10 +203,8 @@ public sealed class DownloadHelper {
     }
 
     public string getHeaderFieldKey(int name) {
-      if (name == 0) {
- return null;
-}
-      return (name == 1) ? ("date") : ((name==2) ? ("content-length") : (null));
+      return (name == 0) ? (null) : ((name == 1) ? ("date") : ((name==2) ?
+        ("content-length") : (null)));
     }
 
     public IDictionary<string, IList<string>> getHeaderFields() {
@@ -215,10 +213,9 @@ public sealed class DownloadHelper {
       map.Add(null, asReadOnlyList(new string[] { getHeaderField(null)}));
       map.Add("date",asReadOnlyList(new string[] { getHeaderField("date")}));
       {
-object objectTemp = "content-length";
-object objectTemp2 = asReadOnlyList(new
+IList<string> objectTemp2 = asReadOnlyList(new
         string[] { getHeaderField("content-length")});
-map.Add(objectTemp, objectTemp2);
+map.Add("content-length", objectTemp2);
 }
       return PeterO.Support.Collections.UnmodifiableMap(map);
     }
@@ -329,7 +326,7 @@ map.Add(objectTemp, objectTemp2);
         } finally {
           if (stream != null) {
             try {
-              stream.Close();
+              stream.Dispose();
             } catch (IOException) {}
           }
         }
@@ -415,8 +412,7 @@ map.Add(objectTemp, objectTemp2);
         if (cacheFile.isFile() && getStream) {
           var fresh = false;
           IHttpHeaders headers = null;
-    var cacheInfoFile = new
-            PeterO.Support.File(cacheFile.ToString()+".cache");
+    var cacheInfoFile = new PeterO.Support.File(cacheFile.ToString()+".cache");
           if (cacheInfoFile.isFile()) {
             try {
               CacheControl cc = CacheControl.fromFile(cacheInfoFile);
@@ -438,7 +434,7 @@ map.Add(objectTemp, objectTemp2);
                 FileBasedHeaders(urlString, cacheFile.Length) :
                 cc.getHeaders(cacheFile.Length);
             } catch (IOException e) {
-              Console.WriteLine(e.StackTrace);
+              //Console.WriteLine(e.StackTrace);
               fresh = false;
               headers = new FileBasedHeaders(urlString, cacheFile.Length);
             }
@@ -555,8 +551,7 @@ map.Add(objectTemp, objectTemp2);
       if (count <= 1||!exceeded) {
  return;
 }
- long threshold = oldest +
-        Math.Abs(oldest-DateTimeUtility.getCurrentDate())/2;
+ long threshold = oldest + Math.Abs(oldest-DateTimeUtility.getCurrentDate())/2;
       count = 0;
       foreach (var file in files) {
         if (file.lastModified()<threshold) {

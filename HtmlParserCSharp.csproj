@@ -68,7 +68,6 @@
     <Compile Include="src\com\upokecenter\io\StackableCharacterInput.cs" />
     <Compile Include="src\com\upokecenter\io\StreamUtility.cs" />
     <Compile Include="src\com\upokecenter\io\StringCharacterInput.cs" />
-    <Compile Include="src\com\upokecenter\io\Utf8CharacterInput.cs" />
     <Compile Include="src\com\upokecenter\json\JSONPatch.cs" />
     <Compile Include="src\com\upokecenter\json\JSONPointer.cs" />
     <Compile Include="src\com\upokecenter\net\CacheControl.cs" />

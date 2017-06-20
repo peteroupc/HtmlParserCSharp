@@ -33,7 +33,7 @@ public sealed class RDFUtility {
 }
       } else {
         // do a lax comparison
-        bool found = false;
+        var found = false;
         foreach (var triple2 in graph2) {
           if (laxEqual(triple, triple2)) {
             found = true;
@@ -50,8 +50,10 @@ public sealed class RDFUtility {
 
     /// <summary>A lax comparer of RDF triples which doesn't compare blank
     /// node labels @param a @param b.</summary>
-    /// <param name='a'>Not documented yet.</param>
-    /// <param name='b'>Not documented yet.</param>
+    /// <param name='a'>The parameter <paramref name='a'/> is not
+    /// documented yet.</param>
+    /// <param name='b'>The parameter <paramref name='b'/> is not
+    /// documented yet.</param>
     /// <returns>A Boolean object.</returns>
   private static bool laxEqual(RDFTriple a, RDFTriple b) {
     if (a == null) {
@@ -89,12 +91,12 @@ public sealed class RDFUtility {
     /// subject can either be a URI or a blank node (which starts with
     /// "_:". @param triples.</summary>
   /*
-  public static com.upokecenter.json.PeterO.Cbor.CBORObject RDFtoJSON(ISet<RDFTriple>
+  public static PeterO.Cbor.CBORObject RDFtoJSON(ISet<RDFTriple>
     triples) {
     IDictionary<RDFTerm, IList<RDFTriple>> subjects = new
       PeterO.Support.LenientDictionary<RDFTerm, IList<RDFTriple>>();
-com.upokecenter.json.PeterO.Cbor.CBORObject rootJson = new
-      com.upokecenter.json.PeterO.Cbor.CBORObject();
+PeterO.Cbor.CBORObject rootJson = new
+      PeterO.Cbor.CBORObject();
     foreach (var triple in triples) {
       IList<RDFTriple> subjectList = subjects[triple.getSubject()];
       if (subjectList == null) {
@@ -104,8 +106,7 @@ com.upokecenter.json.PeterO.Cbor.CBORObject rootJson = new
       subjectList.Add(triple);
     }
     foreach (var subject in subjects.Keys) {
-      com.upokecenter.json.PeterO.Cbor.CBORObject subjectJson = new
-        com.upokecenter.json.PeterO.Cbor.CBORObject();
+      var subjectJson = new PeterO.Cbor.CBORObject();
       IDictionary<RDFTerm, IList<RDFTerm>> predicates = new
         PeterO.Support.LenientDictionary<RDFTerm, IList<RDFTerm>>();
       foreach (var triple in triples) {
@@ -117,11 +118,10 @@ com.upokecenter.json.PeterO.Cbor.CBORObject rootJson = new
         subjectList.Add(triple.getObject());
       }
       foreach (var predicate in predicates.Keys) {
-com.upokecenter.json.PeterO.Cbor.CBORObject valueArray = new
-          com.upokecenter.json.PeterO.Cbor.CBORObject();
+PeterO.Cbor.CBORObject valueArray = new
+          PeterO.Cbor.CBORObject();
         foreach (var obj in predicates[predicate]) {
-          com.upokecenter.json.PeterO.Cbor.CBORObject valueJson = new
-            com.upokecenter.json.PeterO.Cbor.CBORObject();
+          var valueJson = new PeterO.Cbor.CBORObject();
           if (obj.getKind() == RDFTerm.IRI) {
             valueJson.put("type","uri");
             valueJson.put("value",obj.getValue());

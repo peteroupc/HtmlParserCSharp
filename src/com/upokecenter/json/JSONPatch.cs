@@ -6,9 +6,9 @@ http://creativecommons.org/publicdomain/zero/1.0/
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 */
-namespace com.upokecenter.json {
 using System;
-
+using PeterO.Cbor;
+namespace com.upokecenter.json {
 public class JSONPatch {
   private static Object addOperation(
       Object o,
@@ -22,15 +22,15 @@ public class JSONPatch {
       o = value;
     } else {
       JSONPointer pointer = JSONPointer.fromPointer(o, path);
-      if (pointer.getParent() is PeterO.Cbor.CBORObject) {
+      if (pointer.getParent() is CBORObject) {
         int index = pointer.getIndex();
         if (index< 0) {
  throw new ArgumentException("patch "+opStr+" path");
 }
-        ((PeterO.Cbor.CBORObject)pointer.getParent()).add(index, value);
-      } else if (pointer.getParent() is PeterO.Cbor.CBORObject) {
+        ((CBORObject)pointer.getParent()).add(index, value);
+      } else if (pointer.getParent() is CBORObject) {
         string key = pointer.getKey();
-        ((PeterO.Cbor.CBORObject)pointer.getParent()).put(key, value);
+        ((CBORObject)pointer.getParent()).put(key, value);
       } else {
  throw new ArgumentException("patch "+opStr+" path");
 }
@@ -40,11 +40,11 @@ public class JSONPatch {
 
   private static Object cloneCbor(Object o) {
     try {
-      if (o is PeterO.Cbor.CBORObject) {
- return new PeterO.Cbor.CBORObject(o.ToString());
+      if (o is CBORObject) {
+ return new CBORObject(o.ToString());
 }
-      if (o is PeterO.Cbor.CBORObject) {
- return new PeterO.Cbor.CBORObject(o.ToString());
+      if (o is CBORObject) {
+ return new CBORObject(o.ToString());
 }
     } catch (Json.InvalidJsonException) {
       return o;
@@ -52,24 +52,24 @@ public class JSONPatch {
     return o;
   }
 
-  private static string getString(PeterO.Cbor.CBORObject o, string key) {
+  private static string getString(CBORObject o, string key) {
       return o.ContainsKey (key) ? o [key].AsString() : null;
   }
 
-  public static Object patch(Object o, PeterO.Cbor.CBORObject patch) {
+  public static Object patch(Object o, CBORObject patch) {
     // clone the _object in case of failure
-    o = clonePeterO.Cbor.CBORObject(o);
+    o = cloneCBORObject(o);
     for (int i = 0;i<patch.Length; ++i) {
       Object op = patch[i];
-      if (!(op is PeterO.Cbor.CBORObject)) {
+      if (!(op is CBORObject)) {
  throw new ArgumentException("patch");
 }
       if (o == null) {
  throw new InvalidOperationException("patch");
 }
-      PeterO.Cbor.CBORObject patchOp=(PeterO.Cbor.CBORObject)op;
+      CBORObject patchOp=(CBORObject)op;
       // NOTE: This algorithm requires "op" to exist
-      // only once; the PeterO.Cbor.CBORObject, however, does not
+      // only once; the CBORObject, however, does not
       // allow duplicates
       string opStr=getString(patchOp,"op");
       if (opStr == null) {
@@ -117,7 +117,7 @@ public class JSONPatch {
  throw new ArgumentException("patch "+opStr);
 }
         Object movedObj = removeOperation(o, opStr, fromPath);
-        o = addOperation(o, opStr, path, clonePeterO.Cbor.CBORObject(movedObj));
+        o = addOperation(o, opStr, path, cloneCBORObject(movedObj));
       } else if ("copy".Equals(opStr)) {
         string path=patchOp.getString("path");
         if (path == null) {
@@ -133,7 +133,8 @@ public class JSONPatch {
    +opStr+" " +fromPath);
 }
         Object copiedObj = pointer.getValue();
-        o = addOperation(o, opStr, path, clonePeterO.Cbor.CBORObject(copiedObj));
+      o = addOperation(o, opStr, path,
+          cloneCBORObject(copiedObj));
       } else if ("test".Equals(opStr)) {
         string path=patchOp.getString("path");
         if (path == null) {
@@ -156,7 +157,7 @@ public class JSONPatch {
 }
       }
     }
-    return (o == null) ? PeterO.Cbor.CBORObject.NULL : o;
+    return (o == null) ? CBORObject.NULL : o;
   }
 
   private static Object removeOperation(
@@ -175,10 +176,10 @@ public class JSONPatch {
    +opStr+" " +path);
 }
       o = pointer.getValue();
-      if (pointer.getParent() is PeterO.Cbor.CBORObject) {
-        ((PeterO.Cbor.CBORObject)pointer.getParent()).removeAt(pointer.getIndex());
-      } else if (pointer.getParent() is PeterO.Cbor.CBORObject) {
-        ((PeterO.Cbor.CBORObject)pointer.getParent()).remove(pointer.getKey());
+      if (pointer.getParent() is CBORObject) {
+((CBORObject)pointer.getParent()) .removeAt(pointer.getIndex());
+      } else if (pointer.getParent() is CBORObject) {
+        ((CBORObject)pointer.getParent()).remove(pointer.getKey());
       }
       return o;
     }
@@ -200,15 +201,15 @@ public class JSONPatch {
  throw new System.Collections.Generic.KeyNotFoundException("patch "
    +opStr+" " +path);
 }
-      if (pointer.getParent() is PeterO.Cbor.CBORObject) {
+      if (pointer.getParent() is CBORObject) {
         int index = pointer.getIndex();
         if (index< 0) {
  throw new ArgumentException("patch "+opStr+" path");
 }
-        ((PeterO.Cbor.CBORObject)pointer.getParent()).put(index, value);
-      } else if (pointer.getParent() is PeterO.Cbor.CBORObject) {
+        ((CBORObject)pointer.getParent()).put(index, value);
+      } else if (pointer.getParent() is CBORObject) {
         string key = pointer.getKey();
-        ((PeterO.Cbor.CBORObject)pointer.getParent()).put(key, value);
+        ((CBORObject)pointer.getParent()).put(key, value);
       } else {
  throw new ArgumentException("patch "+opStr+" path");
 }

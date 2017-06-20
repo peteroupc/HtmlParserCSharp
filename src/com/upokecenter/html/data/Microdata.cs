@@ -22,7 +22,7 @@ public sealed class Microdata {
       INode root,
       IElement e,
       int startIndex) {
-    int[] runningIndex = new int[] { startIndex };
+    var runningIndex = new int[] { startIndex };
     return getElementIndex(root, e, runningIndex);
   }
   private static int getElementIndex(
@@ -71,7 +71,7 @@ public sealed class Microdata {
  throw new ArgumentNullException("document");
 }
     PeterO.Cbor.CBORObject result = PeterO.Cbor.CBORObject.NewMap();
-    JSONArray items = new JSONArray();
+    var items = new JSONArray();
     foreach (var node in document.getElementsByTagName("*")) {
       if (node.getAttribute("itemscope")!=null &&
           node.getAttribute("itemprop")==null) {
@@ -85,12 +85,12 @@ public sealed class Microdata {
 
   private static PeterO.Cbor.CBORObject getMicrodataObject(IElement item,
     IList<IElement> memory) {
- string[] itemtypes=StringUtility.splitAtSpaces(item.getAttribute("itemtype"
-));
+ string[] itemtypes = StringUtility.splitAtSpaces(item.getAttribute(
+  "itemtype"));
     PeterO.Cbor.CBORObject result = PeterO.Cbor.CBORObject.NewMap();
     memory.Add(item);
     if (itemtypes.Length>0) {
-      JSONArray array = new JSONArray();
+      var array = new JSONArray();
       foreach (var itemtype in itemtypes) {
         array.put(itemtype);
       }
@@ -104,8 +104,8 @@ public sealed class Microdata {
     }
     PeterO.Cbor.CBORObject properties = PeterO.Cbor.CBORObject.NewMap();
     foreach (var element in getMicrodataProperties(item)) {
-  string[] names=StringUtility.splitAtSpaces(element.getAttribute("itemprop"
-));
+  string[] names = StringUtility.splitAtSpaces(element.getAttribute(
+  "itemprop"));
       Object obj = null;
       if (element.getAttribute("itemscope")!=null) {
         if (memory.Contains(element)) {
@@ -120,7 +120,7 @@ public sealed class Microdata {
         if (properties.has(name)) {
           properties.getJSONArray(name).put(obj);
         } else {
-          JSONArray arr = new JSONArray();
+          var arr = new JSONArray();
           arr.put(obj);
           properties.put(name, arr);
         }
@@ -207,9 +207,9 @@ public sealed class Microdata {
     if (elements == null || elements.Count< 2) {
  return elements;
 }
-    List<ElementAndIndex> elems = new List<ElementAndIndex>();
+    var elems = new List<ElementAndIndex>();
     foreach (var element in elements) {
-      ElementAndIndex el = new ElementAndIndex();
+      var el = new ElementAndIndex();
       el.element = element;
       el.index = getElementIndex(root, element, 0);
       elems.Add(el);

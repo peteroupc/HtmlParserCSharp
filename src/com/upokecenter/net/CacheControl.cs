@@ -118,31 +118,30 @@ internal class CacheControl {
   private class CacheControlSerializer {
  public CacheControl readObjectFromStream(PeterO.Support.InputStream stream) {
       try {
-        PeterO.Cbor.CBORObject jsonobj = new PeterO.Cbor.CBORObject.FromJSONString(
-            StreamUtility.streamToString(stream));
-        CacheControl cc = new CacheControl();
+    PeterO.Cbor.CBORObject jsonobj = PeterO.Cbor.CBORObject.ReadJSON(stream);
+        var cc = new CacheControl();
         cc.cacheability=jsonobj.getInt("cacheability");
         cc.noStore=jsonobj.getBoolean("noStore");
         cc.noTransform=jsonobj.getBoolean("noTransform");
         cc.mustRevalidate=jsonobj.getBoolean("mustRevalidate");
-        cc.requestTime=Int64.Parse(jsonobj.getString("requestTime"
-), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
-        cc.responseTime=Int64.Parse(jsonobj.getString("responseTime"
-), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
-        cc.maxAge=Int64.Parse(jsonobj.getString("maxAge"
-), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
-        cc.date=Int64.Parse(jsonobj.getString("date"
-), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+        cc.requestTime = Int64.Parse(jsonobj.getString(
+  "requestTime"), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+        cc.responseTime = Int64.Parse(jsonobj.getString(
+  "responseTime"), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+        cc.maxAge = Int64.Parse(jsonobj.getString(
+  "maxAge"), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+        cc.date = Int64.Parse(jsonobj.getString(
+  "date"), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
         cc.code=jsonobj.getInt("code");
-        cc.age=Int64.Parse(jsonobj.getString("age"
-), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+        cc.age = Int64.Parse(jsonobj.getString(
+  "age"), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
         cc.uri=jsonobj.getString("uri");
         cc.requestMethod=jsonobj.getString("requestMethod");
         if (cc.requestMethod != null) {
           cc.requestMethod = StringUtility.toLowerCaseAscii(cc.requestMethod);
         }
         cc.headers = new List<string>();
-        PeterO.Cbor.CBORObject jsonarr=jsonobj.getPeterO.Cbor.CBORObject("headers");
+   PeterO.Cbor.CBORObject jsonarr=jsonobj.getPeterO.Cbor.CBORObject("headers");
         for (int i = 0;i<jsonarr.Length; ++i) {
           string str = jsonarr.getString(i);
           if (str != null && (i%2) != 0) {
@@ -198,8 +197,7 @@ internal class CacheControl {
     }
   }
   public static CacheControl fromFile(PeterO.Support.File f) {
-    PeterO.Support.WrappedInputStream fs = new
-      PeterO.Support.WrappedInputStream(new
+    var fs = new PeterO.Support.WrappedInputStream(new
       FileStream(f.ToString(), FileMode.Open));
     try {
       return new CacheControlSerializer().readObjectFromStream(fs);
@@ -211,25 +209,25 @@ internal class CacheControl {
   }
   public static CacheControl getCacheControl(IHttpHeaders headers, long
     requestTime) {
-    CacheControl cc = new CacheControl();
-    bool proxyRevalidate = false;
-    int sMaxAge = 0;
-    bool publicCache = false;
-    bool privateCache = false;
-    bool noCache = false;
+    var cc = new CacheControl();
+    var proxyRevalidate = false;
+    var sMaxAge = 0;
+    var publicCache = false;
+    var privateCache = false;
+    var noCache = false;
     long expires = 0;
-    bool hasExpires = false;
+    var hasExpires = false;
     cc.uri = headers.getUrl();
     string cacheControl=headers.getHeaderField("cache-control");
     if (cacheControl != null) {
-      int index = 0;
-      int[] intval = new int[1];
+      var index = 0;
+      var intval = new int[1];
       while (index<cacheControl.Length) {
         int current = index;
         if ((index=HeaderParser.parseToken(cacheControl,current,"private",
  true)) != current) {
           privateCache = true;
-        } else if ((index=HeaderParser.parseToken(cacheControl,current,"no-cache",
+     } else if ((index=HeaderParser.parseToken(cacheControl,current,"no-cache",
  true)) != current) {
           noCache = true;
           //Console.WriteLine("returning early because it saw no-cache");
@@ -238,7 +236,7 @@ internal class CacheControl {
             cacheControl,
             current,
             "no-store",
-            false))!=current) {
+            false)) != current) {
           cc.noStore = true;
           //Console.WriteLine("returning early because it saw no-store");
           return null;  // return immediately, this is not cacheable or storable
@@ -246,37 +244,37 @@ internal class CacheControl {
             cacheControl,
             current,
             "public",
-            false))!=current) {
+            false)) != current) {
           publicCache = true;
         } else if ((index = HeaderParser.parseToken(
             cacheControl,
             current,
             "no-transform",
-            false))!=current) {
+            false)) != current) {
           cc.noTransform = true;
         } else if ((index = HeaderParser.parseToken(
             cacheControl,
             current,
             "must-revalidate",
-            false))!=current) {
+            false)) != current) {
           cc.mustRevalidate = true;
         } else if ((index = HeaderParser.parseToken(
             cacheControl,
             current,
             "proxy-revalidate",
-            false))!=current) {
+            false)) != current) {
           proxyRevalidate = true;
         } else if ((index = HeaderParser.parseTokenWithDelta(
             cacheControl,
             current,
             "max-age",
-            intval))!=current) {
+            intval)) != current) {
           cc.maxAge = intval[0];
         } else if ((index = HeaderParser.parseTokenWithDelta(
             cacheControl,
             current,
             "s-maxage",
-            intval))!=current) {
+            intval)) != current) {
           sMaxAge = intval[0];
         } else {
           index = HeaderParser.skipDirective(cacheControl, current);
@@ -287,8 +285,8 @@ internal class CacheControl {
       }
     } else {
       int code = headers.getResponseCode();
-      if ((code == 200 || code == 203 || code == 300 || code == 301 || code == 410) &&
-          headers.getHeaderField("authorization")==null) {
+      if ((code == 200 || code == 203 || code == 300 || code == 301 || code
+        == 410) && headers.getHeaderField("authorization")==null) {
         publicCache = true;
         privateCache = false;
       } else {
@@ -330,8 +328,8 @@ internal class CacheControl {
     }
     if (headers.getHeaderField("age")!=null) {
       try {
-        cc.age=Int32.Parse(headers.getHeaderField("age"
-), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+        cc.age = Int32.Parse(headers.getHeaderField(
+  "age"), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
         if (cc.age< 0) {
           cc.age = 0;
         }
@@ -352,11 +350,9 @@ internal class CacheControl {
     } else if (hasExpires && !noCache) {
       long maxAge = expires-cc.date;
       cc.maxAge=(maxAge>Int32.MaxValue) ? Int32.MaxValue : (int)maxAge;
-    } else if (noCache || cc.noStore) {
-      cc.maxAge = 0;
     } else {
-      cc.maxAge = 24L*3600L*1000L;
-    }
+ cc.maxAge = (noCache || cc.noStore) ? (0) : (24L*3600L*1000L);
+}
     string reqmethod = headers.getRequestMethod();
     if (reqmethod == null || (
         !StringUtility.toLowerCaseAscii(reqmethod).Equals("get"))) {
@@ -370,7 +366,7 @@ internal class CacheControl {
     } else if (privateCache) {
       cc.cacheability = 1;
     }
-    int i = 0;
+    var i = 0;
     cc.headers.Add(headers.getHeaderField(null));
     while (true) {
       string newValue = headers.getHeaderField(i);
@@ -460,7 +456,7 @@ internal class CacheControl {
   }
 
   public bool isFresh() {
-    return (cacheability == 0 || noStore) ? (false) : ((maxAge>getAge()));
+    return (cacheability == 0 || noStore) ? (false) : (maxAge>getAge());
   }
 
   public bool isMustRevalidate() {
