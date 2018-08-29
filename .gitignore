@@ -5,6 +5,9 @@
 *.launch
 *.log
 *.map
+*.nupkg
+*.pyc
+*.snk
 *.swp
 *.tmp
 *.userprefs
@@ -20,6 +23,7 @@
 .pmd
 .project
 .settings/
+.vs/
 Desktop.ini
 Thumbs.db
 assets/

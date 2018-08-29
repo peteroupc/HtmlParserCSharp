@@ -7,6 +7,8 @@ using System.Resources;
 
 namespace Org.System.Xml.Sax {
   /**<summary>Identifies localized string constants.</summary> */
+
+    /// <summary>Not documented yet.</summary>
   public enum RsId
   {
     // for Org.System.Xml.Sax namespace
@@ -30,22 +32,21 @@ namespace Org.System.Xml.Sax {
   }
 
   /**<summary>Enables access to localized resources.</summary> */
-  public class Resources {
-    private static ResourceManager rm;
 
-    private Resources() {}
+    /// <summary>Not documented yet.</summary>
+  public class Resources {
+    // NOTE: 'rm' deleted
+    private Resources() {
+}
 
     /// <summary>Returns localized string constants.</summary>
-    /// <param name='id'>Not documented yet.</param>
+    /// <param name='id'>The parameter <paramref name='id'/> is not
+    /// documented yet.</param>
     /// <returns>A string object.</returns>
     public static string GetString(RsId id) {
-      string name = Enum.GetName(typeof(RsId), id);
-      return rm.GetString(name);
+      // NOTE: modified
+      return id.ToString();
     }
-
-    static Resources() {
-      rm = new ResourceManager("Org.System.Xml.Sax.Sax",
-        Assembly.GetExecutingAssembly());
-    }
+    // NOTE: Resources static initializer deleted
   }
 }

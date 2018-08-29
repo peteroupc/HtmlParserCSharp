@@ -12,105 +12,123 @@ using System.Collections.Generic;
 
     /// <summary>A class for holding tasks that can be referred to by
     /// integer index.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public sealed class ActionList<T> {
   private IList<IBoundAction<T>> actions;
   private IList<Object> boundObjects;
   private IList<T[]> postponeCall;
   private Object syncRoot = new Object();
 
+    /// <summary>Initializes a new instance of the ActionList
+    /// class.</summary>
   public ActionList() {
-    actions = new List<IBoundAction<T>>();
-    boundObjects = new List<Object>();
-    postponeCall = new List<T[]>();
+    this.actions = new List<IBoundAction<T>>();
+    this.boundObjects = new List<Object>();
+    this.postponeCall = new List<T[]>();
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='actionID'>Not documented yet.</param>
+    /// <param name='boundObject'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
   public bool rebindAction(int actionID, Object boundObject) {
-    //Console.WriteLine("Rebinding action %d",actionID);
+    // DebugUtility.Log("Rebinding action %d",actionID);
     IBoundAction<T> action = null;
-    if (actionID<0 || boundObject == null) {
+    if (actionID < 0 || boundObject == null) {
  return false;
 }
     T[] postponed = null;
-    lock (syncRoot) {
-      if (actionID >= actions.Count) {
+    lock (this.syncRoot) {
+      if (actionID >= this.actions.Count) {
  return false;
 }
-      action = actions[actionID];
+      action = this.actions[actionID];
       if (action == null) {
  return false;
 }
-      boundObjects[actionID]=boundObject;
-      postponed = postponeCall[actionID];
+      this.boundObjects[actionID] = boundObject;
+      postponed = this.postponeCall[actionID];
       if (postponed != null) {
-        actions[actionID]=null;
-        postponeCall[actionID]=null;
-        boundObjects[actionID]=null;
+        this.actions[actionID] = null;
+        this.postponeCall[actionID] = null;
+        this.boundObjects[actionID] = null;
       }
     }
     if (postponed != null) {
-      //Console.WriteLine("Calling postponed action %d",actionID);
+      // DebugUtility.Log("Calling postponed action %d",actionID);
       action.action(boundObject, postponed);
     }
     return true;
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='boundObject'>Not documented yet.</param>
+    /// <param name='action'>Not documented yet.</param>
+    /// <returns>A 32-bit signed integer.</returns>
   public int registerAction(Object boundObject, IBoundAction<T> action) {
-    lock (syncRoot) {
-      for (int i = 0;i<actions.Count; ++i) {
-        if (actions[i]==null) {
-          //Console.WriteLine("Adding action %d",i);
-          actions[i]=action;
-          boundObjects[i]=boundObject;
-          postponeCall[i]=null;
+    lock (this.syncRoot) {
+      for (int i = 0; i < this.actions.Count; ++i) {
+        if (this.actions[i] == null) {
+          // DebugUtility.Log("Adding action %d",i);
+          this.actions[i] = action;
+          this.boundObjects[i] = boundObject;
+          this.postponeCall[i] = null;
           return i;
         }
       }
-      int ret = actions.Count;
-      //Console.WriteLine("Adding action %d",ret);
-      actions.Add(action);
-      boundObjects.Add(boundObject);
-      postponeCall.Add(null);
+      int ret = this.actions.Count;
+      // DebugUtility.Log("Adding action %d",ret);
+      this.actions.Add(action);
+      this.boundObjects.Add(boundObject);
+      this.postponeCall.Add(null);
       return ret;
     }
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='actionID'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
   public bool removeAction(int actionID) {
-    //Console.WriteLine("Removing action %d",actionID);
-    if (actionID< 0) {
+    // DebugUtility.Log("Removing action %d",actionID);
+    if (actionID < 0) {
  return false;
 }
-    lock (syncRoot) {
-      if (actionID >= actions.Count) {
+    lock (this.syncRoot) {
+      if (actionID >= this.actions.Count) {
  return false;
 }
-      actions[actionID]=null;
-      boundObjects[actionID]=null;
-      postponeCall[actionID]=null;
+      this.actions[actionID] = null;
+      this.boundObjects[actionID] = null;
+      this.postponeCall[actionID] = null;
     }
     return true;
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='actionID'>Not documented yet.</param>
+    /// <param name='parameters'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
   public bool triggerActionOnce(int actionID, params T[] parameters) {
-    //Console.WriteLine("Triggering action %d",actionID);
+    // DebugUtility.Log("Triggering action %d",actionID);
     IBoundAction<T> action = null;
-    if (actionID< 0) {
+    if (actionID < 0) {
  return false;
 }
     Object boundObject = null;
-    lock (syncRoot) {
-      if (actionID >= actions.Count) {
+    lock (this.syncRoot) {
+      if (actionID >= this.actions.Count) {
  return false;
 }
-      boundObject = boundObjects[actionID];
+      boundObject = this.boundObjects[actionID];
       if (boundObject == null) {
-        //Console.WriteLine("Postponing action %d",actionID);
-        postponeCall[actionID]=parameters;
+        // DebugUtility.Log("Postponing action %d",actionID);
+        this.postponeCall[actionID] = parameters;
         return false;
       }
-      action = actions[actionID];
-      actions[actionID]=null;
-      boundObjects[actionID]=null;
-      postponeCall[actionID]=null;
+      action = this.actions[actionID];
+      this.actions[actionID] = null;
+      this.boundObjects[actionID] = null;
+      this.postponeCall[actionID] = null;
     }
     if (action == null) {
  return false;
@@ -119,21 +137,24 @@ public sealed class ActionList<T> {
     return true;
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='actionID'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
   public bool unbindAction(int actionID) {
-    //Console.WriteLine("Unbinding action %d",actionID);
+    // DebugUtility.Log("Unbinding action %d",actionID);
     IBoundAction<T> action = null;
-    if (actionID< 0) {
+    if (actionID < 0) {
  return false;
 }
-    lock (syncRoot) {
-      if (actionID >= actions.Count) {
+    lock (this.syncRoot) {
+      if (actionID >= this.actions.Count) {
  return false;
 }
-      action = actions[actionID];
+      action = this.actions[actionID];
       if (action == null) {
  return false;
 }
-      boundObjects[actionID]=null;
+      this.boundObjects[actionID] = null;
     }
     return true;
   }

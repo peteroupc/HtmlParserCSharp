@@ -35,9 +35,7 @@ namespace com.upokecenter.net {
       //
       Stream stream = null;
       String requestMethod="GET";
-      bool calledConnecting = false;
-      WebResponse response = null;
-      try {
+      var calledConnecting = false;
         if (isEventHandler && callback != null && !calledConnecting) {
           ((IDownloadEventListener<T>)callback).onConnecting(urlString);
           calledConnecting = true;
@@ -47,7 +45,7 @@ namespace com.upokecenter.net {
         if (request is HttpWebRequest) {
  request.Method = requestMethod;
 }
-        response = request.GetResponse();
+      using (WebResponse response = request.GetResponse()) {
         if (isEventHandler && callback != null) {
           ((IDownloadEventListener<T>)callback).onConnected(urlString);
         }
@@ -56,24 +54,16 @@ namespace com.upokecenter.net {
         if (response is HttpWebResponse &&
           (int)(((HttpWebResponse)response).StatusCode) >= 400) {
           if (!handleErrorResponses) {
- throw new IOException();
-}
+            throw new IOException();
+          }
         }
-        if (stream != null) {
-          stream = new PeterO.Support.BufferedInputStream(stream);
+        using (Stream stream = response.GetResponseStream()) {
+          T ret = (callback == null) ? default(T) : callback.processResponse(
+            urlString,
+            (PeterO.Support.InputStream)stream,
+            headers);
+          return ret;
         }
-        T ret=(callback == null) ? default(T) : callback.processResponse(
-          urlString,
-          (PeterO.Support.InputStream)stream,
-          headers);
-        return ret;
-      } finally {
-        if (stream != null) {
-          try {
-            stream.Close();
-          } catch (IOException) {}
-        }
-        response.Close();
       }
     }
   }

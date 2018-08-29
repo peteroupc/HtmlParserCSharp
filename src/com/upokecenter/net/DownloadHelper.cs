@@ -52,187 +52,6 @@ public sealed class DownloadHelper {
     public PeterO.Support.File trueCacheInfoFile = null;
   }
 
-  internal class DataURLHeaders : IHttpHeaders {
-    string urlString;
-    string contentType;
-
-    public DataURLHeaders(string urlString, long length, string contentType) {
-      this.urlString = urlString;
-      this.contentType = contentType;
-    }
-
-    private IList<string> asReadOnlyList(string[] a) {
-      return PeterO.Support.Collections.UnmodifiableList(a);
-    }
-
-    public string getHeaderField(int name) {
-      return (name == 0) ? (getHeaderField(null)) : ((name == 1) ?
-        (getHeaderField("content-type")) : (null));
-    }
-
-    public string getHeaderField(string name) {
-      if (name == null) {
- return "HTTP/1.1 200 OK";
-}
-      return ("content-type" .Equals(StringUtility.toLowerCaseAscii(name)))?
-        (contentType) : (null);
-    }
-
-    public long getHeaderFieldDate(string field, long defaultValue) {
-      return defaultValue;
-    }
-
-    public string getHeaderFieldKey(int name) {
-      return (name == 0) ? (null) : ((name==1) ? ("content-type") : (null));
-    }
-
-    public IDictionary<string, IList<string>> getHeaderFields() {
-      IDictionary<string, IList<string>> map = new
-        PeterO.Support.LenientDictionary<string, IList<string>>();
-      map.Add(null, asReadOnlyList(new string[] { getHeaderField(null)}));
-      map.Add("content-type",asReadOnlyList(new
-        string[] { getHeaderField("content-type")}));
-      return PeterO.Support.Collections.UnmodifiableMap(map);
-    }
-
-    public string getRequestMethod() {
-      return "GET";
-    }
-
-    public int getResponseCode() {
-      return 200;
-    }
-
-    public string getUrl() {
-      return urlString;
-    }
-  }
-
-  internal class ErrorHeader : IHttpHeaders {
-    string message;
-    int code;
-    string urlString;
-
-    public ErrorHeader(string urlString, int code, string message) {
-      this.urlString = urlString;
-      this.code = code;
-      this.message = message;
-    }
-
-    private IList<string> asReadOnlyList(string[] a) {
-      return PeterO.Support.Collections.UnmodifiableList(a);
-    }
-
-    public string getHeaderField(int name) {
-      return (name == 0) ? (getHeaderField(null)) : (null);
-    }
-
-    public string getHeaderField(string name) {
-      return (name==null) ? ("HTTP/1.1 "
-        +Convert.ToString(code,CultureInfo.InvariantCulture)+" " +message) :
-        (null);
-    }
-
-    public long getHeaderFieldDate(string field, long defaultValue) {
-      return defaultValue;
-    }
-
-    public string getHeaderFieldKey(int name) {
-      return null;
-    }
-
-    public IDictionary<string, IList<string>> getHeaderFields() {
-      IDictionary<string, IList<string>> map = new
-        PeterO.Support.LenientDictionary<string, IList<string>>();
-      map.Add(null, asReadOnlyList(new string[] { getHeaderField(null)}));
-      return PeterO.Support.Collections.UnmodifiableMap(map);
-    }
-
-    public string getRequestMethod() {
-      return "GET";
-    }
-
-    public int getResponseCode() {
-      return code;
-    }
-
-    public string getUrl() {
-      return urlString;
-    }
-  }
-
-  internal class FileBasedHeaders : IHttpHeaders {
-    long date, length;
-    string urlString;
-
-    public FileBasedHeaders(string urlString, long length) {
-      date = DateTimeUtility.getCurrentDate();
-      this.length = length;
-      this.urlString = urlString;
-    }
-
-    private IList<string> asReadOnlyList(string[] a) {
-      return PeterO.Support.Collections.UnmodifiableList(a);
-    }
-
-    public string getHeaderField(int name) {
-      if (name == 0) {
- return getHeaderField(null);
-  } else if (name == 1) {
- return getHeaderField("date");
-} else {
- return (name==2) ? (getHeaderField("content-length")) : (null);
-}
-    }
-
-    public string getHeaderField(string name) {
-      if (name == null) {
- return "HTTP/1.1 200 OK";
-}
-      if ("date".Equals(StringUtility.toLowerCaseAscii(name))) {
- return HeaderParser.formatHttpDate(date);
-}
-      return ("content-length" .Equals(StringUtility.toLowerCaseAscii(name))) ?
-        (Convert.ToString(length, CultureInfo.InvariantCulture)) : (null);
-    }
-
-    public long getHeaderFieldDate(string field, long defaultValue) {
-      return (field!=null && "date"
-        .Equals(StringUtility.toLowerCaseAscii(field))) ? (date) :
-        (defaultValue);
-    }
-
-    public string getHeaderFieldKey(int name) {
-      return (name == 0) ? (null) : ((name == 1) ? ("date") : ((name==2) ?
-        ("content-length") : (null)));
-    }
-
-    public IDictionary<string, IList<string>> getHeaderFields() {
-      IDictionary<string, IList<string>> map = new
-        PeterO.Support.LenientDictionary<string, IList<string>>();
-      map.Add(null, asReadOnlyList(new string[] { getHeaderField(null)}));
-      map.Add("date",asReadOnlyList(new string[] { getHeaderField("date")}));
-      {
-IList<string> objectTemp2 = asReadOnlyList(new
-        string[] { getHeaderField("content-length")});
-map.Add("content-length", objectTemp2);
-}
-      return PeterO.Support.Collections.UnmodifiableMap(map);
-    }
-
-    public string getRequestMethod() {
-      return "GET";
-    }
-
-    public int getResponseCode() {
-      return 200;
-    }
-
-    public string getUrl() {
-      return urlString;
-    }
-  }
-
     /// <summary>* Connects to a URL to download data from that URL. @param
     /// urlString a URL _string. All schemes (protocols) supported by
     /// Java's URLConnection are supported. Data URLs are also supported.
@@ -295,86 +114,6 @@ map.Add("content-length", objectTemp2);
     if (uri == null) {
  throw new ArgumentException();
 }
-    //
-    // About URIs
-    //
-    if ("about".Equals(uri.getScheme())) {
-      string ssp = uri.getSchemeData();
-      if (!"blank".Equals(ssp)) {
-        if (!handleErrorResponses) {
- throw new IOException();
-}
-        if (isEventHandler && callback != null) {
-          ((IDownloadEventListener<T>)callback).onConnected(urlString);
-        }
- T ret=(callback == null) ? default(T) :
-          callback.processResponse(urlString, null,
-            new ErrorHeader(urlString,400,"Bad Request"));
-        return ret;
-      } else {
-        string contentType="text/html;charset=utf-8";
-        PeterO.Support.InputStream stream = null;
-        try {
-          stream = new PeterO.Support.ByteArrayInputStream(new byte[] { });
-          if (isEventHandler && callback != null) {
-            ((IDownloadEventListener<T>)callback).onConnected(urlString);
-          }
-          T ret=(callback == null) ? default(T) :
-            callback.processResponse(urlString, stream,
-              new DataURLHeaders(urlString, 0, contentType));
-          return ret;
-        } finally {
-          if (stream != null) {
-            try {
-              stream.Dispose();
-            } catch (IOException) {}
-          }
-        }
-      }
-    }
-    //
-    // Data URLs
-    //
-    if ("data".Equals(uri.getScheme())) {
-      // NOTE: Only "GET" is allowed here
-      byte[] bytes = HeaderParser.getDataURLBytes(uri.ToString());
-      if (bytes == null) {
-        if (!handleErrorResponses) {
- throw new IOException();
-}
-        if (isEventHandler && callback != null) {
-          ((IDownloadEventListener<T>)callback).onConnected(urlString);
-        }
- T ret=(callback == null) ? default(T) :
-          callback.processResponse(urlString, null,
-            new ErrorHeader(urlString,400,"Bad Request"));
-        return ret;
-      } else {
-        string contentType = HeaderParser.getDataURLContentType(uri.ToString());
-        PeterO.Support.InputStream stream = null;
-        try {
-          stream = new PeterO.Support.BufferedInputStream(
-              new PeterO.Support.ByteArrayInputStream(bytes),
-              Math.Max(32, Math.Min(8192, bytes.Length)));
-          if (isEventHandler && callback != null) {
-            ((IDownloadEventListener<T>)callback).onConnected(urlString);
-          }
-          T ret=(callback == null) ? default(T) :
-            callback.processResponse(urlString, stream,
-              new DataURLHeaders(urlString, bytes.Length, contentType));
-          return ret;
-        } finally {
-          if (stream != null) {
-            try {
-              stream.Close();
-            } catch (IOException) {}
-          }
-        }
-      }
-    }
-    //
-    // Other URLs
-    //
     return DownloadHelperImpl.downloadUrl(urlString, callback,
       handleErrorResponses);
   }
@@ -407,7 +146,7 @@ map.Add("content-length", objectTemp2);
           PeterO.Support.File(crinfo.trueCachedFile.ToString()+".cache");
         return crinfo;
       }
-      //Console.WriteLine("%s, getStream=%s",(cacheFiles),getStream);
+      //DebugUtility.Log("%s, getStream=%s",(cacheFiles),getStream);
       foreach (var cacheFile in cacheFiles) {
         if (cacheFile.isFile() && getStream) {
           var fresh = false;
@@ -416,7 +155,7 @@ map.Add("content-length", objectTemp2);
           if (cacheInfoFile.isFile()) {
             try {
               CacheControl cc = CacheControl.fromFile(cacheInfoFile);
-              //Console.WriteLine("havecache: %s",cc!=null);
+              //DebugUtility.Log("havecache: %s",cc!=null);
               if (cc == null) {
                 fresh = false;
               } else {
@@ -425,16 +164,16 @@ map.Add("content-length", objectTemp2);
                   // Wrong URI
                   continue;
                 }
-                //Console.WriteLine("reqmethod: %s",cc.getRequestMethod());
+                //DebugUtility.Log("reqmethod: %s",cc.getRequestMethod());
                 if (!"get".Equals(cc.getRequestMethod())) {
                   fresh = false;
                 }
               }
               headers=(cc == null) ? new
-                FileBasedHeaders(urlString, cacheFile.Length) :
+                  FileBasedHeaders(urlString, cacheFile.Length) :
                 cc.getHeaders(cacheFile.Length);
-            } catch (IOException e) {
-              //Console.WriteLine(e.StackTrace);
+            } catch (IOException) {
+              //DebugUtility.Log(e.StackTrace);
               fresh = false;
               headers = new FileBasedHeaders(urlString, cacheFile.Length);
             }
@@ -446,7 +185,7 @@ map.Add("content-length", objectTemp2);
             fresh=(timeDiff <= maxAgeMillis);
             headers = new FileBasedHeaders(urlString, cacheFile.Length);
           }
-          //Console.WriteLine("fresh=%s",fresh);
+          //DebugUtility.Log("fresh=%s",fresh);
           if (!fresh) {
             // Too old, download again
             trueCachedFile = cacheFile;
@@ -462,7 +201,7 @@ map.Add("content-length", objectTemp2);
                 FileStream(cacheFile.ToString(), FileMode.Open)), 8192);
               crinfo.cr = DownloadHelperImpl.newCacheResponse(stream,
                   headers);
-              //Console.WriteLine("headerfields: %s",headers.getHeaderFields());
+              //DebugUtility.Log("headerfields: %s",headers.getHeaderFields());
             } catch (IOException) {
               // if we get an exception here, we download again
               crinfo.cr = null;

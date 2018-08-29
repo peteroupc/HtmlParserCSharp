@@ -27,8 +27,15 @@ THE SOFTWARE.
 namespace com.upokecenter.net {
 using System;
 
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public interface IDownloadEventListener<T> : IResponseListener<T> {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='url'>Not documented yet.</param>
    void onConnected(string url);
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='url'>Not documented yet.</param>
    void onConnecting(string url);
 }
 }

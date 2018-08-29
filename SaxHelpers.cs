@@ -5,12 +5,15 @@
 using System;
 using System.Reflection;
 using System.Text;
+using PeterO.Support;
 
 namespace Org.System.Xml.Sax.Helpers {
     /**<summary>Default implementation for <see cref="ParseError"/>.</summary>
      * <remarks>For some parsers a different implementation may be
        preferable.</remarks>
      */
+
+    /// <summary>Not documented yet.</summary>
     public class ParseErrorImpl : ParseError
     {
         private Exception baseException;
@@ -28,8 +31,8 @@ namespace Org.System.Xml.Sax.Helpers {
     /// <see cref='ParseError'/> instance possible, together with
     /// <see cref='Init'/> and
     /// <see cref='SetBaseException'/>.</remarks>
-        protected void SetErrorId (string id) {
-            errorId = id;
+        protected void SetErrorId(string id) {
+            this.errorId = id;
         }
 
     /// <summary>Set base exception.</summary>
@@ -39,8 +42,8 @@ namespace Org.System.Xml.Sax.Helpers {
     /// <see cref='ParseError'/> instance possible, together with
     /// <see cref='Init'/> and
     /// <see cref='SetErrorId'/>.</remarks>
-        protected void SetBaseException (Exception e) {
-            baseException = e;
+        protected void SetBaseException(Exception e) {
+            this.baseException = e;
         }
 
     /// <summary>Initialize instance data.</summary>
@@ -58,7 +61,7 @@ namespace Org.System.Xml.Sax.Helpers {
     /// <see cref='ParseError'/> instance possible, together with
     /// <see cref='SetErrorId'/> and
     /// <see cref='SetBaseException'/>.</remarks>
-        protected void Init (
+        protected void Init(
           string message,
           string publicId,
           string systemId,
@@ -71,94 +74,151 @@ namespace Org.System.Xml.Sax.Helpers {
             this.columnNumber = columnNumber;
         }
 
-        public ParseErrorImpl (string message) {
-            Init (message, null, null, -1, -1);
+    /// <summary>Initializes a new instance of the ParseErrorImpl
+    /// class.</summary>
+    /// <param name='message'>A string object.</param>
+        public ParseErrorImpl(string message) {
+            this.Init(message, null, null, -1, -1);
         }
 
-        public ParseErrorImpl (string message, Exception e) {
-            Init (message, null, null, -1, -1);
-            baseException = e;
+    /// <summary>Initializes a new instance of the ParseErrorImpl
+    /// class.</summary>
+    /// <param name='message'>A string object.</param>
+    /// <param name='e'>An Exception object.</param>
+        public ParseErrorImpl(string message, Exception e) {
+            this.Init(message, null, null, -1, -1);
+            this.baseException = e;
         }
 
-        public ParseErrorImpl (string message, ILocator locator, string id) {
+    /// <summary>Initializes a new instance of the ParseErrorImpl
+    /// class.</summary>
+    /// <param name='message'>A string object.</param>
+    /// <param name='locator'>An ILocator object.</param>
+    /// <param name='id'>Another string object.</param>
+        public ParseErrorImpl(string message, ILocator locator, string id) {
             if (locator != null) {
-                Init (message, locator.PublicId, locator.SystemId,
-                    locator.LineNumber, locator.ColumnNumber);
+                this.Init(
+  message,
+  locator.PublicId,
+  locator.SystemId,
+  locator.LineNumber,
+  locator.ColumnNumber);
             } else {
-                Init (message, null, null, -1, -1);
+                this.Init(message, null, null, -1, -1);
             }
-            errorId = id;
+            this.errorId = id;
         }
 
-        public ParseErrorImpl (string message, ILocator locator, Exception e) {
+    /// <summary>Initializes a new instance of the ParseErrorImpl
+    /// class.</summary>
+    /// <param name='message'>A string object.</param>
+    /// <param name='locator'>An ILocator object.</param>
+    /// <param name='e'>An Exception object.</param>
+        public ParseErrorImpl(string message, ILocator locator, Exception e) {
             if (locator != null) {
-                Init (message, locator.PublicId, locator.SystemId,
-                    locator.LineNumber, locator.ColumnNumber);
+                this.Init(
+  message,
+  locator.PublicId,
+  locator.SystemId,
+  locator.LineNumber,
+  locator.ColumnNumber);
             } else {
-                Init (message, null, null, -1, -1);
+                this.Init(message, null, null, -1, -1);
             }
-            baseException = e;
+            this.baseException = e;
         }
 
-        public ParseErrorImpl (string message,
-                    string publicId,
-                    string systemId,
-                    int lineNumber,
-                    int columnNumber,
-                    string id) {
-            Init (message, publicId, systemId, lineNumber, columnNumber);
-            errorId = id;
+    /// <summary>Initializes a new instance of the ParseErrorImpl
+    /// class.</summary>
+    /// <param name='message'>A string object.</param>
+    /// <param name='publicId'>Another string object.</param>
+    /// <param name='systemId'>A string object. (3).</param>
+    /// <param name='lineNumber'>A 32-bit signed integer.</param>
+    /// <param name='columnNumber'>Another 32-bit signed integer.</param>
+    /// <param name='id'>A string object. (4).</param>
+        public ParseErrorImpl(
+  string message,
+  string publicId,
+  string systemId,
+  int lineNumber,
+  int columnNumber,
+  string id) {
+            this.Init(message, publicId, systemId, lineNumber, columnNumber);
+            this.errorId = id;
         }
 
-        public ParseErrorImpl (string message,
-                    string publicId,
-                    string systemId,
-                    int lineNumber,
-                    int columnNumber,
-                    Exception e) {
-            Init (message, publicId, systemId, lineNumber, columnNumber);
-            baseException = e;
+    /// <summary>Initializes a new instance of the ParseErrorImpl
+    /// class.</summary>
+    /// <param name='message'>A string object.</param>
+    /// <param name='publicId'>Another string object.</param>
+    /// <param name='systemId'>A string object. (3).</param>
+    /// <param name='lineNumber'>A 32-bit signed integer.</param>
+    /// <param name='columnNumber'>Another 32-bit signed integer.</param>
+    /// <param name='e'>An Exception object.</param>
+        public ParseErrorImpl(
+  string message,
+  string publicId,
+  string systemId,
+  int lineNumber,
+  int columnNumber,
+  Exception e) {
+            this.Init(message, publicId, systemId, lineNumber, columnNumber);
+            this.baseException = e;
         }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
         public override string Message {
             get {
-                return message;
+                return this.message;
             }
         }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
         public override string ErrorId {
             get {
-                return errorId;
+                return this.errorId;
             }
         }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
         public override string PublicId {
             get {
-                return publicId;
+                return this.publicId;
             }
         }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
         public override string SystemId {
             get {
-                return systemId;
+                return this.systemId;
             }
         }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
         public override long LineNumber {
             get {
-                return lineNumber;
+                return this.lineNumber;
             }
         }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
         public override long ColumnNumber {
             get {
-                return columnNumber;
+                return this.columnNumber;
             }
         }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
         public override Exception BaseException {
             get {
-                return baseException;
+                return this.baseException;
             }
         }
     }
@@ -174,39 +234,55 @@ namespace Org.System.Xml.Sax.Helpers {
      * instance which gets called whenever <see cref="IProperty&lt;T>.Value"
        /> changes.</remarks>
      */
-  public delegate void OnPropertyChange<T> (IProperty<T> property, T
-      newValue);
+
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+  public delegate void OnPropertyChange<T>(
+  IProperty<T> property,
+  T newValue);
 
     /**<summary>Implementaton of <see cref="IProperty&lt;T>" /> interface
       which calls back through
      * a delegate on every change of the property value.</summary>
      */
+
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
     public abstract class PropertyImpl<T> : IProperty<T>
     {
         private T propValue;
         private OnPropertyChange<T> onChange;
 
-        protected PropertyImpl (OnPropertyChange<T> onChange, T defaultValue) {
+    /// <summary>Initializes a new instance of the PropertyImpl
+    /// class.</summary>
+    /// <param name='onChange'>An OnPropertyChange object.</param>
+    /// <param name='defaultValue'>A T object.</param>
+        protected PropertyImpl(OnPropertyChange<T> onChange, T defaultValue) {
             this.onChange = onChange;
             this.propValue = defaultValue;
         }
 
     /// <summary>The Name property must be overriden in a derived
     /// class.</summary>
+    /// <value>The Name property must be overriden in a derived
+    /// class.</value>
     /// <remarks>This allows one to save the space needed for a name
     /// field.</remarks>
         public abstract string Name { get; }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public T Value {
             get {
-                return propValue;
+                return this.propValue;
             }
+
             set {
                 T newValue = value;
-                if (onChange != null) {
-                    onChange (this, newValue);
+                if (this.onChange != null) {
+                    this.onChange(this, newValue);
                 }
-                propValue = newValue;
+                this.propValue = newValue;
             }
         }
     }
@@ -225,90 +301,106 @@ namespace Org.System.Xml.Sax.Helpers {
      * class do throw exceptions in the same situation.</remarks>
      * <seealso
 
-  href="http://www.saxproject.org/apidoc/org/xml/sax/helpers/AttributesImpl.html"
+  href="http://www.saxproject.org/apidoc/org/xml/ValueSax/helpers/AttributesImpl.html"
        >
      * AttributesImpl on www.saxproject.org</seealso>
      * <seealso
-    href="http://www.saxproject.org/apidoc/org/xml/sax/ext/Attributes2Impl.html"
+
+  href="http://www.saxproject.org/apidoc/org/xml/ValueSax/ext/Attributes2Impl.html"
        >
      * Attributes2Impl on www.saxproject.org</seealso>
      */
+
+    /// <summary>Not documented yet.</summary>
     public class AttributesImpl : IAttributes
     {
     /// <summary>Holds all the fields for an attribute.</summary>
         protected struct Attribute {
             private string uri;
-            private string qName;
-            private string aType;
-            private string aValue;
+            private string valueQName;
+            private string valueAType;
+            private string valueAValue;
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
             public string Uri {
                 get {
-                    return uri;
+                    return this.uri;
                 }
+
                 set {
                     if (value == null) {
-                    throw new ArgumentNullException ("Uri");
+                    throw new ArgumentNullException(nameof(this.Uri));
                     }
-                    uri = value;
+                    this.uri = value;
                 }
             }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
             public string QName {
                 get {
-                    return qName;
+                    return this.valueQName;
                 }
+
                 set {
                     if (value == null || value == String.Empty) {
-                    throw new
-          ArgumentException (Resources.GetString
-                      (RsId.NonEmptyStringRequired),
-                    "QName");
+                throw new ArgumentException(
+  Resources.GetString(RsId.NonEmptyStringRequired),
+  "QName");
                     }
-                    qName = value;
+                    this.valueQName = value;
                 }
             }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
             public string AType {
                 get {
-                    return aType;
+                    return this.valueAType;
                 }
+
                 set {
                     if (value == null || value == String.Empty) {
-                    throw new
-          ArgumentException (Resources.GetString
-                      (RsId.NonEmptyStringRequired),
-                    "AType");
+                throw new ArgumentException(
+  Resources.GetString(RsId.NonEmptyStringRequired),
+  "AType");
                     }
-                    aType = value;
+                    this.valueAType = value;
                 }
             }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
             public string AValue {
                 get {
-                    return aValue;
+                    return this.valueAValue;
                 }
+
                 set {
                     if (value == null) {
-                    throw new ArgumentNullException ("AValue");
+                    throw new ArgumentNullException(nameof(this.AValue));
                     }
-                    aValue = value;
+                    this.valueAValue = value;
                 }
             }
 
+    /// <summary>Not documented yet.</summary>
             public int PrefixLen;  // includes colon
+
+    /// <summary>Not documented yet.</summary>
             public bool IsSpecified;
         }
 
-        private Attribute [] atts;
+        private Attribute[] atts;
         private int attCount;
         private StringBuilder strBuilder;
 
     /// <summary>All attributes are stored in this struct array.</summary>
     /// <value>All attributes are stored in this struct array.</value>
-        protected Attribute [] Atts {
+        protected Attribute[] Atts {
             get {
-                return atts;
+                return this.atts;
             }
         }
 
@@ -316,16 +408,21 @@ namespace Org.System.Xml.Sax.Helpers {
     /// <value>String builder helper object.</value>
         protected StringBuilder StrBuilder {
             get {
-                return strBuilder;
+                return this.strBuilder;
             }
         }
 
-        public AttributesImpl () {
-            atts = new Attribute [4];  // default capacity = 4
+    /// <summary>Initializes a new instance of the AttributesImpl
+    /// class.</summary>
+        public AttributesImpl() {
+            this.atts = new Attribute[4];  // default capacity = 4
         }
 
-        public AttributesImpl (int capacity) {
-            atts = new Attribute [capacity];
+    /// <summary>Initializes a new instance of the AttributesImpl
+    /// class.</summary>
+    /// <param name='capacity'>A 32-bit signed integer.</param>
+        public AttributesImpl(int capacity) {
+            this.atts = new Attribute[capacity];
         }
 
     /// <summary>Returns clone of <c>AttributesImpl</c> instance.</summary>
@@ -334,17 +431,17 @@ namespace Org.System.Xml.Sax.Helpers {
     /// <see cref='Attribute'/> fields are cloned, not the other fields
     /// like
     /// <see cref='Capacity'/>.</remarks>
-        public AttributesImpl Clone () {
-            var result = new AttributesImpl (attCount);
+        public AttributesImpl Clone() {
+            var result = new AttributesImpl(this.attCount);
             // requires existing Attributes to be properly initialized
-            Array.Copy (atts, 0, result.atts, 0, attCount);
-            result.attCount = attCount;
+            Array.Copy(this.atts, 0, result.atts, 0, this.attCount);
+            result.attCount = this.attCount;
             return result;
         }
 
     /// <summary>Capacity for holding
     /// <see cref='Attribute'/> instances.</summary>
-    /// <value>Capacity for holding &lt;see cref=&apos;Attribute&apos;/&gt;
+    /// <value>Capacity for holding &lt;see cref=&#x27;Attribute&#x27;/&gt;
     /// instances.</value>
     /// <remarks>Can be initialized to avoid costly re-allocations when new
     /// attributes are added. Its value must not be less than the value of
@@ -352,17 +449,18 @@ namespace Org.System.Xml.Sax.Helpers {
     /// <see cref='Length'/> property.</remarks>
         public int Capacity {
             get {
-                return atts.Length;
+                return this.atts.Length;
             }
+
             set {
-                if (value < attCount) {
-                    string msg = Resources.GetString (RsId.CapacityTooSmall);
-                    throw new ArgumentException (msg, "Capacity");
+                if (value < this.attCount) {
+                    string msg = Resources.GetString(RsId.CapacityTooSmall);
+                    throw new ArgumentException(msg, "Capacity");
                 }
-                var tmpAtts = new Attribute [value];
+                var tmpAtts = new Attribute[value];
                 // requires existing Attributes to be properly initialized
-                atts.CopyTo (tmpAtts, 0);
-                atts = tmpAtts;
+                this.atts.CopyTo(tmpAtts, 0);
+                this.atts = tmpAtts;
             }
         }
 
@@ -370,21 +468,23 @@ namespace Org.System.Xml.Sax.Helpers {
     /// not.</summary>
     /// <param name='index'>The parameter <paramref name='index'/> is not
     /// documented yet.</param>
-        protected void CheckIndex (int index) {
-            bool isBad = index < 0 || index >= attCount;
+        protected void CheckIndex(int index) {
+            bool isBad = index < 0 || index >= this.attCount;
             if (isBad) {
-                string msg = Resources.GetString (RsId.AttIndexOutOfBounds);
-                throw new IndexOutOfRangeException (msg);
+                string msg = Resources.GetString(RsId.AttIndexOutOfBounds);
+                throw new IndexOutOfRangeException(msg);
             }
         }
 
     /// <summary>Helper routine for throwing an
     /// <see cref='ArgumentException'/> when an attribute is not found,
     /// with message loaded from resources.</summary>
-    /// <param name='qName'>Qualified name of attribute.</param>
-        protected void NotFoundError (string qName) {
-            string msg = Resources.GetString (RsId.AttributeNotFound);
-            throw new ArgumentException (String.Format (msg, qName), "qName");
+    /// <param name='valueQName'>Qualified name of attribute.</param>
+        protected void NotFoundError(string valueQName) {
+            string msg = Resources.GetString(RsId.AttributeNotFound);
+     throw new ArgumentException(
+  String.Format(msg, valueQName),
+  "valueQName");
         }
 
     /// <summary>Helper routine for throwing an
@@ -393,10 +493,13 @@ namespace Org.System.Xml.Sax.Helpers {
     /// <param name='uri'>URI of attribute's qualified name.</param>
     /// <param name='localName'>Local part of attribute's qualified
     /// name.</param>
-        protected void NotFoundError (string uri, string localName) {
-            string msg = Resources.GetString (RsId.AttributeNotFoundNS);
-            throw new ArgumentException (String.Format (msg, uri, localName),
-              "uri, localName");
+        protected void NotFoundError(string uri, string localName) {
+            string msg = Resources.GetString(RsId.AttributeNotFoundNS);
+string str13606 = "uri, localName";
+
+            throw new ArgumentException(
+  String.Format(msg, uri, localName),
+  str13606);
         }
 
     /// <summary>Helper routine for quickly setting the fields of an
@@ -407,113 +510,148 @@ namespace Org.System.Xml.Sax.Helpers {
     /// documented yet.</param>
     /// <param name='localName'>The parameter <paramref name='localName'/>
     /// is not documented yet.</param>
-    /// <param name='qName'>The parameter <paramref name='qName'/> is not
-    /// documented yet.</param>
-    /// <param name='aType'>The parameter <paramref name='aType'/> is not
-    /// documented yet.</param>
-    /// <param name='aValue'>The parameter <paramref name='aValue'/> is not
-    /// documented yet.</param>
+    /// <param name='valueQName'>The parameter <paramref
+    /// name='valueQName'/> is not documented yet.</param>
+    /// <param name='valueAType'>The parameter <paramref
+    /// name='valueAType'/> is not documented yet.</param>
+    /// <param name='valueAValue'>The parameter <paramref
+    /// name='valueAValue'/> is not documented yet.</param>
     /// <param name='isSpecified'>The parameter <paramref
     /// name='isSpecified'/> is not documented yet.</param>
-        protected void InternalSetAttribute (
+        protected void InternalSetAttribute(
           ref Attribute att,
           string uri,
           string localName,
-          string qName,
-          string aType,
-          string aValue,
+          string valueQName,
+          string valueAType,
+          string valueAValue,
           bool isSpecified) {
             att.Uri = uri;
-            if (qName == null) {
+            if (valueQName == null) {
                 att.QName = localName;
                 att.PrefixLen = 0;
             } else {
-                att.QName = qName;
-                int colPos = qName.IndexOf (Sax.Constants.XmlColon);
-                att.PrefixLen = (colPos < 0) ? (0) : ((colPos + 1));
+                att.QName = valueQName;
+                int colPos = valueQName.IndexOf(Sax.Constants.XmlColon);
+                att.PrefixLen = (colPos < 0) ? 0 : (colPos + 1);
             }
-            att.AType = aType;
-            att.AValue = aValue;
+            att.AType = valueAType;
+            att.AValue = valueAValue;
             att.IsSpecified = isSpecified;
         }
 
         // IAttributes
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public int Length {
             get {
-                return attCount;
+                return this.attCount;
             }
         }
 
-        public string GetUri (int index) {
-            CheckIndex (index);
-            return atts [index].Uri;
+    /// <summary>Not documented yet.</summary>
+    /// <param name='index'>Not documented yet.</param>
+    /// <returns>A string object.</returns>
+        public string GetUri(int index) {
+            this.CheckIndex(index);
+            return this.atts[index].Uri;
         }
 
-        public string GetLocalName (int index) {
-            CheckIndex (index);
-            return atts [index].QName.Substring (atts [index].PrefixLen);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='index'>Not documented yet.</param>
+    /// <returns>A string object.</returns>
+        public string GetLocalName(int index) {
+            this.CheckIndex(index);
+            return this.atts[index].QName.Substring(this.atts[index].PrefixLen);
         }
 
-        public string GetQName (int index) {
-            CheckIndex (index);
-            return atts [index].QName;
+    /// <summary>Not documented yet.</summary>
+    /// <param name='index'>Not documented yet.</param>
+    /// <returns>A string object.</returns>
+        public string GetQName(int index) {
+            this.CheckIndex(index);
+            return this.atts[index].QName;
         }
 
-        public string GetType (int index) {
-            CheckIndex (index);
-            return atts [index].AType;
+    /// <summary>Not documented yet.</summary>
+    /// <param name='index'>Not documented yet.</param>
+    /// <returns>A string object.</returns>
+        public string GetType(int index) {
+            this.CheckIndex(index);
+            return this.atts[index].AType;
         }
 
-        public string GetType (string uri, string localName) {
-            int index = GetIndex (uri, localName);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='uri'>Not documented yet.</param>
+    /// <param name='localName'>Not documented yet.</param>
+    /// <returns>A string object.</returns>
+        public string GetType(string uri, string localName) {
+            int index = this.GetIndex(uri, localName);
             if (index < 0) {
-                NotFoundError (uri, localName);
+                this.NotFoundError(uri, localName);
             }
-            return atts [index].AType;
+            return this.atts[index].AType;
         }
 
-        public string GetType (string qName) {
-            int index = GetIndex (qName);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='valueQName'>Not documented yet.</param>
+    /// <returns>A string object.</returns>
+        public string GetType(string valueQName) {
+            int index = this.GetIndex(valueQName);
             if (index < 0) {
-                NotFoundError (qName);
+                this.NotFoundError(valueQName);
             }
-            return atts [index].AType;
+            return this.atts[index].AType;
         }
 
-        public string GetValue (int index) {
-            CheckIndex (index);
-            return atts [index].AValue;
+    /// <summary>Not documented yet.</summary>
+    /// <param name='index'>Not documented yet.</param>
+    /// <returns>A string object.</returns>
+        public string GetValue(int index) {
+            this.CheckIndex(index);
+            return this.atts[index].AValue;
         }
 
-        public string GetValue (string uri, string localName) {
-            int index = GetIndex (uri, localName);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='uri'>Not documented yet.</param>
+    /// <param name='localName'>Not documented yet.</param>
+    /// <returns>A string object.</returns>
+        public string GetValue(string uri, string localName) {
+            int index = this.GetIndex(uri, localName);
             if (index < 0) {
-                NotFoundError (uri, localName);
+                this.NotFoundError(uri, localName);
             }
-            return atts [index].AValue;
+            return this.atts[index].AValue;
         }
 
-        public string GetValue (string qName) {
-            int index = GetIndex (qName);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='valueQName'>Not documented yet.</param>
+    /// <returns>A string object.</returns>
+        public string GetValue(string valueQName) {
+            int index = this.GetIndex(valueQName);
             if (index < 0) {
-                NotFoundError (qName);
+                this.NotFoundError(valueQName);
             }
-            return atts [index].AValue;
+            return this.atts[index].AValue;
         }
 
-        public int GetIndex (string uri, string localName) {
-            int result = attCount - 1;
+    /// <summary>Not documented yet.</summary>
+    /// <param name='uri'>Not documented yet.</param>
+    /// <param name='localName'>Not documented yet.</param>
+    /// <returns>A 32-bit signed integer.</returns>
+        public int GetIndex(string uri, string localName) {
+            int result = this.attCount - 1;
             while (result >= 0) {
-                if (String.Equals (uri, atts [result].Uri)) {
-                    string qName = atts [result].QName;
-                    bool equal = !(localName == null ^ qName == null);
+                if (String.Equals(uri, this.atts[result].Uri)) {
+                    string valueQName = this.atts[result].QName;
+                    bool equal = !(localName == null ^ valueQName == null);
                     if (equal && localName != null) {
-                    equal = String.CompareOrdinal (
+                    equal = String.CompareOrdinal(
                     localName,
                     0,
-                    qName,
-                    atts [result].PrefixLen,
+                    valueQName,
+                    this.atts[result].PrefixLen,
                     Int32.MaxValue) == 0;
                     }
                     if (equal) {
@@ -525,10 +663,14 @@ namespace Org.System.Xml.Sax.Helpers {
             return result;
         }
 
-        public int GetIndex (string qName) {
-            int result = attCount - 1;
+    /// <summary>Not documented yet.</summary>
+    /// <param name='valueQName'>Not documented yet.</param>
+    /// <returns>A 32-bit signed integer.</returns>
+        public int GetIndex(string valueQName) {
+            int result = this.attCount - 1;
             while (result >= 0) {
-                if (qName != null && qName.Equals (atts [result].QName)) {
+         if (valueQName != null &&
+                  valueQName.Equals(this.atts[result].QName)) {
                     break;
                 }
                 --result;
@@ -536,25 +678,35 @@ namespace Org.System.Xml.Sax.Helpers {
             return result;
         }
 
-        public bool IsSpecified (int index) {
-            CheckIndex (index);
-            return atts [index].IsSpecified;
+    /// <summary>Not documented yet.</summary>
+    /// <param name='index'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
+        public bool IsSpecified(int index) {
+            this.CheckIndex(index);
+            return this.atts[index].IsSpecified;
         }
 
-        public bool IsSpecified (string qName) {
-            int index = GetIndex (qName);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='valueQName'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
+        public bool IsSpecified(string valueQName) {
+            int index = this.GetIndex(valueQName);
             if (index < 0) {
-                NotFoundError (qName);
+                this.NotFoundError(valueQName);
             }
-            return atts [index].IsSpecified;
+            return this.atts[index].IsSpecified;
         }
 
-        public bool IsSpecified (string uri, string localName) {
-            int index = GetIndex (uri, localName);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='uri'>Not documented yet.</param>
+    /// <param name='localName'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
+        public bool IsSpecified(string uri, string localName) {
+            int index = this.GetIndex(uri, localName);
             if (index < 0) {
-                NotFoundError (uri, localName);
+                this.NotFoundError(uri, localName);
             }
-            return atts [index].IsSpecified;
+            return this.atts[index].IsSpecified;
         }
 
         // modifier methods
@@ -565,38 +717,38 @@ namespace Org.System.Xml.Sax.Helpers {
     /// documented yet.</param>
     /// <param name='localName'>The parameter <paramref name='localName'/>
     /// is not documented yet.</param>
-    /// <param name='qName'>The parameter <paramref name='qName'/> is not
-    /// documented yet.</param>
-    /// <param name='aType'>The parameter <paramref name='aType'/> is not
-    /// documented yet.</param>
-    /// <param name='aValue'>The parameter <paramref name='aValue'/> is not
-    /// documented yet.</param>
+    /// <param name='valueQName'>The parameter <paramref
+    /// name='valueQName'/> is not documented yet.</param>
+    /// <param name='valueAType'>The parameter <paramref
+    /// name='valueAType'/> is not documented yet.</param>
+    /// <param name='valueAValue'>The parameter <paramref
+    /// name='valueAValue'/> is not documented yet.</param>
     /// <param name='isSpecified'>The parameter <paramref
     /// name='isSpecified'/> is not documented yet.</param>
     /// <returns>Index of new attribute.</returns>
     /// <remarks>If there is no namespace, pass the empty string for the
     /// <c>uri</c> argument, and not <c>null</c>.</remarks>
-        public int AddAttribute (
+        public int AddAttribute(
           string uri,
           string localName,
-          string qName,
-          string aType,
-          string aValue,
+          string valueQName,
+          string valueAType,
+          string valueAValue,
           bool isSpecified) {
-            if (attCount >= Capacity) {
-                int newSize = attCount + 4 + (attCount >> 1);
+            if (this.attCount >= this.Capacity) {
+                int newSize = this.attCount + 4 + (this.attCount >> 1);
                 newSize = (newSize >> 2) << 2;  // align to 4 byte boundary
-                Capacity = newSize;
+                this.Capacity = newSize;
             }
-            InternalSetAttribute (
-              ref atts [attCount],
+            this.InternalSetAttribute(
+              ref this.atts[this.attCount],
               uri,
               localName,
-              qName,
-              aType,
-              aValue,
+              valueQName,
+              valueAType,
+              valueAValue,
               isSpecified);
-            return attCount++;
+            return this.attCount++;
         }
 
     /// <summary>Add an attribute taken from an existing set of
@@ -608,33 +760,33 @@ namespace Org.System.Xml.Sax.Helpers {
     /// <returns>Index of added attribute.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='atts'/> is null.</exception>
-        public virtual int AddAttribute (IAttributes atts, int index) {
+        public virtual int AddAttribute(IAttributes atts, int index) {
             if (atts == null) {
-                throw new ArgumentNullException ("atts");
+                throw new ArgumentNullException(nameof(atts));
             }
-            return AddAttribute (
-              atts.GetUri (index),
-              atts.GetLocalName (index),
-              atts.GetQName (index),
-              atts.GetType (index),
-              atts.GetValue (index),
-              atts.IsSpecified (index));
+            return this.AddAttribute(
+              atts.GetUri(index),
+              atts.GetLocalName(index),
+              atts.GetQName(index),
+              atts.GetType(index),
+              atts.GetValue(index),
+              atts.IsSpecified(index));
         }
 
     /// <summary>Remove all attributes, but don't shrink
     /// capacity.</summary>
-        public virtual void Clear () {
-            attCount = 0;
+        public virtual void Clear() {
+            this.attCount = 0;
         }
 
     /// <summary>Remove attribute at index.</summary>
     /// <param name='index'>The parameter <paramref name='index'/> is not
     /// documented yet.</param>
-        public void RemoveAttribute (int index) {
-            CheckIndex (index);
-            int lastIndx = --attCount;
+        public void RemoveAttribute(int index) {
+            this.CheckIndex(index);
+            int lastIndx = --this.attCount;
             for (; index < lastIndx; ++index) {
-                atts [index] = atts [index + 1];
+                this.atts[index] = this.atts[index + 1];
             }
         }
 
@@ -645,30 +797,30 @@ namespace Org.System.Xml.Sax.Helpers {
     /// documented yet.</param>
     /// <param name='localName'>The parameter <paramref name='localName'/>
     /// is not documented yet.</param>
-    /// <param name='qName'>The parameter <paramref name='qName'/> is not
-    /// documented yet.</param>
-    /// <param name='aType'>The parameter <paramref name='aType'/> is not
-    /// documented yet.</param>
-    /// <param name='aValue'>The parameter <paramref name='aValue'/> is not
-    /// documented yet.</param>
+    /// <param name='valueQName'>The parameter <paramref
+    /// name='valueQName'/> is not documented yet.</param>
+    /// <param name='valueAType'>The parameter <paramref
+    /// name='valueAType'/> is not documented yet.</param>
+    /// <param name='valueAValue'>The parameter <paramref
+    /// name='valueAValue'/> is not documented yet.</param>
     /// <param name='isSpecified'>The parameter <paramref
     /// name='isSpecified'/> is not documented yet.</param>
-        public void SetAttribute (
+        public void SetAttribute(
           int index,
           string uri,
           string localName,
-          string qName,
-          string aType,
-          string aValue,
+          string valueQName,
+          string valueAType,
+          string valueAValue,
           bool isSpecified) {
-            CheckIndex (index);
-            InternalSetAttribute (
-              ref atts [index],
+            this.CheckIndex(index);
+            this.InternalSetAttribute(
+              ref this.atts[index],
               uri,
               localName,
-              qName,
-              aType,
-              aValue,
+              valueQName,
+              valueAType,
+              valueAValue,
               isSpecified);
         }
 
@@ -677,24 +829,24 @@ namespace Org.System.Xml.Sax.Helpers {
     /// documented yet.</param>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='atts'/> is null.</exception>
-        public virtual void SetAttributes (IAttributes atts) {
+        public virtual void SetAttributes(IAttributes atts) {
             if (atts == null) {
-                throw new ArgumentNullException ("atts");
+                throw new ArgumentNullException(nameof(atts));
             }
-            Clear();
+            this.Clear();
             int attLen = atts.Length;
-            if (Capacity < attLen) {
-                Capacity = attLen;
+            if (this.Capacity < attLen) {
+                this.Capacity = attLen;
             }
             for (int attIndx = 0; attIndx < attLen; ++attIndx) {
-                InternalSetAttribute (
-                  ref this.atts [attIndx],
-                  atts.GetUri (attIndx),
-                  atts.GetLocalName (attIndx),
-                  atts.GetQName (attIndx),
-                  atts.GetType (attIndx),
-                  atts.GetValue (attIndx),
-                  atts.IsSpecified (attIndx));
+                this.InternalSetAttribute(
+                  ref this.atts[attIndx],
+                  atts.GetUri(attIndx),
+                  atts.GetLocalName(attIndx),
+                  atts.GetQName(attIndx),
+                  atts.GetType(attIndx),
+                  atts.GetValue(attIndx),
+                  atts.IsSpecified(attIndx));
             }
         }
 
@@ -703,45 +855,46 @@ namespace Org.System.Xml.Sax.Helpers {
     /// documented yet.</param>
     /// <param name='localName'>The parameter <paramref name='localName'/>
     /// is not documented yet.</param>
-        public void SetLocalName (int index, string localName) {
-            CheckIndex (index);
+        public void SetLocalName(int index, string localName) {
+            this.CheckIndex(index);
             if (localName == null || localName == String.Empty) {
-                throw new
-          ArgumentException (Resources.GetString
-                    (RsId.NonEmptyStringRequired),
-                  "localName");
+                throw new ArgumentException(
+  Resources.GetString(RsId.NonEmptyStringRequired),
+  "localName");
             }
-            int prefixLen = atts [index].PrefixLen;
-            if (strBuilder == null) {
-              strBuilder = new StringBuilder (atts [index].QName, 0,
-                  prefixLen,
-                    localName.Length + prefixLen);
+            int prefixLen = this.atts[index].PrefixLen;
+            if (this.strBuilder == null) {
+              this.strBuilder = new StringBuilder(
+  this.atts[index].QName,
+  0,
+  prefixLen,
+  localName.Length + prefixLen);
             } else {
-                strBuilder.Length = 0;
-                strBuilder.Append (atts [index].QName, 0, prefixLen);
+                this.strBuilder.Length = 0;
+                this.strBuilder.Append(this.atts[index].QName, 0, prefixLen);
             }
-            strBuilder.Append (localName);
-            atts [index].QName = strBuilder.ToString();
+            this.strBuilder.Append(localName);
+            this.atts[index].QName = this.strBuilder.ToString();
         }
 
     /// <summary>Set qualified name of attribute at index.</summary>
     /// <param name='index'>The parameter <paramref name='index'/> is not
     /// documented yet.</param>
-    /// <param name='qName'>The parameter <paramref name='qName'/> is not
-    /// documented yet.</param>
-        public void SetQName (int index, string qName) {
-            CheckIndex (index);
-            atts [index].QName = qName;
+    /// <param name='valueQName'>The parameter <paramref
+    /// name='valueQName'/> is not documented yet.</param>
+        public void SetQName(int index, string valueQName) {
+            this.CheckIndex(index);
+            this.atts[index].QName = valueQName;
         }
 
     /// <summary>Set type of attribute at index.</summary>
     /// <param name='index'>The parameter <paramref name='index'/> is not
     /// documented yet.</param>
-    /// <param name='aType'>The parameter <paramref name='aType'/> is not
-    /// documented yet.</param>
-        public void SetType (int index, string aType) {
-            CheckIndex (index);
-            atts [index].AType = aType;
+    /// <param name='valueAType'>The parameter <paramref
+    /// name='valueAType'/> is not documented yet.</param>
+        public void SetType(int index, string valueAType) {
+            this.CheckIndex(index);
+            this.atts[index].AType = valueAType;
         }
 
     /// <summary>Set namespace URI of attribute at index.</summary>
@@ -751,19 +904,19 @@ namespace Org.System.Xml.Sax.Helpers {
     /// documented yet.</param>
     /// <remarks>For removing the namespace, pass the empty string for the
     /// <c>uri</c> argument, and not <c>null</c>.</remarks>
-        public void SetURI (int index, string uri) {
-            CheckIndex (index);
-            atts [index].Uri = uri;
+        public void SetURI(int index, string uri) {
+            this.CheckIndex(index);
+            this.atts[index].Uri = uri;
         }
 
     /// <summary>Set value of attribute at index.</summary>
     /// <param name='index'>The parameter <paramref name='index'/> is not
     /// documented yet.</param>
-    /// <param name='aValue'>The parameter <paramref name='aValue'/> is not
-    /// documented yet.</param>
-        public void SetValue (int index, string aValue) {
-            CheckIndex (index);
-            atts [index].AValue = aValue;
+    /// <param name='valueAValue'>The parameter <paramref
+    /// name='valueAValue'/> is not documented yet.</param>
+        public void SetValue(int index, string valueAValue) {
+            this.CheckIndex(index);
+            this.atts[index].AValue = valueAValue;
         }
 
     /// <summary>Set if attribute at index is specified (not
@@ -772,23 +925,27 @@ namespace Org.System.Xml.Sax.Helpers {
     /// documented yet.</param>
     /// <param name='isSpecified'>The parameter <paramref
     /// name='isSpecified'/> is not documented yet.</param>
-        public void SetIsSpecified (int index, bool isSpecified) {
-            CheckIndex (index);
-            atts [index].IsSpecified = isSpecified;
+        public void SetIsSpecified(int index, bool isSpecified) {
+            this.CheckIndex(index);
+            this.atts[index].IsSpecified = isSpecified;
         }
     }
 
     /**<summary>Default implementation of the <see cref="ILocator" />
       interface.</summary>
      * <seealso
-    href="http://www.saxproject.org/apidoc/org/xml/sax/helpers/LocatorImpl.html"
+
+  href="http://www.saxproject.org/apidoc/org/xml/ValueSax/helpers/LocatorImpl.html"
        >
      * LocatorImpl on www.saxproject.org</seealso>
      * <seealso
-    href="http://www.saxproject.org/apidoc/org/xml/sax/ext/Locator2Impl.html"
+
+  href="http://www.saxproject.org/apidoc/org/xml/ValueSax/ext/Locator2Impl.html"
        >
      * Locator2Impl on www.saxproject.org</seealso>
      */
+
+    /// <summary>Not documented yet.</summary>
     public class LocatorImpl : ILocator
     {
         private string publicId;
@@ -799,65 +956,99 @@ namespace Org.System.Xml.Sax.Helpers {
         private string encoding;
         private ParsedEntityType entityType;
 
-        public LocatorImpl () { }
+    /// <summary>Initializes a new instance of the LocatorImpl
+    /// class.</summary>
+        public LocatorImpl() {
+}
 
-        public LocatorImpl (ILocator locator) {
-            publicId = locator.PublicId;
-            systemId = locator.SystemId;
-            lineNumber = locator.LineNumber;
-            columnNumber = locator.ColumnNumber;
-            xmlVersion = locator.XmlVersion;
-            encoding = locator.Encoding;
-            entityType = locator.EntityType;
+    /// <summary>Initializes a new instance of the LocatorImpl
+    /// class.</summary>
+    /// <param name='locator'>An ILocator object.</param>
+        public LocatorImpl(ILocator locator) {
+            this.publicId = locator.PublicId;
+            this.systemId = locator.SystemId;
+            this.lineNumber = locator.LineNumber;
+            this.columnNumber = locator.ColumnNumber;
+            this.xmlVersion = locator.XmlVersion;
+            this.encoding = locator.Encoding;
+            this.entityType = locator.EntityType;
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public string PublicId {
             get {
-                return publicId;
+                return this.publicId;
             }
-            set { publicId = value; }
+
+            set {
+ this.publicId = value; }
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public string SystemId {
             get {
-                return systemId;
+                return this.systemId;
             }
-            set { systemId = value; }
+
+            set {
+ this.systemId = value; }
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public long LineNumber {
             get {
-                return lineNumber;
+                return this.lineNumber;
             }
-            set { lineNumber = value; }
+
+            set {
+ this.lineNumber = value; }
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public long ColumnNumber {
             get {
-                return columnNumber;
+                return this.columnNumber;
             }
-            set { columnNumber = value; }
+
+            set {
+ this.columnNumber = value; }
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public string XmlVersion {
             get {
-                return xmlVersion;
+                return this.xmlVersion;
             }
-            set { xmlVersion = value; }
+
+            set {
+ this.xmlVersion = value; }
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public string Encoding {
             get {
-                return encoding;
+                return this.encoding;
             }
-            set { encoding = value; }
+
+            set {
+ this.encoding = value; }
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public ParsedEntityType EntityType {
             get {
-                return entityType;
+                return this.entityType;
             }
-            set { entityType = value; }
+
+            set {
+ this.entityType = value; }
         }
     }
 
@@ -865,14 +1056,17 @@ namespace Org.System.Xml.Sax.Helpers {
       from.</summary>
      * <seealso
 
-  href="http://www.saxproject.org/apidoc/org/xml/sax/helpers/DefaultHandler.html"
+  href="http://www.saxproject.org/apidoc/org/xml/ValueSax/helpers/DefaultHandler.html"
        >
      * DefaultHandler on www.saxproject.org</seealso>
      * <seealso
-    href="http://www.saxproject.org/apidoc/org/xml/sax/ext/DefaultHandler2.html"
+
+  href="http://www.saxproject.org/apidoc/org/xml/ValueSax/ext/DefaultHandler2.html"
        >
      * DefaultHandler2 on www.saxproject.org</seealso>
      */
+
+    /// <summary>Not documented yet.</summary>
     public class DefaultHandler : IContentHandler,
       IDtdHandler,
       ILexicalHandler,
@@ -882,64 +1076,110 @@ namespace Org.System.Xml.Sax.Helpers {
     {
         // IContentHandler
 
-        public virtual void SetDocumentLocator (ILocator locator) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='locator'>Not documented yet.</param>
+        public virtual void SetDocumentLocator(ILocator locator) {
             // no op
         }
 
-        public virtual void StartDocument () {
+    /// <summary>Not documented yet.</summary>
+        public virtual void StartDocument() {
             // no op
         }
 
-        public virtual void EndDocument () {
+    /// <summary>Not documented yet.</summary>
+        public virtual void EndDocument() {
             // no op
         }
 
-        public virtual void StartPrefixMapping (string prefix, string uri) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='prefix'>Not documented yet.</param>
+    /// <param name='uri'>Not documented yet.</param>
+        public virtual void StartPrefixMapping(string prefix, string uri) {
             // no op
         }
 
-        public virtual void EndPrefixMapping (string prefix) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='prefix'>Not documented yet.</param>
+        public virtual void EndPrefixMapping(string prefix) {
             // no op
         }
 
-        public virtual void StartElement (
+    /// <summary>Not documented yet.</summary>
+    /// <param name='uri'>Not documented yet.</param>
+    /// <param name='localName'>Not documented yet.</param>
+    /// <param name='valueQName'>Not documented yet. (3).</param>
+    /// <param name='atts'>Not documented yet. (4).</param>
+        public virtual void StartElement(
           string uri,
           string localName,
-          string qName,
+          string valueQName,
           IAttributes atts) {
             // no op
         }
 
-    public virtual void EndElement (string uri, string localName, string
-          qName) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='uri'>Not documented yet.</param>
+    /// <param name='localName'>Not documented yet.</param>
+    /// <param name='valueQName'>Not documented yet. (3).</param>
+    public virtual void EndElement(
+  string uri,
+  string localName,
+  string valueQName) {
             // no op
         }
 
-        public virtual void Characters (char [] ch, int start, int length) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='ch'>Not documented yet.</param>
+    /// <param name='start'>Not documented yet.</param>
+    /// <param name='length'>Not documented yet. (3).</param>
+        public virtual void Characters(char[] ch, int start, int length) {
             // no op
         }
 
-    public virtual void IgnorableWhitespace (char [] ch, int start, int
-          length) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='ch'>Not documented yet.</param>
+    /// <param name='start'>Not documented yet.</param>
+    /// <param name='length'>Not documented yet. (3).</param>
+    public virtual void IgnorableWhitespace(
+  char[] ch,
+  int start,
+  int length) {
             // no op
         }
 
-        public virtual void ProcessingInstruction (string target, string data) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='target'>Not documented yet.</param>
+    /// <param name='data'>Not documented yet.</param>
+        public virtual void ProcessingInstruction(string target, string data) {
             // no op
         }
 
-        public virtual void SkippedEntity (string name) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+        public virtual void SkippedEntity(string name) {
             // no op
         }
 
         // IDtdHandler
 
-        public virtual void NotationDecl (string name, string publicId, string
-              systemId) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='publicId'>Not documented yet.</param>
+    /// <param name='systemId'>Not documented yet. (3).</param>
+        public virtual void NotationDecl(
+  string name,
+  string publicId,
+  string systemId) {
             // no op
         }
 
-        public virtual void UnparsedEntityDecl (
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='publicId'>Not documented yet.</param>
+    /// <param name='systemId'>Not documented yet. (3).</param>
+    /// <param name='notationName'>Not documented yet. (4).</param>
+        public virtual void UnparsedEntityDecl(
           string name,
           string publicId,
           string systemId,
@@ -949,55 +1189,88 @@ namespace Org.System.Xml.Sax.Helpers {
 
         // ILexicalHandler
 
-   public virtual void StartDtd (string name, string publicId, string
-          systemId) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='publicId'>Not documented yet.</param>
+    /// <param name='systemId'>Not documented yet. (3).</param>
+   public virtual void StartDtd(
+  string name,
+  string publicId,
+  string systemId) {
             // no op
         }
 
-        public virtual void EndDtd () {
+    /// <summary>Not documented yet.</summary>
+        public virtual void EndDtd() {
             // no op
         }
 
-        public virtual void StartEntity (string name) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+        public virtual void StartEntity(string name) {
             // no op
         }
 
-        public virtual void EndEntity (string name) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+        public virtual void EndEntity(string name) {
             // no op
         }
 
-        public virtual void StartCData () {
+    /// <summary>Not documented yet.</summary>
+        public virtual void StartCData() {
             // no op
         }
 
-        public virtual void EndCData () {
+    /// <summary>Not documented yet.</summary>
+        public virtual void EndCData() {
             // no op
         }
 
-        public virtual void Comment (char [] ch, int start, int length) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='ch'>Not documented yet.</param>
+    /// <param name='start'>Not documented yet.</param>
+    /// <param name='length'>Not documented yet. (3).</param>
+        public virtual void Comment(char[] ch, int start, int length) {
             // no op
         }
 
         // IDeclHandler
 
-        public virtual void ElementDecl (string name, string model) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='model'>Not documented yet.</param>
+        public virtual void ElementDecl(string name, string model) {
             // no op
         }
 
-        public virtual void AttributeDecl (
-          string eName,
-          string aName,
-          string aType,
+    /// <summary>Not documented yet.</summary>
+    /// <param name='valueEName'>Not documented yet.</param>
+    /// <param name='valueAName'>Not documented yet.</param>
+    /// <param name='valueAType'>Not documented yet. (3).</param>
+    /// <param name='mode'>Not documented yet. (4).</param>
+    /// <param name='valueAValue'>Not documented yet. (5).</param>
+        public virtual void AttributeDecl(
+          string valueEName,
+          string valueAName,
+          string valueAType,
           string mode,
-          string aValue) {
+          string valueAValue) {
             // no op
         }
 
-        public virtual void InternalEntityDecl (string name, string value) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='value'>Not documented yet.</param>
+        public virtual void InternalEntityDecl(string name, string value) {
             // no op
         }
 
-        public virtual void ExternalEntityDecl (
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='publicId'>Not documented yet.</param>
+    /// <param name='systemId'>Not documented yet. (3).</param>
+        public virtual void ExternalEntityDecl(
           string name,
           string publicId,
           string systemId) {
@@ -1006,12 +1279,23 @@ namespace Org.System.Xml.Sax.Helpers {
 
         // IEntityResolver
 
-     public virtual InputSource GetExternalSubset (string name, string
-          baseURI) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='baseURI'>Not documented yet.</param>
+    /// <returns>An InputSource object.</returns>
+     public virtual InputSource GetExternalSubset(
+  string name,
+  string baseURI) {
             return null;
         }
 
-        public virtual InputSource ResolveEntity (
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='publicId'>Not documented yet.</param>
+    /// <param name='baseURI'>Not documented yet. (3).</param>
+    /// <param name='systemId'>Not documented yet. (4).</param>
+    /// <returns>An InputSource object.</returns>
+        public virtual InputSource ResolveEntity(
           string name,
           string publicId,
           string baseURI,
@@ -1021,15 +1305,21 @@ namespace Org.System.Xml.Sax.Helpers {
 
         // IErrorHandler
 
-        public virtual void Warning (ParseError error) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='error'>Not documented yet.</param>
+        public virtual void Warning(ParseError error) {
             // no op
         }
 
-        public virtual void Error (ParseError error) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='error'>Not documented yet.</param>
+        public virtual void Error(ParseError error) {
             // no op
         }
 
-        public virtual void FatalError (ParseError error) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='error'>Not documented yet.</param>
+        public virtual void FatalError(ParseError error) {
             error.Throw();
         }
     }
@@ -1037,10 +1327,12 @@ namespace Org.System.Xml.Sax.Helpers {
     /**<summary>Base class for deriving an XML filter.</summary>
      * <seealso
 
-  href="http://www.saxproject.org/apidoc/org/xml/sax/helpers/XMLFilterImpl.html"
+  href="http://www.saxproject.org/apidoc/org/xml/ValueSax/helpers/XMLFilterImpl.html"
        >
      * JavaDoc on www.saxproject.org</seealso>
      */
+
+    /// <summary>Not documented yet.</summary>
     public class XmlFilterImpl : IXmlFilter,
       IContentHandler,
       IDtdHandler,
@@ -1058,48 +1350,56 @@ namespace Org.System.Xml.Sax.Helpers {
         private IEntityResolver resolver;
         private IErrorHandler errorHandler;
 
-        public XmlFilterImpl () { }
+    /// <summary>Initializes a new instance of the XmlFilterImpl
+    /// class.</summary>
+        public XmlFilterImpl() {
+}
 
-        public XmlFilterImpl (IXmlReader parent) {
+    /// <summary>Initializes a new instance of the XmlFilterImpl
+    /// class.</summary>
+    /// <param name='parent'>An IXmlReader object.</param>
+        public XmlFilterImpl(IXmlReader parent) {
             this.parent = parent;
         }
 
-        protected void CheckParent () {
-            if (parent == null) {
-            throw new SaxException (Resources.GetString
-                  (RsId.NoFilterParent));
+    /// <summary>Not documented yet.</summary>
+        protected void CheckParent() {
+            if (this.parent == null) {
+            throw new SaxException(Resources.GetString(
+                  RsId.NoFilterParent));
             }
         }
 
-        protected virtual void SetupParse () {
-            CheckParent();
-            parent.ContentHandler = this;
-            parent.DtdHandler = this;
-            parent.LexicalHandler = this;
-            parent.DeclHandler = this;
-            parent.EntityResolver = this;
-            parent.ErrorHandler = this;
+    /// <summary>Not documented yet.</summary>
+        protected virtual void SetupParse() {
+            this.CheckParent();
+            this.parent.ContentHandler = this;
+            this.parent.DtdHandler = this;
+            this.parent.LexicalHandler = this;
+            this.parent.DeclHandler = this;
+            this.parent.EntityResolver = this;
+            this.parent.ErrorHandler = this;
         }
 
         // IXmlReader
 
     /// <summary>See
     /// <see
-    /// href='http://www.saxproject.org/apidoc/org/xml/sax/helpers/XMLFilterImpl.html#getFeature(java.lang.String)'>getFeature(java.lang.String)</see>
+    /// href='http://www.saxproject.org/apidoc/org/xml/ValueSax/helpers/XMLFilterImpl.html#getFeature(java.lang.String)'>getFeature(java.lang.String)</see>
     /// on www.saxproject.org.</summary>
     /// <param name='name'>The parameter <paramref name='name'/> is not
     /// documented yet.</param>
     /// <returns>A Boolean object.</returns>
     /// <remarks>Difference to Java: Will throw
     /// <see cref='SaxException'/> if parent is <c>null</c>.</remarks>
-        public bool GetFeature (string name) {
-            CheckParent();
-            return parent.GetFeature (name);
+        public bool GetFeature(string name) {
+            this.CheckParent();
+            return this.parent.GetFeature(name);
         }
 
     /// <summary>See
     /// <see
-    /// href='http://www.saxproject.org/apidoc/org/xml/sax/helpers/XMLFilterImpl.html#setFeature(java.lang.String,
+    /// href='http://www.saxproject.org/apidoc/org/xml/ValueSax/helpers/XMLFilterImpl.html#setFeature(java.lang.String,
     /// boolean)'>setFeature(java.lang.String, boolean)</see> on
     /// www.saxproject.org.</summary>
     /// <param name='name'>The parameter <paramref name='name'/> is not
@@ -1108,297 +1408,445 @@ namespace Org.System.Xml.Sax.Helpers {
     /// documented yet.</param>
     /// <remarks>Difference to Java: Will throw
     /// <see cref='SaxException'/> if parent is <c>null</c>.</remarks>
-        public void SetFeature (string name, bool value) {
-            CheckParent();
-            parent.SetFeature (name, value);
+        public void SetFeature(string name, bool value) {
+            this.CheckParent();
+            this.parent.SetFeature(name, value);
         }
 
     /// <seealso
-    /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#getProperty(java.lang.String)'>getProperty(java.lang.String)
+    /// href='http://www.saxproject.org/apidoc/org/xml/ValueSax/XMLReader.html#getProperty(java.lang.String)'>getProperty(java.lang.String)
     /// on www.saxproject.org</seealso>
     /// <summary>Returns an
     /// <see cref='IProperty&lt;T>'/> interface for the property identified
     /// by <c>name</c></summary>
     /// <param name='name'>The parameter <paramref name='name'/> is not
     /// documented yet.</param>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
     /// <returns>An IProperty(T) object.</returns>
     /// <remarks>Difference to Java: Will throw
     /// <see cref='SaxException'/> if parent is <c>null</c>.</remarks>
-        public IProperty<T> GetProperty<T> (string name) {
-            CheckParent();
-            return parent.GetProperty<T> (name);
+        public IProperty<T> GetProperty<T>(string name) {
+            this.CheckParent();
+            return this.parent.GetProperty<T>(name);
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public IContentHandler ContentHandler {
             get {
-                return contentHandler;
+                return this.contentHandler;
             }
-            set { contentHandler = value; }
+
+            set {
+ this.contentHandler = value; }
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public IDtdHandler DtdHandler {
             get {
-                return dtdHandler;
+                return this.dtdHandler;
             }
-            set { dtdHandler = value; }
+
+            set {
+ this.dtdHandler = value; }
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public ILexicalHandler LexicalHandler {
             get {
-                return lexicalHandler;
+                return this.lexicalHandler;
             }
-            set { lexicalHandler = value; }
+
+            set {
+ this.lexicalHandler = value; }
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public IDeclHandler DeclHandler {
             get {
-                return declHandler;
+                return this.declHandler;
             }
-            set { declHandler = value; }
+
+            set {
+ this.declHandler = value; }
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public IEntityResolver EntityResolver {
             get {
-                return resolver;
+                return this.resolver;
             }
-            set { resolver = value; }
+
+            set {
+ this.resolver = value; }
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public IErrorHandler ErrorHandler {
             get {
-                return errorHandler;
+                return this.errorHandler;
             }
-            set { errorHandler = value; }
+
+            set {
+ this.errorHandler = value; }
         }
 
-        public void Parse (InputSource input) {
-            SetupParse();
-            parent.Parse (input);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='input'>Not documented yet.</param>
+        public void Parse(InputSource input) {
+            this.SetupParse();
+            this.parent.Parse(input);
         }
 
-        public void Parse (string systemId) {
-            Parse (new InputSource (systemId));
+    /// <summary>Not documented yet.</summary>
+    /// <param name='systemId'>Not documented yet.</param>
+        public void Parse(string systemId) {
+            this.Parse(new InputSource(systemId));
         }
 
-        public void Suspend () {
-            CheckParent();
-            parent.Suspend();
+    /// <summary>Not documented yet.</summary>
+        public void Suspend() {
+            this.CheckParent();
+            this.parent.Suspend();
         }
 
-        public void Abort () {
-            CheckParent();
-            parent.Abort();
+    /// <summary>Not documented yet.</summary>
+        public void Abort() {
+            this.CheckParent();
+            this.parent.Abort();
         }
 
-        public void Resume () {
-            CheckParent();
-            parent.Resume();
+    /// <summary>Not documented yet.</summary>
+        public void Resume() {
+            this.CheckParent();
+            this.parent.Resume();
         }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public XmlReaderStatus Status {
             get {
-                CheckParent();
-                return parent.Status;
+                this.CheckParent();
+                return this.parent.Status;
             }
         }
 
         // IXmlFilter
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
         public IXmlReader Parent {
             get {
-                return parent;
+                return this.parent;
             }
-            set { parent = value; }
+
+            set {
+ this.parent = value; }
         }
 
         // IContentHandler
 
-        public virtual void SetDocumentLocator (ILocator locator) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='locator'>Not documented yet.</param>
+        public virtual void SetDocumentLocator(ILocator locator) {
             this.locator = locator;
-            if (contentHandler != null) {
-                contentHandler.SetDocumentLocator (locator);
+            if (this.contentHandler != null) {
+                this.contentHandler.SetDocumentLocator(locator);
             }
         }
 
-        public virtual void StartDocument () {
-            if (contentHandler != null) {
-                contentHandler.StartDocument();
+    /// <summary>Not documented yet.</summary>
+        public virtual void StartDocument() {
+            if (this.contentHandler != null) {
+                this.contentHandler.StartDocument();
             }
         }
 
-        public virtual void EndDocument () {
-            if (contentHandler != null) {
-                contentHandler.EndDocument();
+    /// <summary>Not documented yet.</summary>
+        public virtual void EndDocument() {
+            if (this.contentHandler != null) {
+                this.contentHandler.EndDocument();
             }
         }
 
-        public virtual void StartPrefixMapping (string prefix, string uri) {
-            if (contentHandler != null) {
-                contentHandler.StartPrefixMapping (prefix, uri);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='prefix'>Not documented yet.</param>
+    /// <param name='uri'>Not documented yet.</param>
+        public virtual void StartPrefixMapping(string prefix, string uri) {
+            if (this.contentHandler != null) {
+                this.contentHandler.StartPrefixMapping(prefix, uri);
             }
         }
 
-        public virtual void EndPrefixMapping (string prefix) {
-            if (contentHandler != null) {
-                contentHandler.EndPrefixMapping (prefix);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='prefix'>Not documented yet.</param>
+        public virtual void EndPrefixMapping(string prefix) {
+            if (this.contentHandler != null) {
+                this.contentHandler.EndPrefixMapping(prefix);
             }
         }
 
-        public virtual void StartElement (
+    /// <summary>Not documented yet.</summary>
+    /// <param name='uri'>Not documented yet.</param>
+    /// <param name='localName'>Not documented yet.</param>
+    /// <param name='valueQName'>Not documented yet. (3).</param>
+    /// <param name='atts'>Not documented yet. (4).</param>
+        public virtual void StartElement(
           string uri,
           string localName,
-          string qName,
+          string valueQName,
           IAttributes atts) {
-            if (contentHandler != null) {
-                contentHandler.StartElement (uri, localName, qName, atts);
+            if (this.contentHandler != null) {
+            this.contentHandler.StartElement(
+  uri,
+  localName,
+  valueQName,
+  atts);
             }
         }
 
-    public virtual void EndElement (string uri, string localName, string
-          qName) {
-            if (contentHandler != null) {
-                contentHandler.EndElement (uri, localName, qName);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='uri'>Not documented yet.</param>
+    /// <param name='localName'>Not documented yet.</param>
+    /// <param name='valueQName'>Not documented yet. (3).</param>
+    public virtual void EndElement(
+  string uri,
+  string localName,
+  string valueQName) {
+            if (this.contentHandler != null) {
+                this.contentHandler.EndElement(uri, localName, valueQName);
             }
         }
 
-        public virtual void Characters (char [] ch, int start, int length) {
-            if (contentHandler != null) {
-                contentHandler.Characters (ch, start, length);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='ch'>Not documented yet.</param>
+    /// <param name='start'>Not documented yet.</param>
+    /// <param name='length'>Not documented yet. (3).</param>
+        public virtual void Characters(char[] ch, int start, int length) {
+            if (this.contentHandler != null) {
+                this.contentHandler.Characters(ch, start, length);
             }
         }
 
-    public virtual void IgnorableWhitespace (char [] ch, int start, int
-          length) {
-            if (contentHandler != null) {
-                contentHandler.IgnorableWhitespace (ch, start, length);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='ch'>Not documented yet.</param>
+    /// <param name='start'>Not documented yet.</param>
+    /// <param name='length'>Not documented yet. (3).</param>
+    public virtual void IgnorableWhitespace(
+  char[] ch,
+  int start,
+  int length) {
+            if (this.contentHandler != null) {
+                this.contentHandler.IgnorableWhitespace(ch, start, length);
             }
         }
 
-        public virtual void ProcessingInstruction (string target, string data) {
-            if (contentHandler != null) {
-                contentHandler.ProcessingInstruction (target, data);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='target'>Not documented yet.</param>
+    /// <param name='data'>Not documented yet.</param>
+        public virtual void ProcessingInstruction(string target, string data) {
+            if (this.contentHandler != null) {
+                this.contentHandler.ProcessingInstruction(target, data);
             }
         }
 
-        public virtual void SkippedEntity (string name) {
-            if (contentHandler != null) {
-                contentHandler.SkippedEntity (name);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+        public virtual void SkippedEntity(string name) {
+            if (this.contentHandler != null) {
+                this.contentHandler.SkippedEntity(name);
             }
         }
 
         // IDtdHandler
 
-        public virtual void NotationDecl (string name, string publicId, string
-              systemId) {
-            if (dtdHandler != null) {
-                dtdHandler.NotationDecl (name, publicId, systemId);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='publicId'>Not documented yet.</param>
+    /// <param name='systemId'>Not documented yet. (3).</param>
+        public virtual void NotationDecl(
+  string name,
+  string publicId,
+  string systemId) {
+            if (this.dtdHandler != null) {
+                this.dtdHandler.NotationDecl(name, publicId, systemId);
             }
         }
 
-        public virtual void UnparsedEntityDecl (
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='publicId'>Not documented yet.</param>
+    /// <param name='systemId'>Not documented yet. (3).</param>
+    /// <param name='notationName'>Not documented yet. (4).</param>
+        public virtual void UnparsedEntityDecl(
           string name,
           string publicId,
           string systemId,
           string notationName) {
-            if (dtdHandler != null) {
-        dtdHandler.UnparsedEntityDecl (name, publicId, systemId,
-                  notationName);
+            if (this.dtdHandler != null) {
+        this.dtdHandler.UnparsedEntityDecl(
+  name,
+  publicId,
+  systemId,
+  notationName);
             }
         }
 
         // ILexicalHandler
 
-   public virtual void StartDtd (string name, string publicId, string
-          systemId) {
-            if (lexicalHandler != null) {
-                lexicalHandler.StartDtd (name, publicId, systemId);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='publicId'>Not documented yet.</param>
+    /// <param name='systemId'>Not documented yet. (3).</param>
+   public virtual void StartDtd(
+  string name,
+  string publicId,
+  string systemId) {
+            if (this.lexicalHandler != null) {
+                this.lexicalHandler.StartDtd(name, publicId, systemId);
             }
         }
 
-        public virtual void EndDtd () {
-            if (lexicalHandler != null) {
-                lexicalHandler.EndDtd();
+    /// <summary>Not documented yet.</summary>
+        public virtual void EndDtd() {
+            if (this.lexicalHandler != null) {
+                this.lexicalHandler.EndDtd();
             }
         }
 
-        public virtual void StartEntity (string name) {
-            if (lexicalHandler != null) {
-                lexicalHandler.StartEntity (name);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+        public virtual void StartEntity(string name) {
+            if (this.lexicalHandler != null) {
+                this.lexicalHandler.StartEntity(name);
             }
         }
 
-        public virtual void EndEntity (string name) {
-            if (lexicalHandler != null) {
-                lexicalHandler.EndEntity (name);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+        public virtual void EndEntity(string name) {
+            if (this.lexicalHandler != null) {
+                this.lexicalHandler.EndEntity(name);
             }
         }
 
-        public virtual void StartCData () {
-            if (lexicalHandler != null) {
-                lexicalHandler.StartCData();
+    /// <summary>Not documented yet.</summary>
+        public virtual void StartCData() {
+            if (this.lexicalHandler != null) {
+                this.lexicalHandler.StartCData();
             }
         }
 
-        public virtual void EndCData () {
-            if (lexicalHandler != null) {
-                lexicalHandler.EndCData();
+    /// <summary>Not documented yet.</summary>
+        public virtual void EndCData() {
+            if (this.lexicalHandler != null) {
+                this.lexicalHandler.EndCData();
             }
         }
 
-        public virtual void Comment (char [] ch, int start, int length) {
-            if (lexicalHandler != null) {
-                lexicalHandler.Comment (ch, start, length);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='ch'>Not documented yet.</param>
+    /// <param name='start'>Not documented yet.</param>
+    /// <param name='length'>Not documented yet. (3).</param>
+        public virtual void Comment(char[] ch, int start, int length) {
+            if (this.lexicalHandler != null) {
+                this.lexicalHandler.Comment(ch, start, length);
             }
         }
 
         // IDeclHandler
 
-        public virtual void ElementDecl (string name, string model) {
-            if (declHandler != null) {
-                declHandler.ElementDecl (name, model);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='model'>Not documented yet.</param>
+        public virtual void ElementDecl(string name, string model) {
+            if (this.declHandler != null) {
+                this.declHandler.ElementDecl(name, model);
             }
         }
 
-        public virtual void AttributeDecl (
-          string eName,
-          string aName,
-          string aType,
+    /// <summary>Not documented yet.</summary>
+    /// <param name='valueEName'>Not documented yet.</param>
+    /// <param name='valueAName'>Not documented yet.</param>
+    /// <param name='valueAType'>Not documented yet. (3).</param>
+    /// <param name='mode'>Not documented yet. (4).</param>
+    /// <param name='valueAValue'>Not documented yet. (5).</param>
+        public virtual void AttributeDecl(
+          string valueEName,
+          string valueAName,
+          string valueAType,
           string mode,
-          string aValue) {
-            if (declHandler != null) {
-                declHandler.AttributeDecl (eName, aName, aType, mode, aValue);
+          string valueAValue) {
+            if (this.declHandler != null) {
+                this.declHandler.AttributeDecl(
+  valueEName,
+  valueAName,
+  valueAType,
+  mode,
+  valueAValue);
             }
         }
 
-        public virtual void InternalEntityDecl (string name, string value) {
-            if (declHandler != null) {
-                declHandler.InternalEntityDecl (name, value);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='value'>Not documented yet.</param>
+        public virtual void InternalEntityDecl(string name, string value) {
+            if (this.declHandler != null) {
+                this.declHandler.InternalEntityDecl(name, value);
             }
         }
 
-        public virtual void ExternalEntityDecl (string name, string publicId,
-          string systemId) {
-            if (declHandler != null) {
-                declHandler.ExternalEntityDecl (name, publicId, systemId);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='publicId'>Not documented yet.</param>
+    /// <param name='systemId'>Not documented yet. (3).</param>
+        public virtual void ExternalEntityDecl(
+  string name,
+  string publicId,
+  string systemId) {
+            if (this.declHandler != null) {
+                this.declHandler.ExternalEntityDecl(name, publicId, systemId);
             }
         }
 
         // IEntityResolver
 
-     public virtual InputSource GetExternalSubset (string name, string
-          baseUri) {
-            if (resolver != null) {
-                return resolver.GetExternalSubset (name, baseUri);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='baseUri'>Not documented yet.</param>
+    /// <returns>An InputSource object.</returns>
+     public virtual InputSource GetExternalSubset(
+  string name,
+  string baseUri) {
+            if (this.resolver != null) {
+                return this.resolver.GetExternalSubset(name, baseUri);
             } else {
                 return null;
             }
         }
 
-        public virtual InputSource ResolveEntity (string name, string publicId,
-          string baseUri, string systemId) {
-            if (resolver != null) {
-             return resolver.ResolveEntity (name, publicId, baseUri,
-                  systemId);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='publicId'>Not documented yet.</param>
+    /// <param name='baseUri'>Not documented yet. (3).</param>
+    /// <param name='systemId'>Not documented yet. (4).</param>
+    /// <returns>An InputSource object.</returns>
+        public virtual InputSource ResolveEntity(
+  string name,
+  string publicId,
+  string baseUri,
+  string systemId) {
+            if (this.resolver != null) {
+             return this.resolver.ResolveEntity(
+  name,
+  publicId,
+  baseUri,
+  systemId);
             } else {
                 return null;
             }
@@ -1406,42 +1854,51 @@ namespace Org.System.Xml.Sax.Helpers {
 
         // IErrorHandler
 
-        public virtual void Warning (ParseError error) {
-            if (errorHandler != null) {
-                errorHandler.Warning (error);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='error'>Not documented yet.</param>
+        public virtual void Warning(ParseError error) {
+            if (this.errorHandler != null) {
+                this.errorHandler.Warning(error);
             }
         }
 
-        public virtual void Error (ParseError error) {
-            if (errorHandler != null) {
-                errorHandler.Error (error);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='error'>Not documented yet.</param>
+        public virtual void Error(ParseError error) {
+            if (this.errorHandler != null) {
+                this.errorHandler.Error(error);
             }
         }
 
-        public virtual void FatalError (ParseError error) {
-            if (errorHandler != null) {
-                errorHandler.FatalError (error);
+    /// <summary>Not documented yet.</summary>
+    /// <param name='error'>Not documented yet.</param>
+        public virtual void FatalError(ParseError error) {
+            if (this.errorHandler != null) {
+                this.errorHandler.FatalError(error);
             }
         }
     }
 
-    /**<summary>Factory class for creating new <see cref="IXmlReader" />
-      instances.</summary>
-     * <remarks>A default implementation of <see cref="IXmlReader" /> can be
-       registered
-     * in the system configuration file "machine.config", under the section
-       appSettings.
-     * The keys to be registered are "Org.System.Xml.Sax.ReaderClass" and
-   * "Org.System.Xml.Sax.ReaderAssembly" . The class name must be fully
-       qualified,
-     * the assembly name can be a partial name.</remarks>
-     */
-    public static class SaxReaderFactory {
-        private static bool InterfaceFilter (Type typeObj, Object criteriaObj) {
+  /**<summary>Factory class for creating new <see cref="IXmlReader" />
+    instances.</summary>
+   * <remarks>A default implementation of <see cref="IXmlReader" /> can be
+     registered
+   * in the system configuration file "machine.config", under the section
+     appSettings.
+   * The keys to be registered are "Org.System.Xml.Sax.ReaderClass" and
+ * "Org.System.Xml.Sax.ReaderAssembly" . The class name must be fully
+     qualified,
+   * the assembly name can be a partial name.</remarks>
+   */
+
+    /// <summary>Not documented yet.</summary>
+  public static class SaxReaderFactory {
+    /* private static bool InterfaceFilter (Type typeObj, Object criteriaObj) {
             Type criteriaType = ((Type)criteriaObj);
          return typeObj.IsSubclassOf (criteriaType) || typeObj ==
               criteriaType;
         }
+*/
 
     /// <summary>Creates an instance of <c>readerType</c> if it has a
     /// constructor matching the runtime types in the <c>args</c> array of
@@ -1451,6 +1908,7 @@ namespace Org.System.Xml.Sax.Helpers {
     /// <param name='args'>The parameter <paramref name='args'/> is not
     /// documented yet.</param>
     /// <returns>An IXmlReader object.</returns>
+    /*
      private static IXmlReader CreateInstance (Type readerType, Object []
           args) {
             IXmlReader result = null;
@@ -1469,6 +1927,7 @@ namespace Org.System.Xml.Sax.Helpers {
             }
             return result;
         }
+*/
 
     /// <summary>Returns the first class-type it can find in the
     /// <see cref='Assembly'/> argument that implements
@@ -1481,9 +1940,9 @@ namespace Org.System.Xml.Sax.Helpers {
     /// name='assem'/> is null.</exception>
     /// <remarks>This will not find classes that have unbound generic
     /// parameters.</remarks>
-        private static Type FindReaderClass (Assembly assem) {
-            if (assem == null) {
-                throw new ArgumentNullException ("assem");
+    private static Type FindReaderClass(Assembly assem) {
+      /* if (assem == null) {
+                throw new ArgumentNullException(nameof(assem));
             }
             Type readerType = typeof (IXmlReader);
             var filter = new TypeFilter (InterfaceFilter);
@@ -1499,80 +1958,18 @@ namespace Org.System.Xml.Sax.Helpers {
                 }
             }
             return null;
-        }
+            */ return typeof(PeterO.Support.SaxReader);
+    }
 
-        private const string sax = "Org.System.Xml.Sax";
+    private const string ValueSax = "Org.System.Xml.Sax";
 
     /// <summary>Key name for registering the default parser assembly in
     /// the machine.config file.</summary>
-        public const string ReaderAssembly = sax + ".ReaderAssembly";
+    public const string ReaderAssembly = ValueSax + ".ReaderAssembly";
 
     /// <summary>Key name for registering the default parser class in the
     /// machine.config file.</summary>
-        public const string ReaderClass = sax + ".ReaderClass";
-
-    /// <summary>Creates a new instance of
-    /// <see cref='IXmlReader'/> based on the assembly and constructor
-    /// arguments that are passed as parameters.</summary>
-    /// <param name='assem'>The parameter <paramref name='assem'/> is not
-    /// documented yet.</param>
-    /// <param name='args'>The parameter <paramref name='args'/> is not
-    /// documented yet.</param>
-    /// <returns>
-    /// <see cref='IXmlReader'/> instance.</returns>
-    /// <remarks>Searches the
-    /// <see cref='Assembly'/> argument for classes that implement
-    /// <see cref='IXmlReader'/> and have a constructor matching the types
-    /// of the parameters in the <c>args</c> array. Creates a new instance
-    /// of the first class it finds.</remarks>
-        public static IXmlReader CreateReader (Assembly assem, Object [] args) {
-            IXmlReader result = null;
-            Type readerClass = FindReaderClass (assem);
-            if (readerClass != null) {
-                result = CreateInstance (readerClass, args);
-            }
-            if (result != null) {
-                return result;
-            } else {
-                string msg = Resources.GetString (RsId.NoXmlReaderInAssembly);
-     throw new SaxException (String.Format (msg, null, assem.GetName
-                  ().Name));
-            }
-        }
-
-    /// <summary>Creates a new instance of
-    /// <see cref='IXmlReader'/> based on the assembly, class name and
-    /// constructor arguments that are passed as parameters.</summary>
-    /// <param name='assem'>The parameter <paramref name='assem'/> is not
-    /// documented yet.</param>
-    /// <param name='className'>The parameter <paramref name='className'/>
-    /// is not documented yet.</param>
-    /// <param name='args'>The parameter <paramref name='args'/> is not
-    /// documented yet.</param>
-    /// <returns>
-    /// <see cref='IXmlReader'/> instance.</returns>
-    /// <exception cref='ArgumentNullException'>The parameter <paramref
-    /// name='assem'/> is null.</exception>
-    /// <remarks>The types of the objects in the <c>args</c> array must
-    /// match a constructor signature of the class.</remarks>
-        public static IXmlReader CreateReader (Assembly assem, string className,
-          Object [] args) {
-            if (assem == null) {
-                throw new ArgumentNullException ("assem");
-            }
-            IXmlReader result = null;
-            Type readerType = assem.GetType (className, false);
-            if (readerType != null) {
-                result = CreateInstance (readerType, args);
-            }
-            if (result != null) {
-                return result;
-            } else {
-                string msg = Resources.GetString (RsId.NoXmlReaderInAssembly);
-                msg = String.Format (msg, className, assem.GetName ().Name);
-                throw new SaxException (msg);
-            }
-        }
+    public const string ReaderClass = ValueSax + ".ReaderClass";
 
     /// <summary>Creates a new instance of
     /// <see cref='IXmlReader'/> based on the constructor arguments that
@@ -1588,7 +1985,9 @@ namespace Org.System.Xml.Sax.Helpers {
     /// <see cref='IXmlReader'/>. The types of the objects in the
     /// <c>args</c> array must match a constructor signature of the
     /// class.</remarks>
-        public static IXmlReader CreateReader (Object [] args) {
+    public static IXmlReader CreateReader(Object[] args) {
+      return new SaxReader();
+      /*
             try {
                 var confReader = new AppSettingsReader();
                 var assemblyName = (string)confReader.GetValue (ReaderAssembly,
@@ -1624,6 +2023,7 @@ namespace Org.System.Xml.Sax.Helpers {
             }
             string msg = Resources.GetString (RsId.NoDefaultXmlReader);
             throw new SaxException (msg);
-        }
+        }*/
     }
+  }
 }

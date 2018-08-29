@@ -28,14 +28,41 @@ namespace com.upokecenter.net {
 using System;
 using System.Collections.Generic;
 
+    /// <summary>Not documented yet.</summary>
 public interface IHttpHeaders {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
    string getHeaderField(int name);
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
    string getHeaderField(string name);
+
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
    long getHeaderFieldDate(string field, long defaultValue);
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
    string getHeaderFieldKey(int name);
+
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
    IDictionary<string, IList<string>> getHeaderFields();
+
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
    string getRequestMethod();
+
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
    int getResponseCode();
+
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
    string getUrl();
 }
 }

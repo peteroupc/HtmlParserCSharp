@@ -9,16 +9,28 @@ at: http://peteroupc.github.io/
 namespace com.upokecenter.io {
 using System;
 using System.IO;
+using PeterO.Text;
 
+    /// <summary>Not documented yet.</summary>
 public interface IMarkableCharacterInput : ICharacterInput {
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
    int getMarkPosition();
 
-   void moveBack(int count) ;
+    /// <summary>Not documented yet.</summary>
+    /// <param name='count'>Not documented yet.</param>
+   void moveBack(int count);
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
    int setHardMark();
 
-   void setMarkPosition(int pos) ;
+    /// <summary>Not documented yet.</summary>
+    /// <param name='pos'>Not documented yet.</param>
+   void setMarkPosition(int pos);
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
    int setSoftMark();
 }
 }

@@ -32,6 +32,7 @@ using System;
     /// Peter.</summary>
 public interface IComment : INode {
     /// <summary>Gets the comment's text.</summary>
+    /// <returns>Not documented yet.</returns>
    string getData();
 }
 }

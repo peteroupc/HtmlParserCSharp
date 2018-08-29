@@ -27,14 +27,15 @@ THE SOFTWARE.
 
 namespace com.upokecenter.html {
 using System;
+
 internal class Comment : Node, IComment {
-  string data;
+  private string valueData;
 
   internal Comment() : base(NodeType.COMMENT_NODE) {
   }
 
   public string getData() {
-    return data;
+    return this.valueData;
   }
 
   public override string getNodeName() {
@@ -45,11 +46,12 @@ internal class Comment : Node, IComment {
     return null;
   }
 
-  internal void setData(string data) {
-    this.data = data;
+  internal void setData(string valueData) {
+    this.valueData = valueData;
   }
+
   internal override string toDebugString() {
-    return "<!-- "+getData().ToString().Replace("\n","~~~~")+" -->\n";
+    return "<!-- " + this.getData().ToString().Replace("\n", "~~~~")+" -->\n";
   }
 }
 }

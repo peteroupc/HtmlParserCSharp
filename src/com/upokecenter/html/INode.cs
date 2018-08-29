@@ -34,35 +34,43 @@ using System.Collections.Generic;
 public interface INode {
     /// <summary>Returns the _base URL of this node. URLs on this node are
     /// resolved relative to this URL.</summary>
+    /// <returns>Not documented yet.</returns>
   string getBaseURI();
 
     /// <summary>* Gets the direct children of this node. @return A list of
     /// the direct children of this node.</summary>
+    /// <returns>Not documented yet.</returns>
   IList<INode> getChildNodes();
 
     /// <summary>Gets the language of this node. Not defined in the DOM
     /// specification.</summary>
+    /// <returns>Not documented yet.</returns>
   string getLanguage();
 
     /// <summary>Gets the name of this node. For HTML elements, this will
     /// be the same as the tag name.</summary>
+    /// <returns>Not documented yet.</returns>
   string getNodeName();
 
     /// <summary>* Returns the type of node represented by this _object.
     /// @return A node type integer; see NodeType.</summary>
+    /// <returns>Not documented yet.</returns>
   int getNodeType();
 
     /// <summary>* Gets the document that owns this node. @return the owner
     /// document, or null if this is a document _object.</summary>
+    /// <returns>Not documented yet.</returns>
   IDocument getOwnerDocument();
 
     /// <summary>* Gets the parent node of this node. @return the parent
     /// node, or null if this is the root node.</summary>
+    /// <returns>Not documented yet.</returns>
   INode getParentNode();
 
     /// <summary>* Gets all the text found within this element. @return All
     /// the concatenated text, except comments, for Element nodes; or the
     /// text of Comment nodes; or null otherwise.</summary>
+    /// <returns>Not documented yet.</returns>
   string getTextContent();
 }
 }

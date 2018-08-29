@@ -28,40 +28,51 @@ THE SOFTWARE.
 namespace com.upokecenter.html {
 using System;
 using System.IO;
+using PeterO;
 using PeterO.Text;
-internal class Html5Decoder : ITextDecoder {
-  ITextDecoder decoder = null;
-  var havebom = false;
-  var havecr = false;
-  var iserror = false;
-  public Html5Decoder(ITextDecoder decoder) {
-    if (decoder == null) {
- throw new ArgumentException();
+  internal class Html5Decoder : ICharacterDecoder {
+    internal ICharacterDecoder decoder = null;
+    internal bool havebom = false;
+    internal bool havecr = false;
+    internal bool iserror = false;
+    public Html5Decoder(ICharacterDecoder decoder) {
+      if ((decoder) == null) {
+  throw new ArgumentNullException(nameof(decoder));
 }
     this.decoder = decoder;
   }
 
-  public int decode(PeterO.Support.InputStream stream) {
-    return decode(stream, TextEncoding.ENCODING_ERROR_THROW);
-  }
+    public int ReadChar(IByteReader byteReader) {
+      if ((byteReader) == null) {
+  throw new ArgumentNullException(nameof(byteReader));
+}
+      throw new NotImplementedException();
+    }
 
-  public int decode(PeterO.Support.InputStream stream, IEncodingError error) {
-    var value = new int[1];
-    int c = decode(stream, value, 0, 1, error);
-    return (c <= 0) ? (-1) : (value[0]);
-  }
-
-  public int decode(PeterO.Support.InputStream stream, int[] buffer, int
+  public int Read(int[] buffer, int
     offset, int length) {
-    return decode(stream, buffer, offset, length,
-      TextEncoding.ENCODING_ERROR_THROW);
-  }
-
-  public int decode(PeterO.Support.InputStream stream, int[] buffer, int
-    offset, int length, IEncodingError error) {
-    if (stream == null || buffer == null || offset<0 || length<0 ||
-        offset + length>buffer.Length) {
- throw new ArgumentException();
+      if ((buffer) == null) {
+  throw new ArgumentNullException(nameof(buffer));
+}
+if (offset < 0) {
+  throw new ArgumentException("offset (" + offset +
+    ") is less than 0");
+}
+if (offset > buffer.Length) {
+  throw new ArgumentException("offset (" + offset +
+    ") is more than " + buffer.Length);
+}
+if (length < 0) {
+  throw new ArgumentException("length (" + length +
+    ") is less than 0");
+}
+if (length > buffer.Length) {
+  throw new ArgumentException("length (" + length +
+    ") is more than " + buffer.Length);
+}
+if (buffer.Length-offset < length) {
+  throw new ArgumentException("buffer's length minus " + offset + " (" +
+    (buffer.Length-offset) + ") is less than " + length);
 }
     if (length == 0) {
  return 0;

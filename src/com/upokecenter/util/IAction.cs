@@ -9,6 +9,8 @@ at: http://peteroupc.github.io/
 namespace com.upokecenter.util {
 using System;
 
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public interface IAction<T> {
     /// <summary>Does an arbitrary action. @param parameters An array of
     /// parameters that the action accepts.</summary>

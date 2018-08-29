@@ -17,241 +17,282 @@ using System.IO;
     /// @author Peter.</summary>
 public sealed class StackableCharacterInput : IMarkableCharacterInput {
   private class InputAndBuffer : ICharacterInput {
-    int[] buffer;
-    ICharacterInput charInput;
-    int pos = 0;
+    private int[] valueBuffer;
+    private ICharacterInput valueCharInput;
+    private int pos = 0;
 
-    public InputAndBuffer(ICharacterInput charInput, int[] buffer, int
-      offset, int length) {
-      this.charInput = charInput;
-      if (length>0) {
-        this.buffer = new int[length];
-        Array.Copy(buffer, offset, this.buffer, 0, length);
+    public InputAndBuffer(
+  ICharacterInput valueCharInput,
+  int[] valueBuffer,
+  int offset,
+  int length) {
+      this.valueCharInput = valueCharInput;
+      if (length > 0) {
+        this.valueBuffer = new int[length];
+        Array.Copy(valueBuffer, offset, this.valueBuffer, 0, length);
       } else {
-        this.buffer = null;
+        this.valueBuffer = null;
       }
     }
 
     public int read() {
-      if (charInput != null) {
-        int c = charInput.read();
+      if (this.valueCharInput != null) {
+        int c = this.valueCharInput.read();
         if (c >= 0) {
  return c;
 }
-        charInput = null;
+        this.valueCharInput = null;
       }
-      if (buffer != null) {
-        if (pos<buffer.Length) {
- return buffer[pos++];
+      if (this.valueBuffer != null) {
+        if (this.pos < this.valueBuffer.Length) {
+ return this.valueBuffer[this.pos++];
 }
-        buffer = null;
+        this.valueBuffer = null;
       }
       return -1;
     }
 
     public int read(int[] buf, int offset, int unitCount) {
-      if ((buf) == null) {
- throw new ArgumentNullException("buf");
+      if (buf == null) {
+ throw new ArgumentNullException(nameof(buf));
 }
       if (offset < 0) {
  throw new ArgumentException("offset less than 0 ("
-   +Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
+   +(offset)+")");
 }
       if (unitCount < 0) {
  throw new ArgumentException("unitCount less than 0 ("
-   +Convert.ToString(unitCount,CultureInfo.InvariantCulture)+")");
+   +(unitCount)+")");
 }
       if (offset + unitCount > buf.Length) {
  throw new
    ArgumentOutOfRangeException("offset+unitCount more than "
-   +Convert.ToString(buf.Length,CultureInfo.InvariantCulture)+" ("
-   +Convert.ToString(offset+unitCount,CultureInfo.InvariantCulture)+")");
+   +(buf.Length)+" ("
+   +(offset + unitCount) + ")");
 }
       if (unitCount == 0) {
  return 0;
 }
-      int count = 0;
-      if (charInput != null) {
-        int c = charInput.read(buf, offset, unitCount);
+      var count = 0;
+      if (this.valueCharInput != null) {
+        int c = this.valueCharInput.read(buf, offset, unitCount);
         if (c <= 0) {
-          charInput = null;
+          this.valueCharInput = null;
         } else {
-          offset+=c;
-          unitCount-=c;
-          count+=c;
+          offset += c;
+          unitCount -= c;
+          count += c;
         }
       }
-      if (buffer != null) {
-        int c = Math.Min(unitCount, this.buffer.Length-pos);
-        if (c>0) {
-          Array.Copy(this.buffer, pos, buf, offset, c);
+      if (this.valueBuffer != null) {
+        int c = Math.Min(unitCount, this.valueBuffer.Length - this.pos);
+        if (c > 0) {
+          Array.Copy(this.valueBuffer, this.pos, buf, offset, c);
         }
-        pos+=c;
-        count+=c;
+        this.pos += c;
+        count += c;
         if (c == 0) {
-          buffer = null;
+          this.valueBuffer = null;
         }
       }
       return (count == 0) ? -1 : count;
     }
   }
 
-  int pos = 0;
-  int endpos = 0;
-  bool haveMark = false;
-  int[] buffer = null;
-  IList<ICharacterInput> stack = new List<ICharacterInput>();
+  private int pos = 0;
+  private int endpos = 0;
+  private bool haveMark = false;
+  private int[] valueBuffer = null;
+  private IList<ICharacterInput> valueStack = new List<ICharacterInput>();
 
+    /// <summary>Initializes a new instance of the StackableCharacterInput
+    /// class.</summary>
+    /// <param name='source'>An ICharacterInput object.</param>
   public StackableCharacterInput(ICharacterInput source) {
-    this.stack.Add(source);
+    this.valueStack.Add(source);
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A 32-bit signed integer.</returns>
   public int getMarkPosition() {
-    return pos;
+    return this.pos;
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='count'>Not documented yet.</param>
   public void moveBack(int count) {
     if (count < 0) {
  throw new ArgumentException("count less than 0 ("
-   +Convert.ToString(count,CultureInfo.InvariantCulture)+")");
+   +(count)+")");
 }
-    if (haveMark && pos >= count) {
-      pos-=count;
+    if (this.haveMark && this.pos >= count) {
+      this.pos -= count;
       return;
     }
     throw new IOException();
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='input'>Not documented yet.</param>
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='input'/> is null.</exception>
   public void pushInput(ICharacterInput input) {
-    if ((input) == null) {
- throw new ArgumentNullException("input");
+    if (input == null) {
+ throw new ArgumentNullException(nameof(input));
 }
-    // Move unread characters in buffer, since this new
+    // Move unread characters in valueBuffer, since this new
     // input sits on top of the existing input
-    stack.Add(new InputAndBuffer(input, buffer, pos, endpos-pos));
-    endpos = pos;
+    this.valueStack.Add(
+  new InputAndBuffer(
+  input,
+  this.valueBuffer,
+  this.pos,
+  this.endpos - this.pos));
+    this.endpos = this.pos;
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A 32-bit signed integer.</returns>
   public int read() {
-    if (haveMark) {
-      // Read from buffer
-      if (pos<endpos) {
- return buffer[pos++];
+    if (this.haveMark) {
+      // Read from valueBuffer
+      if (this.pos < this.endpos) {
+ return this.valueBuffer[this.pos++];
 }
-      //Console.WriteLine(this);
-      // End pos is smaller than buffer size, fill
-      // entire buffer if possible
-      if (endpos<buffer.Length) {
-        int count = readInternal(buffer, endpos, buffer.Length-endpos);
-        if (count>0) {
-          endpos+=count;
+      // DebugUtility.Log(this);
+      // End pos is smaller than valueBuffer size, fill
+      // entire valueBuffer if possible
+      if (this.endpos < this.valueBuffer.Length) {
+        int count = this.readInternal(
+  this.valueBuffer,
+  this.endpos,
+  this.valueBuffer.Length - this.endpos);
+        if (count > 0) {
+          this.endpos += count;
         }
       }
-      // Try reading from buffer again
-      if (pos<endpos) {
- return buffer[pos++];
+      // Try reading from valueBuffer again
+      if (this.pos < this.endpos) {
+ return this.valueBuffer[this.pos++];
 }
-      //Console.WriteLine(this);
-      // No room, read next character and put it in buffer
-      int c = readInternal();
-      if (c< 0) {
+      // DebugUtility.Log(this);
+      // No room, read next character and put it in valueBuffer
+      int c = this.readInternal();
+      if (c < 0) {
  return c;
 }
-      if (pos >= buffer.Length) {
-        int[] newBuffer = new int[buffer.Length*2];
-        Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
-        buffer = newBuffer;
+      if (this.pos >= this.valueBuffer.Length) {
+        var newBuffer = new int[this.valueBuffer.Length * 2];
+        Array.Copy(this.valueBuffer, 0, newBuffer, 0, this.valueBuffer.Length);
+        this.valueBuffer = newBuffer;
       }
-      //Console.WriteLine(this);
-      buffer[pos++]=(byte)(c & 0xff);
-      ++endpos;
+      // DebugUtility.Log(this);
+      this.valueBuffer[this.pos++] = (byte)(c & 0xff);
+      ++this.endpos;
       return c;
     } else {
- return readInternal();
+ return this.readInternal();
 }
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='buf'>Not documented yet.</param>
+    /// <param name='offset'>Not documented yet.</param>
+    /// <param name='unitCount'>Not documented yet. (3).</param>
+    /// <returns>A 32-bit signed integer.</returns>
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='buf'/> is null.</exception>
   public int read(int[] buf, int offset, int unitCount) {
-    if (haveMark) {
-      if ((buf) == null) {
- throw new ArgumentNullException("buf");
+    if (this.haveMark) {
+      if (buf == null) {
+ throw new ArgumentNullException(nameof(buf));
 }
       if (offset < 0) {
  throw new ArgumentException("offset less than 0 ("
-   +Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
+   +(offset)+")");
 }
       if (unitCount < 0) {
  throw new ArgumentException("unitCount less than 0 ("
-   +Convert.ToString(unitCount,CultureInfo.InvariantCulture)+")");
+   +(unitCount)+")");
 }
       if (offset + unitCount > buf.Length) {
  throw new
    ArgumentOutOfRangeException("offset+unitCount more than "
-   +Convert.ToString(buf.Length,CultureInfo.InvariantCulture)+" ("
-   +Convert.ToString(offset+unitCount,CultureInfo.InvariantCulture)+")");
+   +(buf.Length)+" ("
+   +(offset + unitCount) + ")");
 }
       if (unitCount == 0) {
  return 0;
 }
-      // Read from buffer
-      if (pos + unitCount <= endpos) {
-        Array.Copy(buffer, pos, buf, offset, unitCount);
-        pos+=unitCount;
+      // Read from valueBuffer
+      if (this.pos + unitCount <= this.endpos) {
+        Array.Copy(this.valueBuffer, this.pos, buf, offset, unitCount);
+        this.pos += unitCount;
         return unitCount;
       }
-      // End pos is smaller than buffer size, fill
-      // entire buffer if possible
-      int count = 0;
-      if (endpos<buffer.Length) {
-        count = readInternal(buffer, endpos, buffer.Length-endpos);
-        //Console.WriteLine("%s",this);
-        if (count>0) {
-          endpos+=count;
+      // End pos is smaller than valueBuffer size, fill
+      // entire valueBuffer if possible
+      var count = 0;
+      if (this.endpos < this.valueBuffer.Length) {
+        count = this.readInternal(
+  this.valueBuffer,
+  this.endpos,
+  this.valueBuffer.Length - this.endpos);
+        // DebugUtility.Log("%s",this);
+        if (count > 0) {
+          this.endpos += count;
         }
       }
-      int total = 0;
-      // Try reading from buffer again
-      if (pos + unitCount <= endpos) {
-        Array.Copy(buffer, pos, buf, offset, unitCount);
-        pos+=unitCount;
+      var total = 0;
+      // Try reading from valueBuffer again
+      if (this.pos + unitCount <= this.endpos) {
+        Array.Copy(this.valueBuffer, this.pos, buf, offset, unitCount);
+        this.pos += unitCount;
         return unitCount;
       }
-      // expand the buffer
-      if (pos + unitCount>buffer.Length) {
-        int[] newBuffer = new int[(buffer.Length*2)+unitCount];
-        Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
-        buffer = newBuffer;
+      // expand the valueBuffer
+      if (this.pos + unitCount > this.valueBuffer.Length) {
+        var newBuffer = new int[(this.valueBuffer.Length * 2) + unitCount];
+        Array.Copy(this.valueBuffer, 0, newBuffer, 0, this.valueBuffer.Length);
+        this.valueBuffer = newBuffer;
       }
-  count = readInternal(buffer, endpos,
-        Math.Min(unitCount, buffer.Length-endpos));
-      if (count>0) {
-        endpos+=count;
+  count = this.readInternal(
+  this.valueBuffer,
+  this.endpos,
+  Math.Min(unitCount, this.valueBuffer.Length - this.endpos));
+      if (count > 0) {
+        this.endpos += count;
       }
-      // Try reading from buffer a third time
-      if (pos + unitCount <= endpos) {
-        Array.Copy(buffer, pos, buf, offset, unitCount);
-        pos+=unitCount;
-        total+=unitCount;
-      } else if (endpos>pos) {
-        Array.Copy(buffer, pos, buf, offset, endpos-pos);
-        total+=(endpos-pos);
-        pos = endpos;
+      // Try reading from valueBuffer a third time
+      if (this.pos + unitCount <= this.endpos) {
+        Array.Copy(this.valueBuffer, this.pos, buf, offset, unitCount);
+        this.pos += unitCount;
+        total += unitCount;
+      } else if (this.endpos > this.pos) {
+   Array.Copy(
+  this.valueBuffer,
+  this.pos,
+  buf,
+  offset,
+  this.endpos - this.pos);
+        total += this.endpos - this.pos;
+        this.pos = this.endpos;
       }
       return (total == 0) ? -1 : total;
     } else {
- return readInternal(buf, offset, unitCount);
+ return this.readInternal(buf, offset, unitCount);
 }
   }
 
   private int readInternal() {
-    if (this.stack.Count == 0) {
+    if (this.valueStack.Count == 0) {
  return -1;
 }
-    while (this.stack.Count>0) {
-      int index = this.stack.Count-1;
-      int c = this.stack[index].read();
-      if (c==-1) {
-        this.stack.RemoveAt(index);
+    while (this.valueStack.Count > 0) {
+      int index = this.valueStack.Count - 1;
+      int c = this.valueStack[index].read();
+      if (c == -1) {
+        this.valueStack.RemoveAt(index);
         continue;
       }
       return c;
@@ -260,76 +301,95 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
   }
 
   private int readInternal(int[] buf, int offset, int unitCount) {
-    if (this.stack.Count == 0) {
+    if (this.valueStack.Count == 0) {
  return -1;
 }
     #if DEBUG
-if (!(((buf)!=null)))throw new InvalidOperationException("buf");
-if (!(((offset) >= 0)))throw new
+if (!(buf != null)) {
+ throw new InvalidOperationException("buf");
+}
+if (!(offset >= 0)) {
+ throw new
   InvalidOperationException("offset less than 0 ("
-  +Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
-if (!(((unitCount) >= 0)))throw new
+  +(offset)+")");
+ }
+if (!(unitCount >= 0)) {
+ throw new
   InvalidOperationException("unitCount less than 0 ("
-  +Convert.ToString(unitCount,CultureInfo.InvariantCulture)+")");
-if (!(((offset + unitCount) <= buf.Length)))throw new
+  +(unitCount)+")");
+ }
+if (!((offset + unitCount) <= buf.Length)) {
+ throw new
   InvalidOperationException("offset+unitCount more than "
-  +Convert.ToString(buf.Length,CultureInfo.InvariantCulture)+" ("
-  +Convert.ToString(offset+unitCount,CultureInfo.InvariantCulture)+")");
+  +(buf.Length)+" ("
+  +(offset + unitCount) + ")");
+ }
 #endif
     if (unitCount == 0) {
  return 0;
 }
-    int count = 0;
-    while (this.stack.Count>0 && unitCount>0) {
-      int index = this.stack.Count-1;
-      int c = this.stack[index].read(buf, offset, unitCount);
+    var count = 0;
+    while (this.valueStack.Count > 0 && unitCount > 0) {
+      int index = this.valueStack.Count - 1;
+      int c = this.valueStack[index].read(buf, offset, unitCount);
       if (c <= 0) {
-        this.stack.RemoveAt(index);
+        this.valueStack.RemoveAt(index);
         continue;
       }
-      count+=c;
-      unitCount-=c;
+      count += c;
+      unitCount -= c;
       if (unitCount == 0) {
         break;
       }
-      this.stack.RemoveAt(index);
+      this.valueStack.RemoveAt(index);
     }
     return count;
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A 32-bit signed integer.</returns>
   public int setHardMark() {
-    if (buffer == null) {
-      buffer = new int[16];
-      pos = 0;
-      endpos = 0;
-      haveMark = true;
-    } else if (haveMark) {
-      // Already have a mark; shift buffer to the new mark
-      if (pos>0 && pos<endpos) {
-        Array.Copy(buffer, pos, buffer, 0, endpos-pos);
+    if (this.valueBuffer == null) {
+      this.valueBuffer = new int[16];
+      this.pos = 0;
+      this.endpos = 0;
+      this.haveMark = true;
+    } else if (this.haveMark) {
+      // Already have a mark; shift valueBuffer to the new mark
+      if (this.pos > 0 && this.pos < this.endpos) {
+     Array.Copy(
+  this.valueBuffer,
+  this.pos,
+  this.valueBuffer,
+  0,
+  this.endpos - this.pos);
       }
-      endpos-=pos;
-      pos = 0;
+      this.endpos -= this.pos;
+      this.pos = 0;
     } else {
-      pos = 0;
-      endpos = 0;
-      haveMark = true;
+      this.pos = 0;
+      this.endpos = 0;
+      this.haveMark = true;
     }
     return 0;
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='pos'>Not documented yet.</param>
   public void setMarkPosition(int pos) {
-    if (!haveMark || pos<0 || pos>endpos) {
+    if (!this.haveMark || pos < 0 || pos > this.endpos) {
  throw new IOException();
 }
     this.pos = pos;
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A 32-bit signed integer.</returns>
   public int setSoftMark() {
-    if (!haveMark) {
-      setHardMark();
+    if (!this.haveMark) {
+      this.setHardMark();
     }
-    return getMarkPosition();
+    return this.getMarkPosition();
   }
 }
 }

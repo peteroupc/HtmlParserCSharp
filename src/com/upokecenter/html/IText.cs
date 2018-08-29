@@ -32,6 +32,7 @@ using System;
     /// Peter.</summary>
 public interface IText : INode {
     /// <summary>* Gets this node's text.</summary>
+    /// <returns>Not documented yet.</returns>
    string getData();
 }
 }

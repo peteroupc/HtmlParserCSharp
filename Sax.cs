@@ -4,18 +4,20 @@
 
 using System;
 using System.Collections;
-//using System.Configuration;
+// using System.Configuration;
 using System.IO;
 using System.Reflection;
-using GUID = System.Runtime.InteropServices.GuidAttribute;
 
 // Documented in SAX.ndoc, as namespaces cannot have XML documentation
 // comments.
 namespace Org.System.Xml.Sax {
   /**<summary>Defines constants for the <see cref="Org.System.Xml.Sax" />
     namespace.</summary> */
+
+    /// <summary>Not documented yet.</summary>
   public class Constants {
-    private Constants() { }
+    private Constants() {
+}
 
     /// <summary>Base name for standard SAX features.</summary>
     public const string Features = "http://xml.org/sax/features/";
@@ -56,7 +58,7 @@ namespace Org.System.Xml.Sax {
     /// <remarks>Read-only. Replaces the UseEntityResolver2Feature feature
     /// in SAX for .NET 1.0.</remarks>
     public const string UseExternalSubsetFeature = Features +
-      "use-external-subset" ;
+      "use-external-subset";
 
     /// <summary>True if suspending and resuming the parse process is
     /// supported, false otherwise.</summary>
@@ -122,30 +124,38 @@ namespace Org.System.Xml.Sax {
    * random information.</item>
    * <item>Attribute names are treated the same as element names with
      respect to namespaces.
-   *     See <see cref="IContentHandler.StartElement"/>.</item>
+   * See <see cref="IContentHandler.StartElement"/>.</item>
    * <item>Namespace declarations (xmlns attributes) will be reported as
      attributes if the
    * <c>namespace-prefixes</c> feature is true, even if namespace processing
      is turned on.</item>
    * <item>The functionality of the <c>Attributes2.isDeclared</c> method in
      the Java API
-   *     has been translated into a new return value <c>"UNDECLARED"</c> for the
-   *     <see cref="IAttributes.GetType"/> method.</item>
+   * has been translated into a new return value <c>"UNDECLARED"</c> for the
+   * <see cref="IAttributes.GetType"/> method.</item>
    * </list></remarks>
    */
-  [GUID(Constants.IidIAttributes)]
+  // [GUID(Constants.IidIAttributes)]
+
+    /// <summary>Not documented yet.</summary>
   public interface IAttributes
   {
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Attributes.html#getLength()'>Attributes.getLength</see>
     /// on www.saxproject.org.</summary>
+    /// <value>See
+    /// <see
+    /// href='http://www.saxproject.org/apidoc/org/xml/sax/Attributes.html#getLength()'>Attributes.getLength</see>
+    /// on www.saxproject.org.</value>
     int Length { get; }
 
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Attributes.html#getURI(int)'>Attributes.getURI</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='index'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='IndexOutOfRangeException'>Thrown when index out of
     /// range.</exception>
     /// <remarks>
@@ -159,6 +169,8 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Attributes.html#getLocalName(int)'>Attributes.getLocalName</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='index'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='IndexOutOfRangeException'>Thrown when index out of
     /// range.</exception>
     /// <remarks>Differences to Java:
@@ -172,6 +184,8 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Attributes.html#getQName(int)'>Attributes.getQName</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='index'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='IndexOutOfRangeException'>Thrown when index out of
     /// range.</exception>
     /// <remarks>Differences to Java:
@@ -193,6 +207,7 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ext/Attributes2.html#isDeclared(int)'>Attributes2.isDeclared</see>
     /// from the Java API.</item></list></remarks></overloads>
+    /// <param name='index'>Not documented yet.</param>
     /// <exception cref='IndexOutOfRangeException'>Thrown when index out of
     /// range.</exception>
     string GetType(int index);
@@ -203,6 +218,7 @@ namespace Org.System.Xml.Sax {
     /// <list type='bullet'>
     /// <item>Throws standard .NET
     /// exceptions.</item></list></remarks></overloads>
+    /// <param name='index'>Not documented yet.</param>
     /// <exception cref='IndexOutOfRangeException'>Thrown when index out of
     /// range.</exception>
     string GetValue(int index);
@@ -214,6 +230,7 @@ namespace Org.System.Xml.Sax {
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Attributes.html#getIndex(java.lang.String,
     /// java.lang.String)'>Attributes.getIndex</see> on
     /// www.saxproject.org.</summary>
+    /// <returns>Not documented yet.</returns>
     /// <remarks>If there is no namespace, pass the empty string for the
     /// <c>uri</c> argument.</remarks>
     int GetIndex(string uri, string localName);
@@ -222,13 +239,16 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Attributes.html#getIndex(java.lang.String)'>Attributes.getIndex</see>
     /// on www.saxproject.org.</summary>
-    int GetIndex(string qName);
+    /// <param name='valueQName'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
+    int GetIndex(string valueQName);
 
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Attributes.html#getType(java.lang.String,
     /// java.lang.String)'>Attributes.getType</see> on
     /// www.saxproject.org.</summary>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='ArgumentException'>Thrown when no matching
     /// attribute can be found.</exception>
     /// <remarks>If there is no namespace, pass the empty string for the
@@ -239,15 +259,18 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Attributes.html#getType(java.lang.String)'>Attributes.getType</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='valueQName'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='ArgumentException'>Thrown when no matching
     /// attribute can be found.</exception>
-    string GetType(string qName);
+    string GetType(string valueQName);
 
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Attributes.html#getValue(java.lang.String,
     /// java.lang.String)'>Attributes.getValue</see> on
     /// www.saxproject.org.</summary>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='ArgumentException'>Thrown when no matching
     /// attribute can be found.</exception>
     /// <remarks>If there is no namespace, pass the empty string for the
@@ -258,9 +281,11 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Attributes.html#getValue(java.lang.String)'>Attributes.getValue</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='valueQName'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='ArgumentException'>Thrown when no matching
     /// attribute can be found.</exception>
-    string GetValue(string qName);
+    string GetValue(string valueQName);
 
     /// <overloads>
     /// <summary>Indicates if attribute was specified, that is, not
@@ -270,6 +295,7 @@ namespace Org.System.Xml.Sax {
     /// <item>Throws standard .NET exceptions.</item>
     /// <item>For a parser that does not read the DTD this will always
     /// return true.</item></list></remarks></overloads>
+    /// <param name='index'>Not documented yet.</param>
     /// <exception cref='IndexOutOfRangeException'>Thrown when index out of
     /// range.</exception>
     bool IsSpecified(int index);
@@ -278,15 +304,18 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ext/Attributes2.html#isSpecified(java.lang.String)'>Attributes2.isSpecified</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='valueQName'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='ArgumentException'>Thrown when no matching
     /// attribute can be found.</exception>
-    bool IsSpecified(string qName);
+    bool IsSpecified(string valueQName);
 
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ext/Attributes2.html#isSpecified(java.lang.String,
     /// java.lang.String)'>Attributes2.isSpecified</see> on
     /// www.saxproject.org.</summary>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='ArgumentException'>Thrown when no matching
     /// attribute can be found.</exception>
     /// <remarks>If there is no namespace, pass the empty string for the
@@ -306,13 +335,16 @@ namespace Org.System.Xml.Sax {
    * from parsing an actual XML document - see <see
      cref="Org.System.Xml.Sax" />.</remarks>
    */
-  [GUID(Constants.IidIContentHandler)]
+  // [GUID(Constants.IidIContentHandler)]
+
+    /// <summary>Not documented yet.</summary>
   public interface IContentHandler
   {
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ContentHandler.html#setDocumentLocator(org.xml.sax.Locator)'>ContentHandler.setDocumentLocator</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='locator'>Not documented yet.</param>
     void SetDocumentLocator(ILocator locator);
 
     /// <summary>See
@@ -357,6 +389,7 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ContentHandler.html#endPrefixMapping(java.lang.String)'>ContentHandler.endPrefixMapping</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='prefix'>Not documented yet.</param>
     /// <remarks>The prefix argument for the default namespace is the empty
     /// string, and not <c>null</c>.</remarks>
     void EndPrefixMapping(string prefix);
@@ -373,17 +406,21 @@ namespace Org.System.Xml.Sax {
     /// namespace processing is turned off, or when the name is not in any
     /// namespace.</para> Differences to Java:
     /// <list type='bullet'>
-    /// <item><c>qName</c> and <c>localName</c> will never be <c>null</c>
-    /// or the empty string.</item>
-    /// <item><c>qName</c> and <c>localName</c> will only be different, if
-    /// namespace processing is turned on - the <c>namespaces</c> feature
-    /// is true - and the name is in a namespace and has a namespace
-    /// prefix. Otherwise they will be identical.</item>
+    /// <item><c>valueQName</c> and <c>localName</c> will never be
+    /// <c>null</c> or the empty string.</item>
+    /// <item><c>valueQName</c> and <c>localName</c> will only be
+    /// different, if namespace processing is turned on - the
+    /// <c>namespaces</c> feature is true - and the name is in a namespace
+    /// and has a namespace prefix. Otherwise they will be
+    /// identical.</item>
     /// <item>xmlns attributes will be reported as attributes if the
     /// <c>namespace-prefixes</c> feature is true, even if namespace
     /// processing is turned on.</item></list></remarks>
-    void StartElement(string uri, string localName, string qName,
-      IAttributes atts);
+    void StartElement(
+  string uri,
+  string localName,
+  string valueQName,
+  IAttributes atts);
 
     /// <summary>See
     /// <see
@@ -391,7 +428,7 @@ namespace Org.System.Xml.Sax {
     /// java.lang.String,
     /// java.lang.String)'>ContentHandler.endElement</see> on
     /// www.saxproject.org.</summary>
-    void EndElement(string uri, string localName, string qName);
+    void EndElement(string uri, string localName, string valueQName);
 
     /// <summary>See
     /// <see
@@ -418,6 +455,7 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ContentHandler.html#skippedEntity(java.lang.String)'>ContentHandler.skippedEntity</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='name'>Not documented yet.</param>
     void SkippedEntity(string name);
   }
 
@@ -425,7 +463,9 @@ namespace Org.System.Xml.Sax {
     href="http://www.saxproject.org/apidoc/org/xml/sax/DTDHandler.html" >
    * DTDHandler</see> on www.saxproject.org.</summary>
    */
-  [GUID(Constants.IidIDtdHandler)]
+  // [GUID(Constants.IidIDtdHandler)]
+
+    /// <summary>Not documented yet.</summary>
   public interface IDtdHandler
   {
     /// <summary>See
@@ -441,8 +481,11 @@ namespace Org.System.Xml.Sax {
     /// java.lang.String, java.lang.String,
     /// java.lang.String)'>DTDHandler.unparsedEntityDecl</see> on
     /// www.saxproject.org.</summary>
-    void UnparsedEntityDecl(string name, string publicId, string systemId,
-      string notationName);
+    void UnparsedEntityDecl(
+  string name,
+  string publicId,
+  string systemId,
+  string notationName);
   }
 
   /**<summary>See <see
@@ -452,7 +495,9 @@ namespace Org.System.Xml.Sax {
    * <remarks>This interface is optional, a SAX parser need not implement
      it.</remarks>
    */
-  [GUID(Constants.IidIDeclHandler)]
+  // [GUID(Constants.IidIDeclHandler)]
+
+    /// <summary>Not documented yet.</summary>
   public interface IDeclHandler {
     /// <summary>See
     /// <see
@@ -467,8 +512,12 @@ namespace Org.System.Xml.Sax {
     /// java.lang.String, java.lang.String, java.lang.String,
     /// java.lang.String)'>DeclHandler.attributeDecl</see> on
     /// www.saxproject.org.</summary>
-    void AttributeDecl(string eName, string aName, string aType, string
-      mode, string aValue);
+    void AttributeDecl(
+  string valueEName,
+  string valueAName,
+  string valueAType,
+  string mode,
+  string valueAValue);
 
     /// <summary>See
     /// <see
@@ -493,7 +542,9 @@ namespace Org.System.Xml.Sax {
    * <remarks>This interface is optional, a SAX parser need not implement
      it.</remarks>
    */
-  [GUID(Constants.IidILexicalHandler)]
+  // [GUID(Constants.IidILexicalHandler)]
+
+    /// <summary>Not documented yet.</summary>
   public interface ILexicalHandler {
     /// <summary>See
     /// <see
@@ -512,12 +563,14 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ext/LexicalHandler.html#startEntity(java.lang.String)'>LexicalHandler.startEntity</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='name'>Not documented yet.</param>
     void StartEntity(string name);
 
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ext/LexicalHandler.html#endEntity(java.lang.String)'>LexicalHandler.endEntity</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='name'>Not documented yet.</param>
     void EndEntity(string name);
 
     /// <summary>See
@@ -551,13 +604,16 @@ namespace Org.System.Xml.Sax {
      <c>EntityResolver</c> and <c>EntityResolver2</c>
    * interfaces specified in the original Java SAX API.</remarks>
    */
-  [GUID(Constants.IidIEntityResolver)]
+  // [GUID(Constants.IidIEntityResolver)]
+
+    /// <summary>Not documented yet.</summary>
   public interface IEntityResolver {
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ext/EntityResolver2.html#getExternalSubset(java.lang.String,
     /// java.lang.String)'>EntityResolver2.getExternalSubset</see> on
     /// www.saxproject.org.</summary>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='NotSupportedException'>Thrown when not
     /// implemented.</exception>
     /// <remarks>Optional method.</remarks>
@@ -569,13 +625,17 @@ namespace Org.System.Xml.Sax {
     /// java.lang.String, java.lang.String,
     /// java.lang.String)'>EntityResolver2.resolveEntity</see> on
     /// www.saxproject.org.</summary>
+    /// <returns>Not documented yet.</returns>
     /// <remarks>This replaces <c>IEntityResolver.ResolveEntity(string
     /// publicId, string systemId)</c> from SAX for .NET 1.0. For
     /// compatibility the <c>name</c> argument may be <c>null</c>. The
     /// <c>systemId</c> argument must be an absolute URI only if the
     /// <c>baseUri</c> argument is <c>null</c>.</remarks>
-    InputSource ResolveEntity(string name, string publicId, string baseUri,
-      string systemId);
+    InputSource ResolveEntity(
+  string name,
+  string publicId,
+  string baseUri,
+  string systemId);
   }
 
   /**<summary>Similar to ErrorHandler interface in SAX. See
@@ -606,19 +666,23 @@ namespace Org.System.Xml.Sax {
    * duration of the call-back.</item>
    * </list></remarks>
    */
-  [GUID(Constants.IidIErrorHandler)]
+  // [GUID(Constants.IidIErrorHandler)]
+
+    /// <summary>Not documented yet.</summary>
   public interface IErrorHandler
   {
     /// <summary>Call-back for warnings. Parser can continue. See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ErrorHandler.html#warning(org.xml.sax.SAXParseException)'>ErrorHandler.warning</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='error'>Not documented yet.</param>
     void Warning(ParseError error);
 
     /// <summary>Call-back for non-fatal errors. Parser can continue. See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ErrorHandler.html#error(org.xml.sax.SAXParseException)'>ErrorHandler.error</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='error'>Not documented yet.</param>
     void Error(ParseError error);
 
     /// <summary>Call-back for fatal errors, like well-formedness
@@ -626,6 +690,7 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ErrorHandler.html#fatalError(org.xml.sax.SAXParseException)'>ErrorHandler.fatalError</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='error'>Not documented yet.</param>
     void FatalError(ParseError error);
   }
 
@@ -669,7 +734,7 @@ namespace Org.System.Xml.Sax {
      cref="IContentHandler.StartDocument" />
    * or after <see cref="IContentHandler.EndDocument" /> (that is, when not
      parsing)
-   *     will throw a <see cref="SaxException"/>.</item>
+   * will throw a <see cref="SaxException"/>.</item>
    * <item>Because the <see cref="Org.System.Xml.Sax" >definition of
      "parsing" </see> in SAX
    * is not restricted to textual document parsing, certain properties of
@@ -677,37 +742,59 @@ namespace Org.System.Xml.Sax {
    * may not be applicable in all contexts.</item>
    * </list></remarks>
    */
-  [GUID(Constants.IidILocator)]
+  // [GUID(Constants.IidILocator)]
+
+    /// <summary>Not documented yet.</summary>
   public interface ILocator
   {
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Locator.html#getPublicId()'>Locator.getPublicId</see>
     /// on www.saxproject.org.</summary>
+    /// <value>See
+    /// <see
+    /// href='http://www.saxproject.org/apidoc/org/xml/sax/Locator.html#getPublicId()'>Locator.getPublicId</see>
+    /// on www.saxproject.org.</value>
     string PublicId { get; }
 
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Locator.html#getSystemId()'>Locator.getSystemId</see>
     /// on www.saxproject.org.</summary>
+    /// <value>See
+    /// <see
+    /// href='http://www.saxproject.org/apidoc/org/xml/sax/Locator.html#getSystemId()'>Locator.getSystemId</see>
+    /// on www.saxproject.org.</value>
     string SystemId { get; }
 
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Locator.html#getLineNumber()'>Locator.getLineNumber</see>
     /// on www.saxproject.org.</summary>
+    /// <value>See
+    /// <see
+    /// href='http://www.saxproject.org/apidoc/org/xml/sax/Locator.html#getLineNumber()'>Locator.getLineNumber</see>
+    /// on www.saxproject.org.</value>
     long LineNumber { get; }
 
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/Locator.html#getColumnNumber()'>Locator.getColumnNumber</see>
     /// on www.saxproject.org.</summary>
+    /// <value>See
+    /// <see
+    /// href='http://www.saxproject.org/apidoc/org/xml/sax/Locator.html#getColumnNumber()'>Locator.getColumnNumber</see>
+    /// on www.saxproject.org.</value>
     long ColumnNumber { get; }
 
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ext/Locator2.html#getXMLVersion()'>Locator2.getXMLVersion</see>
     /// on www.saxproject.org.</summary>
+    /// <value>See
+    /// <see
+    /// href='http://www.saxproject.org/apidoc/org/xml/sax/ext/Locator2.html#getXMLVersion()'>Locator2.getXMLVersion</see>
+    /// on www.saxproject.org.</value>
     /// <exception cref='NotSupportedException'>Thrown when not
     /// implemented.</exception>
     /// <remarks>Optional method.</remarks>
@@ -717,6 +804,10 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ext/Locator2.html#getEncoding()'>Locator2.getEncoding</see>
     /// on www.saxproject.org.</summary>
+    /// <value>See
+    /// <see
+    /// href='http://www.saxproject.org/apidoc/org/xml/sax/ext/Locator2.html#getEncoding()'>Locator2.getEncoding</see>
+    /// on www.saxproject.org.</value>
     /// <exception cref='NotSupportedException'>Thrown when not
     /// implemented.</exception>
     /// <remarks>Optional method.</remarks>
@@ -725,6 +816,9 @@ namespace Org.System.Xml.Sax {
     /// <summary>Indicates if the entity currently being parsed is the
     /// document entity - standalone or not - or an external parsed
     /// entity.</summary>
+    /// <value>Indicates if the entity currently being parsed is the
+    /// document entity - standalone or not - or an external parsed
+    /// entity.</value>
     /// <exception cref='NotSupportedException'>Thrown when not
     /// implemented.</exception>
     /// <remarks>Optional property.</remarks>
@@ -733,6 +827,8 @@ namespace Org.System.Xml.Sax {
 
   /**<summary>Describes the parsing status of an <see cref="IXmlReader" />
     instance.</summary> */
+
+    /// <summary>Not documented yet.</summary>
   public enum XmlReaderStatus
   {
     /// <summary>Parser is initialized - ready to parse (again).</summary>
@@ -757,14 +853,14 @@ namespace Org.System.Xml.Sax {
      processing,
    * and to initiate, suspend or resume a document parse.</summary>
    * <remarks>There are some differences to the Java specification.
-   *   <list type="bullet">
+   * <list type="bullet">
    * <item>Extension properties are retrieved or set using the <see
      cref="IProperty&lt;T>" />
    * interface, which avoids repeated lookup by name.</item>
    * <item>Explicit properties exist for registering <see
      cref="IDeclHandler" /> and
-   *       <see cref="ILexicalHandler"/> instances.</item>
-   *     <item>The additional methods <see cref="IXmlReader.Suspend"/>,
+   * <see cref="ILexicalHandler"/> instances.</item>
+   * <item>The additional methods <see cref="IXmlReader.Suspend"/>,
    * <see cref="IXmlReader.Resume" /> and <see cref="IXmlReader.Abort" />
      allow for
    * suspending, resuming or aborting the parse process. If an
@@ -777,7 +873,7 @@ namespace Org.System.Xml.Sax {
      into a
    * Pull parser when a suitable implementation of <see
      cref="IContentHandler" />
-   *       is used that calls <see cref="IXmlReader.Suspend"/> whenever an event
+   * is used that calls <see cref="IXmlReader.Suspend"/> whenever an event
    * of interest occurs.</item>
    * </list>
    * </remarks>
@@ -785,13 +881,17 @@ namespace Org.System.Xml.Sax {
      href="http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html" >
    * XMLReader on www.saxproject.org</seealso>
    */
-  [GUID(Constants.IidIXmlReader)]
+  // [GUID(Constants.IidIXmlReader)]
+
+    /// <summary>Not documented yet.</summary>
   public interface IXmlReader
   {
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#getFeature(java.lang.String)'>XMLReader.getFeature</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='ArgumentException'>Thrown when the feature name is
     /// not recognized.</exception>
     /// <exception cref='NotSupportedException'>Thrown when the feature
@@ -825,6 +925,9 @@ namespace Org.System.Xml.Sax {
     /// <summary>Returns an
     /// <see cref='IProperty&lt;T>'/> interface reference for the property
     /// identified by <c>name</c></summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='ArgumentException'>Thrown when the property name
     /// is not recognized.</exception>
     /// <remarks>Differences to Java:
@@ -838,16 +941,26 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#setContentHandler(org.xml.sax.ContentHandler)'>XMLReader.setContentHandler</see>
     /// on www.saxproject.org.</summary>
+    /// <value>See
+    /// <see
+    /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#setContentHandler(org.xml.sax.ContentHandler)'>XMLReader.setContentHandler</see>
+    /// on www.saxproject.org.</value>
     IContentHandler ContentHandler { get; set; }
 
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#setDTDHandler(org.xml.sax.DTDHandler)'>XMLReader.setDTDHandler</see>
     /// on www.saxproject.org.</summary>
+    /// <value>See
+    /// <see
+    /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#setDTDHandler(org.xml.sax.DTDHandler)'>XMLReader.setDTDHandler</see>
+    /// on www.saxproject.org.</value>
     IDtdHandler DtdHandler { get; set; }
 
     /// <summary>Gets or sets the event handler registered for lexical
     /// information.</summary>
+    /// <value>The event handler registered for lexical
+    /// information.</value>
     /// <exception cref='NotSupportedException'>Thrown when not
     /// implemented.</exception>
     /// <remarks>Optional property.</remarks>
@@ -855,6 +968,7 @@ namespace Org.System.Xml.Sax {
 
     /// <summary>Gets or sets the event handler registered for DTD
     /// declarations.</summary>
+    /// <value>The event handler registered for DTD declarations.</value>
     /// <exception cref='NotSupportedException'>Thrown when not
     /// implemented.</exception>
     /// <remarks>Optional property.</remarks>
@@ -864,12 +978,20 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#setEntityResolver(org.xml.sax.EntityResolver)'>XMLReader.setEntityResolver</see>
     /// on www.saxproject.org.</summary>
+    /// <value>See
+    /// <see
+    /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#setEntityResolver(org.xml.sax.EntityResolver)'>XMLReader.setEntityResolver</see>
+    /// on www.saxproject.org.</value>
     IEntityResolver EntityResolver { get; set; }
 
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#setErrorHandler(org.xml.sax.ErrorHandler)'>XMLReader.setErrorHandler</see>
     /// on www.saxproject.org.</summary>
+    /// <value>See
+    /// <see
+    /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#setErrorHandler(org.xml.sax.ErrorHandler)'>XMLReader.setErrorHandler</see>
+    /// on www.saxproject.org.</value>
     IErrorHandler ErrorHandler { get; set; }
 
     /// <summary>Parses the XML document represented by the input source.
@@ -877,6 +999,7 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#parse(org.xml.sax.InputSource)'>XMLReader.parse</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='input'>Not documented yet.</param>
     /// <remarks>Differences to Java:
     /// <list type='bullet'>
     /// <item>Will not close the input source's stream or text reader at
@@ -888,6 +1011,7 @@ namespace Org.System.Xml.Sax {
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLReader.html#parse(java.lang.String)'>XMLReader.parse</see>
     /// on www.saxproject.org.</summary>
+    /// <param name='systemId'>Not documented yet.</param>
     /// <remarks>This will <b>not</b> generate a call-back on
     /// <see cref='IEntityResolver.ResolveEntity'/>.</remarks>
     void Parse(string systemId);
@@ -966,6 +1090,9 @@ namespace Org.System.Xml.Sax {
     /// <summary>Returns which of three states the parser is in: actively
     /// processing a document, suspended, or ready to start with another
     /// document.</summary>
+    /// <value>Returns which of three states the parser is in: actively
+    /// processing a document, suspended, or ready to start with another
+    /// document.</value>
     XmlReaderStatus Status { get; }
   }
 
@@ -973,13 +1100,18 @@ namespace Org.System.Xml.Sax {
     href="http://www.saxproject.org/apidoc/org/xml/sax/XMLFilter.html" >
    * XMLFilter</see> on www.saxproject.org.</summary>
    */
-  [GUID(Constants.IidIXmlFilter)]
-  public interface IXmlFilter: IXmlReader
+
+    /// <summary>Not documented yet.</summary>
+  public interface IXmlFilter : IXmlReader
   {
     /// <summary>See
     /// <see
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLFilter.html#setParent(org.xml.sax.XMLReader)'>XMLFilter.setParent</see>
     /// on www.saxproject.org.</summary>
+    /// <value>See
+    /// <see
+    /// href='http://www.saxproject.org/apidoc/org/xml/sax/XMLFilter.html#setParent(org.xml.sax.XMLReader)'>XMLFilter.setParent</see>
+    /// on www.saxproject.org.</value>
     IXmlReader Parent { get; set; }
   }
 
@@ -996,40 +1128,56 @@ namespace Org.System.Xml.Sax {
      >
    * XMLReader.getProperty on www.saxproject.org</seealso>
    */
-  [GUID(Constants.IidIGenericProperty)]
-  public interface IProperty<T>
+
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+ public interface IProperty<T>
   {
     /// <summary>Name of property - one of the property
     /// constants.</summary>
+    /// <value>Name of property - one of the property constants.</value>
     string Name { get; }
 
     /// <summary>Value accessor.</summary>
+    /// <value>Value accessor.</value>
     T Value { get; set; }
   }
 
   /**<summary>Interface for object properties.</summary>
    * <remarks>Retained for backwards compatibility.</remarks>
    */
-  [GUID(Constants.IidIProperty), Obsolete]
-  public interface IProperty: IProperty<object> { }
+  [ Obsolete]
+
+    /// <summary>Not documented yet.</summary>
+  public interface IProperty : IProperty<object> {
+}
 
   /**<summary>Interface for boolean properties.</summary>
    * <remarks>Retained for backwards compatibility.</remarks>
    */
-  [GUID(Constants.IidIBooleanProperty), Obsolete]
-  public interface IBooleanProperty: IProperty<bool> { }
+  [Obsolete]
+
+    /// <summary>Not documented yet.</summary>
+  public interface IBooleanProperty : IProperty<bool> {
+}
 
   /**<summary>Interface for integer properties.</summary>
    * <remarks>Retained for backwards compatibility.</remarks>
    */
-  [GUID(Constants.IidIIntegerProperty), Obsolete]
-  public interface IIntegerProperty: IProperty<int> {}
+  // [GUID(Constants.IidIIntegerProperty), Obsolete]
+
+    /// <summary>Not documented yet.</summary>
+  public interface IIntegerProperty : IProperty<int> {
+}
 
   /**<summary>Interface for string properties.</summary>
    * <remarks>Retained for backwards compatibility.</remarks>
    */
-  [GUID(Constants.IidIStringProperty), Obsolete]
-  public interface IStringProperty: IProperty<string> { }
+ // //[GUID(Constants.IidIStringProperty), Obsolete]
+
+    /// <summary>Not documented yet.</summary>
+  public interface IStringProperty : IProperty<string> {
+}
 
   /**<summary>Abstract base class for all errors passed to any of the
    * <see cref="IErrorHandler"/> call-backs.</summary>
@@ -1042,8 +1190,11 @@ namespace Org.System.Xml.Sax {
      >
    * SAXParseException on www.saxproject.org</seealso>
    */
+
+    /// <summary>Not documented yet.</summary>
   public abstract class ParseError {
     /// <summary>Error message. Must not be <c>null</c></summary>
+    /// <value>Error message. Must not be <c>null</c>.</value>
     public virtual string Message
     {
       get {
@@ -1058,6 +1209,10 @@ namespace Org.System.Xml.Sax {
     /// was violated. This may also refer to a custom error id message. Is
     /// <c>null</c> if such information is not available or
     /// applicable.</summary>
+    /// <value>Identifies which well-formedness or validation constraint
+    /// was violated. This may also refer to a custom error id message. Is
+    /// <c>null</c> if such information is not available or
+    /// applicable.</value>
     public virtual string ErrorId
     {
       get {
@@ -1068,6 +1223,9 @@ namespace Org.System.Xml.Sax {
     /// <summary>The public identifier of the entity where the error
     /// occurred, or <c>null</c> if none is available or
     /// applicable.</summary>
+    /// <value>The public identifier of the entity where the error
+    /// occurred, or <c>null</c> if none is available or
+    /// applicable.</value>
     public virtual string PublicId
     {
       get {
@@ -1078,6 +1236,9 @@ namespace Org.System.Xml.Sax {
     /// <summary>The system identifier of the entity where the error
     /// occurred, or <c>null</c> if none is available or
     /// applicable.</summary>
+    /// <value>The system identifier of the entity where the error
+    /// occurred, or <c>null</c> if none is available or
+    /// applicable.</value>
     public virtual string SystemId
     {
       get {
@@ -1088,6 +1249,8 @@ namespace Org.System.Xml.Sax {
     /// <summary>The line number of the end of the text where the error
     /// occurred, or <c>-1</c> if none is available or
     /// applicable.</summary>
+    /// <value>The line number of the end of the text where the error
+    /// occurred, or <c>-1</c> if none is available or applicable.</value>
     /// <remarks>This number is 1-based.</remarks>
     public virtual long LineNumber
     {
@@ -1099,6 +1262,8 @@ namespace Org.System.Xml.Sax {
     /// <summary>The column number of the end of the text where the error
     /// occurred, or <c>-1</c> if none is available or
     /// applicable.</summary>
+    /// <value>The column number of the end of the text where the error
+    /// occurred, or <c>-1</c> if none is available or applicable.</value>
     /// <remarks>This number is 1-based.</remarks>
     public virtual long ColumnNumber
     {
@@ -1109,6 +1274,8 @@ namespace Org.System.Xml.Sax {
 
     /// <summary>The underlying exception, or <c>null</c> if none
     /// exists.</summary>
+    /// <value>The underlying exception, or <c>null</c> if none
+    /// exists.</value>
     public virtual Exception BaseException
     {
       get {
@@ -1131,13 +1298,27 @@ namespace Org.System.Xml.Sax {
    * <see href="http://www.saxproject.org/apidoc/org/xml/sax/SAXException.html">
    * SAXException</see>.</remarks>
    */
-  public class SaxException: Exception
+
+    /// <summary>Not documented yet.</summary>
+  public class SaxException : Exception
   {
-    public SaxException() { }
+    /// <summary>Initializes a new instance of the SaxException
+    /// class.</summary>
+    public SaxException() {
+}
 
-    public SaxException(string message): base(message) { }
+    /// <summary>Initializes a new instance of the SaxException
+    /// class.</summary>
+    /// <param name='message'>A string object.</param>
+    public SaxException(string message) : base(message) {
+}
 
-    public SaxException(string message, Exception e): base(message, e) { }
+    /// <summary>Initializes a new instance of the SaxException
+    /// class.</summary>
+    /// <param name='message'>A string object.</param>
+    /// <param name='e'>An Exception object.</param>
+    public SaxException(string message, Exception e) : base(message, e) {
+}
 
     /* The .NET Exception class already implements all of the below,
      * including the various constructors desribed in the Java docs.
@@ -1157,17 +1338,34 @@ namespace Org.System.Xml.Sax {
      >
    * SAXParseException on www.saxproject.org</seealso>
    */
-  public class SaxParseException: SaxException
+
+    /// <summary>Not documented yet.</summary>
+  public class SaxParseException : SaxException
   {
     private ParseError error;
 
-    public SaxParseException() { }
+    /// <summary>Initializes a new instance of the SaxParseException
+    /// class.</summary>
+    public SaxParseException() {
+}
 
-    public SaxParseException(string message): base(message) { }
+    /// <summary>Initializes a new instance of the SaxParseException
+    /// class.</summary>
+    /// <param name='message'>A string object.</param>
+    public SaxParseException(string message) : base(message) {
+}
 
-    public SaxParseException(string message, Exception e): base(message, e) { }
+    /// <summary>Initializes a new instance of the SaxParseException
+    /// class.</summary>
+    /// <param name='message'>A string object.</param>
+    /// <param name='e'>An Exception object.</param>
+    public SaxParseException(string message, Exception e) : base(message, e) {
+}
 
-    public SaxParseException(ParseError error):
+    /// <summary>Initializes a new instance of the SaxParseException
+    /// class.</summary>
+    /// <param name='error'>A ParseError object.</param>
+    public SaxParseException(ParseError error) :
       base(error.Message, error.BaseException) {
       this.error = error;
     }
@@ -1177,7 +1375,7 @@ namespace Org.System.Xml.Sax {
     public ParseError Error
     {
       get {
- return error;
+ return this.error;
 }
     }
   }
@@ -1189,14 +1387,22 @@ namespace Org.System.Xml.Sax {
      href="http://www.saxproject.org/apidoc/org/xml/sax/InputSource.html" >
    * InputSource on www.saxproject.org</seealso>
    */
+
+    /// <summary>Not documented yet.</summary>
   public class InputSource {
     private string publicId, encoding;
     private Uri systemId;
 
-    public InputSource() { }
+    /// <summary>Initializes a new instance of the InputSource
+    /// class.</summary>
+    public InputSource() {
+}
 
+    /// <summary>Initializes a new instance of the InputSource
+    /// class.</summary>
+    /// <param name='systemId'>A string object.</param>
     public InputSource(string systemId) {
-      SystemId = systemId;
+      this.SystemId = systemId;
     }
 
     /// <summary>See
@@ -1204,15 +1410,17 @@ namespace Org.System.Xml.Sax {
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/InputSource.html#setEncoding(java.lang.String)'>InputSource.get/setEncoding</see>
     /// on www.saxproject.org.</summary>
     /// <value>See &lt;see
-    /// href=&apos;http://www.saxproject.org/apidoc/org/xml/sax/InputSource.html#setEncoding(java.lang.String)&apos;&gt;
+    /// href=&#x27;http://www.saxproject.org/apidoc/org/xml/sax/InputSource.html#setEncoding(java.lang.String)&#x27;&gt;
     /// InputSource.get/setEncoding&lt;/see&gt; on
     /// www.saxproject.org.</value>
     public string Encoding
     {
       get {
- return encoding;
+ return this.encoding;
 }
-      set { encoding = value; }
+
+      set {
+ this.encoding = value; }
     }
 
     /// <summary>See
@@ -1220,15 +1428,17 @@ namespace Org.System.Xml.Sax {
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/InputSource.html#setPublicId(java.lang.String)'>InputSource.get/setPublicId</see>
     /// on www.saxproject.org.</summary>
     /// <value>See &lt;see
-    /// href=&apos;http://www.saxproject.org/apidoc/org/xml/sax/InputSource.html#setPublicId(java.lang.String)&apos;&gt;
+    /// href=&#x27;http://www.saxproject.org/apidoc/org/xml/sax/InputSource.html#setPublicId(java.lang.String)&#x27;&gt;
     /// InputSource.get/setPublicId&lt;/see&gt; on
     /// www.saxproject.org.</value>
     public string PublicId
     {
       get {
- return publicId;
+ return this.publicId;
 }
-      set { publicId = value; }
+
+      set {
+ this.publicId = value; }
     }
 
     /// <summary>See
@@ -1236,25 +1446,26 @@ namespace Org.System.Xml.Sax {
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/InputSource.html#setSystemId(java.lang.String)'>InputSource.get/setSystemId</see>
     /// on www.saxproject.org.</summary>
     /// <value>See &lt;see
-    /// href=&apos;http://www.saxproject.org/apidoc/org/xml/sax/InputSource.html#setSystemId(java.lang.String)&apos;&gt;
+    /// href=&#x27;http://www.saxproject.org/apidoc/org/xml/sax/InputSource.html#setSystemId(java.lang.String)&#x27;&gt;
     /// InputSource.get/setSystemId&lt;/see&gt; on
     /// www.saxproject.org.</value>
     public string SystemId
     {
       get {
-        if (systemId == null) {
+        if (this.systemId == null) {
  return null;
 } else {
- return systemId.AbsoluteUri;
+ return this.systemId.AbsoluteUri;
 }
       }
+
       set {
         if (value == null) {
- systemId = null;
+ this.systemId = null;
 }
         else
           // if there is no exception then we have an absolute URI
-          systemId = new Uri(value);
+          this.systemId = new Uri(value);
       }
     }
   }
@@ -1268,17 +1479,30 @@ namespace Org.System.Xml.Sax {
      href="http://www.saxproject.org/apidoc/org/xml/sax/InputSource.html" >
    * InputSource on www.saxproject.org</seealso>
    */
-  public class InputSource<S>: InputSource
+
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+  public class InputSource<S> : InputSource
   {
     private S source;
 
-    public InputSource() { }
+    /// <summary>Initializes a new instance of the InputSource
+    /// class.</summary>
+    public InputSource() {
+}
 
+    /// <summary>Initializes a new instance of the InputSource
+    /// class.</summary>
+    /// <param name='source'>A S object.</param>
     public InputSource(S source) {
       this.source = source;
     }
 
-    public InputSource(S source, string systemId): base(systemId) {
+    /// <summary>Initializes a new instance of the InputSource
+    /// class.</summary>
+    /// <param name='source'>A S object.</param>
+    /// <param name='systemId'>A string object.</param>
+    public InputSource(S source, string systemId) : base(systemId) {
       this.source = source;
     }
 
@@ -1290,11 +1514,12 @@ namespace Org.System.Xml.Sax {
     public S Source
     {
       get {
- return source;
+ return this.source;
 }
+
       set {
         if (value == null) {
- throw new ArgumentNullException("Source");
+ throw new ArgumentNullException(nameof(this.Source));
 }
         this.source = value;
       }

@@ -9,7 +9,10 @@ at: http://peteroupc.github.io/
 namespace com.upokecenter.util {
 using System;
 
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public interface IBoundAction<T> {
+    /// <summary>Not documented yet.</summary>
    void action(Object thisObject, params T[] parameters);
 }
 }

@@ -45,7 +45,11 @@ public sealed class NodeType {
 
     /// <summary>A DOCTYPE node.</summary>
   public const int DOCUMENT_TYPE_NODE = 10;
+
+    /// <summary>Not documented yet.</summary>
   public const int PROCESSING_INSTRUCTION_NODE = 7;
-  private NodeType() {}
+
+  private NodeType() {
+}
 }
 }

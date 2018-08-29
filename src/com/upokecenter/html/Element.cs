@@ -1,4 +1,4 @@
-/*
+﻿/*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 
@@ -40,13 +40,13 @@ internal class Element : Node, IElement {
   }
 
   internal static Element fromToken(HtmlParser.StartTagToken token) {
-    return fromToken(token, HtmlParser.HTML_NAMESPACE);
+    return fromToken(token, HtmlCommon.HTML_NAMESPACE);
   }
 
   internal static Element fromToken(
       HtmlParser.StartTagToken token,
       string _namespace) {
-    Element ret = new Element();
+    var ret = new Element();
     ret.name = token.getName();
     ret.attributes = new List<Attr>();
     foreach (var attribute in token.getAttributes()) {
@@ -95,7 +95,7 @@ internal class Element : Node, IElement {
       Element e=(Element)c;
       if (s == null) {
         nodes.Add(e);
-      } else if (HtmlParser.HTML_NAMESPACE.Equals(e.getNamespaceURI()) &&
+      } else if (HtmlCommon.HTML_NAMESPACE.Equals(e.getNamespaceURI()) &&
           e.getLocalName().Equals(sLowercase)) {
         nodes.Add(e);
       } else if (e.getLocalName().Equals(s)) {
@@ -155,7 +155,7 @@ internal class Element : Node, IElement {
     }
     IList<IElement> ret = new List<IElement>();
     if (((Document) getOwnerDocument()).isHtmlDocument()) {
-      string lowerTagName = StringUtility.toLowerCaseAscii(tagName);
+      string lowerTagName = DataUtilities.ToLowerCaseAscii(tagName);
       foreach (var node in getChildNodes()) {
         collectElementsHtml(node, tagName, lowerTagName, ret);
       }
@@ -212,12 +212,12 @@ internal class Element : Node, IElement {
       tagName=prefix+":"+name;
     }
     return ((getOwnerDocument() is Document) &&
-        HtmlParser.HTML_NAMESPACE.Equals(_namespace)) ?
-          (StringUtility.toUpperCaseAscii(tagName)) : (tagName);
+        HtmlCommon.HTML_NAMESPACE.Equals(_namespace)) ?
+          (DataUtilities.ToUpperCaseAscii(tagName)) : (tagName);
   }
 
   public override sealed string getTextContent() {
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     foreach (var node in getChildNodes()) {
       if (node.getNodeType() != NodeType.COMMENT_NODE) {
         builder.Append(node.getTextContent());
@@ -227,18 +227,16 @@ internal class Element : Node, IElement {
   }
 
   internal bool isHtmlElement(string name) {
- return name.Equals(this.name) &&
-      HtmlParser.HTML_NAMESPACE.Equals(_namespace);
+ return name.Equals(this.name) && HtmlCommon.HTML_NAMESPACE.Equals(_namespace);
   }
 
   internal bool isMathMLElement(string name) {
     return name.Equals(this.name) &&
-      HtmlParser.MATHML_NAMESPACE.Equals(_namespace);
+      HtmlCommon.MATHML_NAMESPACE.Equals(_namespace);
   }
 
   internal bool isSvgElement(string name) {
-  return name.Equals(this.name) &&
-      HtmlParser.SVG_NAMESPACE.Equals(_namespace);
+  return name.Equals(this.name) && HtmlCommon.SVG_NAMESPACE.Equals(_namespace);
   }
 
   internal void mergeAttributes(HtmlParser.StartTagToken token) {
@@ -271,19 +269,19 @@ internal class Element : Node, IElement {
   }
 
   internal override sealed string toDebugString() {
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     string extra="";
-    if (HtmlParser.MATHML_NAMESPACE.Equals(_namespace)) {
+    if (HtmlCommon.MATHML_NAMESPACE.Equals(_namespace)) {
       extra="math ";
     }
-    if (HtmlParser.SVG_NAMESPACE.Equals(_namespace)) {
+    if (HtmlCommon.SVG_NAMESPACE.Equals(_namespace)) {
       extra="svg ";
     }
     builder.Append("<"+extra+name.ToString()+">\n");
-    List<IAttr> attribs = new List<IAttr>(getAttributes());
+    var attribs = new List<IAttr>(getAttributes());
     attribs.Sort(new AttributeNameComparator());
     foreach (var attribute in attribs) {
-      //Console.WriteLine("%s %s"
+      //DebugUtility.Log("%s %s"
       // , attribute.getNamespace(), attribute.getLocalName());
       if (attribute.getNamespaceURI() != null) {
         string extra1="";

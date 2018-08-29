@@ -6,82 +6,29 @@ using com.upokecenter.util;
 
 namespace PeterO.Support {
     /// <summary>Description of Support.</summary>
-  public class File {
-    String path;
-    public File(String path) {
-      this.path = path;
-    }
-    public override string ToString() {
-      return path;
-    }
-
-    public File(File path, String file) {
-      this.path = Path.Combine(path.ToString(), file);
-    }
-
-    public File(String path, String file) {
-      this.path = Path.Combine(path, file);
-    }
-    public bool delete() {
-      System.IO.File.Delete(path);
-      return !exists();
-    }
-    public String getName() {
-      return System.IO.Path.GetFileName(path);
-    }
-    public bool exists() {
-      return System.IO.File.Exists(path);
-    }
-    public bool isDirectory() {
-      return (System.IO.File.GetAttributes(path)&FileAttributes.Directory)==
-        FileAttributes.Directory;
-    }
-    public bool isFile() {
-      return (System.IO.File.GetAttributes(path)&FileAttributes.Directory)==
-        FileAttributes.Normal;
-    }
-    public long lastModified() {
-      DateTime t = System.IO.File.GetLastWriteTimeUtc(path);
-      long msec = t.Millisecond;
-      long
-  time = DateTimeUtility.toGmtDate(t.Year, t.Month, t.Day, t.Hour, t.Minute,
-    t.Second)+msec;
-      return time;
-    }
-    public long length() {
-      return new FileInfo(path).Length;
-    }
-    public String toURI() {
-      var builder = new UriBuilder();
-      builder.Scheme="file";
-      builder.Path = path;
-      return builder.Uri.ToString();
-    }
-    public File[] listFiles() {
-      if (isFile()) {
- return new File[0];
-}
-      var ret = new List<File>();
-      foreach (var f in Directory.GetFiles(path)) {
-        ret.Add(new File(f));
-      }
-      foreach (var f in Directory.GetDirectories(path)) {
-        ret.Add(new File(f));
-      }
-      return ret.ToArray();
-    }
-  }
-
   public static class Collections {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='list'>Not documented yet.</param>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+    /// <returns>An IList(T) object.</returns>
     public static IList<T> UnmodifiableList<T>(IList<T> list) {
-      return (list.IsReadOnly) ? (list) : (new
+      return (list.IsReadOnly) ? list : (new
         System.Collections.ObjectModel.ReadOnlyCollection<T>(list));
     }
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='list'>Not documented yet.</param>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+    /// <returns>An IDictionary(TKey, TValue) object.</returns>
     public static IDictionary<TKey, TValue>
       UnmodifiableMap<TKey, TValue>(IDictionary<TKey, TValue> list) {
-      return (list.IsReadOnly) ? (list) : (new
-        ReadOnlyDictionary<TKey, TValue>(list));
+return list.IsReadOnly ? list : (new ReadOnlyDictionary<TKey, TValue>(list));
     }
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='enu'>Not documented yet.</param>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+    /// <returns>A T[] object.</returns>
     public static T[] ToArray<T>(IEnumerable<T> enu) {
       return ((enu as List<T>) ?? (new List<T>(enu))).ToArray();
     }
@@ -90,197 +37,249 @@ namespace PeterO.Support {
     /// <summary>Dictionary that allows null keys and doesn't throw
     /// exceptions if keys are not found, both of which are HashMap
     /// behaviors.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public sealed class LenientDictionary<TKey, TValue> :
     IDictionary<TKey, TValue> {
     private TValue nullValue;
     private bool hasNull = false;
-    private IDictionary<TKey, TValue> wrapped;
+    private IDictionary<TKey, TValue> valueWrapped;
 
+    /// <summary>Initializes a new instance of the LenientDictionary
+    /// class.</summary>
     public LenientDictionary() {
-      this.wrapped = new Dictionary<TKey, TValue>();
+      this.valueWrapped = new Dictionary<TKey, TValue>();
     }
 
+    /// <summary>Initializes a new instance of the LenientDictionary
+    /// class.</summary>
+    /// <param name='other'>An IDictionary object.</param>
     public LenientDictionary(IDictionary<TKey, TValue> other) {
       if (default(TKey) == null && other.ContainsKey(default(TKey))) {
         // If dictionary contains null, add the values manually,
         // because the constructor will throw an exception
         // otherwise
-        this.wrapped = new Dictionary<TKey, TValue>();
+        this.valueWrapped = new Dictionary<TKey, TValue>();
         foreach (var kvp in other) {
           this.AddInternal(kvp.Key, kvp.Value);
         }
       } else {
-        this.wrapped = new Dictionary<TKey, TValue>(other);
+        this.valueWrapped = new Dictionary<TKey, TValue>(other);
       }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='key'>Not documented yet.</param>
+    /// <returns>A TValue object.</returns>
     public TValue this[TKey key] {
       get {
-        if (Object.Equals(key, null) && hasNull && default(TKey) == null) {
- return nullValue;
+        if (Object.Equals(key, null) && this.hasNull && default(TKey) == null) {
+ return this.nullValue;
 }
         TValue val;
-        return (wrapped.TryGetValue(key, out val)) ? (val) : (default(TValue));
+     return this.valueWrapped.TryGetValue(key, out val) ? val :
+          default(TValue);
       }
+
       set {
         if (Object.Equals(key, null) && default(TKey) == null) {
-          hasNull = true;
-          nullValue = value;
+          this.hasNull = true;
+          this.nullValue = value;
         }
-        wrapped[key]=value;
+        this.valueWrapped[key] = value;
       }
     }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
     public ICollection<TKey> Keys {
       get {
-        if (hasNull) {
-          var keys = new List<TKey>(wrapped.Keys);
+        if (this.hasNull) {
+          var keys = new List<TKey>(this.valueWrapped.Keys);
           keys.Add(default(TKey));
           return keys;
         } else {
- return wrapped.Keys;
+ return this.valueWrapped.Keys;
 }
       }
     }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
     public ICollection<TValue> Values {
       get {
-        if (hasNull) {
-          var keys = new List<TValue>(wrapped.Values);
-          keys.Add(nullValue);
+        if (this.hasNull) {
+          var keys = new List<TValue>(this.valueWrapped.Values);
+          keys.Add(this.nullValue);
           return keys;
         } else {
- return wrapped.Values;
+ return this.valueWrapped.Values;
 }
       }
     }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
     public int Count {
       get {
-        return wrapped.Count+(hasNull ? 1 : 0);
+        return this.valueWrapped.Count + (this.hasNull ? 1 : 0);
       }
     }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
     public bool IsReadOnly {
       get {
         return false;
       }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='key'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
     public bool ContainsKey(TKey key) {
-      return (Object.Equals(key, null) && default(TKey) == null) ? (hasNull):
-        (wrapped.ContainsKey(key));
+    return (Object.Equals(key, null) && default(TKey) == null) ?
+        this.hasNull : this.valueWrapped.ContainsKey(key);
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='key'>Not documented yet.</param>
+    /// <param name='value'>Not documented yet.</param>
     public void Add(TKey key, TValue value) {
-      AddInternal(key, value);
+      this.AddInternal(key, value);
     }
 
     private void AddInternal(TKey key, TValue value) {
       if (Object.Equals(key, null)) {
-        hasNull = true;
-        nullValue = value;
+        this.hasNull = true;
+        this.nullValue = value;
       } else {
- wrapped[key]=value;
+ this.valueWrapped[key] = value;
 }
     }
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='key'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
     public bool Remove(TKey key) {
       if (Object.Equals(key, null)) {
-        bool ret = hasNull;
-        hasNull = false;
-        nullValue = default(TValue);
+        bool ret = this.hasNull;
+        this.hasNull = false;
+        this.nullValue = default(TValue);
         return ret;
       } else {
- return wrapped.Remove(key);
+ return this.valueWrapped.Remove(key);
 }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='key'>Not documented yet.</param>
+    /// <param name='value'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
     public bool TryGetValue(TKey key, out TValue value) {
       if (Object.Equals(key, null)) {
-        value=(hasNull) ? nullValue : default(TValue);
-        return hasNull;
+        value = this.hasNull ? this.nullValue : default(TValue);
+        return this.hasNull;
       } else {
- return wrapped.TryGetValue(key, out value);
+ return this.valueWrapped.TryGetValue(key, out value);
 }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='item'>Not documented yet.</param>
     public void Add(KeyValuePair<TKey, TValue> item) {
-      Add(item.Key, item.Value);
+      this.Add(item.Key, item.Value);
     }
 
+    /// <summary>Not documented yet.</summary>
     public void Clear() {
-      hasNull = true;
-      nullValue = default(TValue);
-      wrapped.Clear();
+      this.hasNull = true;
+      this.nullValue = default(TValue);
+      this.valueWrapped.Clear();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='item'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
     public bool Contains(KeyValuePair<TKey, TValue> item) {
-      return ContainsKey(item.Key);
+      return this.ContainsKey(item.Key);
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='array'>Not documented yet.</param>
+    /// <param name='arrayIndex'>Not documented yet.</param>
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
-      if (array != null && arrayIndex<array.Length && hasNull) {
-     array[arrayIndex]=new KeyValuePair<TKey,
-          TValue>(default(TKey), nullValue);
+      if (array != null && arrayIndex < array.Length && this.hasNull) {
+     array[arrayIndex] = new KeyValuePair<TKey,
+          TValue>(default(TKey), this.nullValue);
         ++arrayIndex;
       }
-      wrapped.CopyTo(array, arrayIndex);
+      this.valueWrapped.CopyTo(array, arrayIndex);
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='item'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
     public bool Remove(KeyValuePair<TKey, TValue> item) {
-      return Remove(item.Key);
+      return this.Remove(item.Key);
     }
 
     private IEnumerable<KeyValuePair<TKey, TValue>> Iterator() {
-      if (hasNull) {
-        yield return new KeyValuePair<TKey, TValue>(default(TKey), nullValue);
+      if (this.hasNull) {
+    yield return new KeyValuePair<TKey, TValue>(
+  default(TKey),
+  this.nullValue);
       }
-      foreach (var kvp in wrapped) {
+      foreach (var kvp in this.valueWrapped) {
         yield return kvp;
       }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
-      return Iterator().GetEnumerator();
+      return this.Iterator().GetEnumerator();
     }
 
   System.Collections.IEnumerator
       System.Collections.IEnumerable.GetEnumerator() {
-      return Iterator().GetEnumerator();
+      return this.Iterator().GetEnumerator();
     }
   }
 
-  sealed class InputStreamWrapper : InputStream {
-    Stream istr;
-    public InputStreamWrapper(Stream istr) {
-      this.istr = istr;
+  internal sealed class InputStreamWrapper : InputStream {
+    private Stream valueIstr;
+
+    public InputStreamWrapper(Stream valueIstr) {
+      this.valueIstr = valueIstr;
     }
     // Just ensures that read never returns a number
     // less than 0, for compatibility with StreamReader
     public override int Read(byte[] buffer, int offset, int count) {
-      int ret = istr.Read(buffer, offset, count);
-      if (ret< 0) {
+      int ret = this.valueIstr.Read(buffer, offset, count);
+      if (ret < 0) {
  ret = 0;
 }
       return ret;
     }
 
     public override int ReadByte() {
-      return istr.ReadByte();
+      return this.valueIstr.ReadByte();
     }
   }
 
-  sealed class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
-    private IDictionary<TKey, TValue> wrapped;
+  internal sealed class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey,
+    TValue> {
+    private IDictionary<TKey, TValue> valueWrapped;
 
-    public ReadOnlyDictionary(IDictionary<TKey, TValue> wrapped) {
-      this.wrapped = wrapped;
+    public ReadOnlyDictionary(IDictionary<TKey, TValue> valueWrapped) {
+      this.valueWrapped = valueWrapped;
     }
 
     public TValue this[TKey key] {
       get {
-        return wrapped[key];
+        return this.valueWrapped[key];
       }
+
       set {
         throw new NotSupportedException();
       }
@@ -288,19 +287,19 @@ public sealed class LenientDictionary<TKey, TValue> :
 
     public ICollection<TKey> Keys {
       get {
-        return wrapped.Keys;
+        return this.valueWrapped.Keys;
       }
     }
 
     public ICollection<TValue> Values {
       get {
-        return wrapped.Values;
+        return this.valueWrapped.Values;
       }
     }
 
     public int Count {
       get {
-        return wrapped.Count;
+        return this.valueWrapped.Count;
       }
     }
 
@@ -311,7 +310,7 @@ public sealed class LenientDictionary<TKey, TValue> :
     }
 
     public bool ContainsKey(TKey key) {
-      return wrapped.ContainsKey(key);
+      return this.valueWrapped.ContainsKey(key);
     }
 
     public void Add(TKey key, TValue value) {
@@ -323,7 +322,7 @@ public sealed class LenientDictionary<TKey, TValue> :
     }
 
     public bool TryGetValue(TKey key, out TValue value) {
-      return wrapped.TryGetValue(key, out value);
+      return this.valueWrapped.TryGetValue(key, out value);
     }
 
     public void Add(KeyValuePair<TKey, TValue> item) {
@@ -335,11 +334,11 @@ public sealed class LenientDictionary<TKey, TValue> :
     }
 
     public bool Contains(KeyValuePair<TKey, TValue> item) {
-      return wrapped.Contains(item);
+      return this.valueWrapped.Contains(item);
     }
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
-      wrapped.CopyTo(array, arrayIndex);
+      this.valueWrapped.CopyTo(array, arrayIndex);
     }
 
     public bool Remove(KeyValuePair<TKey, TValue> item) {
@@ -347,63 +346,88 @@ public sealed class LenientDictionary<TKey, TValue> :
     }
 
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
-      return wrapped.GetEnumerator();
+      return this.valueWrapped.GetEnumerator();
     }
 
   System.Collections.IEnumerator
       System.Collections.IEnumerable.GetEnumerator() {
-      return wrapped.GetEnumerator();
+      return this.valueWrapped.GetEnumerator();
     }
   }
 
+    /// <summary>Not documented yet.</summary>
   public sealed class WrappedInputStream : InputStream {
-    Stream wrapped = null;
-    public WrappedInputStream(Stream wrapped) {
-      this.wrapped = wrapped;
+    private Stream valueWrapped = null;
+
+    /// <summary>Initializes a new instance of the WrappedInputStream
+    /// class.</summary>
+    /// <param name='valueWrapped'>A Stream object.</param>
+    public WrappedInputStream(Stream valueWrapped) {
+      this.valueWrapped = valueWrapped;
     }
 
+    /// <summary>Not documented yet.</summary>
     public new void Dispose() {
-      wrapped.Dispose();
+      this.valueWrapped.Dispose();
       base.Dispose();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public override sealed int ReadByte() {
-      return wrapped.ReadByte();
+      return this.valueWrapped.ReadByte();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='byteCount'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     public override sealed long skip(long byteCount) {
       var data = new byte[1024];
       long ret = 0;
-      while (byteCount< 0) {
-        int bc=(int)Math.Min(byteCount, data.Length);
-        int c = Read(data, 0, bc);
+      while (byteCount < 0) {
+        var bc = (int)Math.Min(byteCount, data.Length);
+        int c = this.Read(data, 0, bc);
         if (c <= 0) {
           break;
         }
-        ret+=c;
-        byteCount-=c;
+        ret += c;
+        byteCount -= c;
       }
       return ret;
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public override sealed int Read(byte[] buffer, int offset, int byteCount) {
-      return wrapped.Read(buffer, offset, byteCount);
+      return this.valueWrapped.Read(buffer, offset, byteCount);
     }
   }
 
+    /// <summary>Not documented yet.</summary>
   public sealed class ByteArrayInputStream : InputStream {
     private byte[] buffer = null;
     private int pos = 0;
     private int endpos = 0;
-    private long markpos=-1;
+    private long markpos = -1;
     private int posAtMark = 0;
     private long marklimit = 0;
 
-  public ByteArrayInputStream(byte[] buffer) : this(buffer, 0,
-      buffer.Length) {
+    /// <summary>Initializes a new instance of the ByteArrayInputStream
+    /// class.</summary>
+    /// <param name='buffer'>A byte array.</param>
+  public ByteArrayInputStream(
+  byte[] buffer) : this(
+  buffer,
+  0,
+  buffer.Length) {
     }
 
-    public ByteArrayInputStream (byte [] buffer, int index, int length) {
+    /// <summary>Initializes a new instance of the ByteArrayInputStream
+    /// class.</summary>
+    /// <param name='buffer'>A byte array.</param>
+    /// <param name='index'>A 32-bit signed integer.</param>
+    /// <param name='length'>Another 32-bit signed integer.</param>
+    public ByteArrayInputStream(byte[] buffer, int index, int length) {
       if (buffer == null || index < 0 || length < 0 || index + length >
         buffer.Length) {
         throw new ArgumentException();
@@ -413,154 +437,184 @@ public sealed class LenientDictionary<TKey, TValue> :
       this.endpos = index + length;
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public override sealed int available() {
-      return endpos-pos;
+      return this.endpos - this.pos;
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public override sealed bool markSupported() {
       return true;
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='limit'>Not documented yet.</param>
     public override sealed void mark(int limit) {
-      if (limit< 0) {
+      if (limit < 0) {
  throw new ArgumentException();
 }
-      markpos = 0;
-      posAtMark = pos;
-      marklimit = limit;
+      this.markpos = 0;
+      this.posAtMark = this.pos;
+      this.marklimit = limit;
     }
 
     private int readInternal(byte[] buf, int offset, int unitCount) {
       if (buf == null) {
  throw new ArgumentException();
 }
-      if (offset<0 || unitCount<0 || offset + unitCount>buf.Length) {
+      if (offset < 0 || unitCount < 0 || offset + unitCount > buf.Length) {
  throw new ArgumentOutOfRangeException();
 }
       if (unitCount == 0) {
  return 0;
 }
-      int total = Math.Min(unitCount, endpos-pos);
+      int total = Math.Min(unitCount, this.endpos - this.pos);
       if (total == 0) {
  return -1;
 }
-      Array.Copy(buffer, pos, buf, offset, total);
-      pos+=total;
+      Array.Copy(this.buffer, this.pos, buf, offset, total);
+      this.pos += total;
       return total;
     }
 
     private int readInternal() {
       // Read from buffer
-      return (pos<endpos) ? (buffer[pos++]&0xff) : (-1);
+      return (this.pos < this.endpos) ? (this.buffer[this.pos++] & 0xff) : (-1);
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public override sealed int ReadByte() {
-      if (markpos< 0) {
- return readInternal();
+      if (this.markpos < 0) {
+ return this.readInternal();
 } else {
-        int c = readInternal();
-        if (c >= 0 && markpos >= 0) {
-          ++markpos;
-          if (markpos>marklimit) {
-            marklimit = 0;
-            markpos=-1;
+        int c = this.readInternal();
+        if (c >= 0 && this.markpos >= 0) {
+          ++this.markpos;
+          if (this.markpos > this.marklimit) {
+            this.marklimit = 0;
+            this.markpos = -1;
           }
         }
         return c;
       }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='byteCount'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     public override sealed long skip(long byteCount) {
       var data = new byte[1024];
       long ret = 0;
-      while (byteCount< 0) {
-        int bc=(int)Math.Min(byteCount, data.Length);
-        int c = Read(data, 0, bc);
+      while (byteCount < 0) {
+        var bc = (int)Math.Min(byteCount, data.Length);
+        int c = this.Read(data, 0, bc);
         if (c <= 0) {
           break;
         }
-        ret+=c;
-        byteCount-=c;
+        ret += c;
+        byteCount -= c;
       }
       return ret;
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public override sealed int Read(byte[] buffer, int offset, int byteCount) {
-      if (markpos< 0) {
- return readInternal(buffer, offset, byteCount);
+      if (this.markpos < 0) {
+ return this.readInternal(buffer, offset, byteCount);
 } else {
-        int c = readInternal(buffer, offset, byteCount);
-        if (c>0 && markpos >= 0) {
-          markpos+=c;
-          if (markpos>marklimit) {
-            marklimit = 0;
-            markpos=-1;
+        int c = this.readInternal(buffer, offset, byteCount);
+        if (c > 0 && this.markpos >= 0) {
+          this.markpos += c;
+          if (this.markpos > this.marklimit) {
+            this.marklimit = 0;
+            this.markpos = -1;
           }
         }
         return c;
       }
     }
+
+    /// <summary>Not documented yet.</summary>
     public override sealed void reset() {
-      if (markpos< 0) {
+      if (this.markpos < 0) {
  throw new IOException();
 }
-      pos = posAtMark;
+      this.pos = this.posAtMark;
     }
   }
 
+    /// <summary>Not documented yet.</summary>
   public sealed class BufferedInputStream : InputStream {
     private byte[] buffer = null;
     private int pos = 0;
     private int endpos = 0;
     private bool closed = false;
-    private long markpos=-1;
+    private long markpos = -1;
     private int posAtMark = 0;
     private long marklimit = 0;
     private Stream stream = null;
 
+    /// <summary>Initializes a new instance of the BufferedInputStream
+    /// class.</summary>
+    /// <param name='input'>A Stream object.</param>
     public BufferedInputStream(Stream input) : this(input, 8192) {
     }
 
+    /// <summary>Initializes a new instance of the BufferedInputStream
+    /// class.</summary>
+    /// <param name='input'>A Stream object.</param>
+    /// <param name='buffersize'>A 32-bit signed integer.</param>
     public BufferedInputStream(Stream input, int buffersize) {
       if (input == null) {
  throw new ArgumentNullException();
 }
-      if (buffersize< 0) {
+      if (buffersize < 0) {
  throw new ArgumentException();
 }
       this.buffer = new byte[buffersize];
       this.stream = input;
     }
 
+    /// <summary>Not documented yet.</summary>
     public new void Dispose() {
-      pos = 0;
-      endpos = 0;
+      this.pos = 0;
+      this.endpos = 0;
       this.stream.Dispose();
       base.Dispose();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public override sealed int available() {
-      return endpos-pos;
+      return this.endpos - this.pos;
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public override sealed bool markSupported() {
       return true;
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='limit'>Not documented yet.</param>
     public override sealed void mark(int limit) {
-      if (limit< 0) {
+      if (limit < 0) {
  throw new ArgumentException();
 }
-      markpos = 0;
-      posAtMark = pos;
-      marklimit = limit;
+      this.markpos = 0;
+      this.posAtMark = this.pos;
+      this.marklimit = limit;
     }
 
     private int readInternal(byte[] buf, int offset, int unitCount) {
       if (buf == null) {
  throw new ArgumentException();
 }
-      if (offset<0 || unitCount<0 || offset + unitCount>buf.Length) {
+      if (offset < 0 || unitCount < 0 || offset + unitCount > buf.Length) {
  throw new ArgumentOutOfRangeException();
 }
       if (unitCount == 0) {
@@ -568,189 +622,225 @@ public sealed class LenientDictionary<TKey, TValue> :
 }
       var total = 0;
       // Read from buffer
-      if (pos + unitCount <= endpos) {
-        Array.Copy(buffer, pos, buf, offset, unitCount);
-        pos+=unitCount;
+      if (this.pos + unitCount <= this.endpos) {
+        Array.Copy(this.buffer, this.pos, buf, offset, unitCount);
+        this.pos += unitCount;
         return unitCount;
       }
       // End pos is smaller than buffer size, fill
       // entire buffer if possible
       var count = 0;
-      if (endpos<buffer.Length) {
-        count = stream.Read(buffer, endpos, buffer.Length-endpos);
-        //Console.WriteLine("%s",this);
-        if (count>0) {
-          endpos+=count;
+      if (this.endpos < this.buffer.Length) {
+        count = this.stream.Read(
+  this.buffer,
+  this.endpos,
+  this.buffer.Length - this.endpos);
+        // DebugUtility.Log("%s",this);
+        if (count > 0) {
+          this.endpos += count;
         }
       }
       // Try reading from buffer again
-      if (pos + unitCount <= endpos) {
-        Array.Copy(buffer, pos, buf, offset, unitCount);
-        pos+=unitCount;
+      if (this.pos + unitCount <= this.endpos) {
+        Array.Copy(this.buffer, this.pos, buf, offset, unitCount);
+        this.pos += unitCount;
         return unitCount;
       }
       // expand the buffer
-      if (pos + unitCount>buffer.Length) {
-        var newBuffer = new byte[(buffer.Length*2)+unitCount];
-        Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
-        buffer = newBuffer;
+      if (this.pos + unitCount > this.buffer.Length) {
+        var newBuffer = new byte[(this.buffer.Length * 2) + unitCount];
+        Array.Copy(this.buffer, 0, newBuffer, 0, this.buffer.Length);
+        this.buffer = newBuffer;
       }
-   count = stream.Read(buffer, endpos,
-        Math.Min(unitCount, buffer.Length-endpos));
-      if (count>0) {
-        endpos+=count;
+   count = this.stream.Read(
+  this.buffer,
+  this.endpos,
+  Math.Min(unitCount, this.buffer.Length - this.endpos));
+      if (count > 0) {
+        this.endpos += count;
       }
       // Try reading from buffer a third time
-      if (pos + unitCount <= endpos) {
-        Array.Copy(buffer, pos, buf, offset, unitCount);
-        pos+=unitCount;
-        total+=unitCount;
-      } else if (endpos>pos) {
-        Array.Copy(buffer, pos, buf, offset, endpos-pos);
-        total+=(endpos-pos);
-        pos = endpos;
+      if (this.pos + unitCount <= this.endpos) {
+        Array.Copy(this.buffer, this.pos, buf, offset, unitCount);
+        this.pos += unitCount;
+        total += unitCount;
+      } else if (this.endpos > this.pos) {
+        Array.Copy(this.buffer, this.pos, buf, offset, this.endpos - this.pos);
+        total += this.endpos - this.pos;
+        this.pos = this.endpos;
       }
       return (total == 0) ? -1 : total;
     }
 
     private int readInternal() {
       // Read from buffer
-      if (pos<endpos) {
- return buffer[pos++]&0xff;
+      if (this.pos < this.endpos) {
+ return this.buffer[this.pos++] & 0xff;
 }
       // End pos is smaller than buffer size, fill
       // entire buffer if possible
-      if (endpos<buffer.Length) {
-        int count = stream.Read(buffer, endpos, buffer.Length-endpos);
-        if (count>0) {
-          endpos+=count;
+      if (this.endpos < this.buffer.Length) {
+        int count = this.stream.Read(
+  this.buffer,
+  this.endpos,
+  this.buffer.Length - this.endpos);
+        if (count > 0) {
+          this.endpos += count;
         }
       }
       // Try reading from buffer again
-      if (pos<endpos) {
- return buffer[pos++]&0xff;
+      if (this.pos < this.endpos) {
+ return this.buffer[this.pos++] & 0xff;
 }
       // No room, read next byte and put it in buffer
-      int c = stream.ReadByte();
-      if (c< 0) {
+      int c = this.stream.ReadByte();
+      if (c < 0) {
  return c;
 }
-      if (pos >= buffer.Length) {
-        var newBuffer = new byte[buffer.Length*2];
-        Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
-        buffer = newBuffer;
+      if (this.pos >= this.buffer.Length) {
+        var newBuffer = new byte[this.buffer.Length * 2];
+        Array.Copy(this.buffer, 0, newBuffer, 0, this.buffer.Length);
+        this.buffer = newBuffer;
       }
-      buffer[pos++]=((byte)(c & 0xff));
-      ++endpos;
+      this.buffer[this.pos++] = (byte)(c & 0xff);
+      ++this.endpos;
       return c;
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public override sealed int ReadByte() {
-      if (closed) {
+      if (this.closed) {
  throw new IOException();
 }
-      if (markpos< 0) {
- return readInternal();
+      if (this.markpos < 0) {
+ return this.readInternal();
 } else {
-        int c = readInternal();
-        if (c >= 0 && markpos >= 0) {
-          ++markpos;
-          if (markpos>marklimit) {
-            marklimit = 0;
-            markpos=-1;
+        int c = this.readInternal();
+        if (c >= 0 && this.markpos >= 0) {
+          ++this.markpos;
+          if (this.markpos > this.marklimit) {
+            this.marklimit = 0;
+            this.markpos = -1;
           }
         }
         return c;
       }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='byteCount'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     public override sealed long skip(long byteCount) {
-      if (closed) {
+      if (this.closed) {
  throw new IOException();
 }
       var data = new byte[1024];
       long ret = 0;
-      while (byteCount< 0) {
-        int bc=(int)Math.Min(byteCount, data.Length);
-        int c = Read(data, 0, bc);
+      while (byteCount < 0) {
+        var bc = (int)Math.Min(byteCount, data.Length);
+        int c = this.Read(data, 0, bc);
         if (c <= 0) {
           break;
         }
-        ret+=c;
-        byteCount-=c;
+        ret += c;
+        byteCount -= c;
       }
       return ret;
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public override sealed int Read(byte[] buffer, int offset, int byteCount) {
-      if (closed) {
+      if (this.closed) {
  throw new IOException();
 }
-      if (markpos< 0) {
- return readInternal(buffer, offset, byteCount);
+      if (this.markpos < 0) {
+ return this.readInternal(buffer, offset, byteCount);
 } else {
-        int c = readInternal(buffer, offset, byteCount);
-        if (c>0 && markpos >= 0) {
-          markpos+=c;
-          if (markpos>marklimit) {
-            marklimit = 0;
-            markpos=-1;
+        int c = this.readInternal(buffer, offset, byteCount);
+        if (c > 0 && this.markpos >= 0) {
+          this.markpos += c;
+          if (this.markpos > this.marklimit) {
+            this.marklimit = 0;
+            this.markpos = -1;
           }
         }
         return c;
       }
     }
+
+    /// <summary>Not documented yet.</summary>
     public override sealed void reset() {
-      if (markpos<0 || closed) {
+      if (this.markpos < 0 || this.closed) {
  throw new IOException();
 }
-      pos = posAtMark;
+      this.pos = this.posAtMark;
     }
   }
 
+    /// <summary>Not documented yet.</summary>
   public abstract class OutputStream : Stream {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='value'>Not documented yet.</param>
     public override sealed void SetLength(long value) {
       throw new NotSupportedException();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public override sealed long Seek(long offset, SeekOrigin origin) {
       throw new NotSupportedException();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public override sealed int Read(byte[] buffer, int offset, int count) {
       throw new NotSupportedException();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
     public override sealed long Position {
       get {
         throw new NotSupportedException();
       }
+
       set {
         throw new NotSupportedException();
       }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
     public override sealed long Length {
       get {
         throw new NotSupportedException();
       }
     }
 
+    /// <summary>Not documented yet.</summary>
     public override void Flush() {
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
     public override sealed bool CanWrite {
       get {
         return true;
       }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
     public override sealed bool CanSeek {
       get {
         return false;
       }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
     public override sealed bool CanRead {
       get {
         return false;
@@ -758,72 +848,100 @@ public sealed class LenientDictionary<TKey, TValue> :
     }
   }
 
+    /// <summary>Not documented yet.</summary>
   public abstract class InputStream : Stream {
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A 32-bit signed integer.</returns>
     public virtual int available() {
       return 0;
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='limit'>Not documented yet.</param>
     public virtual void mark(int limit) {
       throw new NotSupportedException();
     }
 
+    /// <summary>Not documented yet.</summary>
     public virtual void reset() {
       throw new NotSupportedException();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A Boolean object.</returns>
     public virtual bool markSupported() {
       return false;
     }
 
-    public virtual long skip (long count) {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='count'>Not documented yet.</param>
+    /// <returns>A 64-bit signed integer.</returns>
+    public virtual long skip(long count) {
       return 0;
     }
 
     //------------------------------------------
 
+    /// <summary>Not documented yet.</summary>
     public sealed override void Write(byte[] buffer, int offset, int count) {
       throw new NotSupportedException();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='value'>Not documented yet.</param>
     public sealed override void SetLength(long value) {
       throw new NotSupportedException();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
     public sealed override long Seek(long offset, SeekOrigin origin) {
       throw new NotSupportedException();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
     public sealed override long Position {
       get {
         throw new NotSupportedException();
       }
+
       set {
         throw new NotSupportedException();
       }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
     public sealed override long Length {
       get {
         throw new NotSupportedException();
       }
     }
 
+    /// <summary>Not documented yet.</summary>
     public sealed override void Flush() {
       throw new NotSupportedException();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
     public sealed override bool CanWrite {
       get {
         return false;
       }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
     public sealed override bool CanSeek {
       get {
         return false;
       }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <value>Value not documented yet.</value>
     public sealed override bool CanRead {
       get {
         return true;

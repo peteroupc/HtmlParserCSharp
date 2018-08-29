@@ -30,23 +30,27 @@ using System;
 using System.Text;
 
 sealed class DocumentType : Node, IDocumentType {
-  internal string publicId;
-  internal string systemId;
-  internal string name;
+  private string valuePublicId;
+  private string valueSystemId;
+  private string valueName;
 
   public DocumentType() : base(NodeType.DOCUMENT_TYPE_NODE) {
   }
+
   public string getName() {
-    return name;
+    return this.valueName;
   }
+
   public override sealed string getNodeName() {
-    return getName();
+    return this.getName();
   }
+
   public string getPublicId() {
-    return publicId;
+    return this.valuePublicId;
   }
+
   public string getSystemId() {
-    return systemId;
+    return this.valueSystemId;
   }
 
   public override sealed string getTextContent() {
@@ -54,14 +58,14 @@ sealed class DocumentType : Node, IDocumentType {
   }
 
   internal override sealed string toDebugString() {
-    StringBuilder builder = new StringBuilder();
-    builder.Append("<!DOCTYPE "+name);
-    if ((publicId != null && publicId.Length>0) ||
-        (systemId != null && systemId.Length>0)) {
-      builder.Append(publicId!=null && publicId.Length>0 ? " \""
-        +publicId.Replace("\n" ,"~~~~")+"\"" : " \"\"");
-      builder.Append(systemId!=null && systemId.Length>0 ? " \""
-        +systemId.Replace("\n" ,"~~~~")+"\"" : " \"\"");
+    var builder = new StringBuilder();
+    builder.Append("<!DOCTYPE " + this.valueName);
+    if ((this.valuePublicId != null && this.valuePublicId.Length > 0) ||
+        (this.valueSystemId != null && this.valueSystemId.Length > 0)) {
+      builder.Append(this.valuePublicId != null && this.valuePublicId.Length >
+        0 ? " \"" +this.valuePublicId.Replace("\n", "~~~~") + "\"" : " \"\"");
+      builder.Append(this.valueSystemId != null && this.valueSystemId.Length >
+        0 ? " \"" +this.valueSystemId.Replace("\n", "~~~~") + "\"" : " \"\"");
     }
     builder.Append(">\n");
     return builder.ToString();

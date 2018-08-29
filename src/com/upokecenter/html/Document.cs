@@ -30,58 +30,62 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using com.upokecenter.util;
+
 internal class Document : Node, IDocument {
-  internal DocumentType doctype;
-  internal string encoding;
+  private DocumentType valueDoctype;
+  private string valueEncoding;
   private DocumentMode docmode = DocumentMode.NoQuirksMode;
 
-  internal string address;
+  private string valueAddress;
 
-  internal string defaultLanguage;
+  private string valueDefaultLanguage;
 
   internal Document() : base(NodeType.DOCUMENT_NODE) {
   }
 
   private void collectElements(INode c, string s, IList<IElement> nodes) {
     if (c.getNodeType() == NodeType.ELEMENT_NODE) {
-      Element e=(Element)c;
+      var e = (IElement)c;
       if (s == null || e.getLocalName().Equals(s)) {
         nodes.Add(e);
       }
     }
     foreach (var node in c.getChildNodes()) {
-      collectElements(node, s, nodes);
+      this.collectElements(node, s, nodes);
     }
   }
 
-  private void collectElementsHtml(INode c, string s,
-      string sLowercase, IList<IElement> nodes) {
+  private void collectElementsHtml(
+  INode c,
+  string s,
+  string valueSLowercase,
+  IList<IElement> nodes) {
     if (c.getNodeType() == NodeType.ELEMENT_NODE) {
-      Element e=(Element)c;
+      var e = (IElement)c;
       if (s == null) {
         nodes.Add(e);
-      } else if (HtmlParser.HTML_NAMESPACE.Equals(e.getNamespaceURI()) &&
-          e.getLocalName().Equals(sLowercase)) {
+      } else if (HtmlCommon.HTML_NAMESPACE.Equals(e.getNamespaceURI()) &&
+          e.getLocalName().Equals(valueSLowercase)) {
         nodes.Add(e);
       } else if (e.getLocalName().Equals(s)) {
         nodes.Add(e);
       }
     }
     foreach (var node in c.getChildNodes()) {
-      collectElements(node, s, nodes);
+      this.collectElements(node, s, nodes);
     }
   }
 
   public string getCharacterSet() {
-    return (encoding==null) ? "utf-8" : encoding;
+    return (this.valueEncoding == null) ? "utf-8" : this.valueEncoding;
   }
 
   public IDocumentType getDoctype() {
-    return doctype;
+    return this.valueDoctype;
   }
 
   public IElement getDocumentElement() {
-    foreach (var node in getChildNodes()) {
+    foreach (var node in this.getChildNodes()) {
       if (node is IElement) {
  return (IElement)node;
 }
@@ -93,10 +97,12 @@ internal class Document : Node, IDocument {
     if (id == null) {
  throw new ArgumentException();
 }
-    foreach (var node in getChildNodes()) {
+    foreach (var node in this.getChildNodes()) {
       if (node is IElement) {
-        if (id.Equals(((IElement)node).getId())) return (IElement)node;
-        IElement element=((IElement)node).getElementById(id);
+        if (id.Equals(((IElement)node).getId())) {
+ return (IElement)node;
+}
+        IElement element = ((IElement)node).getElementById(id);
         if (element != null) {
  return element;
 }
@@ -104,6 +110,7 @@ internal class Document : Node, IDocument {
     }
     return null;
   }
+
   public IList<IElement> getElementsByTagName(string tagName) {
     if (tagName == null) {
  throw new ArgumentException();
@@ -112,21 +119,25 @@ internal class Document : Node, IDocument {
       tagName = null;
     }
     IList<IElement> ret = new List<IElement>();
-    if (isHtmlDocument()) {
-      collectElementsHtml(this, tagName,
-          StringUtility.toLowerCaseAscii(tagName), ret);
+    if (this.isHtmlDocument()) {
+      this.collectElementsHtml(
+  this,
+  tagName,
+  DataUtilities.ToLowerCaseAscii(tagName),
+  ret);
     } else {
-      collectElements(this, tagName, ret);
+      this.collectElements(this, tagName, ret);
     }
     return ret;
   }
 
   public override string getLanguage() {
-    return (defaultLanguage==null) ? "" : defaultLanguage;
+    return (this.valueDefaultLanguage == null) ? String.Empty :
+      this.valueDefaultLanguage;
   }
 
   internal DocumentMode getMode() {
-    return docmode;
+    return this.docmode;
   }
 
   public override string getNodeName() {
@@ -138,32 +149,33 @@ internal class Document : Node, IDocument {
   }
 
   public string getURL() {
-    return address;
+    return this.valueAddress;
   }
+
   internal bool isHtmlDocument() {
     return true;
   }
 
   internal void setMode(DocumentMode mode) {
-    docmode = mode;
+    this.docmode = mode;
   }
 
   internal override string toDebugString() {
-    StringBuilder builder = new StringBuilder();
-    foreach (var node in getChildNodesInternal()) {
+    var builder = new StringBuilder();
+    foreach (var node in this.getChildNodesInternal()) {
       string str = node.toDebugString();
       if (str == null) {
         continue;
       }
-      string[] strarray=StringUtility.splitAt(str,"\n");
+      string[] strarray = StringUtility.splitAt(str, "\n");
       int len = strarray.Length;
-      if (len>0 && strarray[len-1].Length == 0) {
+      if (len > 0 && strarray[len - 1].Length == 0) {
         --len;  // ignore trailing empty _string
       }
       for (int i = 0; i < len; ++i) {
         string el = strarray[i];
         builder.Append("| ");
-        builder.Append(el.Replace("~~~~","\n"));
+        builder.Append(el.Replace("~~~~", "\n"));
         builder.Append("\n");
       }
     }

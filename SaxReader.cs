@@ -8,81 +8,112 @@ using com.upokecenter.net;
 using com.upokecenter.util;
 
 namespace PeterO.Support {
+    /// <summary>Not documented yet.</summary>
   public sealed class SaxReader : IXmlReader {
-    IContentHandler ch = null;
-    IDtdHandler dtdh = null;
-    ILexicalHandler lh = null;
-    IDeclHandler declh = null;
-    IErrorHandler errh = null;
-    IEntityResolver entres = null;
+    private IContentHandler valueCh = null;
+    private IDtdHandler valueDtdh = null;
+    private ILexicalHandler valueLh = null;
+    private IDeclHandler valueDeclh = null;
+    private IErrorHandler valueErrh = null;
+    private IEntityResolver valueEntres = null;
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
     public IContentHandler ContentHandler {
       get {
-        return ch;
+        return this.valueCh;
       }
-      set { ch = value;
+
+      set { this.valueCh = value;
       }
     }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
     public IDtdHandler DtdHandler {
       get {
-        return dtdh;
+        return this.valueDtdh;
       }
+
       set {
-        dtdh = value;
+        this.valueDtdh = value;
       }
     }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
     public ILexicalHandler LexicalHandler {
       get {
-        return lh;
+        return this.valueLh;
       }
+
       set {
-        lh = value;
+        this.valueLh = value;
       }
     }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
     public IDeclHandler DeclHandler {
       get {
-        return declh;
+        return this.valueDeclh;
       }
+
       set {
-        declh = value;
+        this.valueDeclh = value;
       }
     }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
     public IEntityResolver EntityResolver {
       get {
-        return entres;
+        return this.valueEntres;
       }
+
       set {
-        entres = value;
+        this.valueEntres = value;
       }
     }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
     public IErrorHandler ErrorHandler {
       get {
-        return errh;
+        return this.valueErrh;
       }
+
       set {
-        errh = value;
+        this.valueErrh = value;
       }
     }
 
+    /// <summary>Gets a value not documented yet.</summary>
+    /// <value>A value not documented yet.</value>
     public XmlReaderStatus Status {
       get {
-        return status;
+        return this.valueStatus;
       }
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <returns>A Boolean object.</returns>
     public bool GetFeature(string name) {
       throw new NotImplementedException();
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='value'>Not documented yet.</param>
     public void SetFeature(string name, bool value) {
       // Ignore
     }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+    /// <returns>An IProperty(T) object.</returns>
     public IProperty<T> GetProperty<T>(string name) {
       throw new NotImplementedException();
     }
@@ -91,32 +122,33 @@ namespace PeterO.Support {
       private IList<String[]> attributes;
 
       private AttributeList(bool blank) {
-        attributes = (blank) ? (new String[0][]) : (new List<String[]>());
+        this.attributes = new List<String[]>();
       }
 
-      public AttributeList() : this(false) {}
+      public AttributeList() : this(false) {
+}
 
       public static readonly AttributeList Empty = new AttributeList(true);
 
       public int Length {
         get {
-          return attributes.Count;
+          return this.attributes.Count;
         }
       }
 
       public string GetUri(int index) {
- return (index<0 || index >= attributes.Count) ? (null) :
-          (attributes[index][1]);
+ return (index < 0 || index >= this.attributes.Count) ? null :
+          this.attributes[index][1];
       }
 
       public string GetLocalName(int index) {
- return (index<0 || index >= attributes.Count) ? (null) :
-          (attributes[index][2]);
+ return (index < 0 || index >= this.attributes.Count) ? null :
+          this.attributes[index][2];
       }
 
       public string GetQName(int index) {
- return (index<0 || index >= attributes.Count) ? (null) :
-          (attributes[index][0]);
+ return (index < 0 || index >= this.attributes.Count) ? null :
+          this.attributes[index][0];
       }
 
       public string GetType(int index) {
@@ -124,13 +156,13 @@ namespace PeterO.Support {
       }
 
       public string GetValue(int index) {
- return (index<0 || index >= attributes.Count) ? (null) :
-          (attributes[index][3]);
+ return (index < 0 || index >= this.attributes.Count) ? null :
+          this.attributes[index][3];
       }
 
       public int GetIndex(string uri, string localName) {
         var i = 0;
-        foreach (var a in attributes) {
+        foreach (var a in this.attributes) {
           if (a[1].Equals(uri) && a[2].Equals(localName)) {
  return i;
 }
@@ -138,10 +170,10 @@ namespace PeterO.Support {
         return -1;
       }
 
-      public int GetIndex(string qName) {
+      public int GetIndex(string valueQName) {
         var i = 0;
-        foreach (var a in attributes) {
-          if (a[0].Equals(qName)) {
+        foreach (var a in this.attributes) {
+          if (a[0].Equals(valueQName)) {
  return i;
 }
         }
@@ -152,28 +184,31 @@ namespace PeterO.Support {
         throw new NotSupportedException();
       }
 
-   internal void Add(string qname, string uri, string localName, string
-        value) {
-        attributes.Add(new String[] { qname, uri, localName, value});
+   internal void Add(
+  string qname,
+  string uri,
+  string localName,
+  string value) {
+        this.attributes.Add(new String[] { qname, uri, localName, value});
       }
 
-      public string GetType(string qName) {
+      public string GetType(string valueQName) {
         throw new NotSupportedException();
       }
 
       public string GetValue(string uri, string localName) {
-        return GetValue(GetIndex(uri, localName));
+        return this.GetValue(this.GetIndex(uri, localName));
       }
 
-      public string GetValue(string qName) {
-        return GetValue(GetIndex(qName));
+      public string GetValue(string valueQName) {
+        return this.GetValue(this.GetIndex(valueQName));
       }
 
       public bool IsSpecified(int index) {
         throw new NotSupportedException();
       }
 
-      public bool IsSpecified(string qName) {
+      public bool IsSpecified(string valueQName) {
         throw new NotSupportedException();
       }
 
@@ -196,9 +231,11 @@ namespace PeterO.Support {
     }
     */
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='input'>Not documented yet.</param>
     public void Parse(InputSource input) {
       if (input is InputSource<Stream>) {
-        InputSource<Stream> iss=(InputSource<Stream>)input;
+        InputSource<Stream> iss = (InputSource<Stream>)input;
         var settings = new XmlReaderSettings();
         settings.DtdProcessing = DtdProcessing.Ignore;
 // settings.ProhibitDtd = false;
@@ -207,54 +244,58 @@ namespace PeterO.Support {
           new StreamReader(new InputStreamWrapper(iss.Source), System.Text.Encoding.GetEncoding(input.Encoding)),
           settings);
         char[] charray = null;
-        status = XmlReaderStatus.Parsing;
+        this.valueStatus = XmlReaderStatus.Parsing;
         var startdoc = false;
         try {
           startdoc = true;
-          if (ch != null) {
- ch.StartDocument();
+          if (this.valueCh != null) {
+ this.valueCh.StartDocument();
 }
-          while (status == XmlReaderStatus.Parsing && reader.Read()) {
-            switch(reader.NodeType) {
+          while (this.valueStatus == XmlReaderStatus.Parsing && reader.Read()) {
+             switch (reader.NodeType) {
               case XmlNodeType.Comment:
                 charray = reader.Value.ToCharArray();
-                if (lh != null) {
- lh.Comment(charray, 0, charray.Length);
+                if (this.valueLh != null) {
+ this.valueLh.Comment(charray, 0, charray.Length);
 }
                 break;
               case XmlNodeType.ProcessingInstruction:
-                if (ch != null) {
- ch.ProcessingInstruction(
+                if (this.valueCh != null) {
+ this.valueCh.ProcessingInstruction(
                   reader.Name,
                   reader.Value);
  }
                 break;
               case XmlNodeType.EndElement:
-                if (ch != null) {
- ch.EndElement(reader.NamespaceURI,
-                    reader.LocalName, reader.Name);
+                if (this.valueCh != null) {
+ this.valueCh.EndElement(
+  reader.NamespaceURI,
+  reader.LocalName,
+  reader.Name);
  }
                 break;
               case XmlNodeType.DocumentType:
-                if (lh != null) {
- lh.StartDtd(reader.Name,
-                    reader["PUBLIC"],
-                    reader["SYSTEM"]);
+                if (this.valueLh != null) {
+ this.valueLh.StartDtd(
+  reader.Name,
+  reader["PUBLIC"],
+  reader["SYSTEM"]);
  }
-                if (lh != null && status == XmlReaderStatus.Parsing) {
- lh.EndDtd();
+     if (this.valueLh != null && this.valueStatus ==
+                  XmlReaderStatus.Parsing) {
+ this.valueLh.EndDtd();
 }
                 break;
               case XmlNodeType.EntityReference:
-                if (ch != null) {
- ch.SkippedEntity(reader.Name);
+                if (this.valueCh != null) {
+ this.valueCh.SkippedEntity(reader.Name);
 }
                 break;
               case XmlNodeType.Element:
-                if (ch != null) {
+                if (this.valueCh != null) {
                   AttributeList attr = AttributeList.Empty;
                   int count = reader.AttributeCount;
-                  if (count>0) {
+                  if (count > 0) {
                     attr = new AttributeList();
                     reader.MoveToFirstAttribute();
                     for (int i = 0; i < count; ++i) {
@@ -263,60 +304,73 @@ namespace PeterO.Support {
                     }
                     reader.MoveToElement();
                   }
-                  ch.StartElement(reader.NamespaceURI,
-                    reader.LocalName, reader.Name, attr);
+                  this.valueCh.StartElement(
+  reader.NamespaceURI,
+  reader.LocalName,
+  reader.Name,
+  attr);
                   if (reader.IsEmptyElement) {
-                    ch.EndElement(reader.NamespaceURI,
-                    reader.LocalName, reader.Name);
+                    this.valueCh.EndElement(
+  reader.NamespaceURI,
+  reader.LocalName,
+  reader.Name);
                   }
                 }
                 break;
               case XmlNodeType.Text:
               case XmlNodeType.SignificantWhitespace:
                 charray = reader.Value.ToCharArray();
-                if (ch != null) {
- ch.Characters(charray, 0, charray.Length);
+                if (this.valueCh != null) {
+ this.valueCh.Characters(charray, 0, charray.Length);
 }
                 break;
               case XmlNodeType.Whitespace:
                 charray = reader.Value.ToCharArray();
-                if (ch != null) {
- ch.IgnorableWhitespace(charray, 0, charray.Length);
+                if (this.valueCh != null) {
+ this.valueCh.IgnorableWhitespace(charray, 0, charray.Length);
 }
                 break;
               case XmlNodeType.CDATA:
-                lh.StartCData();
+                this.valueLh.StartCData();
                 charray = reader.Value.ToCharArray();
-                if (ch != null && status == XmlReaderStatus.Parsing) {
- ch.Characters(charray, 0, charray.Length);
+     if (this.valueCh != null && this.valueStatus ==
+                  XmlReaderStatus.Parsing) {
+ this.valueCh.Characters(charray, 0, charray.Length);
 }
-                if (lh != null && status == XmlReaderStatus.Parsing) {
- lh.EndCData();
+     if (this.valueLh != null && this.valueStatus ==
+                  XmlReaderStatus.Parsing) {
+ this.valueLh.EndCData();
 }
                 break;
             }
           }
         } finally {
-          if (startdoc && ch != null) {
- ch.EndDocument();
+          if (startdoc && this.valueCh != null) {
+ this.valueCh.EndDocument();
 }
         }
       }
     }
-    XmlReaderStatus status;
 
+    private XmlReaderStatus valueStatus;
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='systemId'>Not documented yet.</param>
     public void Parse(string systemId) {
       throw new NotSupportedException();
     }
 
+    /// <summary>Not documented yet.</summary>
     public void Suspend() {
       throw new NotSupportedException();
     }
 
+    /// <summary>Not documented yet.</summary>
     public void Abort() {
-      status = XmlReaderStatus.Ready;
+      this.valueStatus = XmlReaderStatus.Ready;
     }
 
+    /// <summary>Not documented yet.</summary>
     public void Resume() {
       throw new NotSupportedException();
     }

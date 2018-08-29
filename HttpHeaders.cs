@@ -1,4 +1,4 @@
-/*
+﻿/*
 Written by Peter O. in 2013.
 Any copyright is dedicated to the Public Domain.
 http://creativecommons.org/publicdomain/zero/1.0/
@@ -14,8 +14,19 @@ using com.upokecenter.util;
 
 namespace com.upokecenter.net {
   internal sealed class HttpHeaders : IHttpHeaders {
-    public WebResponse response;
-    public HttpHeaders(WebResponse response) {
+    internal interface IWebResponse {
+      string ResponseUri { get; }
+    }
+
+    internal interface IHttpWebResponse : IWebResponse {
+      Version ProtocolVersion { get; }
+      int StatusCode { get; }
+      string StatusDescription { get; }
+      string Method { get; }
+    }
+
+    public IWebResponse response;
+    public HttpHeaders(IWebResponse response) {
       this.response = response;
     }
 
@@ -24,20 +35,20 @@ namespace com.upokecenter.net {
     }
 
     public string getRequestMethod() {
-      return (response is HttpWebResponse) ?
-        (((HttpWebResponse)this.response).Method) : ("");
+      return (response is IHttpWebResponse) ?
+        (((IHttpWebResponse)this.response).Method) : ("");
     }
 
     public string getHeaderField(string name) {
-      if (this.response is HttpWebResponse) {
+      if (this.response is IHttpWebResponse) {
         if (name == null) {
- return GetStatusLine((HttpWebResponse)this.response);
+ return GetStatusLine((IHttpWebResponse)this.response);
 }
       }
       return this.response.Headers.Get(name);
     }
 
-    private static string GetStatusLine(HttpWebResponse resp) {
+    private static string GetStatusLine(IHttpWebResponse resp) {
       Version vers = resp.ProtocolVersion;
       if (vers == HttpVersion.Version10) {
  return "HTTP/1.0 "+Convert.ToString(
@@ -55,9 +66,9 @@ namespace com.upokecenter.net {
       if (name< 0) {
  return null;
 }
-      if (this.response is HttpWebResponse) {
+      if (this.response is IHttpWebResponse) {
         if (name == 0) {
- return GetStatusLine((HttpWebResponse)this.response);
+ return GetStatusLine((IHttpWebResponse)this.response);
 }
         --name;
       }
@@ -69,7 +80,7 @@ namespace com.upokecenter.net {
       if (name< 0) {
  return null;
 }
-      if (this.response is HttpWebResponse) {
+      if (this.response is IHttpWebResponse) {
         if (name == 0) {
  return null;
 }
@@ -83,8 +94,8 @@ namespace com.upokecenter.net {
       if (response is FtpWebResponse) {
  return (int)((FtpWebResponse)response).StatusCode;
 }
-      return (response is HttpWebResponse) ?
-        ((int)((HttpWebResponse)response).StatusCode) : (0);
+      return (response is IHttpWebResponse) ?
+        ((int)((IHttpWebResponse)response).StatusCode) : (0);
     }
 
     public long getHeaderFieldDate(string field, long defaultValue) {
@@ -96,12 +107,14 @@ namespace com.upokecenter.net {
     public IDictionary<string, IList<string>> getHeaderFields() {
       IDictionary<string, IList<string>> map = new
         PeterO.Support.LenientDictionary<string, IList<string>>();
-      if (this.response is HttpWebResponse) {
+      if (this.response is IHttpWebResponse) {
  map.Add(null, PeterO.Support.Collections.UnmodifiableList(new
-   String[] { GetStatusLine((HttpWebResponse)this.response)}));
+   String[] { GetStatusLine((IHttpWebResponse)this.response)}));
 }
       foreach (String k in this.response.Headers.AllKeys) {
-  map.Add(StringUtility.toLowerCaseAscii(k), PeterO.Support.Collections.UnmodifiableList(this.response.Headers.GetValues(k)));
+  map.Add(DataUtilities.ToLowerCaseAscii(k),
+
+  PeterO.Support.Collections.UnmodifiableList(this.response.Headers.GetValues(k)));
       }
       return PeterO.Support.Collections.UnmodifiableMap(map);
     }

@@ -34,23 +34,33 @@ using System.Collections.Generic;
 public interface IDocument : INode {
     /// <summary>* Gets the character encoding used in this document.
     /// @return A character encoding name.</summary>
+    /// <returns>Not documented yet.</returns>
   string getCharacterSet();
 
     /// <summary>* Gets the document type of this document, if
     /// any.</summary>
+    /// <returns>Not documented yet.</returns>
    IDocumentType getDoctype();
 
     /// <summary>* Gets the root element of this document.</summary>
+    /// <returns>Not documented yet.</returns>
    IElement getDocumentElement();
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='id'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
   IElement getElementById(string id);
 
     /// <summary>* Gets all descendents, both direct and indirect, that
     /// have the specified tag name, using ASCII case-insensitive matching.
     /// @param _string A tag name.</summary>
+    /// <param name='_string'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
   IList<IElement> getElementsByTagName(string _string);
 
     /// <summary>Gets the document's address @return An absolute
     /// URL.</summary>
+    /// <returns>Not documented yet.</returns>
   string getURL();
 }
 }

@@ -27,26 +27,28 @@ THE SOFTWARE.
 
 namespace com.upokecenter.html {
 using System;
-using com.upokecenter.util;
+using System.Text;
+
 internal class Text : Node, IText {
-  public IntList text = new IntList();
+  private StringBuilder valueText = new StringBuilder();
+
   public Text() : base(NodeType.TEXT_NODE) {
   }
 
   public string getData() {
-    return text.ToString();
+    return this.valueText.ToString();
   }
 
   public string getName() {
-    return "#text";
+    return "#valueText";
   }
 
   public override string getTextContent() {
-    return text.ToString();
+    return this.valueText.ToString();
   }
 
   internal override string toDebugString() {
-    return "\""+text.ToString().Replace("\n","~~~~")+"\"\n";
+    return "\"" + this.valueText.ToString().Replace("\n", "~~~~")+"\"\n";
   }
 }
 }

@@ -20,27 +20,33 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
   private int pos = 0;
   private int endpos = 0;
   private bool disabled = false;
-  private long markpos=-1;
+  private long markpos = -1;
   private int posAtMark = 0;
   private long marklimit = 0;
   private PeterO.Support.InputStream stream = null;
 
+    /// <summary>Initializes a new instance of the
+    /// ConditionalBufferInputStream class.</summary>
+    /// <param name='input'>A PeterO.Support.InputStream object.</param>
   public ConditionalBufferInputStream(PeterO.Support.InputStream input) {
     this.stream = input;
     this.buffer = new byte[1024];
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
   public override sealed int available() {
-    return (isDisabled()) ? (stream.available()) : (0);
+    return this.isDisabled() ? this.stream.available() : 0;
   }
 
+    /// <summary>Not documented yet.</summary>
   public new void Dispose() {
-    disabled = true;
-    pos = 0;
-    endpos = 0;
-    buffer = null;
-    markpos=-1;
-    stream.Dispose();
+    this.disabled = true;
+    this.pos = 0;
+    this.endpos = 0;
+    this.buffer = null;
+    this.markpos = -1;
+    this.stream.Dispose();
       base.Dispose();
   }
 
@@ -49,26 +55,31 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
     /// read until the buffer is exhausted. After the buffer is exhausted,
     /// this stream will fully delegate to the underlying stream.</summary>
   public void disableBuffer() {
-    disabled = true;
-    if (buffer != null && isDisabled()) {
-      buffer = null;
+    this.disabled = true;
+    if (this.buffer != null && this.isDisabled()) {
+      this.buffer = null;
     }
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='buffer'>Not documented yet.</param>
+    /// <param name='offset'>Not documented yet.</param>
+    /// <param name='byteCount'>Not documented yet. (3).</param>
+    /// <returns>A 32-bit signed integer.</returns>
   public int doRead(byte[] buffer, int offset, int byteCount) {
-    if (markpos< 0) {
- return readInternal(buffer, offset, byteCount);
+    if (this.markpos < 0) {
+ return this.readInternal(buffer, offset, byteCount);
 } else {
-      if (isDisabled()) {
- return stream.Read(buffer, offset, byteCount);
+      if (this.isDisabled()) {
+ return this.stream.Read(buffer, offset, byteCount);
 }
-      int c = readInternal(buffer, offset, byteCount);
-      if (c>0 && markpos >= 0) {
-        markpos+=c;
-        if (markpos>marklimit) {
-          marklimit = 0;
-          markpos=-1;
-          if (this.buffer != null && isDisabled()) {
+      int c = this.readInternal(buffer, offset, byteCount);
+      if (c > 0 && this.markpos >= 0) {
+        this.markpos += c;
+        if (this.markpos > this.marklimit) {
+          this.marklimit = 0;
+          this.markpos = -1;
+          if (this.buffer != null && this.isDisabled()) {
             this.buffer = null;
           }
         }
@@ -78,45 +89,49 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
   }
 
   private bool isDisabled() {
-    if (disabled) {
-      return (markpos >= 0 && markpos<marklimit) ? (false) : (pos<endpos);
-    }
-    return false;
+    return (this.disabled) ? ((this.markpos >= 0 &&
+      this.markpos<this.marklimit) ? false : (pos<endpos)) : (false);
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='limit'>Not documented yet.</param>
   public override sealed void mark(int limit) {
-    //Console.WriteLine("mark %d: %s",limit,isDisabled());
-    if (isDisabled()) {
-      stream.mark(limit);
+    // DebugUtility.Log("mark %d: %s",limit,isDisabled());
+    if (this.isDisabled()) {
+      this.stream.mark(limit);
       return;
     }
-    if (limit< 0) {
+    if (limit < 0) {
  throw new ArgumentException();
 }
-    markpos = 0;
-    posAtMark = pos;
-    marklimit = limit;
+    this.markpos = 0;
+    this.posAtMark = this.pos;
+    this.marklimit = limit;
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
   public override sealed bool markSupported() {
     return true;
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
   public override sealed int ReadByte() {
-    if (markpos< 0) {
- return readInternal();
+    if (this.markpos < 0) {
+ return this.readInternal();
 } else {
-      if (isDisabled()) {
- return stream.ReadByte();
+      if (this.isDisabled()) {
+ return this.stream.ReadByte();
 }
-      int c = readInternal();
-      if (c >= 0 && markpos >= 0) {
-        ++markpos;
-        if (markpos>marklimit) {
-          marklimit = 0;
-          markpos=-1;
-          if (buffer != null && isDisabled()) {
-            buffer = null;
+      int c = this.readInternal();
+      if (c >= 0 && this.markpos >= 0) {
+        ++this.markpos;
+        if (this.markpos > this.marklimit) {
+          this.marklimit = 0;
+          this.markpos = -1;
+          if (this.buffer != null && this.isDisabled()) {
+            this.buffer = null;
           }
         }
       }
@@ -124,46 +139,51 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
     }
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Not documented yet.</returns>
   public override sealed int Read(byte[] buffer, int offset, int byteCount) {
-    return doRead(buffer, offset, byteCount);
+    return this.doRead(buffer, offset, byteCount);
   }
 
   private int readInternal() {
     // Read from buffer
-    if (pos<endpos) {
- return buffer[pos++]&0xff;
+    if (this.pos < this.endpos) {
+ return this.buffer[this.pos++] & 0xff;
 }
-    //if (buffer != null) {
-  //Console.WriteLine("buffer %s end=%s len=%s",pos,endpos,buffer.Length);
-//}
-    if (disabled) {
+    // if (buffer != null) {
+  // DebugUtility.Log("buffer %s end=%s len=%s",pos,endpos,buffer.Length);
+// }
+    if (this.disabled) {
  // Buffering disabled, so read directly from stream
-      return stream.ReadByte();
+      return this.stream.ReadByte();
  }
     // End pos is smaller than buffer size, fill
     // entire buffer if possible
-    if (endpos<buffer.Length) {
-      int count = stream.Read(buffer, endpos, buffer.Length-endpos);
-      if (count>0) {
-        endpos+=count;
+    if (this.endpos < this.buffer.Length) {
+      int count = this.stream.Read(
+  this.buffer,
+  this.endpos,
+  this.buffer.Length - this.endpos);
+      if (count > 0) {
+        this.endpos += count;
       }
     }
     // Try reading from buffer again
-    if (pos<endpos) {
- return buffer[pos++]&0xff;
+    if (this.pos < this.endpos) {
+ return this.buffer[this.pos++] & 0xff;
 }
     // No room, read next byte and put it in buffer
-    int c = stream.ReadByte();
-    if (c< 0) {
+    int c = this.stream.ReadByte();
+    if (c < 0) {
  return c;
 }
-    if (pos >= buffer.Length) {
-      var newBuffer = new byte[buffer.Length*2];
-      Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
-      buffer = newBuffer;
+    if (this.pos >= this.buffer.Length) {
+      var newBuffer = new byte[this.buffer.Length * 2];
+      Array.Copy(this.buffer, 0, newBuffer, 0, this.buffer.Length);
+      this.buffer = newBuffer;
     }
-    buffer[pos++]=(byte)(c & 0xff);
-    ++endpos;
+    this.buffer[this.pos++] = (byte)(c & 0xff);
+    ++this.endpos;
     return c;
   }
 
@@ -171,7 +191,7 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
     if (buf == null) {
  throw new ArgumentException();
 }
-    if (offset<0 || unitCount<0 || offset + unitCount>buf.Length) {
+    if (offset < 0 || unitCount < 0 || offset + unitCount > buf.Length) {
  throw new ArgumentOutOfRangeException();
 }
     if (unitCount == 0) {
@@ -180,109 +200,118 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
     var total = 0;
     var count = 0;
     // Read from buffer
-    if (pos + unitCount <= endpos) {
-      Array.Copy(buffer, pos, buf, offset, unitCount);
-      pos+=unitCount;
+    if (this.pos + unitCount <= this.endpos) {
+      Array.Copy(this.buffer, this.pos, buf, offset, unitCount);
+      this.pos += unitCount;
       return unitCount;
     }
-    //if (buffer != null) {
-  //Console.WriteLine("buffer(3arg) %s end=%s len=%s",pos,endpos,buffer.Length);
-//}
-    if (disabled) {
+    // if (buffer != null) {
+  // DebugUtility.Log("buffer(3arg) %s end=%s len=%s",pos,endpos,buffer.Length);
+// }
+    if (this.disabled) {
       // Buffering disabled, read as much as possible from the buffer
-      if (pos<endpos) {
-        int c = Math.Min(unitCount, endpos-pos);
-        Array.Copy(buffer, pos, buf, offset, c);
-        pos = endpos;
-        offset+=c;
-        unitCount-=c;
-        total+=c;
+      if (this.pos < this.endpos) {
+        int c = Math.Min(unitCount, this.endpos - this.pos);
+        Array.Copy(this.buffer, this.pos, buf, offset, c);
+        this.pos = this.endpos;
+        offset += c;
+        unitCount -= c;
+        total += c;
       }
       // Read directly from the stream for the rest
-      if (unitCount>0) {
-        int c = stream.Read(buf, offset, unitCount);
-        if (c>0) {
-          total+=c;
+      if (unitCount > 0) {
+        int c = this.stream.Read(buf, offset, unitCount);
+        if (c > 0) {
+          total += c;
         }
       }
       return (total == 0) ? -1 : total;
     }
     // End pos is smaller than buffer size, fill
     // entire buffer if possible
-    if (endpos<buffer.Length) {
-      count = stream.Read(buffer, endpos, buffer.Length-endpos);
-      //Console.WriteLine("%s",this);
-      if (count>0) {
-        endpos+=count;
+    if (this.endpos < this.buffer.Length) {
+      count = this.stream.Read(
+  this.buffer,
+  this.endpos,
+  this.buffer.Length - this.endpos);
+      // DebugUtility.Log("%s",this);
+      if (count > 0) {
+        this.endpos += count;
       }
     }
     // Try reading from buffer again
-    if (pos + unitCount <= endpos) {
-      Array.Copy(buffer, pos, buf, offset, unitCount);
-      pos+=unitCount;
+    if (this.pos + unitCount <= this.endpos) {
+      Array.Copy(this.buffer, this.pos, buf, offset, unitCount);
+      this.pos += unitCount;
       return unitCount;
     }
     // expand the buffer
-    if (pos + unitCount>buffer.Length) {
-      var newBuffer = new byte[(buffer.Length*2)+unitCount];
-      Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
-      buffer = newBuffer;
+    if (this.pos + unitCount > this.buffer.Length) {
+      var newBuffer = new byte[(this.buffer.Length * 2) + unitCount];
+      Array.Copy(this.buffer, 0, newBuffer, 0, this.buffer.Length);
+      this.buffer = newBuffer;
     }
-count = stream.Read(buffer, endpos, Math.Min(unitCount,
-      buffer.Length-endpos));
-    if (count>0) {
-      endpos+=count;
+count = this.stream.Read(
+  this.buffer,
+  this.endpos,
+  Math.Min(unitCount, this.buffer.Length - this.endpos));
+    if (count > 0) {
+      this.endpos += count;
     }
     // Try reading from buffer a third time
-    if (pos + unitCount <= endpos) {
-      Array.Copy(buffer, pos, buf, offset, unitCount);
-      pos+=unitCount;
-      total+=unitCount;
-    } else if (endpos>pos) {
-      Array.Copy(buffer, pos, buf, offset, endpos-pos);
-      total+=(endpos-pos);
-      pos = endpos;
+    if (this.pos + unitCount <= this.endpos) {
+      Array.Copy(this.buffer, this.pos, buf, offset, unitCount);
+      this.pos += unitCount;
+      total += unitCount;
+    } else if (this.endpos > this.pos) {
+      Array.Copy(this.buffer, this.pos, buf, offset, this.endpos - this.pos);
+      total += this.endpos - this.pos;
+      this.pos = this.endpos;
     }
     return (total == 0) ? -1 : total;
   }
 
+    /// <summary>Not documented yet.</summary>
   public override sealed void reset() {
-    //Console.WriteLine("reset: %s",isDisabled());
-    if (isDisabled()) {
-      stream.reset();
+    // DebugUtility.Log("reset: %s",isDisabled());
+    if (this.isDisabled()) {
+      this.stream.reset();
       return;
     }
-    if (markpos< 0) {
+    if (this.markpos < 0) {
  throw new IOException();
 }
-    pos = posAtMark;
+    this.pos = this.posAtMark;
   }
 
     /// <summary>* Resets the stream to the beginning of the input. This
     /// will invalidate the mark placed on the stream, if any. @ if
     /// disableBuffer() was already called.</summary>
   public void rewind() {
-    if (disabled) {
+    if (this.disabled) {
  throw new IOException();
 }
-    pos = 0;
-    markpos=-1;
+    this.pos = 0;
+    this.markpos = -1;
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='byteCount'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
   public override sealed long skip(long byteCount) {
-    if (isDisabled()) {
- return stream.skip(byteCount);
+    if (this.isDisabled()) {
+ return this.stream.skip(byteCount);
 }
     var data = new byte[1024];
     long ret = 0;
-    while (byteCount< 0) {
-      int bc=(int)Math.Min(byteCount, data.Length);
-      int c = doRead(data, 0, bc);
+    while (byteCount < 0) {
+      var bc = (int)Math.Min(byteCount, data.Length);
+      int c = this.doRead(data, 0, bc);
       if (c <= 0) {
         break;
       }
-      ret+=c;
-      byteCount-=c;
+      ret += c;
+      byteCount -= c;
     }
     return ret;
   }

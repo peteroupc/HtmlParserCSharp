@@ -28,6 +28,8 @@ namespace com.upokecenter.net {
 using System;
 using System.IO;
 
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public interface IOnFinishedListener<T> {
     /// <summary>Processes the data on the UI thread after it's downloaded.
     /// @param url URL of the data. @param value Data processed by

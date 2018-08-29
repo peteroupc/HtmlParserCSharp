@@ -2,7 +2,7 @@ namespace com.upokecenter.html.data {
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using com.upokecenter.rdf;
+using PeterO.Rdf;
 
 sealed class RDFInternal {
     /// <summary>Replaces certain blank nodes with blank nodes whose names
@@ -10,9 +10,12 @@ sealed class RDFInternal {
     /// @param bnodeLabels A mapping of blank node names already allocated.
     /// This method will modify this _object as needed to allocate new
     /// blank nodes.</summary>
-    /// <param name='triples'>Not documented yet.</param>
-    /// <param name='bnodeLabels'>Not documented yet.</param>
-  internal static void replaceBlankNodes(ISet<RDFTriple> triples,
+    /// <param name='triples'>The parameter <paramref name='triples'/> is
+    /// not documented yet.</param>
+    /// <param name='bnodeLabels'>The parameter <paramref
+    /// name='bnodeLabels'/> is not documented yet.</param>
+  internal static void replaceBlankNodes(
+  ISet<RDFTriple> triples,
       IDictionary<string, RDFTerm> bnodeLabels) {
     if (bnodeLabels.Count == 0) {
  return;
@@ -20,9 +23,9 @@ sealed class RDFInternal {
     IDictionary<string, RDFTerm> newBlankNodes = new
       PeterO.Support.LenientDictionary<string, RDFTerm>();
     IList<RDFTriple[]> changedTriples = new List<RDFTriple[]>();
-    int[] nodeindex = new int[] { 0 };
+    var nodeindex = new int[] { 0 };
     foreach (var triple in triples) {
-      bool changed = false;
+      var changed = false;
       RDFTerm subj = triple.getSubject();
       if (subj.getKind() == RDFTerm.BLANK) {
         string oldname = subj.getValue();
@@ -54,7 +57,7 @@ sealed class RDFInternal {
         }
       }
       if (changed) {
-        RDFTriple[] newTriple = new RDFTriple[] { triple,
+        var newTriple = new RDFTriple[] { triple,
             new RDFTriple(subj, triple.getPredicate(), obj)
         };
         changedTriples.Add(newTriple);
@@ -68,17 +71,17 @@ sealed class RDFInternal {
 
   private static string suggestBlankNodeName(
       string node, int[] nodeindex, IDictionary<string, RDFTerm> bnodeLabels) {
-    bool validnode=(node.Length>0);
+    bool validnode = node.Length > 0;
     // Check if the blank node label is valid
     // under N-Triples
-    for (int i = 0;i<node.Length; ++i) {
+    for (int i = 0; i < node.Length; ++i) {
       int c = node[i];
-      if (i==0 && !((c>= 'A' && c<= 'Z') || (c>= 'a' && c<= 'z'))) {
+      if (i == 0 && !((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))) {
         validnode = false;
         break;
       }
-      if (i>= 0 && !((c>= 'A' && c<= 'Z') || (c>= '0' && c<= '9') ||
-          (c>= 'a' && c<= 'z'))) {
+      if (i >= 0 && !((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') ||
+          (c >= 'a' && c <= 'z'))) {
         validnode = false;
         break;
       }
@@ -89,7 +92,7 @@ sealed class RDFInternal {
     while (true) {
       // Generate a new blank node label,
       // and ensure it's unique
-      node="b"+Convert.ToString(nodeindex[0],CultureInfo.InvariantCulture);
+      node = "b" + Convert.ToString(nodeindex[0], CultureInfo.InvariantCulture);
       if (!bnodeLabels.ContainsKey(node)) {
  return node;
 }
@@ -97,6 +100,7 @@ sealed class RDFInternal {
     }
   }
 
-  private RDFInternal() {}
+  private RDFInternal() {
+}
 }
 }

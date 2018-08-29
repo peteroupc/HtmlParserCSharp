@@ -101,8 +101,7 @@ internal class XhtmlParser {
     public InputSource<Stream> resolveEntity(string name, string publicId,
       string baseURI, string systemId) {
       // Always load a blank external entity
-      return new InputSource<Stream>(new
-        PeterO.Support.ByteArrayInputStream(new byte[] { }));
+      return new InputSource<Stream>(new MemoryStream(new byte[] { }));
     }
 
     internal void setDocument(Document doc) {
@@ -110,21 +109,41 @@ internal class XhtmlParser {
     }
 
     public override void SkippedEntity(string arg0) {
-      //Console.WriteLine(arg0);
+      //DebugUtility.Log(arg0);
       if (useEntities) {
         int entity = HtmlEntities.getHtmlEntity(arg0);
+          StringBuilder builder = getTextNodeToInsert(getCurrentNode()).text;
         if (entity< 0) {
           int[] twoChars = HtmlEntities.getTwoCharacterEntity(entity);
-          getTextNodeToInsert(getCurrentNode()).text.appendInts(twoChars, 0, 2);
+            if (twoChars[0] <= 0xffff) {
+  { builder.Append((char)(twoChars[0]));
+}
+  } else if (twoChars[0] <= 0x10ffff) {
+builder.Append((char)((((twoChars[0] - 0x10000) >> 10) & 0x3ff) + 0xd800));
+builder.Append((char)(((twoChars[0] - 0x10000) & 0x3ff) + 0xdc00));
+}
+            if (twoChars[1] <= 0xffff) {
+  { builder.Append((char)(twoChars[1]));
+}
+  } else if (twoChars[1] <= 0x10ffff) {
+builder.Append((char)((((twoChars[1] - 0x10000) >> 10) & 0x3ff) + 0xd800));
+builder.Append((char)(((twoChars[1] - 0x10000) & 0x3ff) + 0xdc00));
+}
         } else if (entity<0x110000) {
-          getTextNodeToInsert(getCurrentNode()).text.appendInt(entity);
+            if (entity <= 0xffff) {
+  { builder.Append((char)(entity));
+}
+  } else if (entity <= 0x10ffff) {
+builder.Append((char)((((entity - 0x10000) >> 10) & 0x3ff) + 0xd800));
+builder.Append((char)(((entity - 0x10000) & 0x3ff) + 0xdc00));
+}
         }
       }
       throw new SaxException("Unrecognized entity: "+arg0);
     }
 
     public override void StartDtd(string name, string pubid, string sysid) {
-      var doctype = new DocumentType();
+        var doctype = new DocumentType();
       doctype.name = name;
       doctype.publicId = pubid;
       doctype.systemId = sysid;

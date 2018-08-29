@@ -10,6 +10,8 @@ namespace com.upokecenter.util {
 using System;
 using System.Collections.Generic;
 
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public sealed class IndexedObjectList<T> {
   private IList<T> strongrefs = new List<T>();
   private IList<WeakReference> weakrefs = new List<WeakReference>();
@@ -18,49 +20,57 @@ public sealed class IndexedObjectList<T> {
   // Remove the strong reference, but keep the weak
   // reference; the index becomes no good when the
   // _object is garbage collected
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='index'>Not documented yet.</param>
+    /// <returns>A T object.</returns>
   public T receiveObject(int index) {
-    if (index< 0) {
+    if (index < 0) {
  return default(T);
 }
     T ret = default(T);
-    lock (syncRoot) {
-      if (index >= strongrefs.Count) {
+    lock (this.syncRoot) {
+      if (index >= this.strongrefs.Count) {
  return default(T);
 }
-      ret = strongrefs[index];
+      ret = this.strongrefs[index];
       if (ret == null) {
  throw new InvalidOperationException();
 }
-      strongrefs[index]=default(T);
+      this.strongrefs[index] = default(T);
     }
     return ret;
   }
 
   // Keep a strong reference and a weak reference
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='value'>Not documented yet.</param>
+    /// <returns>A 32-bit signed integer.</returns>
   public int sendObject(T value) {
     if (value == null) {
  return -1;  // Special case for null
 }
-    lock (syncRoot) {
-      for (int i = 0;i<strongrefs.Count; ++i) {
-        if (strongrefs[i]==null) {
-          if (weakrefs[i]==null ||
-              weakrefs[i].Target == null) {
+    lock (this.syncRoot) {
+      for (int i = 0; i < this.strongrefs.Count; ++i) {
+        if (this.strongrefs[i] == null) {
+          if (this.weakrefs[i] == null ||
+              this.weakrefs[i].Target == null) {
             // If the _object is garbage collected
             // the index is available for use again
-            //Console.WriteLine("Adding _object %d",i);
-            strongrefs[i]=value;
-            weakrefs[i]=new WeakReference(value);
+            // DebugUtility.Log("Adding _object %d",i);
+            this.strongrefs[i] = value;
+            this.weakrefs[i] = new WeakReference(value);
             return i;
           }
         }
       }
       // Keep a strong and weak reference of
       // the same _object
-      int ret = strongrefs.Count;
-      //Console.WriteLine("Adding _object %d",ret);
-      strongrefs.Add(value);
-      weakrefs.Add(new WeakReference(value));
+      int ret = this.strongrefs.Count;
+      // DebugUtility.Log("Adding _object %d",ret);
+      this.strongrefs.Add(value);
+      this.weakrefs.Add(new WeakReference(value));
       return ret;
     }
   }

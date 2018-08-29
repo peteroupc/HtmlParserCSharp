@@ -33,13 +33,16 @@ using System;
 public interface IDocumentType : INode {
     /// <summary>Gets the name of this document type. For HTML documents,
     /// this should be "html".</summary>
+    /// <returns>Not documented yet.</returns>
    string getName();
 
     /// <summary>* Gets the identifier of this document type.</summary>
+    /// <returns>Not documented yet.</returns>
    string getPublicId();
 
     /// <summary>Gets the system identifier of this document
     /// type.</summary>
+    /// <returns>Not documented yet.</returns>
    string getSystemId();
 }
 }

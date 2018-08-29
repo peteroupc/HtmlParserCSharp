@@ -28,6 +28,8 @@ namespace com.upokecenter.net {
 using System;
 using System.IO;
 
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public interface IResponseListener<T> {
     /// <summary>Processes the Web response on a background thread. Please
     /// note: For the response to be cacheable, the entire stream must be
@@ -37,7 +39,10 @@ public interface IResponseListener<T> {
     /// stream Input stream for the response body. The listener must not
     /// close the stream. @param headers Contains the headers returned by
     /// the response. @.</summary>
-   T processResponse(string url,
-      PeterO.Support.InputStream stream, IHttpHeaders headers) ;
+    /// <returns>Not documented yet.</returns>
+   T processResponse(
+  string url,
+  PeterO.Support.InputStream stream,
+  IHttpHeaders headers);
 }
 }

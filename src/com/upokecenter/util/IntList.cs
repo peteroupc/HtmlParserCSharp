@@ -25,7 +25,7 @@ public sealed class IntList {
     if (ptr<buffer.Length) {
       buffer[ptr++]=v;
     } else {
-      int[] newbuffer = new int[buffer.Length*2];
+      var newbuffer = new int[buffer.Length*2];
       Array.Copy(buffer, 0, newbuffer, 0, buffer.Length);
       buffer = newbuffer;
       buffer[ptr++]=v;
@@ -34,7 +34,7 @@ public sealed class IntList {
 
   public void appendInts(int[] array, int offset, int length) {
     if ((array) == null) {
- throw new ArgumentNullException("array");
+ throw new ArgumentNullException(nameof(array));
 }
     if (offset < 0) {
  throw new ArgumentException("offset less than " +"0 ("
@@ -50,7 +50,8 @@ public sealed class IntList {
    +Convert.ToString(offset+length,CultureInfo.InvariantCulture)+")");
 }
     if (ptr + length>buffer.Length) {
-      int[] newbuffer = new int[Math.Max(buffer.Length*2, buffer.Length + length)];
+    var newbuffer = new int[Math.Max(buffer.Length*2, buffer.Length +
+        length)];
       Array.Copy(buffer, 0, newbuffer, 0, buffer.Length);
       buffer = newbuffer;
     }
@@ -61,17 +62,16 @@ public sealed class IntList {
   public void appendString(string str) {
     for (int i = 0;i<str.Length; ++i) {
       int c = str[i];
-      if (c >= 0xd800 && c <= 0xdbff && i + 1<str.Length &&
-          str[i + 1]>= 0xdc00 && str[i + 1]<= 0xdfff) {
+      if ((c & 0xfc00) == 0xd800 && i + 1<str.Length &&
+          (str[i + 1] & 0xfc00) == 0xdc00) {
         // Append a UTF-16 surrogate pair
         int cp2 = 0x10000+(c-0xd800)*0x400+(str[i + 1]-0xdc00);
         appendInt(cp2);
         ++i;
-      } else if (c >= 0xd800 && c <= 0xdfff) {
+      } else if ((c & 0xf800) == 0xd800) {
  // illegal surrogate
         throw new ArgumentException();
- }
-      else {
+ } else {
         appendInt(c);
       }
     }
@@ -94,8 +94,10 @@ public int get(int index) {
     /// <summary>Sets the integer at a specified position to a new value.
     /// @param index an index into the list. @param value the integer's new
     /// value.</summary>
-    /// <param name='index'>Not documented yet.</param>
-    /// <param name='value'>Not documented yet.</param>
+    /// <param name='index'>The parameter <paramref name='index'/> is not
+    /// documented yet.</param>
+    /// <param name='value'>The parameter <paramref name='value'/> is not
+    /// documented yet.</param>
   public void set(int index, int value) {
     buffer[index]=value;
   }
@@ -106,7 +108,7 @@ public int size() {
     return ptr;
   }
   public override sealed string ToString() {
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     for (int i = 0; i < ptr; ++i) {
       if (buffer[i]<= 0xffff) {
         builder.Append((char)buffer[i]);

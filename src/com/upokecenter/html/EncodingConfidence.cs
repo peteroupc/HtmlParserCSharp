@@ -29,37 +29,45 @@ namespace com.upokecenter.html {
 using System;
 
 sealed class EncodingConfidence {
-  int confidence;
-  string encoding;
+  private int valueConfidence;
+  private string valueEncoding;
   public const int Irrelevant = 0;
   public const int Tentative = 1;
   public const int Certain = 2;
-  public static readonly EncodingConfidence UTF16BE=
-      new EncodingConfidence("utf-16be",Certain);
-  public static readonly EncodingConfidence UTF16LE=
-      new EncodingConfidence("utf-16le",Certain);
-  public static readonly EncodingConfidence UTF8=
-      new EncodingConfidence("utf-8",Certain);
+  public static readonly EncodingConfidence UTF16BE =
+      new EncodingConfidence("utf-16be", Certain);
 
-  public static readonly EncodingConfidence UTF8_TENTATIVE=
-      new EncodingConfidence("utf-8",Tentative);
+  public static readonly EncodingConfidence UTF16LE =
+      new EncodingConfidence("utf-16le", Certain);
+
+  public static readonly EncodingConfidence UTF8 =
+      new EncodingConfidence("utf-8", Certain);
+
+  public static readonly EncodingConfidence UTF8_TENTATIVE =
+      new EncodingConfidence("utf-8", Tentative);
+
   public EncodingConfidence(string e) {
-    encoding = e;
-    confidence = Tentative;
+    this.valueEncoding = e;
+    this.valueConfidence = Tentative;
   }
+
   public EncodingConfidence(string e, int c) {
-    encoding = e;
-    confidence = c;
+    this.valueEncoding = e;
+    this.valueConfidence = c;
   }
+
   public int getConfidence() {
-    return confidence;
+    return this.valueConfidence;
   }
+
   public string getEncoding() {
-    return encoding;
+    return this.valueEncoding;
   }
+
   public override sealed string ToString() {
-    return "EncodingConfidence [confidence=" + confidence + ", encoding="+
-        encoding + "]";
+    return "EncodingConfidence [this.valueConfidence=" +
+      this.valueConfidence + ", valueEncoding=" +
+        this.valueEncoding + "]";
   }
 }
 }
