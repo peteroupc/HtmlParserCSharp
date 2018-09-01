@@ -15,8 +15,7 @@ public sealed class Microdata {
 
   private sealed class SortInTreeOrderComparer : IComparer<ElementAndIndex> {
     public int Compare(ElementAndIndex arg0, ElementAndIndex arg1) {
-return (arg0.Index == arg1.Index) ? (0) : ((arg0.Index < arg1.Index) ? -1 :
-      1);
+return (arg0.Index == arg1.Index) ? (0) : ((arg0.Index < arg1.Index) ? -1 : 1);
     }
   }
 
@@ -118,7 +117,7 @@ return (arg0.Index == arg1.Index) ? (0) : ((arg0.Index < arg1.Index) ? -1 :
       Object obj = null;
       if (valueElement.getAttribute("itemscope") != null) {
         obj = memory.Contains(valueElement) ? (object)"ERROR" :
-        (object)(getMicrodataObject(valueElement, new List<IElement>(memory)));
+        (object)getMicrodataObject(valueElement, new List<IElement>(memory));
       } else {
         obj = getPropertyValue(valueElement);
       }

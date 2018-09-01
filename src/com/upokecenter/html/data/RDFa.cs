@@ -15,16 +15,25 @@ using com.upokecenter.util;
     }
 
     internal class EvalContext {
-      private string ValueBaseURI;
-      private RDFTerm ValueParentSubject;
-      private RDFTerm ValueParentObject;
-      private string ValueLanguage;
-      private IDictionary<string, string> ValueIriMap;
-      private IList<IncompleteTriple> ValueIncompleteTriples;
-      private IDictionary<string, IList<RDFTerm>> ValueListMap;
-      private IDictionary<string, string> ValueTermMap;
-      private IDictionary<string, string> ValueNamespaces;
-      private string valueDefaultVocab;
+      public string ValueBaseURI { get; set; }
+
+      public RDFTerm ValueParentSubject { get; set; }
+
+      public RDFTerm ValueParentObject { get; set; }
+
+      public string ValueLanguage { get; set; }
+
+      public IDictionary<string, string> ValueIriMap { get; set; }
+
+      public IList<IncompleteTriple> ValueIncompleteTriples { get; set; }
+
+      public IDictionary<string, IList<RDFTerm>> ValueListMap { get; set; }
+
+      public IDictionary<string, string> ValueTermMap { get; set; }
+
+      public IDictionary<string, string> ValueNamespaces { get; set; }
+
+      public string valueDefaultVocab { get; set; }
 
       public EvalContext copy() {
         var ec = new EvalContext();
@@ -48,12 +57,14 @@ using com.upokecenter.util;
     }
 
     internal class IncompleteTriple {
-      private IList<RDFTerm> valueList;
-      private RDFTerm ValuePredicate;
-      private ChainingDirection ValueDirection;
+      public IList<RDFTerm> valueTripleList { get; set; }
+
+      public RDFTerm ValuePredicate { get; set; }
+
+      public ChainingDirection ValueDirection { get; set; }
 
       public override string ToString() {
- return "IncompleteTriple [this.valueList=" + this.valueList +
+ return "IncompleteTriple [this.valueTripleList=" + this.valueTripleList +
           ", ValuePredicate=" +
          this.ValuePredicate + ", this.ValueDirection=" + this.ValueDirection +
               "]";
@@ -449,8 +460,8 @@ this.context.ValueIriMap.Add(
             "alternate", "appendix", "cite",
             "bookmark", "chapter", "contents",
             "copyright", "first", "glossary",
-            "help", "icon", "index","last",
-            "license", "meta", "next","prev",
+            "help", "icon", "index", "last",
+            "license", "meta", "next", "prev",
             "previous", "section", "start",
             "stylesheet", "subsection", "top",
             "up", "p3pv1"
@@ -502,7 +513,8 @@ this.context.ValueIriMap.Add(
         string prefixName = DataUtilities.ToLowerCaseAscii(
             attribute.Substring(
   refIndex,
-  (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -= prefix + 1;
+  (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
+    prefix + 1;
         prefixIri = prefixMapping[prefixName];
         prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
           prefixMapping[prefixName];
@@ -520,7 +532,7 @@ this.context.ValueIriMap.Add(
          this.relativeResolve(
   prefixIri + attribute.Substring(
   refIndex,
-  (refIndex + refLength) - refIndex)) .getValue(); } else {
+  (refIndex + refLength) - refIndex)).getValue(); } else {
         return null;
       }
     }
@@ -539,7 +551,8 @@ this.context.ValueIriMap.Add(
         prefixName = DataUtilities.ToLowerCaseAscii(
             attribute.Substring(
   refIndex,
-  (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -= prefix + 1;
+  (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
+    prefix + 1;
         prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
           prefixMapping[prefixName];
         if (prefixIri == null && !"_".Equals(prefixName)) {
@@ -789,8 +802,8 @@ new PeterO.Support.LenientDictionary<string,
               RDFTerm resource = this.getSafeCurieOrCurieOrIri(
                   node.getAttribute("resource"),
                   iriMapLocal);
-resource = resource ?? (this.relativeResolve(node.getAttribute("href")));
- resource = resource ?? (this.relativeResolve(node.getAttribute("src")));
+resource = resource ?? this.relativeResolve(node.getAttribute("href"));
+ resource = resource ?? this.relativeResolve(node.getAttribute("src"));
               // DebugUtility.Log("resource=%s",resource);
               if ((resource == null || resource.getKind() != RDFTerm.IRI) &&
                   xhtml_rdfa11) {
@@ -998,10 +1011,10 @@ if (newSubject != null &&
                 IList<RDFTerm> newList = new List<RDFTerm>();
                 listMapLocal.Add(iri, newList);
                 // NOTE: Should not be a copy
-                inc.valueList = newList;
+                inc.valueTripleList = newList;
               } else {
                 IList<RDFTerm> existingList = listMapLocal[iri];
-                inc.valueList = existingList;
+                inc.valueTripleList = existingList;
               }
               inc.ValueDirection = ChainingDirection.None;
             } else {
@@ -1132,8 +1145,8 @@ if (newSubject != null &&
       if (!skipElement && newSubject != null) {
         foreach (var triple in this.context.ValueIncompleteTriples) {
           if (triple.ValueDirection == ChainingDirection.None) {
-            IList<RDFTerm> valueList = triple.valueList;
-            valueList.Add(newSubject);
+            IList<RDFTerm> valueTripleList = triple.valueTripleList;
+            valueTripleList.Add(newSubject);
           } else if (triple.ValueDirection == ChainingDirection.Forward) {
             this.outputGraph.Add(new RDFTriple(
                 this.context.ValueParentSubject,
@@ -1186,8 +1199,8 @@ if (newSubject != null &&
       // Step 14
       foreach (var iri in listMapLocal.Keys) {
         if (!this.context.ValueListMap.ContainsKey(iri)) {
-          IList<RDFTerm> valueList = listMapLocal[iri];
-          if (valueList.Count == 0) {
+          IList<RDFTerm> valueTripleList = listMapLocal[iri];
+          if (valueTripleList.Count == 0) {
             this.outputGraph.Add(new RDFTriple(
              newSubject == null ? newSubject : this.context.ValueParentSubject,
              RDFTerm.fromIRI(iri),
@@ -1198,13 +1211,13 @@ if (newSubject != null &&
              newSubject == null ? newSubject : this.context.ValueParentSubject,
              RDFTerm.fromIRI(iri),
              bnode));
-            for (int i = 0; i < valueList.Count; ++i) {
-              RDFTerm nextBnode = (i == valueList.Count - 1) ?
+            for (int i = 0; i < valueTripleList.Count; ++i) {
+              RDFTerm nextBnode = (i == valueTripleList.Count - 1) ?
                   this.generateBlankNode() : RDFTerm.NIL;
               this.outputGraph.Add(new RDFTriple(
               bnode,
               RDFTerm.FIRST,
-              valueList[i]));
+              valueTripleList[i]));
               this.outputGraph.Add(new RDFTriple(
                   bnode,
                   RDFTerm.REST,
@@ -1222,8 +1235,9 @@ if (newSubject != null &&
       }
       return (URIUtility.splitIRI(iri) == null) ? null :
    RDFTerm.fromIRI(
-  URIUtility.relativeResolve(iri,
-          this.context.ValueBaseURI));
+  URIUtility.relativeResolve(
+  iri,
+  this.context.ValueBaseURI));
     }
   }
 }

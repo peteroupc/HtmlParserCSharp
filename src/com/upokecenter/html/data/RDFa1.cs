@@ -203,9 +203,9 @@ using com.upokecenter.util;
       string prefixIri = null;
       if (prefix >= 0) {
         string prefixName = DataUtilities.ToLowerCaseAscii(
-            attribute.Substring(refIndex, (refIndex + prefix) -
-              (refIndex))); refIndex += (prefix + 1);
-        refLength -= prefix + 1;
+            attribute.Substring(
+  refIndex,
+  (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -= prefix + 1;
         prefixIri = prefixMapping[prefixName];
         prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
           prefixMapping[prefixName];
@@ -249,9 +249,9 @@ using com.upokecenter.util;
       string prefixName = null;
       if (prefix >= 0) {
         prefixName = DataUtilities.ToLowerCaseAscii(
-            attribute.Substring(refIndex, (refIndex + prefix) -
-              (refIndex))); refIndex += (prefix + 1);
-        refLength -= prefix + 1;
+            attribute.Substring(
+  refIndex,
+  (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -= prefix + 1;
         prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
           prefixMapping[prefixName];
         if (prefixIri == null && !"_".Equals(prefixName)) {
@@ -285,8 +285,7 @@ using com.upokecenter.util;
     this.getNamedBlankNode(
     attribute.Substring(
     refIndex,
-    (refIndex + refLength) - (refIndex))); }
-#if DEBUG
+    (refIndex + refLength) - (refIndex))); } #if DEBUG
         if (!(refIndex >= 0)) {
           throw new InvalidOperationException(attribute);
         }
@@ -347,17 +346,17 @@ using com.upokecenter.util;
       }
     }
 
-    private void miniRdfXml(IElement node, RDFa.EvalContext context) {
-      this.miniRdfXml(node, context, null);
+    private void miniRdfXml(IElement node, RDFa.EvalContext evalContext) {
+      this.miniRdfXml(node, evalContext, null);
     }
 
     // Processes a subset of RDF/XML metadata
     // Doesn't implement RDF/XML completely
     private void miniRdfXml(
     IElement node,
-    RDFa.EvalContext context,
+    RDFa.EvalContext evalContext,
     RDFTerm subject) {
-      string language = context.ValueLanguage;
+      string language = evalContext.ValueLanguage;
       foreach (var child in node.getChildNodes()) {
         IElement childElement = (child is IElement) ?
             ((IElement)child) : null;
@@ -365,7 +364,7 @@ using com.upokecenter.util;
           continue;
         }
         language = (node.getAttribute("xml:lang") != null) ?
-          node.getAttribute("xml:lang") : context.ValueLanguage;
+          node.getAttribute("xml:lang") : evalContext.ValueLanguage;
         if (childElement.getLocalName().Equals("Description") &&
             RDF_NAMESPACE.Equals(childElement.getNamespaceURI())) {
           RDFTerm
@@ -381,7 +380,7 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
             }
           }
           foreach (var child2 in child.getChildNodes()) {
-   IElement childElement2 = ((child2 is IElement) ? ((IElement)child2) : null);
+   IElement childElement2 = (child2 is IElement) ? ((IElement)child2) : null;
             if (childElement2 == null) {
               continue;
             }
@@ -494,7 +493,7 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
               node.getAttribute("resource"),
               iriMapLocal);
         }
-      resource = resource ?? (this.relativeResolve(node.getAttribute("href")));
+      resource = resource ?? this.relativeResolve(node.getAttribute("href"));
         resource = resource ?? this.relativeResolve(node.getAttribute("src"));
         if (resource == null || resource.getKind() != RDFTerm.IRI) {
           string rdfTypeof = this.getCurie(
@@ -552,7 +551,7 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
         resource = this.getSafeCurieOrCurieOrIri(
             node.getAttribute("resource"),
             iriMapLocal);
-      resource = resource ?? (this.relativeResolve(node.getAttribute("href")));
+      resource = resource ?? this.relativeResolve(node.getAttribute("href"));
         currentObject = resource;
       }
       // Step 6
@@ -757,8 +756,9 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
       }
       return (URIUtility.splitIRI(iri) == null) ? null :
    RDFTerm.fromIRI(
-  URIUtility.relativeResolve(iri,
-          this.context.ValueBaseURI));
+  URIUtility.relativeResolve(
+  iri,
+  this.context.ValueBaseURI));
     }
   }
 }

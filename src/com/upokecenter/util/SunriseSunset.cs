@@ -206,7 +206,7 @@ public sealed class SunriseSunset {
 
   // The "workhorse" function for sun rise/set times
   private static long days_since_2000_Jan_0(long y, long m, long d) {
-    return 367L * (y)-((7 * ((y)+(((m)+9)/12)))/4)+((275*m)/9)+(d)-730530L;
+    return 367L * (y)-((7 * ((y)+(((m)+9) / 12)))/4)+((275*m)/9)+(d)-730530L;
   }
 
   // The "workhorse" function
@@ -264,8 +264,8 @@ public sealed class SunriseSunset {
 }
     return (hours < trise[0]) ? (DayState.NightToDay) : ((hours<tset[0]) ?
       (DayState.Day) : ((hours<twiset[0]) ? (DayState.DayToNight) :
-      (DayState.Night))); }
-  // This function computes the Sun's position at any instant
+      (DayState.Night))); }  // This function computes the Sun's position at
+        any instant
 
   // **
   // This function computes GMST0, the Greenwich Mean Sidereal Time

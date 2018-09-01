@@ -22,7 +22,8 @@ namespace com.upokecenter.html {
         XMLNS_NAMESPACE = "http://www.w3.org/2000/xmlns/";
 
     public static string resolveURL(INode node, string url, string _base) {
- string encoding = ((node is IDocument) ? ((IDocument)node).getCharacterSet() :
+ string encoding = ((node is IDocument) ?
+   ((IDocument)node).getCharacterSet() :
    node.getOwnerDocument().getCharacterSet());
       if ("utf-16be".Equals(encoding) || "utf-16le".Equals(encoding)) {
         encoding = "utf-8";

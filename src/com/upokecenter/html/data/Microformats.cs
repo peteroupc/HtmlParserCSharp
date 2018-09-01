@@ -250,7 +250,8 @@ complexLegacyMap.Add(
           "%H:%m:%s%Z:%z",
           "%H:%m:%s%Z%z", "%H:%m:%s%G",
           "%H:%m%Z:%z", "%H:%m%Z%z",
-      "%H:%m%G"}, components,
+      "%H:%m%G"},
+ components,
  !haveDate,
  !haveTime,
  !haveTimeZone)) {
@@ -272,7 +273,8 @@ complexLegacyMap.Add(
           "%H:%m:%s%Z:%z",
           "%H:%m:%s%Z%z", "%H:%m:%s%G",
           "%H:%m%Z:%z", "%H:%m%Z%z",
-      "%H:%m%G"}, components,
+      "%H:%m%G"},
+ components,
  false,
  !haveTime,
  !haveTimeZone)) {
@@ -286,7 +288,8 @@ complexLegacyMap.Add(
         } else if (
   matchDateTimePattern(
   text,
-            null, new string[] { "%Z:%z",
+            null,
+ new string[] { "%Z:%z",
  "%Z%z",
  "%Z",
  "%G" },
@@ -323,7 +326,7 @@ complexLegacyMap.Add(
             null,
  new string[] { "%h:%m:%sp.m.",
   // PM clock values
-        "%h:%m:%spm", "%h:%mp.m.", "%h:%mpm", "%hp.m.","%hpm"},
+        "%h:%m:%spm", "%h:%mp.m.", "%h:%mpm", "%hp.m.", "%hpm"},
           components,
  false,
  !haveTime,

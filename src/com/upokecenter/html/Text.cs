@@ -48,7 +48,7 @@ internal class Text : Node, IText {
   }
 
   internal override string toDebugString() {
-    return "\"" + this.valueText.ToString().Replace("\n", "~~~~")+"\"\n";
+    return "\"" + this.valueText.ToString().Replace("\n", "~~~~") + "\"\n";
   }
 }
 }

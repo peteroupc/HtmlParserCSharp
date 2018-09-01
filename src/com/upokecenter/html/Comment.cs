@@ -51,7 +51,7 @@ internal class Comment : Node, IComment {
   }
 
   internal override string toDebugString() {
-    return "<!-- " + this.getData().ToString().Replace("\n", "~~~~")+" -->\n";
+    return "<!-- " + this.getData().ToString().Replace("\n", "~~~~") + " -->\n";
   }
 }
 }

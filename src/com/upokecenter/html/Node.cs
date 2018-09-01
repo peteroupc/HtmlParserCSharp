@@ -36,12 +36,12 @@ internal class Node : INode {
   private Node parentNode = null;
   private IDocument ownerDocument = null;
 
-  internal int nodeType;
+  private int ValueNodeType;
 
   private string baseURI = null;
 
-  public Node(int nodeType) {
-    this.nodeType = nodeType;
+  public Node(int ValueNodeType) {
+    this.ValueNodeType = ValueNodeType;
     this.childNodes = new List<Node>();
   }
 
@@ -221,7 +221,7 @@ HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
     INode parent = this.getParentNode();
     if (parent == null) {
       parent = this.getOwnerDocument();
-      return (parent == null) ? String.Empty : (parent.getLanguage());
+      return (parent == null) ? String.Empty : parent.getLanguage();
     } else {
  return parent.getLanguage();
 }
@@ -232,7 +232,7 @@ HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
   }
 
   public int getNodeType() {
-    return this.nodeType;
+    return this.ValueNodeType;
   }
 
   public virtual IDocument getOwnerDocument() {
@@ -279,7 +279,7 @@ HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
       this.baseURI = value;
     } else {
       string val = URL.parse(value, URL.parse(parent.getBaseURI())).ToString();
-      this.baseURI=(val == null) ? parent.getBaseURI() : val.ToString();
+      this.baseURI = (val == null) ? parent.getBaseURI() : val.ToString();
     }
   }
 
