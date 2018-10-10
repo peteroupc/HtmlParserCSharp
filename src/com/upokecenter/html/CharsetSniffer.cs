@@ -1,4 +1,6 @@
-/*
+using com.upokecenter.util;
+
+  /*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 
@@ -26,16 +28,7 @@ THE SOFTWARE.
 */
 
 namespace com.upokecenter.html {
-  using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Text;
-using PeterO.Text;
-using com.upokecenter.net;
-using com.upokecenter.util;
-
-  internal sealed class CharsetSniffer {
+internal sealed class CharsetSniffer {
     private const int NoFeed = 0;
 
     private const int RSSFeed = 1;  // application/rss + xml

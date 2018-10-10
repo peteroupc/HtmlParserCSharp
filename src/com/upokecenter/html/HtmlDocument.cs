@@ -1,3 +1,5 @@
+using com.upokecenter.util;
+
 /*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
@@ -26,12 +28,7 @@ THE SOFTWARE.
 */
 
 namespace com.upokecenter.html {
-using System;
-using System.IO;
-using com.upokecenter.net;
-using com.upokecenter.util;
-
-public sealed class HtmlDocument {
+public static class HtmlDocument {
   private sealed class ParseURLListener : IResponseListener<IDocument> {
 public IDocument processResponse(string url, PeterO.Support.InputStream
       stream,
@@ -176,7 +173,4 @@ public IDocument processResponse(string url, PeterO.Support.InputStream
     return DownloadHelper.downloadUrl(url,
         new ParseURLListener(), false);
   }
-
-  private HtmlDocument() {}
-}
 }

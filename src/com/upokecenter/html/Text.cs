@@ -1,3 +1,5 @@
+using System.Text;
+
 /*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
@@ -26,17 +28,15 @@ THE SOFTWARE.
 */
 
 namespace com.upokecenter.html {
-using System;
-using System.Text;
-
 internal class Text : Node, IText {
-  private StringBuilder valueText = new StringBuilder();
-
   public Text() : base(NodeType.TEXT_NODE) {
+      this.ValueText = new StringBuilder();
   }
 
-  public string getData() {
-    return this.valueText.ToString();
+    public StringBuilder ValueText { get; private set; }
+
+    public string getData() {
+      return this.ValueText.ToString();
   }
 
   public string getName() {
@@ -44,11 +44,11 @@ internal class Text : Node, IText {
   }
 
   public override string getTextContent() {
-    return this.valueText.ToString();
+    return this.ValueText.ToString();
   }
 
   internal override string toDebugString() {
-    return "\"" + this.valueText.ToString().Replace("\n", "~~~~") + "\"\n";
+    return "\"" + this.ValueText.ToString().Replace("\n", "~~~~") + "\"\n";
   }
 }
 }

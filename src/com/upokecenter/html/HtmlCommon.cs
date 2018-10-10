@@ -1,9 +1,9 @@
-using System;
+using com.upokecenter.util;
+
+  using System;
 
 namespace com.upokecenter.html {
-  using com.upokecenter.util;
-
-  internal static class HtmlCommon {
+internal static class HtmlCommon {
     public static readonly string HTML_NAMESPACE =
      "http://www.w3.org/1999/xhtml";
 
@@ -18,13 +18,28 @@ namespace com.upokecenter.html {
     public static readonly string
       XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace";
 
-    private static readonly string
+    public static readonly string
         XMLNS_NAMESPACE = "http://www.w3.org/2000/xmlns/";
+
+    internal static bool isHtmlElement(IElement ie, string name) {
+      return name.Equals(ie.getLocalName()) &&
+          HtmlCommon.HTML_NAMESPACE.Equals(ie.getNamespaceURI());
+    }
+
+    internal static bool isMathMLElement(IElement ie, string name) {
+      return name.Equals(ie.getLocalName()) &&
+        HtmlCommon.MATHML_NAMESPACE.Equals(ie.getNamespaceURI());
+    }
+
+    internal static bool isSvgElement(IElement ie, string name) {
+      return name.Equals(ie.getLocalName()) &&
+         HtmlCommon.SVG_NAMESPACE.Equals(ie.getNamespaceURI());
+    }
 
     public static string resolveURL(INode node, string url, string _base) {
  string encoding = ((node is IDocument) ?
-   ((IDocument)node).getCharacterSet() :
-   node.getOwnerDocument().getCharacterSet());
+   ((IDocument)node).getCharset() :
+   node.getOwnerDocument().getCharset());
       if ("utf-16be".Equals(encoding) || "utf-16le".Equals(encoding)) {
         encoding = "utf-8";
       }

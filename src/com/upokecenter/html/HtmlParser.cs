@@ -25,16 +25,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 
-namespace com.upokecenter.html {
-  using System;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
+using PeterO;
 using PeterO.Text;
-using com.upokecenter.io;
 using com.upokecenter.net;
 using com.upokecenter.util;
 
+namespace com.upokecenter.html {
   sealed class HtmlParser {
     internal class CommentToken : IToken {
       internal StringBuilder value;
@@ -87,14 +86,14 @@ using com.upokecenter.util;
     }
     private class FormattingElement {
       public bool marker;
-      public Element element;
+      public IElement element;
       public StartTagToken token;
       public bool isMarker() {
         return marker;
       }
       public override sealed string ToString() {
-     return "FormattingElement [marker=" + marker + ", token=" + token +
-          "]\n" ;
+        return "FormattingElement [marker=" + marker + ", token=" + token +
+             "]\n";
       }
     }
 
@@ -434,7 +433,7 @@ using com.upokecenter.util;
     "-//webtechs//dtd mozilla html//"
   };
 
-    private ConditionalBufferInputStream inputStream;
+    private PeterO.Support.InputStream inputStream;
     private IMarkableCharacterInput charInput = null;
     private EncodingConfidence encoding = null;
 
@@ -456,7 +455,7 @@ using com.upokecenter.util;
     private IList<int> tokenQueue = new List<int>();
     private InsertionMode insertionMode = InsertionMode.Initial;
     private InsertionMode originalInsertionMode = InsertionMode.Initial;
-    private IList<Element> openElements = new List<Element>();
+    private IList<IElement> openElements = new List<IElement>();
     private IList<FormattingElement> formattingElements = new
       List<FormattingElement>();
     private Element headElement = null;
@@ -469,7 +468,7 @@ using com.upokecenter.util;
 
     private StringBuilder pendingTableCharacters = new StringBuilder();
     private bool doFosterParent;
-    private Element context;
+    private IElement context;
     private bool noforeign;
     private string address;
 
@@ -504,11 +503,10 @@ using com.upokecenter.util;
       this.address = address;
       initialize();
       inputStream = new ConditionalBufferInputStream(source);
-      encoding = CharsetSniffer.sniffEncoding(inputStream, charset);
-      ICharacterEncoding encoding = Encodings.GetEncoding(encoding);
+      this.encoding = CharsetSniffer.sniffEncoding(inputStream, charset);
       inputStream.rewind();
-   decoder = new Html5Decoder(encoding == null ? null :
-        encoding.GetDecoder());
+      decoder = new Html5Decoder(this.encoding == null ? null :
+           encoding.GetDecoder());
       charInput = new StackableCharacterInput(new
         DecoderCharacterInput(inputStream, decoder));
     }
@@ -554,12 +552,12 @@ using com.upokecenter.util;
             name.Equals("xlink:href") || name.Equals("xlink:role") ||
             name.Equals("xlink:show") || name.Equals("xlink:title") ||
             name.Equals("xlink:type")) {
-          attr.setNamespace(XLINK_NAMESPACE);
+          attr.setNamespace(HtmlCommon.XLINK_NAMESPACE);
         } else if (name.Equals("xml:base") || name.Equals("xml:lang") ||
                 name.Equals("xml:space")) {
-          attr.setNamespace(XML_NAMESPACE);
+          attr.setNamespace(HtmlCommon.XML_NAMESPACE);
         } else if (name.Equals("xmlns") || name.Equals("xmlns:xlink")) {
-          attr.setNamespace(XMLNS_NAMESPACE);
+          attr.setNamespace(HtmlCommon.XMLNS_NAMESPACE);
         }
       }
     }
@@ -816,8 +814,8 @@ using com.upokecenter.util;
     }
 
     private bool applyEndTag(string name, InsertionMode? insMode) {
-   return applyInsertionMode(getArtificialToken(TOKEN_END_TAG, name),
-        insMode);
+      return applyInsertionMode(getArtificialToken(TOKEN_END_TAG, name),
+           insMode);
     }
 
     private bool applyForeignContext(int token) {
@@ -841,12 +839,12 @@ using com.upokecenter.util;
         var tag = (StartTagToken)getToken(token);
         string name = tag.getName();
         if (name.Equals("font")) {
-   if (tag.getAttribute("color") != null || tag.getAttribute("size") !=
-            null || tag.getAttribute("face") != null) {
+          if (tag.getAttribute("color") != null || tag.getAttribute("size") !=
+                   null || tag.getAttribute("face") != null) {
             error = true;
             while (true) {
               popCurrentNode();
-              Element node = getCurrentNode();
+              IElement node = getCurrentNode();
               if (node.getNamespaceURI().Equals(HtmlCommon.HTML_NAMESPACE) ||
                   isMathMLTextIntegrationPoint(node) ||
                   isHtmlIntegrationPoint(node)) {
@@ -885,7 +883,7 @@ using com.upokecenter.util;
           }
           while (true) {
             popCurrentNode();
-            Element node = getCurrentNode();
+            IElement node = getCurrentNode();
             if (node.getNamespaceURI().Equals(HtmlCommon.HTML_NAMESPACE) ||
                 isMathMLTextIntegrationPoint(node) ||
                 isHtmlIntegrationPoint(node)) {
@@ -896,7 +894,7 @@ using com.upokecenter.util;
         } else {
           string _namespace = getCurrentNode().getNamespaceURI();
           var mathml = false;
-          if (SVG_NAMESPACE.Equals(_namespace)) {
+          if (HtmlCommon.SVG_NAMESPACE.Equals(_namespace)) {
             if (name.Equals("altglyph")) {
               tag.setName("altGlyph");
             } else if (name.Equals("altglyphdef")) {
@@ -971,7 +969,7 @@ using com.upokecenter.util;
               tag.setName("textPath");
             }
             adjustSvgAttributes(tag);
-          } else if (MATHML_NAMESPACE.Equals(_namespace)) {
+          } else if (HtmlCommon.MATHML_NAMESPACE.Equals(_namespace)) {
             adjustMathMLAttributes(tag);
             mathml = true;
           }
@@ -1004,7 +1002,7 @@ using com.upokecenter.util;
         string name = tag.getName();
         if (name.Equals("script") &&
             getCurrentNode().getLocalName().Equals("script") &&
-            SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
+HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
           popCurrentNode();
         } else {
           if (!DataUtilities.ToLowerCaseAscii(getCurrentNode().getLocalName())
@@ -1016,17 +1014,17 @@ using com.upokecenter.util;
             if (i1 == 0) {
               return true;
             }
-            Element node = openElements[i1];
+            IElement node = openElements[i1];
             if (i1 < originalSize - 1 &&
                 HtmlCommon.HTML_NAMESPACE.Equals(node.getNamespaceURI())) {
               noforeign = true;
               return applyInsertionMode(token, null);
             }
-         string nodeName =
-              DataUtilities.ToLowerCaseAscii(node.getLocalName());
+            string nodeName =
+                 DataUtilities.ToLowerCaseAscii(node.getLocalName());
             if (name.Equals(nodeName)) {
               while (true) {
-                Element node2 = popCurrentNode();
+                IElement node2 = popCurrentNode();
                 if (node2.Equals(node)) {
                   break;
                 }
@@ -1037,8 +1035,8 @@ using com.upokecenter.util;
         }
         return false;
       } else {
-      return (token == TOKEN_EOF) ? (applyInsertionMode(token, null)) :
-          (true);
+        return (token == TOKEN_EOF) ? (applyInsertionMode(token, null)) :
+            (true);
       }
       throw new InvalidOperationException();
     }
@@ -1060,8 +1058,8 @@ using com.upokecenter.util;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
               var doctype = (DocTypeToken)getToken(token);
-    string doctypeName = (doctype.name == null) ? "" :
-                doctype.name.ToString();
+              string doctypeName = (doctype.name == null) ? "" :
+                    doctype.name.ToString();
               string doctypePublic = (doctype.publicID == null) ? null :
                 doctype.publicID.ToString();
               string doctypeSystem = (doctype.systemID == null) ? null :
@@ -1093,18 +1091,18 @@ using com.upokecenter.util;
               }
               doctypePublic = doctypePublic ?? ("");
               doctypeSystem = doctypeSystem ?? ("");
-              var doctypeNode = new DocumentType();
-              doctypeNode.name = doctypeName;
-              doctypeNode.publicId = doctypePublic;
-              doctypeNode.systemId = doctypeSystem;
+              var doctypeNode = new DocumentType(
+              doctypeName,
+              doctypePublic,
+              doctypeSystem);
               document.doctype = doctypeNode;
               document.appendChild(doctypeNode);
               string doctypePublicLC = null;
-              if (!"about:srcdoc".Equals(document.address)) {
+              if (!"about:srcdoc".Equals(document.Address)) {
                 if (!matchesHtml || doctype.forceQuirks) {
                   document.setMode(DocumentMode.QuirksMode);
                 } else {
-               doctypePublicLC =
+                  doctypePublicLC =
                     DataUtilities.ToLowerCaseAscii(doctypePublic);
                   if ("html".Equals(doctypePublicLC) ||
               "-//w3o//dtd w3 html strict 3.0//en//"
@@ -1114,7 +1112,7 @@ using com.upokecenter.util;
                     document.setMode(DocumentMode.QuirksMode);
                   } else if (doctypePublic.Length > 0) {
                     foreach (var id in quirksModePublicIdPrefixes) {
-                if (doctypePublicLC.StartsWith(id,
+                    if (doctypePublicLC.StartsWith(id,
                     StringComparison.Ordinal)) {
                     document.setMode(DocumentMode.QuirksMode);
                     break;
@@ -1125,30 +1123,30 @@ using com.upokecenter.util;
                 if (document.getMode() != DocumentMode.QuirksMode) {
                   doctypePublicLC = doctypePublicLC ??
                     (DataUtilities.ToLowerCaseAscii(doctypePublic));
-               if
-  ("http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd"
+                  if
+     ("http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd"
                     .Equals(
                     DataUtilities.ToLowerCaseAscii(doctypeSystem)) ||
                     (!hasSystemId &&
-            doctypePublicLC.StartsWith("-//w3c//dtd html 4.01 frameset//",
-           StringComparison.Ordinal)) || (!hasSystemId &&
-            doctypePublicLC.StartsWith("-//w3c//dtd html 4.01 transitional//",
-           StringComparison.Ordinal))) {
+               doctypePublicLC.StartsWith("-//w3c//dtd html 4.01 frameset//",
+              StringComparison.Ordinal)) || (!hasSystemId &&
+  doctypePublicLC.StartsWith("-//w3c//dtd html 4.01 transitional//",
+              StringComparison.Ordinal))) {
                     document.setMode(DocumentMode.QuirksMode);
                   }
                 }
                 if (document.getMode() != DocumentMode.QuirksMode) {
                   doctypePublicLC = doctypePublicLC ??
                     (DataUtilities.ToLowerCaseAscii(doctypePublic));
-             if
-  (doctypePublicLC.StartsWith("-//w3c//dtd xhtml 1.0 frameset//",
-         StringComparison.Ordinal) ||
-          doctypePublicLC.StartsWith("-//w3c//dtd xhtml 1.0 transitional//",
-         StringComparison.Ordinal) || (hasSystemId &&
-          doctypePublicLC.StartsWith("-//w3c//dtd html 4.01 frameset//",
-         StringComparison.Ordinal)) || (hasSystemId &&
-          doctypePublicLC.StartsWith("-//w3c//dtd html 4.01 transitional//",
-         StringComparison.Ordinal))) {
+                  if
+       (doctypePublicLC.StartsWith("-//w3c//dtd xhtml 1.0 frameset//",
+              StringComparison.Ordinal) ||
+  doctypePublicLC.StartsWith("-//w3c//dtd xhtml 1.0 transitional//",
+              StringComparison.Ordinal) || (hasSystemId &&
+               doctypePublicLC.StartsWith("-//w3c//dtd html 4.01 frameset//",
+              StringComparison.Ordinal)) || (hasSystemId &&
+  doctypePublicLC.StartsWith("-//w3c//dtd html 4.01 transitional//",
+              StringComparison.Ordinal))) {
                     document.setMode(DocumentMode.LimitedQuirksMode);
                   }
                 }
@@ -1161,7 +1159,7 @@ using com.upokecenter.util;
 
               return true;
             }
-            if (!"about:srcdoc".Equals(document.address)) {
+            if (!"about:srcdoc".Equals(document.Address)) {
               error = true;
               document.setMode(DocumentMode.QuirksMode);
             }
@@ -1286,7 +1284,7 @@ using com.upokecenter.util;
                     if (TextEncoding.isAsciiCompatible(charset) ||
                     "utf-16be".Equals(charset) || "utf-16le".Equals(charset)) {
                     changeEncoding(charset);
-                  if (encoding.getConfidence() ==
+                    if (encoding.getConfidence() ==
                     EncodingConfidence.Certain) {
                     inputStream.disableBuffer();
                     }
@@ -1300,10 +1298,12 @@ using com.upokecenter.util;
                     if (value != null) {
                     value = DataUtilities.ToLowerCaseAscii(value);
                     charset = CharsetSniffer.extractCharsetFromMeta(value);
-                    if (TextEncoding.isAsciiCompatible(charset) ||
-                    "utf-16be".Equals(charset) || "utf-16le".Equals(charset)) {
+                    if (true) {
+                    //if (TextEncoding.isAsciiCompatible(charset) ||
+                    //"utf-16be" .Equals(charset) || "utf-16le"
+                    // .Equals(charset)) {
                     changeEncoding(charset);
-                  if (encoding.getConfidence() ==
+                    if (encoding.getConfidence() ==
                     EncodingConfidence.Certain) {
                     inputStream.disableBuffer();
                     }
@@ -1321,7 +1321,7 @@ using com.upokecenter.util;
                     string[] data = StringUtility.splitAtSpaces(value);
                     string deflang = (data.Length == 0) ? "" : data[0];
                     if (!String.IsNullOrEmpty(deflang)) {
-                    document.defaultLanguage = deflang;
+                    document.DefaultLanguage = deflang;
                     }
                     }
                   }
@@ -1442,119 +1442,6 @@ using com.upokecenter.util;
               addCommentNodeToCurrentNode(token);
 
               return true;
-            } else if (token == TOKEN_EOF) {
-              applyStartTag("body", insMode);
-              framesetOk = true;
-              return applyInsertionMode(token, null);
-            }
-            return true;
-          }
-        case InsertionMode.Text: {
-            if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              if (insMode != insertionMode) {
-                insertCharacter(getCurrentNode(), token);
-              } else {
-                Text textNode = getTextNodeToInsert(getCurrentNode());
-                int ch = token;
-                if (textNode == null) {
-                  throw new InvalidOperationException();
-                }
-                while (true) {
-                  if (ch <= 0xffff) {
-                    textNode.text.Append((char)(ch));
-                  } else if (ch <= 0x10ffff) {
-       textNode.text.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
-                    0xd800));
-               textNode.text.Append((char)(((ch - 0x10000) & 0x3ff) +
-                    0xdc00));
-                  }
-                  token = parserRead();
-                  if ((token & TOKEN_TYPE_MASK) != TOKEN_CHARACTER) {
-                    tokenQueue.Insert(0, token);
-                    break;
-                  }
-                  ch = token;
-                }
-              }
-              return true;
-            } else if (token == TOKEN_EOF) {
-              error = true;
-              openElements.RemoveAt(openElements.Count - 1);
-              insertionMode = originalInsertionMode;
-              return applyInsertionMode(token, null);
-            } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              openElements.RemoveAt(openElements.Count - 1);
-              insertionMode = originalInsertionMode;
-            }
-            return true;
-          }
-        case InsertionMode.InBody: {
-            if (token == 0) {
-              error = true;
-              return true;
-            }
-            if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              addCommentNodeToCurrentNode(token);
-
-              return true;
-            }
-            if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              error = true;
-              return true;
-            }
-            if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              //DebugUtility.Log("%c %s",token,getCurrentNode().getTagName());
-              reconstructFormatting();
-              Text textNode = getTextNodeToInsert(getCurrentNode());
-              int ch = token;
-              if (textNode == null) {
-                throw new InvalidOperationException();
-              }
-              while (true) {
-                // Read multiple characters at once
-                if (ch == 0) {
-                  error = true;
-                } else {
-                  if (ch <= 0xffff) {
-                    textNode.text.Append((char)(ch));
-                  } else if (ch <= 0x10ffff) {
-       textNode.text.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
-                    0xd800));
-               textNode.text.Append((char)(((ch - 0x10000) & 0x3ff) +
-                    0xdc00));
-                  }
-                }
-                if (framesetOk && token != 0x20 && token != 0x09 &&
-                    token != 0x0a && token != 0x0c && token != 0x0d) {
-                  framesetOk = false;
-                }
-                // If we're only processing under a different
-                // insertion mode then break
-                if (insMode != insertionMode) {
-                  break;
-                }
-                token = parserRead();
-                if ((token & TOKEN_TYPE_MASK) != TOKEN_CHARACTER) {
-                  tokenQueue.Insert(0, token);
-                  break;
-                }
-                ch = token;
-              }
-              return true;
-            } else if (token == TOKEN_EOF) {
-              foreach (var e in openElements) {
-                string name = e.getLocalName();
-                if (!"dd".Equals(name) &&
-                    !"dt".Equals(name) && !"li".Equals(name) &&
-                    !"p".Equals(name) && !"tbody".Equals(name) &&
-                    !"td".Equals(name) && !"tfoot".Equals(name) &&
-                    !"th".Equals(name) && !"tr".Equals(name) &&
-                    !"thead".Equals(name) && !"body".Equals(name) &&
-                    !"html".Equals(name)) {
-                  error = true;
-                }
-              }
-              stopParsing();
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
               //
@@ -1585,8 +1472,8 @@ using com.upokecenter.util;
               } else if ("frameset".Equals(name)) {
                 error = true;
                 if (!framesetOk ||
-                  openElements.Count <= 1 || !openElements[1].isHtmlElement(
-        "body")) {
+                  openElements.Count <= 1 ||
+                    !HtmlCommon.isHtmlElement(openElements[1],"body")) {
                   return false;
                 }
                 var parent = (Node)openElements[1].getParentNode();
@@ -1619,7 +1506,7 @@ using com.upokecenter.util;
                   "h3".Equals(name) || "h4".Equals(name) ||
                 "h5".Equals(name) || "h6".Equals(name)) {
                 closeParagraph(insMode);
-                Element node = getCurrentNode();
+                IElement node = getCurrentNode();
                 string name1 = node.getLocalName();
                 if ("h1".Equals(name1) || "h2".Equals(name1) ||
                     "h3".Equals(name1) || "h4".Equals(name1) ||
@@ -1647,7 +1534,7 @@ using com.upokecenter.util;
               } else if ("li".Equals(name)) {
                 framesetOk = false;
                 for (int i = openElements.Count - 1; i >= 0; --i) {
-                  Element node = openElements[i];
+                  IElement node = openElements[i];
                   string nodeName = node.getLocalName();
                   if (nodeName.Equals("li")) {
                     applyInsertionMode(
@@ -1666,7 +1553,7 @@ using com.upokecenter.util;
               } else if ("dd".Equals(name) || "dt".Equals(name)) {
                 framesetOk = false;
                 for (int i = openElements.Count - 1; i >= 0; --i) {
-                  Element node = openElements[i];
+                  IElement node = openElements[i];
                   string nodeName = node.getLocalName();
                   //DebugUtility.Log("looping through %s",nodeName);
                   if (nodeName.Equals("dd") || nodeName.Equals("dt")) {
@@ -1699,7 +1586,7 @@ using com.upokecenter.util;
                 return true;
               } else if ("a".Equals(name)) {
                 while (true) {
-                  Element node = null;
+                  IElement node = null;
                   for (int i = formattingElements.Count - 1; i >= 0; --i) {
                     FormattingElement fe = formattingElements[i];
                     if (fe.isMarker()) {
@@ -1877,7 +1764,7 @@ using com.upokecenter.util;
                 reconstructFormatting();
                 adjustMathMLAttributes(tag);
                 adjustForeignAttributes(tag);
-                insertForeignElement(tag, MATHML_NAMESPACE);
+                insertForeignElement(tag, HtmlCommon.MATHML_NAMESPACE);
                 if (tag.isSelfClosing()) {
                   tag.ackSelfClosing();
                   popCurrentNode();
@@ -1888,7 +1775,7 @@ using com.upokecenter.util;
                 reconstructFormatting();
                 adjustSvgAttributes(tag);
                 adjustForeignAttributes(tag);
-                insertForeignElement(tag, SVG_NAMESPACE);
+                insertForeignElement(tag, HtmlCommon.SVG_NAMESPACE);
                 if (tag.isSelfClosing()) {
                   tag.ackSelfClosing();
                   popCurrentNode();
@@ -1960,14 +1847,14 @@ using com.upokecenter.util;
                     // NOTE: Steps for "any other end tag"
                     // DebugUtility.Log("no such formatting element");
                     for (int i1 = openElements.Count - 1; i1 >= 0; --i1) {
-                    Element node = openElements[i1];
+                    IElement node = openElements[i1];
                     if (name.Equals(node.getLocalName())) {
                     generateImpliedEndTagsExcept(name);
                     if (!name.Equals(getCurrentNode().getLocalName())) {
                     error = true;
                     }
                     while (true) {
-                    Element node2 = popCurrentNode();
+                    IElement node2 = popCurrentNode();
                     if (node2.Equals(node)) {
                     break;
                     }
@@ -1980,7 +1867,8 @@ using com.upokecenter.util;
                     }
                     break;
                   }
-           int formattingElementPos = openElements.IndexOf(formatting.element);
+           int formattingElementPos =
+                    openElements.IndexOf(formatting.element);
                   if (formattingElementPos < 0) {  // not found
                     error = true;
                     // DebugUtility.Log("Not in stack of open elements");
@@ -2000,7 +1888,7 @@ using com.upokecenter.util;
                   }
                   Element furthestBlock = null;
                   var furthestBlockPos = -1;
-          for (int j = openElements.Count - 1; j > formattingElementPos;
+                  for (int j = openElements.Count - 1; j > formattingElementPos;
                     --j) {
                     Element e = openElements[j];
                     if (isSpecialElement(e)) {
@@ -2022,7 +1910,7 @@ using com.upokecenter.util;
                     //DebugUtility.Log(formattingElements);
                     break;
                   }
-               Element commonAncestor = openElements[formattingElementPos -
+                  Element commonAncestor = openElements[formattingElementPos -
                     1];
                   // DebugUtility.Log("common ancestor: %s",commonAncestor);
                   int bookmark = formattingElements.IndexOf(formatting);
@@ -2035,7 +1923,7 @@ using com.upokecenter.util;
                     FormattingElement nodeFE = getFormattingElement(myNode);
                     if (nodeFE == null) {
                     // DebugUtility.Log("node not a formatting element");
-                 superiorNode = openElements[openElements.IndexOf(myNode) -
+                    superiorNode = openElements[openElements.IndexOf(myNode) -
                     1];
                     openElements.Remove(myNode);
                     continue;
@@ -2119,7 +2007,7 @@ using com.upokecenter.util;
                     error = true;
                   }
                   while (true) {
-                    Element node = popCurrentNode();
+                    IElement node = popCurrentNode();
                     if (node.getLocalName().Equals(name)) {
                     break;
                     }
@@ -2152,14 +2040,14 @@ using com.upokecenter.util;
                     error = true;
                   }
                   while (true) {
-                    Element node = popCurrentNode();
+                    IElement node = popCurrentNode();
                     if (node.getLocalName().Equals(name)) {
                     break;
                     }
                   }
                 }
               } else if (name.Equals("form")) {
-                Element node = formElement;
+                IElement node = formElement;
                 formElement = null;
                 if (node == null || hasHtmlElementInScope(node)) {
                   error = true;
@@ -2181,7 +2069,7 @@ using com.upokecenter.util;
                   error = true;
                 }
                 while (true) {
-                  Element node = popCurrentNode();
+                  IElement node = popCurrentNode();
                   if (node.getLocalName().Equals(name)) {
                     break;
                   }
@@ -2196,7 +2084,7 @@ using com.upokecenter.util;
                   error = true;
                 }
                 while (true) {
-                  Element node = popCurrentNode();
+                  IElement node = popCurrentNode();
                   if (node.getLocalName().Equals(name)) {
                     break;
                   }
@@ -2213,7 +2101,7 @@ using com.upokecenter.util;
                   error = true;
                 }
                 while (true) {
-                  Element node = popCurrentNode();
+                  IElement node = popCurrentNode();
                   string name2 = node.getLocalName();
                   if (name2.Equals("h1") ||
                     name2.Equals("h2") || name2.Equals("h3") ||
@@ -2233,7 +2121,7 @@ using com.upokecenter.util;
                   error = true;
                 }
                 while (true) {
-                  Element node = popCurrentNode();
+                  IElement node = popCurrentNode();
                   if (node.getLocalName().Equals(name)) {
                     break;
                   }
@@ -2244,14 +2132,14 @@ using com.upokecenter.util;
                 return false;
               } else {
                 for (int i = openElements.Count - 1; i >= 0; --i) {
-                  Element node = openElements[i];
+                  IElement node = openElements[i];
                   if (name.Equals(node.getLocalName())) {
                     generateImpliedEndTagsExcept(name);
                     if (!name.Equals(getCurrentNode().getLocalName())) {
                     error = true;
                     }
                     while (true) {
-                    Element node2 = popCurrentNode();
+                    IElement node2 = popCurrentNode();
                     if (node2.Equals(node)) {
                     break;
                     }
@@ -2351,7 +2239,7 @@ using com.upokecenter.util;
                   (applyInsertionMode(token, null)) : (false);
               } else if (name.Equals("caption")) {
                 while (true) {
-                  Element node = getCurrentNode();
+                  IElement node = getCurrentNode();
                   if (node == null ||
                     node.getLocalName().Equals("table") ||
                     node.getLocalName().Equals("html")) {
@@ -2364,7 +2252,7 @@ using com.upokecenter.util;
                 return true;
               } else if (name.Equals("colgroup")) {
                 while (true) {
-                  Element node = getCurrentNode();
+                  IElement node = getCurrentNode();
                   if (node == null ||
                     node.getLocalName().Equals("table") ||
                     node.getLocalName().Equals("html")) {
@@ -2381,7 +2269,7 @@ using com.upokecenter.util;
               } else if (name.Equals("tbody") || name.Equals("tfoot") ||
                   name.Equals("thead")) {
                 while (true) {
-                  Element node = getCurrentNode();
+                  IElement node = getCurrentNode();
                   if (node == null ||
                     node.getLocalName().Equals("table") ||
                     node.getLocalName().Equals("html")) {
@@ -2432,7 +2320,7 @@ using com.upokecenter.util;
                   return false;
                 } else {
                   while (true) {
-                    Element node = popCurrentNode();
+                    IElement node = popCurrentNode();
                     if (node.getLocalName().Equals(name)) {
                     break;
                     }
@@ -2456,8 +2344,9 @@ using com.upokecenter.util;
               addCommentNodeToCurrentNode(token);
               return true;
             } else if (token == TOKEN_EOF) {
- error |= (getCurrentNode() == null || !getCurrentNode().getLocalName().Equals(
-               "html"));
+ error |= (getCurrentNode() == null ||
+                !getCurrentNode().getLocalName().Equals(
+                    "html"));
               stopParsing();
             }
             return true;
@@ -2468,14 +2357,20 @@ using com.upokecenter.util;
                 error = true;
                 return false;
               } else {
-                pendingTableCharacters.AddCodePoint(token);
+         if (token <= 0xffff) {
+                  pendingTableCharacters.Append((char)(token));
+  } else if (token <= 0x10ffff) {
+pendingTableCharacters.Append((char)((((token - 0x10000) >> 10) & 0x3ff) +
+  0xd800));
+pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
+}
               }
             } else {
               var nonspace = false;
-              int[] array = pendingTableCharacters.array();
-              int size = pendingTableCharacters.Count;
-              for (int i = 0; i < size; ++i) {
-                int c = array[i];
+              string str = pendingTableCharacters.ToString();
+              int size = pendingTableCharacters.Length;
+              for (int i = 0; i < str.Length; ++i) {
+                int c = str[i];
                 if (c != 0x9 && c != 0xa && c != 0xc && c != 0xd && c != 0x20) {
                   nonspace = true;
                   break;
@@ -2491,8 +2386,8 @@ using com.upokecenter.util;
                 }
                 doFosterParent = false;
               } else {
-             insertString(getCurrentNode(),
-                  pendingTableCharacters.ToString());
+                insertString(getCurrentNode(),
+                    pendingTableCharacters.ToString());
               }
               insertionMode = originalInsertionMode;
               return applyInsertionMode(token, null);
@@ -2528,7 +2423,7 @@ using com.upokecenter.util;
                   error = true;
                 }
                 while (true) {
-                  Element node = popCurrentNode();
+                  IElement node = popCurrentNode();
                   if (node.getLocalName().Equals("caption")) {
                     break;
                   }
@@ -2558,8 +2453,9 @@ using com.upokecenter.util;
           }
         case InsertionMode.InColumnGroup: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        if (token == 0x20 || token == 0x0c || token == 0x0a || token == 0x0d||
-                token == 0x09) {
+        if (token == 0x20 || token == 0x0c || token == 0x0a || token == 0x0d
+                ||
+                    token == 0x09) {
                 insertCharacter(getCurrentNode(), token);
               } else {
                 if (applyEndTag("colgroup", insMode)) {
@@ -2621,7 +2517,7 @@ using com.upokecenter.util;
               string name = tag.getName();
               if (name.Equals("tr")) {
                 while (true) {
-                  Element node = getCurrentNode();
+                  IElement node = getCurrentNode();
                   if (node == null || node.getLocalName().Equals("tbody") ||
                     node.getLocalName().Equals("tfoot") ||
                     node.getLocalName().Equals("thead") ||
@@ -2648,7 +2544,7 @@ using com.upokecenter.util;
                   return false;
                 }
                 while (true) {
-                  Element node = getCurrentNode();
+                  IElement node = getCurrentNode();
                   if (node == null || node.getLocalName().Equals("tbody") ||
                     node.getLocalName().Equals("tfoot") ||
                     node.getLocalName().Equals("thead") ||
@@ -2672,7 +2568,7 @@ using com.upokecenter.util;
                   return false;
                 }
                 while (true) {
-                  Element node = getCurrentNode();
+                  IElement node = getCurrentNode();
                   if (node == null || node.getLocalName().Equals("tbody") ||
                     node.getLocalName().Equals("tfoot") ||
                     node.getLocalName().Equals("thead") ||
@@ -2692,7 +2588,7 @@ using com.upokecenter.util;
                   return false;
                 }
                 while (true) {
-                  Element node = getCurrentNode();
+                  IElement node = getCurrentNode();
                   if (node == null || node.getLocalName().Equals("tbody") ||
                     node.getLocalName().Equals("tfoot") ||
                     node.getLocalName().Equals("thead") ||
@@ -2798,8 +2694,8 @@ using com.upokecenter.util;
                   error = true;
                   return false;
                 }
-          applyEndTag(hasHtmlElementInTableScope("td") ? "td" : "th",
-                  insMode);
+                applyEndTag(hasHtmlElementInTableScope("td") ? "td" : "th",
+                    insMode);
                 return applyInsertionMode(token, null);
               } else {
                 applyInsertionMode(token, InsertionMode.InBody);
@@ -2817,7 +2713,7 @@ using com.upokecenter.util;
                   error = true;
                 }
                 while (true) {
-                  Element node = popCurrentNode();
+                  IElement node = popCurrentNode();
                   if (node.getLocalName().Equals(name)) {
                     break;
                   }
@@ -2836,8 +2732,8 @@ using com.upokecenter.util;
                   error = true;
                   return false;
                 }
-          applyEndTag(hasHtmlElementInTableScope("td") ? "td" : "th",
-                  insMode);
+                applyEndTag(hasHtmlElementInTableScope("td") ? "td" : "th",
+                    insMode);
                 return applyInsertionMode(token, null);
               } else {
                 applyInsertionMode(token, InsertionMode.InBody);
@@ -2921,7 +2817,7 @@ using com.upokecenter.util;
                   return false;
                 }
                 while (true) {
-                  Element node = popCurrentNode();
+                  IElement node = popCurrentNode();
                   if (node.getLocalName().Equals(name)) {
                     break;
                   }
@@ -2933,8 +2829,9 @@ using com.upokecenter.util;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
               addCommentNodeToCurrentNode(token);
             } else if (token == TOKEN_EOF) {
-       if (getCurrentNode() == null || !getCurrentNode().getLocalName().Equals(
-               "html")) {
+       if (getCurrentNode() == null ||
+                !getCurrentNode().getLocalName().Equals(
+                    "html")) {
                 error = true;
               }
               stopParsing();
@@ -2984,8 +2881,9 @@ using com.upokecenter.util;
           }
         case InsertionMode.AfterBody: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        if (token == 0x09 || token == 0x0a || token == 0x0c || token == 0x0d||
-                token == 0x20) {
+        if (token == 0x09 || token == 0x0a || token == 0x0c || token == 0x0d
+                ||
+                    token == 0x20) {
                 applyInsertionMode(token, InsertionMode.InBody);
               } else {
                 error = true;
@@ -3074,7 +2972,7 @@ using com.upokecenter.util;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
               addCommentNodeToCurrentNode(token);
             } else if (token == TOKEN_EOF) {
-              if (!getCurrentNode().isHtmlElement("html")) {
+              if (!HtmlCommon.isHtmlElement(getCurrentNode(),"html")) {
                 error = true;
               }
               stopParsing();
@@ -3083,8 +2981,9 @@ using com.upokecenter.util;
           }
         case InsertionMode.AfterFrameset: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        if (token == 0x09 || token == 0x0a || token == 0x0c || token == 0x0d||
-                token == 0x20) {
+        if (token == 0x09 || token == 0x0a || token == 0x0c || token == 0x0d
+                ||
+                    token == 0x20) {
                 insertCharacter(getCurrentNode(), token);
               } else {
                 error = true;
@@ -3118,8 +3017,9 @@ using com.upokecenter.util;
           }
         case InsertionMode.AfterAfterBody: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        if (token == 0x09 || token == 0x0a || token == 0x0c || token == 0x0d||
-                token == 0x20) {
+        if (token == 0x09 || token == 0x0a || token == 0x0c || token == 0x0d
+                ||
+                    token == 0x20) {
                 applyInsertionMode(token, InsertionMode.InBody);
               } else {
                 error = true;
@@ -3151,8 +3051,9 @@ using com.upokecenter.util;
           }
         case InsertionMode.AfterAfterFrameset: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        if (token == 0x09 || token == 0x0a || token == 0x0c || token == 0x0d||
-                token == 0x20) {
+        if (token == 0x09 || token == 0x0a || token == 0x0c || token == 0x0d
+                ||
+                    token == 0x20) {
                 applyInsertionMode(token, InsertionMode.InBody);
               } else {
                 error = true;
@@ -3210,8 +3111,10 @@ using com.upokecenter.util;
       // Rewind the input stream and set the new encoding
       inputStream.rewind();
       encoding = new EncodingConfidence(charset, EncodingConfidence.Certain);
-   decoder = new Html5Decoder(TextEncoding.getDecoder(encoding.getEncoding()));
-      charInput = new StackableCharacterInput(new
+   decoder = new
+        Html5Decoder(TextEncoding.getDecoder(encoding.getEncoding()));
+      charInput = new StackableCharacterInput(
+        new
          DecoderCharacterInput(inputStream, decoder));
     }
 
@@ -3257,7 +3160,7 @@ using com.upokecenter.util;
       if (openElements.Count == 0) {
         return;
       }
-      Node fosterParent = openElements[0];
+      INode fosterParent = openElements[0];
       for (int i = openElements.Count - 1; i >= 0; --i) {
         Element e = openElements[i];
         if (e.getLocalName().Equals("table")) {
@@ -3284,7 +3187,7 @@ using com.upokecenter.util;
 
     private void generateImpliedEndTags() {
       while (true) {
-        Element node = getCurrentNode();
+        IElement node = getCurrentNode();
         string name = node.getLocalName();
         if ("dd".Equals(name) || "dd".Equals(name) || "dt".Equals(name) ||
             "li".Equals(name) || "option".Equals(name) ||
@@ -3299,7 +3202,7 @@ using com.upokecenter.util;
 
     private void generateImpliedEndTagsExcept(string _string) {
       while (true) {
-        Element node = getCurrentNode();
+        IElement node = getCurrentNode();
         string name = node.getLocalName();
         if (_string.Equals(name)) {
           break;
@@ -3331,7 +3234,7 @@ using com.upokecenter.util;
       throw new ArgumentException();
     }
 
-    private Element getCurrentNode() {
+    private IElement getCurrentNode() {
       return (openElements.Count == 0) ? (null) :
             (openElements[openElements.Count - 1]);
     }
@@ -3349,10 +3252,10 @@ using com.upokecenter.util;
       if (openElements.Count == 0) {
         return null;
       }
-      Node fosterParent = openElements[0];
-      IList<Node> childNodes;
+      INode fosterParent = openElements[0];
+      IList<INode> childNodes;
       for (int i = openElements.Count - 1; i >= 0; --i) {
-        Element e = openElements[i];
+        IElement e = openElements[i];
         if (e.getLocalName().Equals("table")) {
           var parent = (Node)e.getParentNode();
           bool isElement = (parent != null &&
@@ -3373,8 +3276,8 @@ using com.upokecenter.util;
             }
             for (int j = 0; j < childNodes.Count; ++j) {
               if (childNodes[j].Equals(e)) {
-          if (j > 0 && childNodes[j - 1].getNodeType() ==
-                  NodeType.TEXT_NODE) {
+                if (j > 0 && childNodes[j - 1].getNodeType() ==
+                    NodeType.TEXT_NODE) {
                   return (Text)childNodes[j - 1];
                 } else {
                   var textNode = new Text();
@@ -3437,7 +3340,7 @@ using com.upokecenter.util;
         return false;
       }
       for (int i = openElements.Count - 1; i >= 0; --i) {
-        Element e = openElements[i];
+        IElement e = openElements[i];
         string _namespace = e.getNamespaceURI();
         string thisName = e.getLocalName();
         if (HtmlCommon.HTML_NAMESPACE.Equals(_namespace)) {
@@ -3453,7 +3356,7 @@ using com.upokecenter.util;
           }
           return false;
         }
-        if (MATHML_NAMESPACE.Equals(_namespace)) {
+        if (HtmlCommon.MATHML_NAMESPACE.Equals(_namespace)) {
           if (thisName.Equals("mi") ||
               thisName.Equals("mo") || thisName.Equals("mn") ||
               thisName.Equals("ms") || thisName.Equals("mtext") ||
@@ -3461,7 +3364,7 @@ using com.upokecenter.util;
             return false;
           }
         }
-        if (SVG_NAMESPACE.Equals(_namespace)) {
+        if (HtmlCommon.SVG_NAMESPACE.Equals(_namespace)) {
           if (thisName.Equals("foreignObject") || thisName.Equals("desc") ||
               thisName.Equals("title")) {
             return false;
@@ -3472,21 +3375,29 @@ using com.upokecenter.util;
     }
     private bool hasHtmlElementInListItemScope(string name) {
       for (int i = openElements.Count - 1; i >= 0; --i) {
-        Element e = openElements[i];
-        if (e.isHtmlElement(name)) {
+        IElement e = openElements[i];
+        if (HtmlCommon.isHtmlElement(e, name)) {
           return true;
         }
-        if (e.isHtmlElement("applet") ||
-            e.isHtmlElement("caption") || e.isHtmlElement("html") ||
-            e.isHtmlElement("table") || e.isHtmlElement("td") ||
-            e.isHtmlElement("th") || e.isHtmlElement("ol") ||
-            e.isHtmlElement("ul") || e.isHtmlElement("marquee") ||
-            e.isHtmlElement("object") || e.isMathMLElement("mi") ||
-            e.isMathMLElement("mo") || e.isMathMLElement("mn") ||
-            e.isMathMLElement("ms") || e.isMathMLElement("mtext") ||
-            e.isMathMLElement("annotation-xml") ||
-            e.isSvgElement("foreignObject") ||
-            e.isSvgElement("desc") || e.isSvgElement("title")
+        if (HtmlCommon.isHtmlElement(e, "applet") ||
+            HtmlCommon.isHtmlElement(e, "caption") ||
+              HtmlCommon.isHtmlElement(e, "html") ||
+   HtmlCommon.isHtmlElement(e, "table") || HtmlCommon.isHtmlElement(e, "td"
+) ||
+      HtmlCommon.isHtmlElement(e, "th") || HtmlCommon.isHtmlElement(e, "ol"
+) ||
+ HtmlCommon.isHtmlElement(e, "ul") || HtmlCommon.isHtmlElement(e, "marquee"
+) ||
+HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
+) ||
+  HtmlCommon.isMathMLElement(e, "mo") || HtmlCommon.isMathMLElement(e, "mn"
+) ||
+            HtmlCommon.isMathMLElement(e, "ms") ||
+              HtmlCommon.isMathMLElement(e, "mtext") ||
+            HtmlCommon.isMathMLElement(e, "annotation-xml") ||
+            HtmlCommon.isSvgElement(e, "foreignObject") ||
+      HtmlCommon.isSvgElement(e, "desc") || HtmlCommon.isSvgElement(e,
+              "title")
 ) {
           return false;
         }
@@ -3495,20 +3406,27 @@ using com.upokecenter.util;
     }
     private bool hasHtmlElementInScope(Element node) {
       for (int i = openElements.Count - 1; i >= 0; --i) {
-        Element e = openElements[i];
+        IElement e = openElements[i];
         if (e == node) {
           return true;
         }
-        if (e.isHtmlElement("applet") ||
-            e.isHtmlElement("caption") || e.isHtmlElement("html") ||
-            e.isHtmlElement("table") || e.isHtmlElement("td") ||
-            e.isHtmlElement("th") || e.isHtmlElement("marquee") ||
-            e.isHtmlElement("object") || e.isMathMLElement("mi") ||
-            e.isMathMLElement("mo") || e.isMathMLElement("mn") ||
-            e.isMathMLElement("ms") || e.isMathMLElement("mtext") ||
-            e.isMathMLElement("annotation-xml") ||
-            e.isSvgElement("foreignObject") ||
-            e.isSvgElement("desc") || e.isSvgElement("title")
+        if (HtmlCommon.isHtmlElement(e, "applet") ||
+            HtmlCommon.isHtmlElement(e, "caption") ||
+              HtmlCommon.isHtmlElement(e, "html") ||
+   HtmlCommon.isHtmlElement(e, "table") || HtmlCommon.isHtmlElement(e, "td"
+) ||
+ HtmlCommon.isHtmlElement(e, "th") || HtmlCommon.isHtmlElement(e, "marquee"
+) ||
+HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
+) ||
+  HtmlCommon.isMathMLElement(e, "mo") || HtmlCommon.isMathMLElement(e, "mn"
+) ||
+            HtmlCommon.isMathMLElement(e, "ms") ||
+              HtmlCommon.isMathMLElement(e, "mtext") ||
+            HtmlCommon.isMathMLElement(e, "annotation-xml") ||
+            HtmlCommon.isSvgElement(e, "foreignObject") ||
+      HtmlCommon.isSvgElement(e, "desc") || HtmlCommon.isSvgElement(e,
+              "title")
 ) {
           return false;
         }
@@ -3517,20 +3435,27 @@ using com.upokecenter.util;
     }
     private bool hasHtmlElementInScope(string name) {
       for (int i = openElements.Count - 1; i >= 0; --i) {
-        Element e = openElements[i];
-        if (e.isHtmlElement(name)) {
+        IElement e = openElements[i];
+        if (HtmlCommon.isHtmlElement(e, name)) {
           return true;
         }
-        if (e.isHtmlElement("applet") ||
-            e.isHtmlElement("caption") || e.isHtmlElement("html") ||
-            e.isHtmlElement("table") || e.isHtmlElement("td") ||
-            e.isHtmlElement("th") || e.isHtmlElement("marquee") ||
-            e.isHtmlElement("object") || e.isMathMLElement("mi") ||
-            e.isMathMLElement("mo") || e.isMathMLElement("mn") ||
-            e.isMathMLElement("ms") || e.isMathMLElement("mtext") ||
-            e.isMathMLElement("annotation-xml") ||
-            e.isSvgElement("foreignObject") ||
-            e.isSvgElement("desc") || e.isSvgElement("title")
+        if (HtmlCommon.isHtmlElement(e, "applet") ||
+            HtmlCommon.isHtmlElement(e, "caption") ||
+              HtmlCommon.isHtmlElement(e, "html") ||
+   HtmlCommon.isHtmlElement(e, "table") || HtmlCommon.isHtmlElement(e, "td"
+) ||
+ HtmlCommon.isHtmlElement(e, "th") || HtmlCommon.isHtmlElement(e, "marquee"
+) ||
+HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
+) ||
+  HtmlCommon.isMathMLElement(e, "mo") || HtmlCommon.isMathMLElement(e, "mn"
+) ||
+            HtmlCommon.isMathMLElement(e, "ms") ||
+              HtmlCommon.isMathMLElement(e, "mtext") ||
+            HtmlCommon.isMathMLElement(e, "annotation-xml") ||
+            HtmlCommon.isSvgElement(e, "foreignObject") ||
+      HtmlCommon.isSvgElement(e, "desc") || HtmlCommon.isSvgElement(e,
+              "title")
 ) {
           return false;
         }
@@ -3539,11 +3464,12 @@ using com.upokecenter.util;
     }
     private bool hasHtmlElementInSelectScope(string name) {
       for (int i = openElements.Count - 1; i >= 0; --i) {
-        Element e = openElements[i];
-        if (e.isHtmlElement(name)) {
+        IElement e = openElements[i];
+        if (HtmlCommon.isHtmlElement(e, name)) {
           return true;
         }
-        if (!e.isHtmlElement("optgroup") && !e.isHtmlElement("option")) {
+        if (!HtmlCommon.isHtmlElement(e, "optgroup") &&
+          !HtmlCommon.isHtmlElement(e, "option")) {
           return false;
         }
       }
@@ -3552,11 +3478,12 @@ using com.upokecenter.util;
 
     private bool hasHtmlElementInTableScope(string name) {
       for (int i = openElements.Count - 1; i >= 0; --i) {
-        Element e = openElements[i];
-        if (e.isHtmlElement(name)) {
+        IElement e = openElements[i];
+        if (HtmlCommon.isHtmlElement(e, name)) {
           return true;
         }
-        if (e.isHtmlElement("html") || e.isHtmlElement("table")) {
+        if (HtmlCommon.isHtmlElement(e, "html") ||
+          HtmlCommon.isHtmlElement(e, "table")) {
           return false;
         }
       }
@@ -3565,22 +3492,32 @@ using com.upokecenter.util;
 
     private bool hasHtmlHeaderElementInScope() {
       for (int i = openElements.Count - 1; i >= 0; --i) {
-        Element e = openElements[i];
-        if (e.isHtmlElement("h1") ||
-            e.isHtmlElement("h2") || e.isHtmlElement("h3") ||
-            e.isHtmlElement("h4") || e.isHtmlElement("h5") ||
-            e.isHtmlElement("h6")) {
+        IElement e = openElements[i];
+        if (HtmlCommon.isHtmlElement(e, "h1") ||
+      HtmlCommon.isHtmlElement(e, "h2") || HtmlCommon.isHtmlElement(e, "h3"
+) ||
+      HtmlCommon.isHtmlElement(e, "h4") || HtmlCommon.isHtmlElement(e, "h5"
+) ||
+            HtmlCommon.isHtmlElement(e, "h6")) {
           return true;
         }
-        if (e.isHtmlElement("applet") || e.isHtmlElement("caption") ||
-            e.isHtmlElement("html") || e.isHtmlElement("table") ||
-            e.isHtmlElement("td") || e.isHtmlElement("th") ||
-            e.isHtmlElement("marquee") || e.isHtmlElement("object") ||
-            e.isMathMLElement("mi") || e.isMathMLElement("mo") ||
-            e.isMathMLElement("mn") || e.isMathMLElement("ms") ||
-            e.isMathMLElement("mtext") || e.isMathMLElement("annotation-xml") ||
-            e.isSvgElement("foreignObject") || e.isSvgElement("desc") ||
-            e.isSvgElement("title")) {
+        if (HtmlCommon.isHtmlElement(e, "applet") ||
+          HtmlCommon.isHtmlElement(e, "caption") ||
+ HtmlCommon.isHtmlElement(e, "html") || HtmlCommon.isHtmlElement(e, "table"
+) ||
+      HtmlCommon.isHtmlElement(e, "td") || HtmlCommon.isHtmlElement(e, "th"
+) ||
+            HtmlCommon.isHtmlElement(e, "marquee") ||
+              HtmlCommon.isHtmlElement(e, "object") ||
+  HtmlCommon.isMathMLElement(e, "mi") || HtmlCommon.isMathMLElement(e, "mo"
+) ||
+  HtmlCommon.isMathMLElement(e, "mn") || HtmlCommon.isMathMLElement(e, "ms"
+) ||
+            HtmlCommon.isMathMLElement(e, "mtext") ||
+              HtmlCommon.isMathMLElement(e, "annotation-xml") ||
+            HtmlCommon.isSvgElement(e, "foreignObject") ||
+              HtmlCommon.isSvgElement(e, "desc") ||
+            HtmlCommon.isSvgElement(e, "title")) {
           return false;
         }
       }
@@ -3589,22 +3526,29 @@ using com.upokecenter.util;
 
     private bool hasNativeElementInScope() {
       for (int i = openElements.Count - 1; i >= 0; --i) {
-        Element e = openElements[i];
+        IElement e = openElements[i];
         //DebugUtility.Log("%s %s",e.getLocalName(),e.getNamespaceURI());
         if (e.getNamespaceURI().Equals(HtmlCommon.HTML_NAMESPACE) ||
             isMathMLTextIntegrationPoint(e) || isHtmlIntegrationPoint(e)) {
           return true;
         }
-        if (e.isHtmlElement("applet") ||
-            e.isHtmlElement("caption") || e.isHtmlElement("html") ||
-            e.isHtmlElement("table") || e.isHtmlElement("td") ||
-            e.isHtmlElement("th") || e.isHtmlElement("marquee") ||
-            e.isHtmlElement("object") || e.isMathMLElement("mi") ||
-            e.isMathMLElement("mo") || e.isMathMLElement("mn") ||
-            e.isMathMLElement("ms") || e.isMathMLElement("mtext") ||
-            e.isMathMLElement("annotation-xml") ||
-            e.isSvgElement("foreignObject") ||
-            e.isSvgElement("desc") || e.isSvgElement("title")
+        if (HtmlCommon.isHtmlElement(e, "applet") ||
+            HtmlCommon.isHtmlElement(e, "caption") ||
+              HtmlCommon.isHtmlElement(e, "html") ||
+   HtmlCommon.isHtmlElement(e, "table") || HtmlCommon.isHtmlElement(e, "td"
+) ||
+ HtmlCommon.isHtmlElement(e, "th") || HtmlCommon.isHtmlElement(e, "marquee"
+) ||
+HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
+) ||
+  HtmlCommon.isMathMLElement(e, "mo") || HtmlCommon.isMathMLElement(e, "mn"
+) ||
+            HtmlCommon.isMathMLElement(e, "ms") ||
+              HtmlCommon.isMathMLElement(e, "mtext") ||
+            HtmlCommon.isMathMLElement(e, "annotation-xml") ||
+            HtmlCommon.isSvgElement(e, "foreignObject") ||
+      HtmlCommon.isSvgElement(e, "desc") || HtmlCommon.isSvgElement(e,
+              "title")
 ) {
           return false;
         }
@@ -3615,7 +3559,7 @@ using com.upokecenter.util;
     private void initialize() {
       noforeign = false;
       document = new Document();
-      document.address = address;
+      document.Address = address;
       document.setBaseURI(address);
       context = null;
       openElements.Clear();
@@ -3650,7 +3594,7 @@ using com.upokecenter.util;
     private void insertCharacter(Node node, int ch) {
       Text textNode = getTextNodeToInsert(node);
       if (textNode != null) {
-        StringBuilder builder = textNode.text;
+        StringBuilder builder = textNode.ValueText;
         if (ch <= 0xffff) {
           builder.Append((char)(ch));
         } else if (ch <= 0x10ffff) {
@@ -3662,12 +3606,14 @@ using com.upokecenter.util;
 
     private Element insertForeignElement(StartTagToken tag, string _namespace) {
       Element element = Element.fromToken(tag, _namespace);
-      string xmlns = element.getAttributeNS(XMLNS_NAMESPACE, "xmlns");
-      string xlink = element.getAttributeNS(XMLNS_NAMESPACE, "xlink");
+      string xmlns = element.getAttributeNS(HtmlCommon.XMLNS_NAMESPACE,
+          "xmlns");
+      string xlink = element.getAttributeNS(HtmlCommon.XMLNS_NAMESPACE,
+          "xlink");
       if (xmlns != null && !xmlns.Equals(_namespace)) {
         error = true;
       }
-      if (xlink != null && !xlink.Equals(XLINK_NAMESPACE)) {
+      if (xlink != null && !xlink.Equals(HtmlCommon.XLINK_NAMESPACE)) {
         error = true;
       }
       Element currentNode = getCurrentNode();
@@ -3690,7 +3636,7 @@ using com.upokecenter.util;
     }
 
     private void insertInCurrentNode(Node element) {
-      Element node = getCurrentNode();
+      IElement node = getCurrentNode();
       if (doFosterParent) {
         string name = node.getLocalName();
         if ("table".Equals(name) || "tbody".Equals(name) ||
@@ -3708,7 +3654,7 @@ using com.upokecenter.util;
     private void insertString(Node node, string str) {
       Text textNode = getTextNodeToInsert(node);
       if (textNode != null) {
-        textNode.text.Append(str);
+        textNode.ValueText.Append(str);
       }
     }
     private bool isAppropriateEndTag() {
@@ -3743,9 +3689,12 @@ using com.upokecenter.util;
               return false;
             }
           }
-          return (MATHML_NAMESPACE.Equals(element.getNamespaceURI()) && (
-              name.Equals("annotation-xml")) && "svg".Equals(tag.getName())) ?
-                (false) : (isHtmlIntegrationPoint(element));
+       return (HtmlCommon.MATHML_NAMESPACE.Equals(element.getNamespaceURI())
+            &&
+                 (
+               name.Equals("annotation-xml")) && "svg"
+                     .Equals(tag.getName())) ?
+                    (false) : (isHtmlIntegrationPoint(element));
         } else if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
           return isMathMLTextIntegrationPoint(element) ||
               isHtmlIntegrationPoint(element);
@@ -3755,77 +3704,121 @@ using com.upokecenter.util;
       }
       return false;
     }
-    private bool isHtmlIntegrationPoint(Element element) {
+    private bool isHtmlIntegrationPoint(IElement element) {
       if (integrationElements.Contains(element)) {
         return true;
       }
       string name = element.getLocalName();
-      return SVG_NAMESPACE.Equals(element.getNamespaceURI()) && (
+      return HtmlCommon.SVG_NAMESPACE.Equals(element.getNamespaceURI()) && (
           name.Equals("foreignObject") || name.Equals("desc") ||
           name.Equals("title"));
     }
 
-    private bool isMathMLTextIntegrationPoint(Element element) {
+    private bool isMathMLTextIntegrationPoint(IElement element) {
       string name = element.getLocalName();
-      return MATHML_NAMESPACE.Equals(element.getNamespaceURI()) && (
+      return HtmlCommon.MATHML_NAMESPACE.Equals(element.getNamespaceURI()) && (
           name.Equals("mi") || name.Equals("mo") ||
           name.Equals("mn") || name.Equals("ms") ||
           name.Equals("mtext"));
     }
 
-    private bool isSpecialElement(Element node) {
-      if (node.isHtmlElement("address") || node.isHtmlElement("applet") ||
-        node.isHtmlElement("area") || node.isHtmlElement("article") ||
-        node.isHtmlElement("aside") || node.isHtmlElement("base") ||
-        node.isHtmlElement("basefont") || node.isHtmlElement("bgsound") ||
-        node.isHtmlElement("blockquote") || node.isHtmlElement("body") ||
-        node.isHtmlElement("br") || node.isHtmlElement("button") ||
-        node.isHtmlElement("caption") || node.isHtmlElement("center") ||
-        node.isHtmlElement("col") || node.isHtmlElement("colgroup") ||
-        node.isHtmlElement("dd") || node.isHtmlElement("details") ||
-        node.isHtmlElement("dir") || node.isHtmlElement("div") ||
-        node.isHtmlElement("dl") || node.isHtmlElement("dt") ||
-        node.isHtmlElement("embed") || node.isHtmlElement("fieldset") ||
-        node.isHtmlElement("figcaption") || node.isHtmlElement("figure") ||
-          node.isHtmlElement("footer") || node.isHtmlElement("form") ||
-            node.isHtmlElement("frame") || node.isHtmlElement("frameset") ||
-            node.isHtmlElement("h1") || node.isHtmlElement("h2") ||
-            node.isHtmlElement("h3") || node.isHtmlElement("h4") ||
-            node.isHtmlElement("h5") || node.isHtmlElement("h6") ||
-            node.isHtmlElement("head") || node.isHtmlElement("header") ||
-            node.isHtmlElement("hgroup") || node.isHtmlElement("hr") ||
-            node.isHtmlElement("html") || node.isHtmlElement("iframe") ||
-            node.isHtmlElement("img") || node.isHtmlElement("input") ||
-            node.isHtmlElement("isindex") || node.isHtmlElement("li") ||
-            node.isHtmlElement("link") ||
-          node.isHtmlElement("listing") || node.isHtmlElement("main") ||
-            node.isHtmlElement("marquee") || node.isHtmlElement("menu") ||
-            node.isHtmlElement("menuitem") || node.isHtmlElement("meta") ||
-            node.isHtmlElement("nav") || node.isHtmlElement("noembed") ||
-            node.isHtmlElement("noframes") || node.isHtmlElement("noscript") ||
-            node.isHtmlElement("object") || node.isHtmlElement("ol") ||
-            node.isHtmlElement("p") || node.isHtmlElement("param") ||
-            node.isHtmlElement("plaintext") || node.isHtmlElement("pre") ||
-            node.isHtmlElement("script") || node.isHtmlElement("section") ||
-          node.isHtmlElement("select") || node.isHtmlElement("source") ||
-            node.isHtmlElement("style") || node.isHtmlElement("summary") ||
-            node.isHtmlElement("table") || node.isHtmlElement("tbody") ||
-            node.isHtmlElement("td") || node.isHtmlElement("textarea") ||
-            node.isHtmlElement("tfoot") || node.isHtmlElement("th") ||
-            node.isHtmlElement("thead") || node.isHtmlElement("title") ||
-            node.isHtmlElement("tr") || node.isHtmlElement("track") ||
-            node.isHtmlElement("ul") || node.isHtmlElement("wbr") ||
-            node.isHtmlElement("xmp")) {
+    private bool isSpecialElement(IElement node) {
+      if (HtmlCommon.isHtmlElement(node, "address") ||
+        HtmlCommon.isHtmlElement(node, "applet") ||
+        HtmlCommon.isHtmlElement(node, "area") ||
+          HtmlCommon.isHtmlElement(node, "article") ||
+        HtmlCommon.isHtmlElement(node, "aside") ||
+          HtmlCommon.isHtmlElement(node, "base") ||
+        HtmlCommon.isHtmlElement(node, "basefont") ||
+          HtmlCommon.isHtmlElement(node, "bgsound") ||
+        HtmlCommon.isHtmlElement(node, "blockquote") ||
+          HtmlCommon.isHtmlElement(node, "body") ||
+        HtmlCommon.isHtmlElement(node, "br") ||
+          HtmlCommon.isHtmlElement(node, "button") ||
+        HtmlCommon.isHtmlElement(node, "caption") ||
+          HtmlCommon.isHtmlElement(node, "center") ||
+        HtmlCommon.isHtmlElement(node, "col") ||
+          HtmlCommon.isHtmlElement(node, "colgroup") ||
+        HtmlCommon.isHtmlElement(node, "dd") ||
+          HtmlCommon.isHtmlElement(node, "details") ||
+        HtmlCommon.isHtmlElement(node, "dir") ||
+          HtmlCommon.isHtmlElement(node, "div") ||
+HtmlCommon.isHtmlElement(node, "dl") || HtmlCommon.isHtmlElement(node, "dt"
+) ||
+        HtmlCommon.isHtmlElement(node, "embed") ||
+          HtmlCommon.isHtmlElement(node, "fieldset") ||
+        HtmlCommon.isHtmlElement(node, "figcaption") ||
+          HtmlCommon.isHtmlElement(node, "figure") ||
+          HtmlCommon.isHtmlElement(node, "footer") ||
+            HtmlCommon.isHtmlElement(node, "form") ||
+            HtmlCommon.isHtmlElement(node, "frame") ||
+              HtmlCommon.isHtmlElement(node, "frameset") ||
+HtmlCommon.isHtmlElement(node, "h1") || HtmlCommon.isHtmlElement(node, "h2"
+) ||
+HtmlCommon.isHtmlElement(node, "h3") || HtmlCommon.isHtmlElement(node, "h4"
+) ||
+HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
+) ||
+            HtmlCommon.isHtmlElement(node, "head") ||
+              HtmlCommon.isHtmlElement(node, "header") ||
+            HtmlCommon.isHtmlElement(node, "hgroup") ||
+              HtmlCommon.isHtmlElement(node, "hr") ||
+            HtmlCommon.isHtmlElement(node, "html") ||
+              HtmlCommon.isHtmlElement(node, "iframe") ||
+            HtmlCommon.isHtmlElement(node, "img") ||
+              HtmlCommon.isHtmlElement(node, "input") ||
+            HtmlCommon.isHtmlElement(node, "isindex") ||
+              HtmlCommon.isHtmlElement(node, "li") ||
+            HtmlCommon.isHtmlElement(node, "link") ||
+          HtmlCommon.isHtmlElement(node, "listing") ||
+            HtmlCommon.isHtmlElement(node, "main") ||
+            HtmlCommon.isHtmlElement(node, "marquee") ||
+              HtmlCommon.isHtmlElement(node, "menu") ||
+            HtmlCommon.isHtmlElement(node, "menuitem") ||
+              HtmlCommon.isHtmlElement(node, "meta") ||
+            HtmlCommon.isHtmlElement(node, "nav") ||
+              HtmlCommon.isHtmlElement(node, "noembed") ||
+            HtmlCommon.isHtmlElement(node, "noframes") ||
+              HtmlCommon.isHtmlElement(node, "noscript") ||
+            HtmlCommon.isHtmlElement(node, "object") ||
+              HtmlCommon.isHtmlElement(node, "ol") ||
+            HtmlCommon.isHtmlElement(node, "p") ||
+              HtmlCommon.isHtmlElement(node, "param") ||
+            HtmlCommon.isHtmlElement(node, "plaintext") ||
+              HtmlCommon.isHtmlElement(node, "pre") ||
+            HtmlCommon.isHtmlElement(node, "script") ||
+              HtmlCommon.isHtmlElement(node, "section") ||
+          HtmlCommon.isHtmlElement(node, "select") ||
+            HtmlCommon.isHtmlElement(node, "source") ||
+            HtmlCommon.isHtmlElement(node, "style") ||
+              HtmlCommon.isHtmlElement(node, "summary") ||
+            HtmlCommon.isHtmlElement(node, "table") ||
+              HtmlCommon.isHtmlElement(node, "tbody") ||
+            HtmlCommon.isHtmlElement(node, "td") ||
+              HtmlCommon.isHtmlElement(node, "textarea") ||
+            HtmlCommon.isHtmlElement(node, "tfoot") ||
+              HtmlCommon.isHtmlElement(node, "th") ||
+            HtmlCommon.isHtmlElement(node, "thead") ||
+              HtmlCommon.isHtmlElement(node, "title") ||
+            HtmlCommon.isHtmlElement(node, "tr") ||
+              HtmlCommon.isHtmlElement(node, "track") ||
+            HtmlCommon.isHtmlElement(node, "ul") ||
+              HtmlCommon.isHtmlElement(node, "wbr") ||
+            HtmlCommon.isHtmlElement(node, "xmp")) {
         return true;
       }
-      if (node.isMathMLElement("mi") || node.isMathMLElement("mo") ||
-        node.isMathMLElement("mn") || node.isMathMLElement("ms") ||
-     node.isMathMLElement("mtext") || node.isMathMLElement(
+      if (HtmlCommon.isMathMLElement(node, "mi") ||
+        HtmlCommon.isMathMLElement(node, "mo") ||
+        HtmlCommon.isMathMLElement(node, "mn") ||
+          HtmlCommon.isMathMLElement(node, "ms") ||
+  HtmlCommon.isMathMLElement(node, "mtext") ||
+       HtmlCommon.isMathMLElement(node,
   "annotation-xml")) {
         return true;
       }
-      return (node.isSvgElement("foreignObject") || node.isSvgElement(
-    "desc") || node.isSvgElement("title")) ? (true) : (false);
+      return (HtmlCommon.isSvgElement(node, "foreignObject") ||
+        HtmlCommon.isSvgElement(node,
+    "desc") || HtmlCommon.isSvgElement(node, "title")) ? (true) : (false);
     }
     internal string nodesToDebugString(IList<Node> nodes) {
       var builder = new StringBuilder();
@@ -3867,20 +3860,20 @@ using com.upokecenter.util;
 
     private int parseCharacterReference(int allowedCharacter) {
       int markStart = charInput.setSoftMark();
-      int c1 = charInput.read();
+      int c1 = charInput.ReadChar();
       if (c1 < 0 || c1 == 0x09 || c1 == 0x0a || c1 == 0x0c ||
           c1 == 0x20 || c1 == 0x3c || c1 == 0x26 || (allowedCharacter >= 0 &&
             c1 == allowedCharacter)) {
         charInput.setMarkPosition(markStart);
         return 0x26;  // emit ampersand
       } else if (c1 == 0x23) {
-        c1 = charInput.read();
+        c1 = charInput.ReadChar();
         var value = 0;
         var haveHex = false;
         if (c1 == 0x78 || c1 == 0x58) {
           // Hex number
           while (true) {  // skip zeros
-            int c = charInput.read();
+            int c = charInput.ReadChar();
             if (c != '0') {
               if (c >= 0) {
                 charInput.moveBack(1);
@@ -3891,7 +3884,7 @@ using com.upokecenter.util;
           }
           var overflow = false;
           while (true) {
-            int number = charInput.read();
+            int number = charInput.ReadChar();
             if (number >= '0' && number <= '9') {
               if (!overflow) {
                 value = (value << 4) + (number - '0');
@@ -3924,7 +3917,7 @@ using com.upokecenter.util;
           }
           // Digits
           while (true) {  // skip zeros
-            int c = charInput.read();
+            int c = charInput.ReadChar();
             if (c != '0') {
               if (c >= 0) {
                 charInput.moveBack(1);
@@ -3935,7 +3928,7 @@ using com.upokecenter.util;
           }
           var overflow = false;
           while (true) {
-            int number = charInput.read();
+            int number = charInput.ReadChar();
             if (number >= '0' && number <= '9') {
               if (!overflow) {
                 value = (value * 10) + (number - '0');
@@ -3959,7 +3952,7 @@ using com.upokecenter.util;
           charInput.setMarkPosition(markStart);
           return 0x26;  // emit ampersand
         }
-        c1 = charInput.read();
+        c1 = charInput.ReadChar();
         if (c1 != 0x3b) {  // semicolon
           error = true;
           if (c1 >= 0) {
@@ -3998,32 +3991,32 @@ using com.upokecenter.util;
         int[] data = null;
         // check for certain well-known entities
         if (c1 == 'g') {
-          if (charInput.read() == 't' && charInput.read() == ';') {
+          if (charInput.ReadChar() == 't' && charInput.ReadChar() == ';') {
             return '>';
           }
           charInput.setMarkPosition(markStart + 1);
         } else if (c1 == 'l') {
-          if (charInput.read() == 't' && charInput.read() == ';') {
+          if (charInput.ReadChar() == 't' && charInput.ReadChar() == ';') {
             return '<';
           }
           charInput.setMarkPosition(markStart + 1);
         } else if (c1 == 'a') {
-          if (charInput.read() == 'm' && charInput.read() == 'p' &&
-            charInput.read() == ';'
+          if (charInput.ReadChar() == 'm' && charInput.ReadChar() == 'p' &&
+            charInput.ReadChar() == ';'
 ) {
             return '&';
           }
           charInput.setMarkPosition(markStart + 1);
         } else if (c1 == 'n') {
-          if (charInput.read() == 'b' && charInput.read() == 's' &&
-            charInput.read() == 'p' && charInput.read() == ';') {
+          if (charInput.ReadChar() == 'b' && charInput.ReadChar() == 's' &&
+            charInput.ReadChar() == 'p' && charInput.ReadChar() == ';') {
             return 0xa0;
           }
           charInput.setMarkPosition(markStart + 1);
         }
         var count = 0;
-        for (int index = 0; index < HtmlEntities.entities.Length; ++index) {
-          string entity = HtmlEntities.entities[index];
+        for (int index = 0; index < HtmlEntities.Entities.Length; ++index) {
+          string entity = HtmlEntities.Entities[index];
           if (entity[0] == c1) {
             if (data == null) {
               // Read the rest of the character reference
@@ -4031,7 +4024,7 @@ using com.upokecenter.util;
               // we get the maximum length possible starting
               // with the first matching character)
               data = new int[entity.Length - 1];
-              count = charInput.read(data, 0, data.Length);
+              count = charInput.Read(data, 0, data.Length);
               //DebugUtility.Log("markposch=%c",(char)data[0]);
             }
             // if fewer bytes were read than the
@@ -4059,7 +4052,7 @@ using com.upokecenter.util;
               //DebugUtility.Log("lastchar=%c",entity[entity.Length-1]);
               if (allowedCharacter >= 0 && entity[entity.Length - 1] != ';') {
                 // Get the next character after the entity
-                int ch2 = charInput.read();
+                int ch2 = charInput.ReadChar();
                 if (ch2 == '=' || (ch2 >= 'A' && ch2 <= 'Z') ||
                   (ch2 >= 'a' && ch2 <= 'z') || (ch2 >= '0' && ch2 <= '9')) {
                   if (ch2 == '=') {
@@ -4087,13 +4080,12 @@ using com.upokecenter.util;
         // no match
         charInput.setMarkPosition(markStart);
         while (true) {
-          int ch2 = charInput.read();
+          int ch2 = charInput.ReadChar();
           if (ch2 == ';') {
             error = true;
             break;
-       } else if (!((ch2 >= 'A' && ch2 <= 'Z') || (ch2 >= 'a' && ch2 <= 'z'
-) ||
-              (ch2 >= '0' && ch2 <= '9'))) {
+          } else if (!((ch2 >= 'A' && ch2 <= 'Z') || (ch2 >= 'a' && ch2 <= 'z'
+) || (ch2 >= '0' && ch2 <= '9'))) {
             break;
           }
         }
@@ -4191,7 +4183,7 @@ using com.upokecenter.util;
         //DebugUtility.Log(state);
         switch (state) {
           case TokenizerState.Data:
-            int c = charInput.read();
+            int c = charInput.ReadChar();
             if (c == 0x26) {
               state = TokenizerState.CharacterRefInData;
             } else if (c == 0x3c) {
@@ -4208,7 +4200,7 @@ using com.upokecenter.util;
               // this method
               int mark = charInput.setSoftMark();
               for (int i = 0; i < 100; ++i) {
-                c = charInput.read();
+                c = charInput.ReadChar();
                 if (c > 0 && c != 0x26 && c != 0x3c) {
                   tokenQueue.Add(c);
                 } else {
@@ -4225,8 +4217,8 @@ using com.upokecenter.util;
               if (charref < 0) {
                 // more than one character in this reference
                 int index = Math.Abs(charref + 1);
-                tokenQueue.Add(HtmlEntities.entityDoubles[index * 2 + 1]);
-                return HtmlEntities.entityDoubles[index * 2];
+                tokenQueue.Add(HtmlEntities.EntityDoubles[index * 2 + 1]);
+                return HtmlEntities.EntityDoubles[index * 2];
               }
               return charref;
             }
@@ -4236,13 +4228,13 @@ using com.upokecenter.util;
               if (charref < 0) {
                 // more than one character in this reference
                 int index = Math.Abs(charref + 1);
-                tokenQueue.Add(HtmlEntities.entityDoubles[index * 2 + 1]);
-                return HtmlEntities.entityDoubles[index * 2];
+                tokenQueue.Add(HtmlEntities.EntityDoubles[index * 2 + 1]);
+                return HtmlEntities.EntityDoubles[index * 2];
               }
               return charref;
             }
           case TokenizerState.RcData:
-            int c1 = charInput.read();
+            int c1 = charInput.ReadChar();
             if (c1 == 0x26) {
               state = TokenizerState.CharacterRefInRcData;
             } else if (c1 == 0x3c) {
@@ -4258,7 +4250,7 @@ using com.upokecenter.util;
             break;
           case TokenizerState.RawText:
           case TokenizerState.ScriptData: {
-              int c11 = charInput.read();
+              int c11 = charInput.ReadChar();
               if (c11 == 0x3c) {
                 state = (state == TokenizerState.RawText) ?
                     TokenizerState.RawTextLessThan :
@@ -4275,7 +4267,7 @@ using com.upokecenter.util;
             }
           case TokenizerState.ScriptDataLessThan: {
               charInput.setHardMark();
-              int c11 = charInput.read();
+              int c11 = charInput.ReadChar();
               if (c11 == 0x2f) {
                 tempBuilder.Remove(0, tempBuilder.Length);
                 state = TokenizerState.ScriptDataEndTagOpen;
@@ -4295,13 +4287,13 @@ using com.upokecenter.util;
           case TokenizerState.ScriptDataEndTagOpen:
           case TokenizerState.ScriptDataEscapedEndTagOpen: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch >= 'A' && ch <= 'Z') {
                 var token = new EndTagToken((char)(ch + 0x20));
                 if (ch <= 0xffff) {
                   tempBuilder.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-         tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -4315,7 +4307,7 @@ using com.upokecenter.util;
                 if (ch <= 0xffff) {
                   tempBuilder.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-         tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -4338,7 +4330,7 @@ using com.upokecenter.util;
           case TokenizerState.ScriptDataEndTagName:
           case TokenizerState.ScriptDataEscapedEndTagName: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if ((ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) &&
                   isAppropriateEndTag()) {
                 state = TokenizerState.BeforeAttributeName;
@@ -4348,30 +4340,22 @@ using com.upokecenter.util;
                 state = TokenizerState.Data;
                 return emitCurrentTag();
               } else if (ch >= 'A' && ch <= 'Z') {
-                currentTag.AppendCodePoint((char)(ch + 0x20));
-                if (ch <= 0xffff) {
+                currentTag.appendChar((char)(ch + 0x20));
                   tempBuilder.Append((char)(ch));
-                } else if (ch <= 0x10ffff) {
-         tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
-                    0xd800));
-                  tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
-                }
               } else if (ch >= 'a' && ch <= 'z') {
-                currentTag.AppendCodePoint((char)ch);
-                if (ch <= 0xffff) {
-                  tempBuilder.Append((char)(ch));
-                } else if (ch <= 0x10ffff) {
-         tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
-                    0xd800));
-                  tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
-                }
+                currentTag.appendChar((char)ch);
+                tempBuilder.Append((char)(ch));
               } else {
                 state = (state == TokenizerState.ScriptDataEndTagName) ?
               (TokenizerState.ScriptData) : (TokenizerState.ScriptDataEscaped);
                 tokenQueue.Add(0x2f);
-                int[] array = tempBuilder.array();
-                for (int i = 0; i < tempBuilder.Count; ++i) {
-                  tokenQueue.Add(array[i]);
+                string tbs = tempBuilder.ToString();
+                for (int i = 0; i < tbs.Length; ++i) {
+                  int c2 = DataUtilities.CodePointAt(tbs, i);
+                  if (c2 >= 0x10000) {
+                    ++i;
+                  }
+                  tokenQueue.Add(c2);
                 }
                 if (ch >= 0) {
                   charInput.moveBack(1);
@@ -4382,7 +4366,7 @@ using com.upokecenter.util;
             }
           case TokenizerState.ScriptDataDoubleEscapeStart: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20 ||
                   ch == 0x2f || ch == 0x3e) {
                 string bufferString = tempBuilder.ToString();
@@ -4394,9 +4378,10 @@ using com.upokecenter.util;
                 if (ch + 0x20 <= 0xffff) {
                   tempBuilder.Append((char)(ch + 0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-  tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) & 0x3ff) +
+            tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) &
+                    0x3ff) +
                     0xd800));
-          tempBuilder.Append((char)(((ch + 0x20 - 0x10000) & 0x3ff) +
+                  tempBuilder.Append((char)(((ch + 0x20 - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
                 return ch;
@@ -4404,7 +4389,7 @@ using com.upokecenter.util;
                 if (ch <= 0xffff) {
                   tempBuilder.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-         tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -4419,7 +4404,7 @@ using com.upokecenter.util;
             }
           case TokenizerState.ScriptDataDoubleEscapeEnd: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20 ||
                   ch == 0x2f || ch == 0x3e) {
                 string bufferString = tempBuilder.ToString();
@@ -4431,9 +4416,10 @@ using com.upokecenter.util;
                 if (ch + 0x20 <= 0xffff) {
                   tempBuilder.Append((char)(ch + 0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-  tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) & 0x3ff) +
+            tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) &
+                    0x3ff) +
                     0xd800));
-          tempBuilder.Append((char)(((ch + 0x20 - 0x10000) & 0x3ff) +
+                  tempBuilder.Append((char)(((ch + 0x20 - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
                 return ch;
@@ -4441,7 +4427,7 @@ using com.upokecenter.util;
                 if (ch <= 0xffff) {
                   tempBuilder.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-         tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -4457,7 +4443,7 @@ using com.upokecenter.util;
           case TokenizerState.ScriptDataEscapeStart:
           case TokenizerState.ScriptDataEscapeStartDash: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x2d) {
                 state = (state == TokenizerState.ScriptDataEscapeStart) ?
                   (TokenizerState.ScriptDataEscapeStartDash) :
@@ -4472,7 +4458,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.ScriptDataEscaped: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x2d) {
                 state = TokenizerState.ScriptDataEscapedDash;
                 return '-';
@@ -4490,7 +4476,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.ScriptDataDoubleEscaped: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x2d) {
                 state = TokenizerState.ScriptDataDoubleEscapedDash;
                 return '-';
@@ -4509,7 +4495,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.ScriptDataEscapedDash: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x2d) {
                 state = TokenizerState.ScriptDataEscapedDashDash;
                 return '-';
@@ -4529,7 +4515,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.ScriptDataDoubleEscapedDash: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x2d) {
                 state = TokenizerState.ScriptDataDoubleEscapedDashDash;
                 return '-';
@@ -4550,7 +4536,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.ScriptDataEscapedDashDash: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x2d) {
                 return '-';
               } else if (ch == 0x3c) {
@@ -4572,7 +4558,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.ScriptDataDoubleEscapedDashDash: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x2d) {
                 return '-';
               } else if (ch == 0x3c) {
@@ -4596,9 +4582,9 @@ using com.upokecenter.util;
             }
           case TokenizerState.ScriptDataDoubleEscapedLessThan: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x2f) {
-                tempBuilder.SetLength(0);
+                tempBuilder.Remove(0, tempBuilder.Length);
                 state = TokenizerState.ScriptDataDoubleEscapeEnd;
                 return 0x2f;
               } else {
@@ -4611,32 +4597,19 @@ using com.upokecenter.util;
             }
           case TokenizerState.ScriptDataEscapedLessThan: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x2f) {
-                tempBuilder.SetLength(0);
+                tempBuilder.Remove(0, tempBuilder.Length);
                 state = TokenizerState.ScriptDataEscapedEndTagOpen;
               } else if (ch >= 'A' && ch <= 'Z') {
-                tempBuilder.SetLength(0);
-                if (ch + 0x20 <= 0xffff) {
-                  tempBuilder.Append((char)(ch + 0x20));
-                } else if (ch + 0x20 <= 0x10ffff) {
-  tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) & 0x3ff) +
-                    0xd800));
-          tempBuilder.Append((char)(((ch + 0x20 - 0x10000) & 0x3ff) +
-                    0xdc00));
-                }
+                tempBuilder.Remove(0, tempBuilder.Length);
+                tempBuilder.Append((char)(ch + 0x20));
                 state = TokenizerState.ScriptDataDoubleEscapeStart;
                 tokenQueue.Add(ch);
                 return 0x3c;
               } else if (ch >= 'a' && ch <= 'z') {
-                tempBuilder.SetLength(0);
-                if (ch <= 0xffff) {
-                  tempBuilder.Append((char)(ch));
-                } else if (ch <= 0x10ffff) {
-         tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
-                    0xd800));
-                  tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
-                }
+                tempBuilder.Remove(0, tempBuilder.Length);
+                tempBuilder.Append((char)(ch));
                 state = TokenizerState.ScriptDataDoubleEscapeStart;
                 tokenQueue.Add(ch);
                 return 0x3c;
@@ -4650,7 +4623,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.PlainText: {
-              int c11 = charInput.read();
+              int c11 = charInput.ReadChar();
               if (c11 == 0) {
                 error = true;
                 return 0xfffd;
@@ -4662,7 +4635,7 @@ using com.upokecenter.util;
             }
           case TokenizerState.TagOpen: {
               charInput.setHardMark();
-              int c11 = charInput.read();
+              int c11 = charInput.ReadChar();
               if (c11 == 0x21) {
                 state = TokenizerState.MarkupDeclarationOpen;
               } else if (c11 == 0x2f) {
@@ -4690,7 +4663,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.EndTagOpen: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch >= 'A' && ch <= 'Z') {
                 TagToken token = new EndTagToken((char)(ch + 0x20));
                 currentEndTag = token;
@@ -4719,13 +4692,13 @@ using com.upokecenter.util;
           case TokenizerState.RcDataEndTagOpen:
           case TokenizerState.RawTextEndTagOpen: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch >= 'A' && ch <= 'Z') {
                 TagToken token = new EndTagToken((char)(ch + 0x20));
                 if (ch <= 0xffff) {
                   tempBuilder.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-         tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -4739,7 +4712,7 @@ using com.upokecenter.util;
                 if (ch <= 0xffff) {
                   tempBuilder.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-         tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -4761,7 +4734,7 @@ using com.upokecenter.util;
           case TokenizerState.RcDataEndTagName:
           case TokenizerState.RawTextEndTagName: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if ((ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) &&
                     isAppropriateEndTag()) {
                 state = TokenizerState.BeforeAttributeName;
@@ -4775,9 +4748,10 @@ using com.upokecenter.util;
                 if (ch + 0x20 <= 0xffff) {
                   tempBuilder.Append((char)(ch + 0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-  tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) & 0x3ff) +
+            tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) &
+                    0x3ff) +
                     0xd800));
-          tempBuilder.Append((char)(((ch + 0x20 - 0x10000) & 0x3ff) +
+                  tempBuilder.Append((char)(((ch + 0x20 - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
               } else if (ch >= 'a' && ch <= 'z') {
@@ -4785,7 +4759,7 @@ using com.upokecenter.util;
                 if (ch <= 0xffff) {
                   tempBuilder.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-         tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  tempBuilder.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -4797,19 +4771,19 @@ using com.upokecenter.util;
                     TokenizerState.RcData : TokenizerState.RawText;
                 tokenQueue.Add(0x2f);  // solidus
                 string tbs = tempBuilder.ToString();
-                for (int i = 0; i < tempBuilder.Count; ++i) {
-                  int c = DataUtilities.CodePointAt(tbs, i);
-                  if (c >= 0x10000) {
- ++i;
-}
-                  tokenQueue.Add(c);
+                for (int i = 0; i < tbs.Length; ++i) {
+                  int c2 = DataUtilities.CodePointAt(tbs, i);
+                  if (c2 >= 0x10000) {
+                    ++i;
+                  }
+                  tokenQueue.Add(c2);
                 }
                 return 0x3c;  // Less than
               }
               break;
             }
           case TokenizerState.BeforeAttributeName: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 // ignored
               } else if (ch == 0x2f) {
@@ -4837,7 +4811,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.AttributeName: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 if (!currentTag.checkAttributeName()) {
                   error = true;
@@ -4879,9 +4853,9 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.AfterAttributeName: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               while (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
-                ch = charInput.read();
+                ch = charInput.ReadChar();
               }
               if (ch == 0x2f) {
                 state = TokenizerState.SelfClosingStartTag;
@@ -4911,9 +4885,9 @@ using com.upokecenter.util;
             }
           case TokenizerState.BeforeAttributeValue: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               while (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
-                ch = charInput.read();
+                ch = charInput.ReadChar();
               }
               if (ch == 0x22) {
                 state = TokenizerState.AttributeValueDoubleQuoted;
@@ -4944,7 +4918,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.AttributeValueDoubleQuoted: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x22) {
                 currentAttribute.commitValue();
                 state = TokenizerState.AfterAttributeValueQuoted;
@@ -4964,7 +4938,7 @@ using com.upokecenter.util;
                 // this method
                 int mark = charInput.setSoftMark();
                 for (int i = 0; i < 100; ++i) {
-                  ch = charInput.read();
+                  ch = charInput.ReadChar();
                   if (ch > 0 && ch != 0x26 && ch != 0x22) {
                     currentAttribute.appendToValue(ch);
                   } else if (ch == 0x22) {
@@ -4980,7 +4954,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.AttributeValueSingleQuoted: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x27) {
                 currentAttribute.commitValue();
                 state = TokenizerState.AfterAttributeValueQuoted;
@@ -5000,7 +4974,7 @@ using com.upokecenter.util;
                 // this method
                 int mark = charInput.setSoftMark();
                 for (int i = 0; i < 100; ++i) {
-                  ch = charInput.read();
+                  ch = charInput.ReadChar();
                   if (ch > 0 && ch != 0x26 && ch != 0x27) {
                     currentAttribute.appendToValue(ch);
                   } else if (ch == 0x27) {
@@ -5016,7 +4990,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.AttributeValueUnquoted: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 currentAttribute.commitValue();
                 state = TokenizerState.BeforeAttributeName;
@@ -5034,8 +5008,9 @@ using com.upokecenter.util;
                 error = true;
                 state = TokenizerState.Data;
               } else {
-      if (ch == 0x22 || ch == 0x27 || ch == 0x3c || ch == 0x3d || ch ==
-                  0x60) {
+              if (ch == 0x22 || ch == 0x27 || ch == 0x3c || ch == 0x3d || ch
+                  ==
+                    0x60) {
                   error = true;
                 }
                 currentAttribute.appendToValue(ch);
@@ -5044,7 +5019,7 @@ using com.upokecenter.util;
             }
           case TokenizerState.AfterAttributeValueQuoted: {
               int mark = charInput.setSoftMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 state = TokenizerState.BeforeAttributeName;
               } else if (ch == 0x2f) {
@@ -5064,7 +5039,7 @@ using com.upokecenter.util;
             }
           case TokenizerState.SelfClosingStartTag: {
               int mark = charInput.setSoftMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x3e) {
                 currentTag.setSelfClosing(true);
                 state = TokenizerState.Data;
@@ -5081,28 +5056,29 @@ using com.upokecenter.util;
             }
           case TokenizerState.MarkupDeclarationOpen: {
               int mark = charInput.setSoftMark();
-              int ch = charInput.read();
-              if (ch == '-' && charInput.read() == '-') {
+              int ch = charInput.ReadChar();
+              if (ch == '-' && charInput.ReadChar() == '-') {
                 var token = new CommentToken();
                 lastComment = token;
                 state = TokenizerState.CommentStart;
                 break;
               } else if (ch == 'D' || ch == 'd') {
-                if (((ch = charInput.read()) == 'o' || ch == 'O') &&
-                    ((ch = charInput.read()) == 'c' || ch == 'C') &&
-                    ((ch = charInput.read()) == 't' || ch == 'T') &&
-                    ((ch = charInput.read()) == 'y' || ch == 'Y') &&
-                    ((ch = charInput.read()) == 'p' || ch == 'P') &&
-                    ((ch = charInput.read()) == 'e' || ch == 'E')) {
+                if (((ch = charInput.ReadChar()) == 'o' || ch == 'O') &&
+                    ((ch = charInput.ReadChar()) == 'c' || ch == 'C') &&
+                    ((ch = charInput.ReadChar()) == 't' || ch == 'T') &&
+                    ((ch = charInput.ReadChar()) == 'y' || ch == 'Y') &&
+                    ((ch = charInput.ReadChar()) == 'p' || ch == 'P') &&
+                    ((ch = charInput.ReadChar()) == 'e' || ch == 'E')) {
                   state = TokenizerState.DocType;
                   break;
                 }
               } else if (ch == '[' && true) {
-                if (charInput.read() == 'C' && charInput.read() == 'D' &&
-                    charInput.read() == 'A' && charInput.read() == 'T' &&
-                    charInput.read() == 'A' && charInput.read() == '[' &&
-                    getCurrentNode() != null &&
-!HtmlCommon.HTML_NAMESPACE.Equals(getCurrentNode() .getNamespaceURI())
+              if (charInput.ReadChar() == 'C' && charInput.ReadChar() == 'D'
+                  &&
+                  charInput.ReadChar() == 'A' && charInput.ReadChar() == 'T' &&
+                  charInput.ReadChar() == 'A' && charInput.ReadChar() == '[' &&
+                  getCurrentNode() != null &&
+  !HtmlCommon.HTML_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())
 ) {
                   state = TokenizerState.CData;
                   break;
@@ -5115,12 +5091,12 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.CommentStart: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == '-') {
                 state = TokenizerState.CommentStartDash;
               } else if (ch == 0) {
                 error = true;
-                  lastComment.Append((char)(0xfffd));
+                lastComment.Append((char)(0xfffd));
                 state = TokenizerState.Comment;
               } else if (ch == 0x3e || ch < 0) {
                 error = true;
@@ -5132,7 +5108,7 @@ using com.upokecenter.util;
                 if (ch <= 0xffff) {
                   lastComment.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-         lastComment.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  lastComment.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   lastComment.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -5141,13 +5117,13 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.CommentStartDash: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == '-') {
                 state = TokenizerState.CommentEnd;
               } else if (ch == 0) {
                 error = true;
-                  lastComment.Append((char)('-'));
-                  lastComment.Append((char)(0xfffd));
+                lastComment.Append((char)('-'));
+                lastComment.Append((char)(0xfffd));
                 state = TokenizerState.Comment;
               } else if (ch == 0x3e || ch < 0) {
                 error = true;
@@ -5156,11 +5132,11 @@ using com.upokecenter.util;
                 tokens.Add(lastComment);
                 return ret;
               } else {
-                  lastComment.Append((char)('-'));
+                lastComment.Append((char)('-'));
                 if (ch <= 0xffff) {
                   lastComment.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-         lastComment.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  lastComment.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   lastComment.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -5169,12 +5145,12 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.Comment: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == '-') {
                 state = TokenizerState.CommentEndDash;
               } else if (ch == 0) {
                 error = true;
-                  lastComment.Append((char)(0xfffd));
+                lastComment.Append((char)(0xfffd));
               } else if (ch < 0) {
                 error = true;
                 state = TokenizerState.Data;
@@ -5185,7 +5161,7 @@ using com.upokecenter.util;
                 if (ch <= 0xffff) {
                   lastComment.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-         lastComment.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  lastComment.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   lastComment.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -5193,7 +5169,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.CommentEndDash: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == '-') {
                 state = TokenizerState.CommentEnd;
               } else if (ch == 0) {
@@ -5207,14 +5183,14 @@ using com.upokecenter.util;
                 tokens.Add(lastComment);
                 return ret;
               } else {
-                  lastComment.Append((char)('-'));
-                  lastComment.Append((char)(ch));
+                lastComment.Append((char)('-'));
+                lastComment.Append((char)(ch));
                 state = TokenizerState.Comment;
               }
               break;
             }
           case TokenizerState.CommentEnd: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x3e) {
                 state = TokenizerState.Data;
                 int ret = tokens.Count | lastComment.getType();
@@ -5229,14 +5205,7 @@ using com.upokecenter.util;
                 state = TokenizerState.CommentEndBang;
               } else if (ch == 0x2d) {
                 error = true;
-                if ('-' <= 0xFFFF) {
-                  lastComment.Append((char)('-'));
-                } else if ('-' <= 0x10FFFF) {
-        lastComment.Append((char)(((('-' - 0x10000) >> 10) & 0x3FF) +
-                    0xd800));
-                lastComment.Append((char)((('-' - 0x10000) & 0x3FF) +
-                    0xdc00));
-                }
+                lastComment.Append((char)('-'));
               } else if (ch < 0) {
                 error = true;
                 state = TokenizerState.Data;
@@ -5245,26 +5214,12 @@ using com.upokecenter.util;
                 return ret;
               } else {
                 error = true;
-                if ('-' <= 0xFFFF) {
-                  lastComment.Append((char)('-'));
-                } else if ('-' <= 0x10FFFF) {
-        lastComment.Append((char)(((('-' - 0x10000) >> 10) & 0x3FF) +
-                    0xd800));
-                lastComment.Append((char)((('-' - 0x10000) & 0x3FF) +
-                    0xdc00));
-                }
-                if ('-' <= 0xFFFF) {
-                  lastComment.Append((char)('-'));
-                } else if ('-' <= 0x10FFFF) {
-        lastComment.Append((char)(((('-' - 0x10000) >> 10) & 0x3FF) +
-                    0xd800));
-                lastComment.Append((char)((('-' - 0x10000) & 0x3FF) +
-                    0xdc00));
-                }
+                lastComment.Append((char)('-'));
+                lastComment.Append((char)('-'));
                 if (ch <= 0xffff) {
                   lastComment.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-         lastComment.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  lastComment.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   lastComment.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -5273,7 +5228,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.CommentEndBang: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x3e) {
                 state = TokenizerState.Data;
                 int ret = tokens.Count | lastComment.getType();
@@ -5298,7 +5253,7 @@ using com.upokecenter.util;
                 if (ch <= 0xffff) {
                   lastComment.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-         lastComment.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  lastComment.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   lastComment.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -5318,10 +5273,10 @@ using com.upokecenter.util;
               if (ch < 0) {
                 // more than one character in this reference
                 int index = Math.Abs(ch + 1);
-         currentAttribute.appendToValue(HtmlEntities.entityDoubles[index *
-                  2]);
-          currentAttribute.appendToValue(HtmlEntities.entityDoubles[index *
-                2 + 1]);
+  currentAttribute.appendToValue(HtmlEntities.EntityDoubles[index *
+                    2]);
+  currentAttribute.appendToValue(HtmlEntities.EntityDoubles[index *
+                    2 + 1]);
               } else {
                 currentAttribute.appendToValue(ch);
               }
@@ -5329,7 +5284,7 @@ using com.upokecenter.util;
               break;
             }
           case TokenizerState.TagName: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 state = TokenizerState.BeforeAttributeName;
               } else if (ch == 0x2f) {
@@ -5352,9 +5307,9 @@ using com.upokecenter.util;
             }
           case TokenizerState.RawTextLessThan: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x2f) {
-                tempBuilder.SetLength(0);
+                tempBuilder.Remove(0, tempBuilder.Length);
                 state = TokenizerState.RawTextEndTagOpen;
               } else {
                 state = TokenizerState.RawText;
@@ -5371,15 +5326,18 @@ using com.upokecenter.util;
                 var bogusChar = bogusCommentCharacter == 0 ? 0xfffd :
                   bogusCommentCharacter;
                 if (bogusChar <= 0xffff) {
-  { comment.Append((char)(bogusChar));
-}
-  } else if (bogusChar <= 0x10ffff) {
-comment.Append((char)((((bogusChar - 0x10000) >> 10) & 0x3ff) + 0xd800));
-comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
-}
+                  {
+                    comment.Append((char)(bogusChar));
+                  }
+                } else if (bogusChar <= 0x10ffff) {
+      comment.Append((char)((((bogusChar - 0x10000) >> 10) & 0x3ff) +
+                    0xd800));
+              comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) +
+                    0xdc00));
+                }
               }
               while (true) {
-                int ch = charInput.read();
+                int ch = charInput.ReadChar();
                 if (ch < 0 || ch == '>') {
                   break;
                 }
@@ -5389,7 +5347,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
                 if (ch <= 0xffff) {
                   comment.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-             comment.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  comment.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   comment.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -5401,7 +5359,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
             }
           case TokenizerState.DocType: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 state = TokenizerState.BeforeDocTypeName;
               } else if (ch < 0) {
@@ -5420,7 +5378,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
               break;
             }
           case TokenizerState.BeforeDocTypeName: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 break;
               } else if (ch >= 'A' && ch <= 'Z') {
@@ -5432,7 +5390,8 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
                 } else if (ch + 0x20 <= 0x10ffff) {
                   docTypeToken.name.Append((char)((((ch + 0x20 - 0x10000) >>
                     10) & 0x3ff) + 0xd800));
-    docTypeToken.name.Append((char)(((ch + 0x20 - 0x10000) & 0x3ff) +
+              docTypeToken.name.Append((char)(((ch + 0x20 - 0x10000) &
+                    0x3ff) +
                     0xdc00));
                 }
                 state = TokenizerState.DocTypeName;
@@ -5456,9 +5415,10 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
                 if (ch <= 0xffff) {
                   docTypeToken.name.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-   docTypeToken.name.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+             docTypeToken.name.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) +
                     0xd800));
-           docTypeToken.name.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  docTypeToken.name.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
                 state = TokenizerState.DocTypeName;
@@ -5466,7 +5426,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
               break;
             }
           case TokenizerState.DocTypeName: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 state = TokenizerState.AfterDocTypeName;
               } else if (ch == 0x3e) {
@@ -5481,19 +5441,13 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
                 } else if (ch + 0x20 <= 0x10ffff) {
                   docTypeToken.name.Append((char)((((ch + 0x20 - 0x10000) >>
                     10) & 0x3ff) + 0xd800));
-    docTypeToken.name.Append((char)(((ch + 0x20 - 0x10000) & 0x3ff) +
+              docTypeToken.name.Append((char)(((ch + 0x20 - 0x10000) &
+                    0x3ff) +
                     0xdc00));
                 }
               } else if (ch == 0) {
                 error = true;
-                if (0xfffd <= 0xffff) {
-                  docTypeToken.name.Append((char)(0xfffd));
-                } else if (0xfffd <= 0x10ffff) {
-                  docTypeToken.name.Append((char)((((0xfffd - 0x10000) >>
-                    10) & 0x3ff) + 0xd800));
-       docTypeToken.name.Append((char)(((0xfffd - 0x10000) & 0x3ff) +
-                    0xdc00));
-                }
+                docTypeToken.name.Append((char)(0xfffd));
               } else if (ch < 0) {
                 error = true;
                 docTypeToken.forceQuirks = true;
@@ -5505,16 +5459,17 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
                 if (ch <= 0xffff) {
                   docTypeToken.name.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-   docTypeToken.name.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+             docTypeToken.name.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) +
                     0xd800));
-           docTypeToken.name.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  docTypeToken.name.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
               }
               break;
             }
           case TokenizerState.AfterDocTypeName: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 break;
               } else if (ch == 0x3e) {
@@ -5533,11 +5488,11 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
                 var ch2 = 0;
                 int pos = charInput.setSoftMark();
                 if (ch == 'P' || ch == 'p') {
-                  if (((ch2 = charInput.read()) == 'u' || ch2 == 'U') &&
-                    ((ch2 = charInput.read()) == 'b' || ch2 == 'B') &&
-                    ((ch2 = charInput.read()) == 'l' || ch2 == 'L') &&
-                    ((ch2 = charInput.read()) == 'i' || ch2 == 'I') &&
-                    ((ch2 = charInput.read()) == 'c' || ch2 == 'C')
+                  if (((ch2 = charInput.ReadChar()) == 'u' || ch2 == 'U') &&
+                    ((ch2 = charInput.ReadChar()) == 'b' || ch2 == 'B') &&
+                    ((ch2 = charInput.ReadChar()) == 'l' || ch2 == 'L') &&
+                    ((ch2 = charInput.ReadChar()) == 'i' || ch2 == 'I') &&
+                    ((ch2 = charInput.ReadChar()) == 'c' || ch2 == 'C')
 ) {
                     state = TokenizerState.AfterDocTypePublic;
                   } else {
@@ -5547,11 +5502,11 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
                     state = TokenizerState.BogusDocType;
                   }
                 } else if (ch == 'S' || ch == 's') {
-                  if (((ch2 = charInput.read()) == 'y' || ch2 == 'Y') &&
-                    ((ch2 = charInput.read()) == 's' || ch2 == 'S') &&
-                    ((ch2 = charInput.read()) == 't' || ch2 == 'T') &&
-                    ((ch2 = charInput.read()) == 'e' || ch2 == 'E') &&
-                    ((ch2 = charInput.read()) == 'm' || ch2 == 'M')
+                  if (((ch2 = charInput.ReadChar()) == 'y' || ch2 == 'Y') &&
+                    ((ch2 = charInput.ReadChar()) == 's' || ch2 == 'S') &&
+                    ((ch2 = charInput.ReadChar()) == 't' || ch2 == 'T') &&
+                    ((ch2 = charInput.ReadChar()) == 'e' || ch2 == 'E') &&
+                    ((ch2 = charInput.ReadChar()) == 'm' || ch2 == 'M')
 ) {
                     state = TokenizerState.AfterDocTypeSystem;
                   } else {
@@ -5571,7 +5526,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
             }
           case TokenizerState.AfterDocTypePublic:
           case TokenizerState.BeforeDocTypePublicID: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 if (state == TokenizerState.AfterDocTypePublic) {
                   state = TokenizerState.BeforeDocTypePublicID;
@@ -5604,7 +5559,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
             }
           case TokenizerState.AfterDocTypeSystem:
           case TokenizerState.BeforeDocTypeSystemID: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 if (state == TokenizerState.AfterDocTypeSystem) {
                   state = TokenizerState.BeforeDocTypeSystemID;
@@ -5637,9 +5592,9 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
             }
           case TokenizerState.DocTypePublicIDDoubleQuoted:
           case TokenizerState.DocTypePublicIDSingleQuoted: {
-              int ch = charInput.read();
-        if (ch == (state == TokenizerState.DocTypePublicIDDoubleQuoted ?
-                0x22 : 0x27)) {
+              int ch = charInput.ReadChar();
+              if (ch == (state == TokenizerState.DocTypePublicIDDoubleQuoted ?
+                    0x22 : 0x27)) {
                 state = TokenizerState.AfterDocTypePublicID;
               } else if (ch == 0) {
                 error = true;
@@ -5657,7 +5612,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
                 } else if (ch <= 0x10ffff) {
                   docTypeToken.publicID.Append((char)((((ch - 0x10000) >>
                     10) & 0x3ff) + 0xd800));
-       docTypeToken.publicID.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  docTypeToken.publicID.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
               }
@@ -5665,13 +5620,13 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
             }
           case TokenizerState.DocTypeSystemIDDoubleQuoted:
           case TokenizerState.DocTypeSystemIDSingleQuoted: {
-              int ch = charInput.read();
-        if (ch == (state == TokenizerState.DocTypeSystemIDDoubleQuoted ?
-                0x22 : 0x27)) {
+              int ch = charInput.ReadChar();
+              if (ch == (state == TokenizerState.DocTypeSystemIDDoubleQuoted ?
+                    0x22 : 0x27)) {
                 state = TokenizerState.AfterDocTypeSystemID;
               } else if (ch == 0) {
                 error = true;
-                 docTypeToken.systemID.Append((char)(0xfffd));
+                docTypeToken.systemID.Append((char)(0xfffd));
               } else if (ch == 0x3e || ch < 0) {
                 error = true;
                 docTypeToken.forceQuirks = true;
@@ -5685,7 +5640,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
                 } else if (ch <= 0x10ffff) {
                   docTypeToken.systemID.Append((char)((((ch - 0x10000) >>
                     10) & 0x3ff) + 0xd800));
-       docTypeToken.systemID.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  docTypeToken.systemID.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
               }
@@ -5693,7 +5648,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
             }
           case TokenizerState.AfterDocTypePublicID:
           case TokenizerState.BetweenDocTypePublicAndSystem: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 if (state == TokenizerState.AfterDocTypePublicID) {
                   state = TokenizerState.BetweenDocTypePublicAndSystem;
@@ -5730,7 +5685,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
               break;
             }
           case TokenizerState.AfterDocTypeSystemID: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 break;
               } else if (ch == 0x3e) {
@@ -5752,7 +5707,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
               break;
             }
           case TokenizerState.BogusDocType: {
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x3e || ch < 0) {
                 state = TokenizerState.Data;
                 int ret = tokens.Count | docTypeToken.getType();
@@ -5766,14 +5721,14 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
               var phase = 0;
               state = TokenizerState.Data;
               while (true) {
-                int ch = charInput.read();
+                int ch = charInput.ReadChar();
                 if (ch < 0) {
                   break;
                 }
                 if (ch <= 0xffff) {
                   buffer.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-              buffer.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                  buffer.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
                     0xd800));
                   buffer.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -5815,9 +5770,9 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
             }
           case TokenizerState.RcDataLessThan: {
               charInput.setHardMark();
-              int ch = charInput.read();
+              int ch = charInput.ReadChar();
               if (ch == 0x2f) {
-                tempBuilder.SetLength(0);
+                tempBuilder.Remove(0, tempBuilder.Length);
                 state = TokenizerState.RcDataEndTagOpen;
               } else {
                 state = TokenizerState.RcData;
@@ -5828,13 +5783,12 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
               }
               break;
             }
-          default:
-            throw new InvalidOperationException();
+          default: throw new InvalidOperationException();
         }
       }
     }
 
-    private Element popCurrentNode() {
+    private IElement popCurrentNode() {
       return (openElements.Count > 0) ?
         (removeAtIndex(openElements, openElements.Count - 1)) : (null);
     }
@@ -5922,7 +5876,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
     private void resetInsertionMode() {
       var last = false;
       for (int i = openElements.Count - 1; i >= 0; --i) {
-        Element e = openElements[i];
+        IElement e = openElements[i];
         if (context != null && i == 0) {
           e = context;
           last = true;
@@ -5964,8 +5918,8 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
           insertionMode = InsertionMode.InBody;
           break;
         }
-    if (name.Equals("thead") || name.Equals("tbody") ||
-          name.Equals("tfoot")) {
+        if (name.Equals("thead") || name.Equals("tbody") ||
+              name.Equals("tfoot")) {
           insertionMode = InsertionMode.InTableBody;
           break;
         }
@@ -5994,7 +5948,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
 
     private void skipLineFeed() {
       int mark = charInput.setSoftMark();
-      int nextToken = charInput.read();
+      int nextToken = charInput.ReadChar();
       if (nextToken == 0x0a) {
         return;  // ignore the token if it's 0x0A
       } else if (nextToken == 0x26) {  // start of character reference
@@ -6002,8 +5956,8 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
         if (charref < 0) {
           // more than one character in this reference
           int index = Math.Abs(charref + 1);
-          tokenQueue.Add(HtmlEntities.entityDoubles[index * 2]);
-          tokenQueue.Add(HtmlEntities.entityDoubles[index * 2 + 1]);
+          tokenQueue.Add(HtmlEntities.EntityDoubles[index * 2]);
+          tokenQueue.Add(HtmlEntities.EntityDoubles[index * 2 + 1]);
         } else if (charref == 0x0a) {
           return;  // ignore the token
         } else {
@@ -6017,12 +5971,12 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
 
     private void stopParsing() {
       done = true;
-      if (String.IsNullOrEmpty(document.defaultLanguage)) {
+      if (String.IsNullOrEmpty(document.DefaultLanguage)) {
         if (contentLanguage.Length == 1) {
           // set the fallback language if there is
           // only one language defined and no meta element
           // defines the language
-          document.defaultLanguage = contentLanguage[0];
+          document.DefaultLanguage = contentLanguage[0];
         }
       }
       document.encoding = encoding.getEncoding();
@@ -6031,7 +5985,7 @@ comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) + 0xdc00));
         docbase = baseurl;
       } else {
         if (baseurl != null && baseurl.Length > 0) {
-          document.setBaseURI(HtmlDocument.resolveURL(document, baseurl,
+          document.setBaseURI(HtmlCommon.resolveURL(document, baseurl,
               docbase));
         }
       }

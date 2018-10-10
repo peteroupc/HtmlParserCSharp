@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using com.upokecenter.util;
 /*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
@@ -26,14 +30,9 @@ THE SOFTWARE.
 */
 
 namespace com.upokecenter.html {
-using System;
-using System.Collections.Generic;
-using System.Text;
-using com.upokecenter.util;
-
 internal class Node : INode {
-  private IList<Node> childNodes;
-  private Node parentNode = null;
+  private IList<INode> childNodes;
+  private INode parentNode = null;
   private IDocument ownerDocument = null;
 
   private int ValueNodeType;
@@ -42,7 +41,7 @@ internal class Node : INode {
 
   public Node(int ValueNodeType) {
     this.ValueNodeType = ValueNodeType;
-    this.childNodes = new List<Node>();
+    this.childNodes = new List<INode>();
   }
 
   public void appendChild(Node node) {
@@ -205,7 +204,7 @@ HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
     return new List<INode>(this.childNodes);
   }
 
-  internal IList<Node> getChildNodesInternal() {
+  internal IList<INode> getChildNodesInternal() {
     return this.childNodes;
   }
 

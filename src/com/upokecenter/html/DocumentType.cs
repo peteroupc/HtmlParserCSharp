@@ -1,4 +1,6 @@
-/*
+using System.Text;
+
+  /*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 
@@ -26,49 +28,46 @@ THE SOFTWARE.
 */
 
 namespace com.upokecenter.html {
-using System;
-using System.Text;
-
-sealed class DocumentType : Node, IDocumentType {
-  private string valuePublicId;
-  private string valueSystemId;
-  private string valueName;
-
-  public DocumentType() : base(NodeType.DOCUMENT_TYPE_NODE) {
-  }
-
-  public string getName() {
-    return this.valueName;
-  }
-
-  public override sealed string getNodeName() {
-    return this.getName();
-  }
-
-  public string getPublicId() {
-    return this.valuePublicId;
-  }
-
-  public string getSystemId() {
-    return this.valueSystemId;
-  }
-
-  public override sealed string getTextContent() {
-    return null;
-  }
-
-  internal override sealed string toDebugString() {
-    var builder = new StringBuilder();
-    builder.Append("<!DOCTYPE " + this.valueName);
-    if ((this.valuePublicId != null && this.valuePublicId.Length > 0) ||
-        (this.valueSystemId != null && this.valueSystemId.Length > 0)) {
-      builder.Append(this.valuePublicId != null && this.valuePublicId.Length >
-        0 ? " \"" +this.valuePublicId.Replace("\n", "~~~~") + "\"" : " \"\"");
-      builder.Append(this.valueSystemId != null && this.valueSystemId.Length >
-        0 ? " \"" +this.valueSystemId.Replace("\n", "~~~~") + "\"" : " \"\"");
+internal sealed class DocumentType : Node, IDocumentType {
+    public DocumentType(string name, string pub, string sys) :
+    base(NodeType.DOCUMENT_TYPE_NODE) {
+      this.Name = name;
+      this.PublicId = pub;
+      this.SystemId = sys;
     }
-    builder.Append(">\n");
-    return builder.ToString();
+    public string SystemId { get; private set; }
+    public string PublicId { get; private set; }
+    public string Name { get; private set; }
+
+    public override sealed string getNodeName() {
+      return this.getName();
+    }
+
+    public string getPublicId() {
+      return this.PublicId;
+    }
+    public override sealed string getTextContent() {
+      return null;
+    }
+    public string getSystemId() {
+      return this.SystemId;
+    }
+    public string getName() {
+      return this.Name;
+    }
+
+    internal override sealed string toDebugString() {
+      var builder = new StringBuilder();
+      builder.Append("<!DOCTYPE " + this.Name);
+      if ((this.PublicId != null && this.PublicId.Length > 0) ||
+          (this.SystemId != null && this.SystemId.Length > 0)) {
+        builder.Append(this.PublicId != null && this.PublicId.Length >
+          0 ? " \"" + this.PublicId.Replace("\n", "~~~~") + "\"" : " \"\"");
+        builder.Append(this.SystemId != null && this.SystemId.Length >
+          0 ? " \"" + this.SystemId.Replace("\n", "~~~~") + "\"" : " \"\"");
+      }
+      builder.Append(">\n");
+      return builder.ToString();
+    }
   }
-}
 }

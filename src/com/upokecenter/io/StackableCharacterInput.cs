@@ -6,12 +6,12 @@ http://creativecommons.org/publicdomain/zero/1.0/
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 */
-namespace com.upokecenter.io {
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-
+using PeterO.Text;
+namespace com.upokecenter.io {
     /// <summary>* A character input stream where additional inputs can be
     /// stacked on top of it. It supports advanced marking capabilities.
     /// @author Peter.</summary>
@@ -35,9 +35,9 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
       }
     }
 
-    public int read() {
+    public int ReadChar() {
       if (this.valueCharInput != null) {
-        int c = this.valueCharInput.read();
+        int c = this.valueCharInput.ReadChar();
         if (c >= 0) {
  return c;
 }
@@ -52,7 +52,7 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
       return -1;
     }
 
-    public int read(int[] buf, int offset, int unitCount) {
+    public int Read(int[] buf, int offset, int unitCount) {
       if (buf == null) {
  throw new ArgumentNullException(nameof(buf));
 }
@@ -75,7 +75,7 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 }
       var count = 0;
       if (this.valueCharInput != null) {
-        int c = this.valueCharInput.read(buf, offset, unitCount);
+        int c = this.valueCharInput.Read(buf, offset, unitCount);
         if (c <= 0) {
           this.valueCharInput = null;
         } else {
@@ -153,7 +153,7 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A 32-bit signed integer.</returns>
-  public int read() {
+  public int ReadChar() {
     if (this.haveMark) {
       // Read from valueBuffer
       if (this.pos < this.endpos) {
@@ -202,7 +202,7 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
     /// <returns>A 32-bit signed integer.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='buf'/> is null.</exception>
-  public int read(int[] buf, int offset, int unitCount) {
+  public int Read(int[] buf, int offset, int unitCount) {
     if (this.haveMark) {
       if (buf == null) {
  throw new ArgumentNullException(nameof(buf));
@@ -290,7 +290,7 @@ public sealed class StackableCharacterInput : IMarkableCharacterInput {
 }
     while (this.valueStack.Count > 0) {
       int index = this.valueStack.Count - 1;
-      int c = this.valueStack[index].read();
+      int c = this.valueStack[index].ReadChar();
       if (c == -1) {
         this.valueStack.RemoveAt(index);
         continue;
@@ -331,7 +331,7 @@ if (!((offset + unitCount) <= buf.Length)) {
     var count = 0;
     while (this.valueStack.Count > 0 && unitCount > 0) {
       int index = this.valueStack.Count - 1;
-      int c = this.valueStack[index].read(buf, offset, unitCount);
+      int c = this.valueStack[index].Read(buf, offset, unitCount);
       if (c <= 0) {
         this.valueStack.RemoveAt(index);
         continue;

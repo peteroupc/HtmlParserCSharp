@@ -1,4 +1,5 @@
-﻿/*
+using com.upokecenter.util;
+/*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 
@@ -26,10 +27,6 @@ THE SOFTWARE.
 */
 
 namespace com.upokecenter.html {
-using System;
-using System.Collections.Generic;
-using System.Text;
-using com.upokecenter.util;
 internal class Element : Node, IElement {
   private sealed class AttributeNameComparator : IComparer<IAttr> {
     public int Compare(IAttr arg0, IAttr arg1) {
@@ -39,12 +36,12 @@ internal class Element : Node, IElement {
     }
   }
 
-  internal static Element fromToken(HtmlParser.StartTagToken token) {
+    internal static Element fromToken(INameAndAttributes token) {
     return fromToken(token, HtmlCommon.HTML_NAMESPACE);
   }
 
   internal static Element fromToken(
-      HtmlParser.StartTagToken token,
+      INameAndAttributes token,
       string _namespace) {
     var ret = new Element();
     ret.name = token.getName();
@@ -177,7 +174,7 @@ internal class Element : Node, IElement {
 
   public override sealed string getLanguage() {
     INode parent = getParentNode();
-    string a=getAttributeNS(HtmlParser.XML_NAMESPACE,"lang");
+    string a=getAttributeNS(HtmlCommon.XML_NAMESPACE,"lang");
     if (a == null) {
       a=getAttribute("lang");
     }
@@ -225,21 +222,7 @@ internal class Element : Node, IElement {
     }
     return builder.ToString();
   }
-
-  internal bool isHtmlElement(string name) {
- return name.Equals(this.name) && HtmlCommon.HTML_NAMESPACE.Equals(_namespace);
-  }
-
-  internal bool isMathMLElement(string name) {
-    return name.Equals(this.name) &&
-      HtmlCommon.MATHML_NAMESPACE.Equals(_namespace);
-  }
-
-  internal bool isSvgElement(string name) {
-  return name.Equals(this.name) && HtmlCommon.SVG_NAMESPACE.Equals(_namespace);
-  }
-
-  internal void mergeAttributes(HtmlParser.StartTagToken token) {
+    internal void mergeAttributes(INameAndAttributes token) {
     foreach (var attr in token.getAttributes()) {
       string s = getAttribute(attr.getName());
       if (s == null) {
@@ -285,10 +268,10 @@ internal class Element : Node, IElement {
       // , attribute.getNamespace(), attribute.getLocalName());
       if (attribute.getNamespaceURI() != null) {
         string extra1="";
-        if (HtmlParser.XLINK_NAMESPACE.Equals(attribute.getNamespaceURI())) {
+        if (HtmlCommon.XLINK_NAMESPACE.Equals(attribute.getNamespaceURI())) {
           extra1="xlink ";
         }
-        if (HtmlParser.XML_NAMESPACE.Equals(attribute.getNamespaceURI())) {
+        if (HtmlCommon.XML_NAMESPACE.Equals(attribute.getNamespaceURI())) {
           extra1="xml ";
         }
         extra1+=attribute.getLocalName();
@@ -300,7 +283,7 @@ internal class Element : Node, IElement {
       }
     }
     foreach (var node in getChildNodesInternal()) {
-      string str = node.toDebugString();
+        string str = ((Node)node).toDebugString();
       if (str == null) {
         continue;
       }

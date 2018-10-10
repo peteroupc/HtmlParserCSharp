@@ -1,9 +1,9 @@
-namespace com.upokecenter.html {
 using System;
 
+  namespace com.upokecenter.html {
 sealed class HtmlEntities {
-  private static string[] valueEntities = new
-    string[] { "CounterClockwiseContourIntegral;",
+    private static readonly string[] entities = new
+      string[] { "CounterClockwiseContourIntegral;",
     "ClockwiseContourIntegral;", "DoubleLongLeftRightArrow;",
     "NotNestedGreaterGreater;", "DiacriticalDoubleAcute;",
     "NotSquareSupersetEqual;", "CloseCurlyDoubleQuote;",
@@ -416,7 +416,7 @@ sealed class HtmlEntities {
  "reg", "rx;", "sc;", "shy", "uml", "wp;", "wr;", "xi;", "yen",
  "GT", "LT", "gt", "lt" };
 
-  private static int[] valueEntityValues = new int[] { 8755, 8754, 10234,
+    private static int[] valueEntityValues = new int[] { 8755, 8754, 10234,
     -1, 733,
     8931, 8221, 8751, 9642, 8203, 8928, 8941, 8929, 8517, 8660, 10233, 9643,
     8811, 8742, -2, 8940, 8930, 8220, 10607, 10232, 10576, 8646, 8203, -3,
@@ -610,7 +610,8 @@ sealed class HtmlEntities {
     8715, 172, 957, 9416, 8744, 960, 177, 8826, 174, 8478, 8827, 173, 168,
     8472, 8768, 958, 165, 62, 60, 62, 60 };
 
-  private static int[] valueEntityDoubles = new int[] { 10914, 824, 10878, 824,
+    private static readonly int[] entityDoubles = new int[] { 10914, 824,
+      10878, 824,
     8807, 824, 10704, 824, 10703, 824, 8811, 824, 10877, 824, 10913, 824,
     8848, 824, 10927, 824, 10928, 824, 8831, 824, 8782, 824, 8847, 824,
     8770, 824, 10955, 65024, 10956, 65024, 8783, 824, 8842, 65024, 8843,
@@ -628,36 +629,41 @@ sealed class HtmlEntities {
     8765, 817, 8766, 819, 61, 8421, 8921, 824, 8811, 8402, 8920, 824, 8810,
     8402, 8807, 824, 8806, 824 };
 
-  public static int getHtmlEntity(string value) {
-    if (value.Length < 2 || value.Length > valueEntities[0].Length) {
- return Int32.MaxValue;
-}
-    value += ";";
-    int len = value.Length;
-    for (int i = 0; i < valueEntities.Length; ++i) {
-      string e = valueEntities[i];
-      if (e.Length < len) {
-        break;
+    internal static string[] Entities => entities;
+
+    internal static int[] EntityDoubles => entityDoubles;
+
+    public static int getHtmlEntity(string value) {
+      if (value.Length < 2 || value.Length > HtmlEntities.Entities[0].Length) {
+        return Int32.MaxValue;
       }
-      if (e.Length != len) {
-        continue;
+      value += ";";
+      int len = value.Length;
+      for (int i = 0; i < HtmlEntities.Entities.Length; ++i) {
+        string e = HtmlEntities.Entities[i];
+        if (e.Length < len) {
+          break;
+        }
+        if (e.Length != len) {
+          continue;
+        }
+        if (e.Equals(value)) {
+          return valueEntityValues[i];
+        }
       }
-      if (e.Equals(value)) {
- return valueEntityValues[i];
-}
+      return Int32.MaxValue;
     }
-    return Int32.MaxValue;
-  }
 
-  public static int[] getTwoCharacterEntity(int index) {
-    if (index > -1) {
- throw new ArgumentException("index more than -1 (" + index + ")");
-}
-    index = Math.Abs(index + 1) * 2;
- return new int[] { valueEntityDoubles[index], valueEntityDoubles[index + 1] };
-  }
+    public static int[] getTwoCharacterEntity(int index) {
+      if (index > -1) {
+        throw new ArgumentException("index more than -1 (" + index + ")");
+      }
+      index = Math.Abs(index + 1) * 2;
+      return new int[] { HtmlEntities.EntityDoubles[index],
+        HtmlEntities.EntityDoubles[index + 1] };
+    }
 
-  private HtmlEntities() {
-}
-}
+    private HtmlEntities() {
+    }
+  }
 }

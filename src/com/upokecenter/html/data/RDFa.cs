@@ -1,14 +1,12 @@
-namespace com.upokecenter.html.data {
-  using System;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Text;
+using PeterO;
 using PeterO.Rdf;
-using com.upokecenter.html;
 using com.upokecenter.util;
 
-    /// <summary>Not documented yet.</summary>
+  namespace com.upokecenter.html.data {
+/// <summary>Not documented yet.</summary>
   public class RDFa : IRDFParser {
     internal enum ChainingDirection {
       None, Forward, Reverse
@@ -64,10 +62,10 @@ using com.upokecenter.util;
       public ChainingDirection ValueDirection { get; set; }
 
       public override string ToString() {
- return "IncompleteTriple [this.valueTripleList=" + this.valueTripleList +
-          ", ValuePredicate=" +
-         this.ValuePredicate + ", this.ValueDirection=" + this.ValueDirection +
-              "]";
+      return "IncompleteTriple [this.valueTripleList=" +
+          this.valueTripleList + ", ValuePredicate=" +
+         this.ValuePredicate + ", this.ValueDirection=" +
+                this.ValueDirection + "]";
       }
     }
 
@@ -196,10 +194,10 @@ using com.upokecenter.util;
       return default(T);
     }
 
-  private static bool isValidCurieReference(
-  string s,
-  int offset,
-  int length) {
+    private static bool isValidCurieReference(
+    string s,
+    int offset,
+    int length) {
       return URIUtility.isValidCurieReference(s, offset, length);
     }
 
@@ -373,8 +371,8 @@ using com.upokecenter.util;
       this.context.valueDefaultVocab = null;
       this.context.ValueBaseURI = document.getBaseURI();
       if (!URIUtility.hasScheme(this.context.ValueBaseURI)) {
-     throw new ArgumentException("ValueBaseURI: " +
-          this.context.ValueBaseURI);
+        throw new ArgumentException("ValueBaseURI: " +
+             this.context.ValueBaseURI);
       }
   this.context.ValueParentSubject = RDFTerm.fromIRI(this.context.ValueBaseURI);
       this.context.ValueParentObject = null;
@@ -395,9 +393,9 @@ using com.upokecenter.util;
       this.context.ValueTermMap.Add(
   "license",
   "http://www.w3.org/1999/xhtml/vocab#license");
-   this.context.ValueTermMap.Add(
-  "role",
-  "http://www.w3.org/1999/xhtml/vocab#role");
+      this.context.ValueTermMap.Add(
+     "role",
+     "http://www.w3.org/1999/xhtml/vocab#role");
       this.context.ValueIriMap.Add("cc", "http://creativecommons.org/ns#");
       this.context.ValueIriMap.Add("ctag", "http://commontag.org/ns#");
       this.context.ValueIriMap.Add("dc", "http://purl.org/dc/terms/");
@@ -405,16 +403,16 @@ using com.upokecenter.util;
       this.context.ValueIriMap.Add("dc11", "http://purl.org/dc/elements/1.1/");
       this.context.ValueIriMap.Add("foaf", "http://xmlns.com/foaf/0.1/");
       this.context.ValueIriMap.Add("gr", "http://purl.org/goodrelations/v1#");
-this.context.ValueIriMap.Add(
-  "ical",
-  "http://www.w3.org/2002/12/cal/icaltzd#");
+      this.context.ValueIriMap.Add(
+        "ical",
+        "http://www.w3.org/2002/12/cal/icaltzd#");
       this.context.ValueIriMap.Add("og", "http://ogp.me/ns#");
       this.context.ValueIriMap.Add("schema", "http://schema.org/");
       this.context.ValueIriMap.Add("rev", "http://purl.org/stuff/rev#");
       this.context.ValueIriMap.Add("sioc", "http://rdfs.org/sioc/ns#");
-  this.context.ValueIriMap.Add(
-  "grddl",
-  "http://www.w3.org/2003/g/data-view#");
+      this.context.ValueIriMap.Add(
+      "grddl",
+      "http://www.w3.org/2003/g/data-view#");
       this.context.ValueIriMap.Add("ma", "http://www.w3.org/ns/ma-ont#");
       this.context.ValueIriMap.Add("owl", "http://www.w3.org/2002/07/owl#");
       this.context.ValueIriMap.Add("prov", "http://www.w3.org/ns/prov#");
@@ -422,33 +420,33 @@ this.context.ValueIriMap.Add(
   "rdf",
   "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
       this.context.ValueIriMap.Add("rdfa", "http://www.w3.org/ns/rdfa#");
- this.context.ValueIriMap.Add(
-  "rdfs",
-  "http://www.w3.org/2000/01/rdf-schema#");
+      this.context.ValueIriMap.Add(
+       "rdfs",
+       "http://www.w3.org/2000/01/rdf-schema#");
       this.context.ValueIriMap.Add("rif", "http://www.w3.org/2007/rif#");
       this.context.ValueIriMap.Add("rr", "http://www.w3.org/ns/r2rml#");
       this.context.ValueIriMap.Add(
   "sd",
   "http://www.w3.org/ns/sparql-service-description#");
-  this.context.ValueIriMap.Add(
-  "skos",
-  "http://www.w3.org/2004/02/skos/core#");
-  this.context.ValueIriMap.Add(
-  "skosxl",
-  "http://www.w3.org/2008/05/skos-xl#");
+      this.context.ValueIriMap.Add(
+      "skos",
+      "http://www.w3.org/2004/02/skos/core#");
+      this.context.ValueIriMap.Add(
+      "skosxl",
+      "http://www.w3.org/2008/05/skos-xl#");
       this.context.ValueIriMap.Add("v", "http://rdf.data-vocabulary.org/#");
       this.context.ValueIriMap.Add("vcard", "http://www.w3.org/2006/vcard/ns#");
       this.context.ValueIriMap.Add("void", "http://rdfs.org/ns/void#");
       this.context.ValueIriMap.Add("wdr", "http://www.w3.org/2007/05/powder#");
-   this.context.ValueIriMap.Add(
-  "wdrs",
-  "http://www.w3.org/2007/05/powder-s#");
-    this.context.ValueIriMap.Add(
-  "xhv",
-  "http://www.w3.org/1999/xhtml/vocab#");
-  this.context.ValueIriMap.Add(
-  "xml",
-  "http://www.w3.org/XML/1998/_namespace");
+      this.context.ValueIriMap.Add(
+     "wdrs",
+     "http://www.w3.org/2007/05/powder-s#");
+      this.context.ValueIriMap.Add(
+    "xhv",
+    "http://www.w3.org/1999/xhtml/vocab#");
+      this.context.ValueIriMap.Add(
+      "xml",
+      "http://www.w3.org/XML/1998/_namespace");
       this.context.ValueIriMap.Add("xsd", "http://www.w3.org/2001/XMLSchema#");
       IElement docElement = document.getDocumentElement();
       if (docElement != null && isHtmlElement(docElement, "html")) {
@@ -467,9 +465,9 @@ this.context.ValueIriMap.Add(
             "up", "p3pv1"
         };
           foreach (var term in terms) {
-          this.context.ValueTermMap.Add(
-  term,
-  "http://www.w3.org/1999/xhtml/vocab#" + term);
+            this.context.ValueTermMap.Add(
+    term,
+    "http://www.w3.org/1999/xhtml/vocab#" + term);
           }
         }
         if (version != null && "XHTML+RDFa 1.0".Equals(version)) {
@@ -493,7 +491,8 @@ this.context.ValueIriMap.Add(
       // be used to guarantee that generated blank nodes will never
       // conflict with those stated explicitly
       string blankNodeString = "//" +
-        Convert.ToString(this.blankNode, CultureInfo.InvariantCulture);
+        Convert.ToString(this.blankNode,
+                    System.Globalization.CultureInfo.InvariantCulture);
       ++this.blankNode;
       RDFTerm term = RDFTerm.fromBlankNode(blankNodeString);
       this.bnodeLabels.Add(blankNodeString, term);
@@ -532,7 +531,8 @@ this.context.ValueIriMap.Add(
          this.relativeResolve(
   prefixIri + attribute.Substring(
   refIndex,
-  (refIndex + refLength) - refIndex)).getValue(); } else {
+  (refIndex + refLength) - refIndex)).getValue();
+      } else {
         return null;
       }
     }
@@ -586,7 +586,9 @@ this.context.ValueIriMap.Add(
     this.getNamedBlankNode(
   attribute.Substring(
   refIndex,
-  (refIndex + refLength) - (refIndex))); } #if DEBUG
+  (refIndex + refLength) - (refIndex)));
+        }
+#if DEBUG
         if (!(refIndex >= 0)) {
           throw new InvalidOperationException(attribute);
         }
@@ -598,7 +600,8 @@ this.context.ValueIriMap.Add(
     this.relativeResolve(
   prefixIri + attribute.Substring(
   refIndex,
-  (refIndex + refLength) - refIndex)); } else {
+  (refIndex + refLength) - refIndex));
+      } else {
         return null;
       }
     }
@@ -615,9 +618,8 @@ this.context.ValueIriMap.Add(
         return null;
       }
       int lastIndex = attribute.Length - 1;
-if (attribute.Length >= 2 && attribute[0] == '[' && attribute[lastIndex] ==
-        ']'
-) {
+    if (attribute.Length >= 2 && attribute[0] == '[' && attribute[lastIndex]
+        == ']') {
         RDFTerm curie = this.getCurieOrBnode(
   attribute,
   1,
@@ -648,8 +650,8 @@ if (attribute.Length >= 2 && attribute[0] == '[' && attribute[lastIndex] ==
       }
       if (isValidTerm(attribute)) {
         if (valueDefaultVocab != null) {
-    return this.relativeResolve(valueDefaultVocab +
-            attribute).getValue();
+          return this.relativeResolve(valueDefaultVocab +
+                  attribute).getValue();
         } else if (termMapping.ContainsKey(attribute)) {
           return termMapping[attribute];
         } else {
@@ -700,8 +702,8 @@ new PeterO.Support.LenientDictionary<string,
       IDictionary<string, string> namespacesLocal =
         new PeterO.Support.LenientDictionary<string,
             string>(this.context.ValueNamespaces);
-  IDictionary<string, IList<RDFTerm>> listMapLocal =
-        this.context.ValueListMap;
+      IDictionary<string, IList<RDFTerm>> listMapLocal =
+            this.context.ValueListMap;
       IDictionary<string, string> termMapLocal =
           new PeterO.Support.LenientDictionary<string,
             string>(this.context.ValueTermMap);
@@ -784,9 +786,9 @@ new PeterO.Support.LenientDictionary<string,
           if (about != null) {
             newSubject = about;
           } else if (root) {
-    newSubject = this.getSafeCurieOrCurieOrIri(
-  String.Empty,
-  iriMapLocal);
+            newSubject = this.getSafeCurieOrCurieOrIri(
+          String.Empty,
+          iriMapLocal);
           } else if (this.context.ValueParentObject != null) {
             newSubject = this.context.ValueParentObject;
           }
@@ -795,15 +797,17 @@ new PeterO.Support.LenientDictionary<string,
             if (about != null) {
               typedResource = about;
             } else if (root) {
- typedResource = this.getSafeCurieOrCurieOrIri(
-  String.Empty,
-  iriMapLocal);
+              typedResource = this.getSafeCurieOrCurieOrIri(
+               String.Empty,
+               iriMapLocal);
             } else {
               RDFTerm resource = this.getSafeCurieOrCurieOrIri(
                   node.getAttribute("resource"),
                   iriMapLocal);
-resource = resource ?? this.relativeResolve(node.getAttribute("href"));
- resource = resource ?? this.relativeResolve(node.getAttribute("src"));
+        resource = resource ?? this.relativeResolve(node.getAttribute(
+  "href"));
+         resource = resource ?? this.relativeResolve(node.getAttribute(
+  "src"));
               // DebugUtility.Log("resource=%s",resource);
               if ((resource == null || resource.getKind() != RDFTerm.IRI) &&
                   xhtml_rdfa11) {
@@ -812,7 +816,7 @@ resource = resource ?? this.relativeResolve(node.getAttribute("href"));
                   newSubject = this.context.ValueParentObject;
                 }
               }
-           typedResource = (resource == null) ? this.generateBlankNode() :
+              typedResource = (resource == null) ? this.generateBlankNode() :
                     resource;
               currentObject = typedResource;
             }
@@ -829,10 +833,10 @@ resource = resource ?? this.relativeResolve(node.getAttribute("href"));
             // node.getAttribute("resource"),
             // resource, context.ValueParentObject);
           }
-   resource = resource ?? this.relativeResolve(node.getAttribute(
-  "href"));
-    resource = resource ?? this.relativeResolve(node.getAttribute(
-  "src"));
+          resource = resource ?? this.relativeResolve(node.getAttribute(
+         "href"));
+          resource = resource ?? this.relativeResolve(node.getAttribute(
+        "src"));
           if ((resource == null || resource.getKind() != RDFTerm.IRI) &&
               xhtml_rdfa11) {
             if (isHtmlElement(node, "head") ||
@@ -842,9 +846,9 @@ resource = resource ?? this.relativeResolve(node.getAttribute("href"));
           }
           if (resource == null) {
             if (root) {
-    newSubject = this.getSafeCurieOrCurieOrIri(
-  String.Empty,
-  iriMapLocal);
+              newSubject = this.getSafeCurieOrCurieOrIri(
+            String.Empty,
+            iriMapLocal);
             } else if (node.getAttribute("typeof") != null) {
               newSubject = this.generateBlankNode();
             } else {
@@ -875,9 +879,9 @@ resource = resource ?? this.relativeResolve(node.getAttribute("href"));
         }
         if (about == null) {
           if (root) {
-         about = this.getSafeCurieOrCurieOrIri(
-  String.Empty,
-  iriMapLocal);
+            about = this.getSafeCurieOrCurieOrIri(
+     String.Empty,
+     iriMapLocal);
           } else if (this.context.ValueParentObject != null) {
             newSubject = this.context.ValueParentObject;
           }
@@ -885,10 +889,10 @@ resource = resource ?? this.relativeResolve(node.getAttribute("href"));
         RDFTerm resource = this.getSafeCurieOrCurieOrIri(
             node.getAttribute("resource"),
             iriMapLocal);
-   resource = resource ?? this.relativeResolve(node.getAttribute(
-  "href"));
-    resource = resource ?? this.relativeResolve(node.getAttribute(
-  "src"));
+        resource = resource ?? this.relativeResolve(node.getAttribute(
+       "href"));
+        resource = resource ?? this.relativeResolve(node.getAttribute(
+      "src"));
         if ((resource == null || resource.getKind() != RDFTerm.IRI) &&
             xhtml_rdfa11) {
           if (isHtmlElement(node, "head") ||
@@ -926,8 +930,8 @@ resource = resource ?? this.relativeResolve(node.getAttribute("href"));
         }
       }
       // Step 8
-if (newSubject != null &&
-        !newSubject.Equals(this.context.ValueParentObject)) {
+      if (newSubject != null &&
+              !newSubject.Equals(this.context.ValueParentObject)) {
         this.context.ValueListMap.Clear();
       }
       // Step 9
@@ -956,8 +960,8 @@ if (newSubject != null &&
           string[] types = StringUtility.SplitAtSpTabCrLf(rel);
 #if DEBUG
           if (!(newSubject != null)) {
-       throw new
-              InvalidOperationException("doesn't satisfy newSubject!=null");
+            throw new
+  InvalidOperationException("doesn't satisfy newSubject!=null");
           }
 #endif
           foreach (var type in types) {
@@ -1097,10 +1101,10 @@ if (newSubject != null &&
             RDFTerm resource = this.getSafeCurieOrCurieOrIri(
                 node.getAttribute("resource"),
                 iriMapLocal);
-   resource = resource ?? this.relativeResolve(node.getAttribute(
-  "href"));
-    resource = resource ?? this.relativeResolve(node.getAttribute(
-  "src"));
+            resource = resource ?? this.relativeResolve(node.getAttribute(
+           "href"));
+            resource = resource ?? this.relativeResolve(node.getAttribute(
+          "src"));
             if (resource != null) {
               currentProperty = resource;
             }
@@ -1130,8 +1134,8 @@ if (newSubject != null &&
           } else {
 #if DEBUG
             if (!(newSubject != null)) {
-       throw new
-                InvalidOperationException("doesn't satisfy newSubject!=null");
+              throw new
+  InvalidOperationException("doesn't satisfy newSubject!=null");
             }
 #endif
             this.outputGraph.Add(new RDFTriple(
@@ -1183,8 +1187,8 @@ if (newSubject != null &&
             ec.ValueIncompleteTriples = incompleteTriplesLocal;
             ec.ValueListMap = listMapLocal;
             ec.ValueTermMap = termMapLocal;
-          ec.ValueParentSubject = ((newSubject == null) ?
-            oldContext.ValueParentSubject : newSubject);
+            ec.ValueParentSubject = ((newSubject == null) ?
+              oldContext.ValueParentSubject : newSubject);
             ec.ValueParentObject = ((currentObject == null) ? ((newSubject
               == null) ? oldContext.ValueParentSubject :
                   newSubject) : currentObject);

@@ -1,9 +1,9 @@
-namespace com.upokecenter.html.data {
 using System;
 using System.Collections.Generic;
 using PeterO.Cbor;
 using com.upokecenter.html;
 using com.upokecenter.util;
+namespace com.upokecenter.html.data {;
 
     /// <summary>Not documented yet.</summary>
 public sealed class Microdata {

@@ -1,3 +1,4 @@
+using com.upokecenter.util;
 /*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
@@ -26,21 +27,15 @@ THE SOFTWARE.
 */
 
 namespace com.upokecenter.html {
-using System;
-using System.Collections.Generic;
-using System.Text;
-using com.upokecenter.util;
-
 internal class Document : Node, IDocument {
-  private DocumentType valueDoctype;
-  private string valueEncoding;
+    private DocumentType Doctype { get; set; }
+    private string Encoding { get; set; }
   private DocumentMode docmode = DocumentMode.NoQuirksMode;
 
-  private string valueAddress;
+    internal string DefaultLanguage { get; set; }
+    internal string Address { get; set; }
 
-  private string valueDefaultLanguage;
-
-  internal Document() : base(NodeType.DOCUMENT_NODE) {
+    internal Document() : base(NodeType.DOCUMENT_NODE) {
   }
 
   private void collectElements(INode c, string s, IList<IElement> nodes) {
@@ -76,12 +71,12 @@ internal class Document : Node, IDocument {
     }
   }
 
-  public string getCharacterSet() {
-    return (this.valueEncoding == null) ? "utf-8" : this.valueEncoding;
+  public string getCharset() {
+    return (this.Encoding == null) ? "utf-8" : this.Encoding;
   }
 
   public IDocumentType getDoctype() {
-    return this.valueDoctype;
+    return this.Doctype;
   }
 
   public IElement getDocumentElement() {
@@ -132,8 +127,8 @@ internal class Document : Node, IDocument {
   }
 
   public override string getLanguage() {
-    return (this.valueDefaultLanguage == null) ? String.Empty :
-      this.valueDefaultLanguage;
+    return (this.DefaultLanguage == null) ? String.Empty :
+      this.DefaultLanguage;
   }
 
   internal DocumentMode getMode() {
@@ -149,7 +144,7 @@ internal class Document : Node, IDocument {
   }
 
   public string getURL() {
-    return this.valueAddress;
+    return this.Address;
   }
 
   internal bool isHtmlDocument() {
@@ -163,7 +158,7 @@ internal class Document : Node, IDocument {
   internal override string toDebugString() {
     var builder = new StringBuilder();
     foreach (var node in this.getChildNodesInternal()) {
-      string str = node.toDebugString();
+        string str = ((Node)node).toDebugString();
       if (str == null) {
         continue;
       }

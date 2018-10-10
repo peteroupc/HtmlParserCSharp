@@ -1,13 +1,11 @@
-namespace com.upokecenter.html.data {
-  using System;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Text;
+using PeterO;
 using PeterO.Rdf;
-using com.upokecenter.html;
 using com.upokecenter.util;
 
+namespace com.upokecenter.html.data {
   internal class RDFa1 : IRDFParser {
     private static string getTextNodeText(INode node) {
       var builder = new StringBuilder();
@@ -117,10 +115,10 @@ using com.upokecenter.util;
           (c >= 0x10000 && c <= 0xeffff);
     }
 
-  private static bool isValidCurieReference(
-  string s,
-  int offset,
-  int length) {
+    private static bool isValidCurieReference(
+    string s,
+    int offset,
+    int length) {
       if (s == null) {
         return false;
       }
@@ -182,7 +180,8 @@ using com.upokecenter.util;
       // be used to guarantee that generated blank nodes will never
       // conflict with those stated explicitly
       string blankNodeString = "b:" +
-   Convert.ToString(this.blankNode, CultureInfo.InvariantCulture);
+   Convert.ToString(this.blankNode,
+                    System.Globalization.CultureInfo.InvariantCulture);
       ++this.blankNode;
       RDFTerm term = RDFTerm.fromBlankNode(blankNodeString);
       this.bnodeLabels.Add(blankNodeString, term);
@@ -205,7 +204,8 @@ using com.upokecenter.util;
         string prefixName = DataUtilities.ToLowerCaseAscii(
             attribute.Substring(
   refIndex,
-  (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -= prefix + 1;
+  (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
+    prefix + 1;
         prefixIri = prefixMapping[prefixName];
         prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
           prefixMapping[prefixName];
@@ -251,7 +251,8 @@ using com.upokecenter.util;
         prefixName = DataUtilities.ToLowerCaseAscii(
             attribute.Substring(
   refIndex,
-  (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -= prefix + 1;
+  (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
+    prefix + 1;
         prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
           prefixMapping[prefixName];
         if (prefixIri == null && !"_".Equals(prefixName)) {
@@ -285,7 +286,9 @@ using com.upokecenter.util;
     this.getNamedBlankNode(
     attribute.Substring(
     refIndex,
-    (refIndex + refLength) - (refIndex))); } #if DEBUG
+    (refIndex + refLength) - (refIndex)));
+        }
+#if DEBUG
         if (!(refIndex >= 0)) {
           throw new InvalidOperationException(attribute);
         }
@@ -324,8 +327,8 @@ using com.upokecenter.util;
         return null;
       }
       int lastIndex = attribute.Length - 1;
-    if (attribute.Length >= 2 && attribute[0] == '[' && attribute[lastIndex]
-        == ']') {
+      if (attribute.Length >= 2 && attribute[0] == '[' && attribute[lastIndex]
+          == ']') {
         RDFTerm curie = this.getCurieOrBnode(
     attribute,
     1,
@@ -380,7 +383,8 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
             }
           }
           foreach (var child2 in child.getChildNodes()) {
-   IElement childElement2 = (child2 is IElement) ? ((IElement)child2) : null;
+     IElement childElement2 = (child2 is IElement) ? ((IElement)child2) :
+              null;
             if (childElement2 == null) {
               continue;
             }
@@ -493,7 +497,7 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
               node.getAttribute("resource"),
               iriMapLocal);
         }
-      resource = resource ?? this.relativeResolve(node.getAttribute("href"));
+        resource = resource ?? this.relativeResolve(node.getAttribute("href"));
         resource = resource ?? this.relativeResolve(node.getAttribute("src"));
         if (resource == null || resource.getKind() != RDFTerm.IRI) {
           string rdfTypeof = this.getCurie(
@@ -551,7 +555,7 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
         resource = this.getSafeCurieOrCurieOrIri(
             node.getAttribute("resource"),
             iriMapLocal);
-      resource = resource ?? this.relativeResolve(node.getAttribute("href"));
+        resource = resource ?? this.relativeResolve(node.getAttribute("href"));
         currentObject = resource;
       }
       // Step 6
@@ -577,8 +581,8 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
     iriMapLocal);
 #if DEBUG
           if (!(newSubject != null)) {
-       throw new
-              InvalidOperationException("doesn't satisfy newSubject!=null");
+            throw new
+  InvalidOperationException("doesn't satisfy newSubject!=null");
           }
 #endif
           if (iri != null) {
@@ -686,8 +690,8 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
           }
 #if DEBUG
           if (!(newSubject != null)) {
-       throw new
-              InvalidOperationException("doesn't satisfy newSubject!=null");
+            throw new
+  InvalidOperationException("doesn't satisfy newSubject!=null");
           }
 #endif
           this.outputGraph.Add(new RDFTriple(

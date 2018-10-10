@@ -1,4 +1,6 @@
-/*
+using System.Collections.Generic;
+
+    /*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 
@@ -26,16 +28,13 @@ THE SOFTWARE.
 */
 
 namespace com.upokecenter.html {
-using System;
-using System.Collections.Generic;
+/// <summary>* Represents an HTML document. This is the root of the
 
-    /// <summary>* Represents an HTML document. This is the root of the
-    /// document hierarchy. @author Peter.</summary>
 public interface IDocument : INode {
     /// <summary>* Gets the character encoding used in this document.
     /// @return A character encoding name.</summary>
     /// <returns>Not documented yet.</returns>
-  string getCharacterSet();
+  string getCharset();
 
     /// <summary>* Gets the document type of this document, if
     /// any.</summary>

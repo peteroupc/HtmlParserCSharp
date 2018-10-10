@@ -51,10 +51,7 @@
     <Compile Include="src\com\upokecenter\html\data\Microdata.cs" />
     <Compile Include="src\com\upokecenter\html\data\Microformats.cs" />
     <Compile Include="src\com\upokecenter\html\data\RDFInternal.cs" />
-    <Compile Include="src\com\upokecenter\html\data\RDFa.cs" />
-    <Compile Include="src\com\upokecenter\html\data\RDFa1.cs" />
     <Compile Include="src\com\upokecenter\io\ConditionalBufferInputStream.cs" />
-    <Compile Include="src\com\upokecenter\io\ICharacterInput.cs" />
     <Compile Include="src\com\upokecenter\io\IMarkableCharacterInput.cs" />
     <Compile Include="src\com\upokecenter\io\StackableCharacterInput.cs" />
     <Compile Include="src\com\upokecenter\io\StreamUtility.cs" />
@@ -79,21 +76,23 @@
     <Compile Include="SaxReader.cs" />
     <Compile Include="SaxRes.cs" />
     <Compile Include="Support.cs" />
-    <Compile Include="src\com\upokecenter\util\DataUtilities.cs" />
     <Compile Include="src\com\upokecenter\html\HtmlCommon.cs" />
+    <Compile Include="src\com\upokecenter\html\Element.cs" />
+    <Compile Include="src\com\upokecenter\html\data\RDFa1.cs" />
+    <Compile Include="src\com\upokecenter\html\data\RDFa.cs" />
+    <Compile Include="src\com\upokecenter\html\Html5Decoder.cs" />
+    <Compile Include="src\com\upokecenter\net\HeaderParser.cs" />
+    <Compile Include="src\com\upokecenter\html\INameAndAttributes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
     <None Include="src\com\upokecenter\html\HtmlDocument.cs" />
-    <None Include="src\com\upokecenter\html\Html5Decoder.cs" />
-    <None Include="src\com\upokecenter\html\HtmlParser.cs" />
     <None Include="src\com\upokecenter\html\XhtmlParser.cs" />
     <None Include="src\com\upokecenter\net\CacheControl.cs" />
     <None Include="src\com\upokecenter\net\DownloadHelper.cs" />
-    <None Include="src\com\upokecenter\net\HeaderParser.cs" />
     <None Include="DownloadHelperImpl.cs" />
     <None Include="HttpHeaders.cs" />
-    <None Include="src\com\upokecenter\html\Element.cs" />
+    <None Include="src\com\upokecenter\html\HtmlParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

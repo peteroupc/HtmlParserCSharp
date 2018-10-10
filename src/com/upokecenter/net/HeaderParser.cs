@@ -1,4 +1,6 @@
-/*
+using com.upokecenter.util;
+
+    /*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 
@@ -25,15 +27,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 namespace com.upokecenter.net {
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Text;
-using com.upokecenter.util;
+/// <summary>* Contains methods useful for parsing header fields.
 
-    /// <summary>* Contains methods useful for parsing header fields.
-    /// @author Peter.</summary>
 public sealed class HeaderParser {
   internal enum QuotedStringRule {
     Http,
@@ -503,7 +498,7 @@ public sealed class HeaderParser {
       ++io;
       io = skipLws(str, io, length, null);
       if (io<length && str[io]=='"') {
-        io = skipQuotedString(str, io, length, null, QuotedStringRule.Http);
+        throw new NotImplementedException();
       } else {
         while (io<length) {  // skip non-separator
           c = str[io];
