@@ -4,6 +4,7 @@ using System.Text;
 using PeterO;
 using com.upokecenter.html;
 using com.upokecenter.util;
+
 namespace com.upokecenter.html.data {
     /// <summary>* Implements Exclusive XML Canonicalization as specified
     /// at: http://www.w3.org/TR/xml-exc-c14n/ @author Peter.</summary>

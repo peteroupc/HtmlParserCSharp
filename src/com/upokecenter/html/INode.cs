@@ -25,9 +25,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 
-namespace com.upokecenter.html {
 using System;
 using System.Collections.Generic;
+namespace com.upokecenter.html {;
 
     /// <summary>* Represents a node in the document _object model (DOM).
     /// All DOM objects implement this interface. @author Peter.</summary>

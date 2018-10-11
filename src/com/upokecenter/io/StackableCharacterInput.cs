@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using PeterO.Text;
+
 namespace com.upokecenter.io {
     /// <summary>* A character input stream where additional inputs can be
     /// stacked on top of it. It supports advanced marking capabilities.

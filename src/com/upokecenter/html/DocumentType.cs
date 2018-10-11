@@ -35,8 +35,11 @@ internal sealed class DocumentType : Node, IDocumentType {
       this.PublicId = pub;
       this.SystemId = sys;
     }
+
     public string SystemId { get; private set; }
+
     public string PublicId { get; private set; }
+
     public string Name { get; private set; }
 
     public override sealed string getNodeName() {
@@ -46,12 +49,15 @@ internal sealed class DocumentType : Node, IDocumentType {
     public string getPublicId() {
       return this.PublicId;
     }
+
     public override sealed string getTextContent() {
       return null;
     }
+
     public string getSystemId() {
       return this.SystemId;
     }
+
     public string getName() {
       return this.Name;
     }

@@ -6,11 +6,11 @@ http://creativecommons.org/publicdomain/zero/1.0/
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 */
-namespace com.upokecenter.io {
 using System;
 using System.IO;
 using System.Text;
 using PeterO.Text;
+namespace com.upokecenter.io {;
 
     /// <summary>Not documented yet.</summary>
 public sealed class StreamUtility {

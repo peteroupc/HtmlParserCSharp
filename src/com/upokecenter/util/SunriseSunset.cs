@@ -7,7 +7,6 @@ released to the public domain by Paul Schlyter, December 1992
 // Converted to Java and C# by Peter O., 2013.
 namespace com.upokecenter.util {
 /// <summary>Contains utility methods for calculating sunrise and
-
   public sealed class SunriseSunset {
     /// <summary>A rough time of day.</summary>
     public enum DayState {
@@ -191,8 +190,7 @@ namespace com.upokecenter.util {
             rc = -1;
           }
           t = 0.0;  // Sun always below altit
-        }
-        else if (cost <= -1.0) {
+  } else if (cost <= -1.0) {
           {
             rc = +1;
           }
@@ -271,10 +269,9 @@ namespace com.upokecenter.util {
 
       // This function computes the Sun's position at
       // any instant
-      return (hours < trise[0]) ? (DayState.NightToDay) : ((hours < tset[0]) ?
+      return (hours < trise[0]) ? (DayState.NightToDay) : ((hours < tset[0])?
         (DayState.Day) : ((hours < twiset[0]) ? (DayState.DayToNight) :
-        (DayState.Night)));
-    }
+        (DayState.Night))); }
     // **
     // This function computes GMST0, the Greenwich Mean Sidereal Time
     // at 0h UT (i.e. the sidereal time at the Greenwhich meridian at

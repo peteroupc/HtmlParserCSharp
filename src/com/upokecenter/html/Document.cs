@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using PeterO;
 using com.upokecenter.util;
 /*
 If you like this, you should donate to Peter O.
@@ -29,10 +33,13 @@ THE SOFTWARE.
 namespace com.upokecenter.html {
 internal class Document : Node, IDocument {
     private DocumentType Doctype { get; set; }
+
     private string Encoding { get; set; }
+
   private DocumentMode docmode = DocumentMode.NoQuirksMode;
 
     internal string DefaultLanguage { get; set; }
+
     internal string Address { get; set; }
 
     internal Document() : base(NodeType.DOCUMENT_NODE) {

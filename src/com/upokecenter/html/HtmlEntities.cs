@@ -2,7 +2,7 @@ using System;
 
   namespace com.upokecenter.html {
 sealed class HtmlEntities {
-    private static readonly string[] entities = new
+    private static readonly string[] ValueEntities = new
       string[] { "CounterClockwiseContourIntegral;",
     "ClockwiseContourIntegral;", "DoubleLongLeftRightArrow;",
     "NotNestedGreaterGreater;", "DiacriticalDoubleAcute;",
@@ -610,7 +610,7 @@ sealed class HtmlEntities {
     8715, 172, 957, 9416, 8744, 960, 177, 8826, 174, 8478, 8827, 173, 168,
     8472, 8768, 958, 165, 62, 60, 62, 60 };
 
-    private static readonly int[] entityDoubles = new int[] { 10914, 824,
+    private static readonly int[] ValueEntityDoubles = new int[] { 10914, 824,
       10878, 824,
     8807, 824, 10704, 824, 10703, 824, 8811, 824, 10877, 824, 10913, 824,
     8848, 824, 10927, 824, 10928, 824, 8831, 824, 8782, 824, 8847, 824,
@@ -629,9 +629,9 @@ sealed class HtmlEntities {
     8765, 817, 8766, 819, 61, 8421, 8921, 824, 8811, 8402, 8920, 824, 8810,
     8402, 8807, 824, 8806, 824 };
 
-    internal static string[] Entities => entities;
+    internal static string[] Entities => ValueEntities;
 
-    internal static int[] EntityDoubles => entityDoubles;
+    internal static int[] EntityDoubles => ValueEntityDoubles;
 
     public static int getHtmlEntity(string value) {
       if (value.Length < 2 || value.Length > HtmlEntities.Entities[0].Length) {

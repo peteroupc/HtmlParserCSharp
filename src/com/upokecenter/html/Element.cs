@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using PeterO;
 using com.upokecenter.util;
 /*
 If you like this, you should donate to Peter O.
@@ -62,50 +66,53 @@ internal class Element : Node, IElement {
   private IList<Attr> attributes;
 
   internal Element() : base(NodeType.ELEMENT_NODE) {
-    attributes = new List<Attr>();
+    this.attributes = new List<Attr>();
   }
 
   public Element(string name) : base(NodeType.ELEMENT_NODE) {
-    attributes = new List<Attr>();
+    this.attributes = new List<Attr>();
     this.name = name;
   }
 
   internal void addAttribute(Attr value) {
-    attributes.Add(value);
+    this.attributes.Add(value);
   }
 
   private void collectElements(INode c, string s, IList<IElement> nodes) {
     if (c.getNodeType() == NodeType.ELEMENT_NODE) {
-      Element e=(Element)c;
+      var e = (Element)c;
       if (s == null || e.getLocalName().Equals(s)) {
         nodes.Add(e);
       }
     }
     foreach (var node in c.getChildNodes()) {
-      collectElements(node, s, nodes);
+      this.collectElements(node, s, nodes);
     }
   }
 
-  private void collectElementsHtml(INode c, string s,
-      string sLowercase, IList<IElement> nodes) {
+  private void collectElementsHtml(
+  INode c,
+  string s,
+  string valueSLowercase,
+  IList<IElement> nodes) {
     if (c.getNodeType() == NodeType.ELEMENT_NODE) {
-      Element e=(Element)c;
+      var e = (Element)c;
       if (s == null) {
         nodes.Add(e);
       } else if (HtmlCommon.HTML_NAMESPACE.Equals(e.getNamespaceURI()) &&
-          e.getLocalName().Equals(sLowercase)) {
+          e.getLocalName().Equals(valueSLowercase)) {
         nodes.Add(e);
       } else if (e.getLocalName().Equals(s)) {
         nodes.Add(e);
       }
     }
     foreach (var node in c.getChildNodes()) {
-      collectElements(node, s, nodes);
+      this.collectElements(node, s, nodes);
     }
   }
 
   public string getAttribute(string name) {
-    foreach (var attr in getAttributes()) {
+    foreach (var attr in this.getAttributes()) {
       if (attr.getName().Equals(name)) {
  return attr.getValue();
 }
@@ -114,7 +121,7 @@ internal class Element : Node, IElement {
   }
 
   public string getAttributeNS(string _namespace, string localName) {
-    foreach (var attr in getAttributes()) {
+    foreach (var attr in this.getAttributes()) {
       if ((localName == null ? attr.getLocalName() == null :
         localName.Equals(attr.getLocalName())) &&
           (_namespace == null ? attr.getNamespaceURI() == null :
@@ -123,18 +130,21 @@ internal class Element : Node, IElement {
     }
     return null;
   }
+
   public IList<IAttr> getAttributes() {
-    return new List<IAttr>(attributes);
+    return new List<IAttr>(this.attributes);
   }
 
   public IElement getElementById(string id) {
     if (id == null) {
  throw new ArgumentException();
 }
-    foreach (var node in getChildNodes()) {
+    foreach (var node in this.getChildNodes()) {
       if (node is IElement) {
-        if (id.Equals(((IElement)node).getId())) return (IElement)node;
-        IElement element=((IElement)node).getElementById(id);
+        if (id.Equals(((IElement)node).getId())) {
+ return (IElement)node;
+}
+        IElement element = ((IElement)node).getElementById(id);
         if (element != null) {
  return element;
 }
@@ -153,90 +163,92 @@ internal class Element : Node, IElement {
     IList<IElement> ret = new List<IElement>();
     if (((Document) getOwnerDocument()).isHtmlDocument()) {
       string lowerTagName = DataUtilities.ToLowerCaseAscii(tagName);
-      foreach (var node in getChildNodes()) {
-        collectElementsHtml(node, tagName, lowerTagName, ret);
+      foreach (var node in this.getChildNodes()) {
+        this.collectElementsHtml(node, tagName, lowerTagName, ret);
       }
     } else {
-      foreach (var node in getChildNodes()) {
-        collectElements(node, tagName, ret);
+      foreach (var node in this.getChildNodes()) {
+        this.collectElements(node, tagName, ret);
       }
     }
     return ret;
   }
 
   public string getId() {
-    return getAttribute("id");
+    return this.getAttribute("id");
   }
 
   public string getInnerHTML() {
-    return getInnerHtmlInternal();
+    return this.getInnerHtmlInternal();
   }
 
   public override sealed string getLanguage() {
     INode parent = getParentNode();
-    string a=getAttributeNS(HtmlCommon.XML_NAMESPACE,"lang");
-    if (a == null) {
-      a=getAttribute("lang");
-    }
+    string a = this.getAttributeNS(HtmlCommon.XML_NAMESPACE,"lang");
+    a = a ?? (this.getAttribute("lang"));
     if (a != null) {
  return a;
 }
     if (parent == null) {
-      parent = getOwnerDocument();
-      return (parent==null) ? ("") : (parent.getLanguage());
+      parent = this.getOwnerDocument();
+      return (parent == null) ? String.Empty : (parent.getLanguage());
     } else {
  return parent.getLanguage();
 }
   }
+
   public string getLocalName() {
-    return name;
+    return this.name;
   }
 
   public string getNamespaceURI() {
-    return _namespace;
+    return this._namespace;
   }
+
   public override sealed string getNodeName() {
-    return getTagName();
+    return this.getTagName();
   }
 
   public string getPrefix() {
-    return prefix;
+    return this.prefix;
   }
 
   public string getTagName() {
-    string tagName = name;
-    if (prefix != null) {
-      tagName=prefix+":"+name;
+    string tagName = this.name;
+    if (this.prefix != null) {
+      tagName = this.prefix+":"+this.name;
     }
     return ((getOwnerDocument() is Document) &&
-        HtmlCommon.HTML_NAMESPACE.Equals(_namespace)) ?
-          (DataUtilities.ToUpperCaseAscii(tagName)) : (tagName);
+        HtmlCommon.HTML_NAMESPACE.Equals(this._namespace)) ?
+          DataUtilities.ToUpperCaseAscii(tagName) : (tagName);
   }
 
   public override sealed string getTextContent() {
     var builder = new StringBuilder();
-    foreach (var node in getChildNodes()) {
+    foreach (var node in this.getChildNodes()) {
       if (node.getNodeType() != NodeType.COMMENT_NODE) {
         builder.Append(node.getTextContent());
       }
     }
     return builder.ToString();
   }
+
     internal void mergeAttributes(INameAndAttributes token) {
     foreach (var attr in token.getAttributes()) {
-      string s = getAttribute(attr.getName());
+      string s = this.getAttribute(attr.getName());
       if (s == null) {
-        setAttribute(attr.getName(), attr.getValue());
+        this.setAttribute(attr.getName(), attr.getValue());
       }
     }
   }
+
   internal void setAttribute(string _string, string value) {
-    foreach (var attr in getAttributes()) {
+    foreach (var attr in this.getAttributes()) {
       if (attr.getName().Equals(_string)) {
         ((Attr)attr).setValue(value);
       }
     }
-    attributes.Add(new Attr(_string, value));
+    this.attributes.Add(new Attr(_string, value));
   }
 
   internal void setLocalName(string name) {
@@ -253,48 +265,48 @@ internal class Element : Node, IElement {
 
   internal override sealed string toDebugString() {
     var builder = new StringBuilder();
-    string extra="";
-    if (HtmlCommon.MATHML_NAMESPACE.Equals(_namespace)) {
-      extra="math ";
+    string extra = String.Empty;
+    if (HtmlCommon.MATHML_NAMESPACE.Equals(this._namespace)) {
+      extra = "math ";
     }
-    if (HtmlCommon.SVG_NAMESPACE.Equals(_namespace)) {
-      extra="svg ";
+    if (HtmlCommon.SVG_NAMESPACE.Equals(this._namespace)) {
+      extra = "svg ";
     }
-    builder.Append("<"+extra+name.ToString()+">\n");
-    var attribs = new List<IAttr>(getAttributes());
+    builder.Append("<"+extra+this.name.ToString()+">\n");
+    var attribs = new List<IAttr>(this.getAttributes());
     attribs.Sort(new AttributeNameComparator());
     foreach (var attribute in attribs) {
-      //DebugUtility.Log("%s %s"
+      // DebugUtility.Log("%s %s"
       // , attribute.getNamespace(), attribute.getLocalName());
       if (attribute.getNamespaceURI() != null) {
-        string extra1="";
+        string extra1 = String.Empty;
         if (HtmlCommon.XLINK_NAMESPACE.Equals(attribute.getNamespaceURI())) {
-          extra1="xlink ";
+          extra1 = "xlink ";
         }
         if (HtmlCommon.XML_NAMESPACE.Equals(attribute.getNamespaceURI())) {
-          extra1="xml ";
+          extra1 = "xml ";
         }
-        extra1+=attribute.getLocalName();
-        builder.Append("  " +extra1+"=\""
-          +attribute.getValue().ToString().Replace("\n" ,"~~~~")+"\"\n");
+        extra1 += attribute.getLocalName();
+        builder.Append(" " +extra1 + "=\""
+          +attribute.getValue().ToString().Replace("\n", "~~~~")+"\"\n");
       } else {
-        builder.Append("  " +attribute.getName().ToString()+"=\""
-          +attribute.getValue().ToString().Replace("\n" ,"~~~~")+"\"\n");
+        builder.Append(" " +attribute.getName().ToString() + "=\""
+          +attribute.getValue().ToString().Replace("\n", "~~~~")+"\"\n");
       }
     }
-    foreach (var node in getChildNodesInternal()) {
+    foreach (var node in this.getChildNodesInternal()) {
         string str = ((Node)node).toDebugString();
       if (str == null) {
         continue;
       }
-      string[] strarray=StringUtility.splitAt(str,"\n");
+      string[] strarray = StringUtility.splitAt(str,"\n");
       int len = strarray.Length;
-      if (len>0 && strarray[len-1].Length == 0) {
+      if (len > 0 && strarray[len - 1].Length == 0) {
         --len;  // ignore trailing empty _string
       }
       for (int i = 0; i < len; ++i) {
         string el = strarray[i];
-        builder.Append("  ");
+        builder.Append(" ");
         builder.Append(el);
         builder.Append("\n");
       }

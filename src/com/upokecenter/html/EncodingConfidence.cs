@@ -25,8 +25,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 
-namespace com.upokecenter.html {
 using System;
+namespace com.upokecenter.html {;
 
 sealed class EncodingConfidence {
   private int valueConfidence;

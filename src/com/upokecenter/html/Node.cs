@@ -35,12 +35,12 @@ internal class Node : INode {
   private INode parentNode = null;
   private IDocument ownerDocument = null;
 
-  private int ValueNodeType;
+  private int valueNodeType;
 
   private string baseURI = null;
 
-  public Node(int ValueNodeType) {
-    this.ValueNodeType = ValueNodeType;
+  public Node(int valueNodeType) {
+    this.valueNodeType = valueNodeType;
     this.childNodes = new List<INode>();
   }
 
@@ -231,7 +231,7 @@ HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
   }
 
   public int getNodeType() {
-    return this.ValueNodeType;
+    return this.valueNodeType;
   }
 
   public virtual IDocument getOwnerDocument() {

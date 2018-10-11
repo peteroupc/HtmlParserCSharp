@@ -1,6 +1,6 @@
-namespace com.upokecenter.html {
 using System;
 using System.Text;
+namespace com.upokecenter.html {;
 
 internal class Attr : IAttr {
   private StringBuilder valueName;
@@ -171,7 +171,7 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
   }
 
   public override string ToString() {
-    return "[Attribute: " + this.getName() + "=" + this.getValue()+"]";
+    return "[Attribute: " + this.getName() + "=" + this.getValue() + "]";
   }
 }
 }

@@ -6,9 +6,9 @@ http://creativecommons.org/publicdomain/zero/1.0/
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 */
-namespace com.upokecenter.io {
 using System;
 using System.IO;
+namespace com.upokecenter.io {;
 
     /// <summary>* An input stream that stores the first bytes of the
     /// stream in a buffer and supports rewinding to the beginning of the

@@ -162,7 +162,7 @@ using com.upokecenter.util;
         if ((c & 0xfc00) == 0xd800 && index + 1 < valueSLength &&
             (s[index + 1] & 0xfc00) == 0xdc00) {
           // Get the Unicode code point for the surrogate pair
-          c = 0x10000 + (c - 0xd800) * 0x400 + (s[index + 1] - 0xdc00);
+          c = 0x10000 + ((c - 0xd800) << 10) + (s[index + 1] - 0xdc00);
           ++index;
         } else if ((c & 0xf800) == 0xd800) {
           // error
@@ -216,7 +216,7 @@ using com.upokecenter.util;
         if ((c & 0xfc00) == 0xd800 && index + 1 < valueSLength &&
             (s[index + 1] & 0xfc00) == 0xdc00) {
           // Get the Unicode code point for the surrogate pair
-          c = 0x10000 + (c - 0xd800) * 0x400 + (s[index + 1] - 0xdc00);
+          c = 0x10000 + ((c - 0xd800) << 10) + (s[index + 1] - 0xdc00);
           ++index;
         } else if ((c & 0xf800) == 0xd800) {
           // error
@@ -255,7 +255,7 @@ using com.upokecenter.util;
         if ((c & 0xfc00) == 0xd800 && index + 1 < valueSLength &&
             (s[index + 1] & 0xfc00) == 0xdc00) {
           // Get the Unicode code point for the surrogate pair
-          c = 0x10000 + (c - 0xd800) * 0x400 + (s[index + 1] - 0xdc00);
+          c = 0x10000 + ((c - 0xd800) << 10) + (s[index + 1] - 0xdc00);
           ++index;
         } else if ((c & 0xf800) == 0xd800) {
           // error
@@ -491,8 +491,9 @@ using com.upokecenter.util;
       // be used to guarantee that generated blank nodes will never
       // conflict with those stated explicitly
       string blankNodeString = "//" +
-        Convert.ToString(this.blankNode,
-                    System.Globalization.CultureInfo.InvariantCulture);
+        Convert.ToString(
+  this.blankNode,
+  System.Globalization.CultureInfo.InvariantCulture);
       ++this.blankNode;
       RDFTerm term = RDFTerm.fromBlankNode(blankNodeString);
       this.bnodeLabels.Add(blankNodeString, term);
@@ -586,8 +587,7 @@ using com.upokecenter.util;
     this.getNamedBlankNode(
   attribute.Substring(
   refIndex,
-  (refIndex + refLength) - (refIndex)));
-        }
+  (refIndex + refLength) - (refIndex))); }
 #if DEBUG
         if (!(refIndex >= 0)) {
           throw new InvalidOperationException(attribute);

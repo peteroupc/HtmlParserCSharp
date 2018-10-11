@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PeterO;
 using PeterO.Cbor;
 using com.upokecenter.html;
 using com.upokecenter.util;
-namespace com.upokecenter.html.data {;
 
+namespace com.upokecenter.html.data {
     /// <summary>Not documented yet.</summary>
   public sealed class Microformats {
     private static IDictionary<string, string[]> complexLegacyMap = new
@@ -20,13 +21,13 @@ namespace com.upokecenter.html.data {;
   "h-card" });
       complexLegacyMap.Add("author", new string[] { "p-author", "h-card" });
       complexLegacyMap.Add("contact", new string[] { "p-contact", "h-card" });
-  complexLegacyMap.Add(
-  "education",
- new string[] { "p-education",
+      complexLegacyMap.Add(
+      "education",
+     new string[] { "p-education",
         "h-event" });
-complexLegacyMap.Add(
-  "experience",
- new string[] { "p-experience",
+      complexLegacyMap.Add(
+        "experience",
+       new string[] { "p-experience",
         "h-event" });
       complexLegacyMap.Add("fn", new string[] { "p-item", "h-item", "p-name" });
       complexLegacyMap.Add("geo", new string[] { "p-geo", "h-geo" });
@@ -35,9 +36,9 @@ complexLegacyMap.Add(
  new string[] { "p-location",
  "h-card",
   "h-adr" });
- complexLegacyMap.Add(
-  "photo",
- new string[] { "p-item",
+      complexLegacyMap.Add(
+       "photo",
+      new string[] { "p-item",
  "h-item",
         "u-photo" });
       complexLegacyMap.Add("review", new string[] { "p-review", "h-review" });
@@ -297,7 +298,7 @@ complexLegacyMap.Add(
  false,
  false,
  !haveTimeZone)) {  // check timezone
-              // formats
+                    // formats
           if (components[6] != Int32.MinValue) {
             haveTimeZone = true;
           }
@@ -340,8 +341,8 @@ complexLegacyMap.Add(
           }
         }
       }
-    return (components[0] != Int32.MinValue) ?
-        toDateTimeString(components) : getDTValueContent(root);
+      return (components[0] != Int32.MinValue) ?
+          toDateTimeString(components) : getDTValueContent(root);
     }
 
     private static string getDTValueContent(IElement valueElement) {
@@ -492,8 +493,8 @@ complexLegacyMap.Add(
         throw new InvalidOperationException("doesn't satisfy day>= 0");
       }
 #endif
-   int[] dayArray = ((year & 3) != 0 || (year % 100 == 0 && year % 400 !=
-        0)) ? ValueNormalDays : ValueLeapDays;
+      int[] dayArray = ((year & 3) != 0 || (year % 100 == 0 && year % 400 !=
+           0)) ? ValueNormalDays : ValueLeapDays;
       var month = 1;
       while (day <= 0 || day > dayArray[month]) {
         if (day > dayArray[month]) {
@@ -532,9 +533,9 @@ complexLegacyMap.Add(
       if (root.getAttribute("title") != null) {
         return root.getAttribute("title");
       }
-   return (DataUtilities.ToLowerCaseAscii(root.getLocalName()).Equals(
-  "img") && !StringUtility.isNullOrSpaces(root.getAttribute("alt"))) ?
-            root.getAttribute("alt") : getValueContent(root, false);
+      return (DataUtilities.ToLowerCaseAscii(root.getLocalName()).Equals(
+     "img") && !StringUtility.isNullOrSpaces(root.getAttribute("alt"))) ?
+               root.getAttribute("alt") : getValueContent(root, false);
     }
 
     /// <summary>Not documented yet.</summary>
@@ -603,12 +604,12 @@ complexLegacyMap.Add(
               c != 0x0c)) {
             ++index;
           } else {
- break;
-}
+            break;
+          }
         }
         if (index == valueSLength) {
- return str;
-}
+          return str;
+        }
         sb = new StringBuilder();
         sb.Append(str, 0, index);
       } else {
@@ -758,8 +759,8 @@ complexLegacyMap.Add(
           }
           if (!DataUtilities.ToLowerCaseAscii(((IElement)child).getLocalName())
                     .Equals(name)) {
- return false;
-}
+            return false;
+          }
           seen = true;
         }
       }
@@ -781,8 +782,8 @@ complexLegacyMap.Add(
           // from the image
           string valuePValue = getPValue(elements[0]);
           if (StringUtility.isNullOrSpaces(valuePValue)) {
-        valuePValue = getPValue(root);  // if empty, get text from link
-              // instead
+            valuePValue = getPValue(root);  // if empty, get text from link
+                    // instead
           }
           setValueIfAbsent(subProperties, "name", valuePValue);
           // get the SRC of the image
@@ -1114,8 +1115,8 @@ complexLegacyMap.Add(
         IList<string> types = new List<string>();
         var hasProperties = false;
         foreach (var cls in className) {
-    if (cls.StartsWith("p-", StringComparison.Ordinal) && properties !=
-            null) {
+          if (cls.StartsWith("p-", StringComparison.Ordinal) && properties !=
+                  null) {
             hasProperties = true;
           } else if (cls.StartsWith("u-", StringComparison.Ordinal) &&
                   properties != null) {
@@ -1215,7 +1216,7 @@ complexLegacyMap.Add(
                 CBORObject clone = copyJson(obj);
                 clone.Add("value", getPValue(root));
                 accumulateValue(properties, cls.Substring(2), clone);
-           } else if (cls.StartsWith("u-", StringComparison.Ordinal)) {
+              } else if (cls.StartsWith("u-", StringComparison.Ordinal)) {
                 // URL
                 CBORObject clone = copyJson(obj);
                 clone.Add("value", getUValue(root));
@@ -1223,13 +1224,13 @@ complexLegacyMap.Add(
               } else if (cls.StartsWith("dt-", StringComparison.Ordinal)) {
                 // date/time
                 CBORObject clone = copyJson(obj);
-            {
-object objectTemp = "value";
-object objectTemp2 = getDTValue(
-  root,
-  getLastKnownTime(properties));
-clone.Add(objectTemp, objectTemp2);
-}
+                {
+                  object objectTemp = "value";
+                  object objectTemp2 = getDTValue(
+                    root,
+                    getLastKnownTime(properties));
+                  clone.Add(objectTemp, objectTemp2);
+                }
                 accumulateValue(properties, cls.Substring(3), clone);
               } else if (cls.StartsWith("e-", StringComparison.Ordinal)) {
                 // date/time
@@ -1329,6 +1330,6 @@ clone.Add(objectTemp, objectTemp2);
     }
 
     private Microformats() {
-}
+    }
   }
 }

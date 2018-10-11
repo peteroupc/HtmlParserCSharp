@@ -1,5 +1,5 @@
-namespace com.upokecenter.util {
-  using System;
+using System;
+namespace com.upokecenter.util {;
 
   // C# version of DateTimeUtility
 
@@ -389,7 +389,8 @@ namespace com.upokecenter.util {
   int minute,
   int second) {
       long days;
-      if (month < 1 || month > 12 || day < 1 || day > 31 || hour<0 || hour>23 ||
+   if (month < 1 || month > 12 || day < 1 || day > 31 || hour < 0 || hour>23
+        ||
          minute < 0 || minute > 59 || second < 0 || second > 59) {
  throw new ArgumentException();
 }

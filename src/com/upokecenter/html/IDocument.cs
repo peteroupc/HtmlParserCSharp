@@ -29,7 +29,6 @@ THE SOFTWARE.
 
 namespace com.upokecenter.html {
 /// <summary>* Represents an HTML document. This is the root of the
-
 public interface IDocument : INode {
     /// <summary>* Gets the character encoding used in this document.
     /// @return A character encoding name.</summary>

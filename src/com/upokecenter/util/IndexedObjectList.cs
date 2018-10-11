@@ -6,9 +6,9 @@ http://creativecommons.org/publicdomain/zero/1.0/
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 */
-namespace com.upokecenter.util {
 using System;
 using System.Collections.Generic;
+namespace com.upokecenter.util {;
 
     /// <summary>Not documented yet.</summary>
     /// <typeparam name='T'>Type parameter not documented yet.</typeparam>

@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using PeterO;
 using com.upokecenter.util;
+
 namespace com.upokecenter.net {
   internal class HttpHeadersFromMap : IHttpHeaders {
     private IDictionary<string, IList<string>> valueMap;
@@ -79,7 +80,7 @@ namespace com.upokecenter.net {
       if (index < 0) {
         return null;
       }
-      index = (index - 1) * 2 + 1 + 1;
+      index = ((index - 1) * 2) + 1 + 1;
 return (index < 0 || index >= this.valueList.Count) ? null :
   this.valueList[index + 1];
     }
@@ -109,7 +110,7 @@ return (index < 0 || index >= this.valueList.Count) ? null :
       if (index == 0 || index < 0) {
         return null;
       }
-      index = (index - 1) * 2 + 1;
+      index = ((index - 1) * 2) + 1;
     return (index < 0 || index >= this.valueList.Count) ? null :
         this.valueList[index];
     }

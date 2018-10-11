@@ -6,10 +6,10 @@ http://creativecommons.org/publicdomain/zero/1.0/
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 */
-namespace com.upokecenter.util {
 using System;
 using System.Collections.Generic;
 using System.Text;
+namespace com.upokecenter.util {;
 
     /// <summary>* Contains utility methods for working with strings.
     /// @author Peter.</summary>

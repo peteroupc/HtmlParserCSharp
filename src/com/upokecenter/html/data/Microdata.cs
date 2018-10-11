@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using PeterO;
 using PeterO.Cbor;
 using com.upokecenter.html;
 using com.upokecenter.util;
-namespace com.upokecenter.html.data {;
 
+namespace com.upokecenter.html.data {
     /// <summary>Not documented yet.</summary>
 public sealed class Microdata {
   private class ElementAndIndex {
@@ -15,7 +16,7 @@ public sealed class Microdata {
 
   private sealed class SortInTreeOrderComparer : IComparer<ElementAndIndex> {
     public int Compare(ElementAndIndex arg0, ElementAndIndex arg1) {
-return (arg0.Index == arg1.Index) ? (0) : ((arg0.Index < arg1.Index) ? -1 : 1);
+return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
     }
   }
 

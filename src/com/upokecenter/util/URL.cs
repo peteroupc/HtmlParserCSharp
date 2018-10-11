@@ -6,13 +6,13 @@ http://creativecommons.org/publicdomain/zero/1.0/
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 */
-namespace com.upokecenter.util {
-  using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using PeterO;
 using PeterO.Text;
+namespace com.upokecenter.util {;
 
     /// <summary>* A URL _object under the WHATWG's URL specification. See
     /// http://url.spec.whatwg.org/ @author Peter.</summary>
@@ -79,7 +79,7 @@ using PeterO.Text;
             if ((c & 0xfc00) == 0xd800 && index + 1 < ending &&
                 (_string[index + 1] & 0xfc00) == 0xdc00) {
               // Get the Unicode code point for the surrogate pair
-            c = 0x10000 + (c - 0xd800) * 0x400 + (_string[index + 1] -
+            c = 0x10000 + ((c - 0xd800) << 10) + (_string[index + 1] -
                 0xdc00);
               ++index;
             } else if ((c & 0xf800) == 0xd800) {
@@ -311,7 +311,7 @@ using PeterO.Text;
           if ((c & 0xfc00) == 0xd800 && index + 1 < ending &&
               (s[index + 1] & 0xfc00) == 0xdc00) {
             // Get the Unicode code point for the surrogate pair
-            c = 0x10000 + (c - 0xd800) * 0x400 + (s[index + 1] - 0xdc00);
+            c = 0x10000 + ((c - 0xd800) << 10) + (s[index + 1] - 0xdc00);
             ++index;
           } else if ((c & 0xf800) == 0xd800) {
             // illegal surrogate
