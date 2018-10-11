@@ -27,8 +27,7 @@ THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-namespace com.upokecenter.html {;
-
+namespace com.upokecenter.html {
     /// <summary>* Represents a node in the document _object model (DOM).
     /// All DOM objects implement this interface. @author Peter.</summary>
 public interface INode {
@@ -72,5 +71,9 @@ public interface INode {
     /// text of Comment nodes; or null otherwise.</summary>
     /// <returns>Not documented yet.</returns>
   string getTextContent();
+
+    void appendChild(INode node);
+
+    void removeChild(INode node);
 }
 }

@@ -26,8 +26,7 @@ THE SOFTWARE.
 */
 
 using System;
-namespace com.upokecenter.html {;
-
+namespace com.upokecenter.html {
     /// <summary>* Represents a comment on an HTML document. @author
     /// Peter.</summary>
 public interface IComment : INode {

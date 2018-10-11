@@ -26,8 +26,7 @@ THE SOFTWARE.
 */
 using System;
 using System.IO;
-namespace com.upokecenter.net {;
-
+namespace com.upokecenter.net {
     /// <summary>Not documented yet.</summary>
     /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public interface IOnFinishedListener<T> {

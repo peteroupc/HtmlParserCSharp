@@ -44,12 +44,12 @@ internal class Node : INode {
     this.childNodes = new List<INode>();
   }
 
-  public void appendChild(Node node) {
+  public void appendChild(INode node) {
     if (node == this) {
  throw new ArgumentException();
 }
-    node.parentNode = this;
-    node.ownerDocument = (this is IDocument) ? (IDocument)this :
+      ((Node)node).parentNode = this;
+      ((Node)node).ownerDocument = (this is IDocument) ? (IDocument)this :
       this.ownerDocument;
     this.childNodes.Add(node);
   }
@@ -267,8 +267,8 @@ HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
     throw new ArgumentException();
   }
 
-  public void removeChild(Node node) {
-    node.parentNode = null;
+  public void removeChild(INode node) {
+      ((Node)node).parentNode = null;
     this.childNodes.Remove(node);
   }
 

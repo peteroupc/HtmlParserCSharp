@@ -425,7 +425,7 @@ public sealed class HeaderParser {
         } else {
  return startIndex;
 }
-        index = skipLws(str, index, length, null);
+        //index = skipLws(str, index, length, null);
       }
     }
     if (index >= length) {

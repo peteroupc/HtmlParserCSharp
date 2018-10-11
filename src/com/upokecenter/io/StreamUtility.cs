@@ -10,8 +10,7 @@ using System;
 using System.IO;
 using System.Text;
 using PeterO.Text;
-namespace com.upokecenter.io {;
-
+namespace com.upokecenter.io {
     /// <summary>Not documented yet.</summary>
 public sealed class StreamUtility {
     /// <summary>Not documented yet.</summary>

@@ -32,9 +32,9 @@ THE SOFTWARE.
 
 namespace com.upokecenter.html {
 internal class Document : Node, IDocument {
-    private DocumentType Doctype { get; set; }
+    internal DocumentType Doctype { get; set; }
 
-    private string Encoding { get; set; }
+    internal string Encoding { get; set; }
 
   private DocumentMode docmode = DocumentMode.NoQuirksMode;
 

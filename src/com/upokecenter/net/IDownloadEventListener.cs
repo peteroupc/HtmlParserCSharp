@@ -25,8 +25,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 using System;
-namespace com.upokecenter.net {;
-
+namespace com.upokecenter.net {
     /// <summary>Not documented yet.</summary>
     /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public interface IDownloadEventListener<T> : IResponseListener<T> {

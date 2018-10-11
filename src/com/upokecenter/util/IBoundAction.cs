@@ -7,8 +7,7 @@ If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 */
 using System;
-namespace com.upokecenter.util {;
-
+namespace com.upokecenter.util {
     /// <summary>Not documented yet.</summary>
     /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public interface IBoundAction<T> {

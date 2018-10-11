@@ -26,8 +26,7 @@ THE SOFTWARE.
 */
 using System;
 using System.Collections.Generic;
-namespace com.upokecenter.net {;
-
+namespace com.upokecenter.net {
     /// <summary>Not documented yet.</summary>
 public interface IHttpHeaders {
     /// <summary>Not documented yet.</summary>

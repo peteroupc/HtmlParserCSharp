@@ -1,6 +1,5 @@
 using System;
-namespace com.upokecenter.html {;
-
+namespace com.upokecenter.html {
     /// <summary>Not documented yet.</summary>
 public interface IProcessingInstruction : INode {
     /// <summary>Not documented yet.</summary>

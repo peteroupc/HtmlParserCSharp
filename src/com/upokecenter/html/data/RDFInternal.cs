@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using PeterO.Rdf;
-namespace com.upokecenter.html.data {;
-
+namespace com.upokecenter.html.data {
 sealed class RDFInternal {
     /// <summary>Replaces certain blank nodes with blank nodes whose names
     /// meet the N-Triples requirements @param triples A set of RDF triples

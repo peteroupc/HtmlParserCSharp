@@ -26,8 +26,7 @@ THE SOFTWARE.
 */
 
 using System;
-namespace com.upokecenter.html {;
-
+namespace com.upokecenter.html {
     /// <summary>* Contains constants for node types. @author
     /// Peter.</summary>
 public sealed class NodeType {

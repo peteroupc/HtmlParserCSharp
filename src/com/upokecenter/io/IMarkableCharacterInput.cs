@@ -9,8 +9,7 @@ at: http://peteroupc.github.io/
 using System;
 using System.IO;
 using PeterO.Text;
-namespace com.upokecenter.io {;
-
+namespace com.upokecenter.io {
     /// <summary>Not documented yet.</summary>
 public interface IMarkableCharacterInput : ICharacterInput {
     /// <summary>Not documented yet.</summary>

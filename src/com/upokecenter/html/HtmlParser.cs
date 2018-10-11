@@ -139,7 +139,7 @@ namespace com.upokecenter.html {
         builder.Append(_string);
       }
     }
-    internal abstract class TagToken : IToken {
+    internal abstract class TagToken : IToken, INameAndAttributes {
       protected StringBuilder builder;
       internal IList<Attr> attributes = null;
       internal bool selfClosing;
@@ -289,6 +289,27 @@ namespace com.upokecenter.html {
               selfClosingAck) : "") + "]";
       }
     }
+
+    private sealed class Html5Encoding : ICharacterEncoding {
+      private ICharacterDecoder decoder;
+      public Html5Encoding(EncodingConfidence ec) {
+        ICharacterDecoder icd = ec == null ? null :
+          Encodings.GetEncoding(ec.getEncoding()).GetDecoder();
+        decoder = new Html5Decoder(icd);
+      }
+      public ICharacterEncoder GetEncoder() {
+        throw new NotSupportedException();
+      }
+      public ICharacterDecoder GetDecoder() {
+        return decoder;
+      }
+    }
+
+    internal interface IInputStream {
+      void rewind();
+      void disableBuffer();
+    }
+
     private enum TokenizerState {
       Data,
       CharacterRefInData,
@@ -433,7 +454,7 @@ namespace com.upokecenter.html {
     "-//webtechs//dtd mozilla html//"
   };
 
-    private PeterO.Support.InputStream inputStream;
+    private IInputStream inputStream;
     private IMarkableCharacterInput charInput = null;
     private EncodingConfidence encoding = null;
 
@@ -441,7 +462,7 @@ namespace com.upokecenter.html {
     private TokenizerState lastState = TokenizerState.Data;
     private CommentToken lastComment;
     private DocTypeToken docTypeToken;
-    private IList<Element> integrationElements = new List<Element>();
+    private IList<IElement> integrationElements = new List<IElement>();
     private IList<IToken> tokens = new List<IToken>();
     private TagToken lastStartTag = null;
     private Html5Decoder decoder = null;
@@ -499,16 +520,16 @@ namespace com.upokecenter.html {
           throw new ArgumentException();
         }
       }
-      this.contentLanguage = HeaderParser.getLanguages(contentLanguage);
+      // TODO: Use amore sophisticated language parser here
+      this.contentLanguage = new string[] { contentLanguage };
       this.address = address;
       initialize();
-      inputStream = new ConditionalBufferInputStream(source);
-      this.encoding = CharsetSniffer.sniffEncoding(inputStream, charset);
+      inputStream = null;  // TODO: ???
+      this.encoding = CharsetSniffer.sniffEncoding(null, charset);
       inputStream.rewind();
-      decoder = new Html5Decoder(this.encoding == null ? null :
-           encoding.GetDecoder());
-      charInput = new StackableCharacterInput(new
-        DecoderCharacterInput(inputStream, decoder));
+      ICharacterEncoding henc = new Html5Encoding(this.encoding);
+      charInput = new StackableCharacterInput(
+        Encodings.GetDecoderInput(henc, (IByteReader)null));
     }
 
     private void addCommentNodeToCurrentNode(int token) {
@@ -516,16 +537,16 @@ namespace com.upokecenter.html {
     }
 
     private void addCommentNodeToDocument(int token) {
-      document.appendChild(createCommentNode(token));
+      ((Document)document).appendChild(createCommentNode(token));
     }
 
     private void addCommentNodeToFirst(int token) {
-      openElements[0].appendChild(createCommentNode(token));
+      ((Node)openElements[0]).appendChild(createCommentNode(token));
     }
 
     private Element addHtmlElement(StartTagToken tag) {
       Element element = Element.fromToken(tag);
-      Element currentNode = getCurrentNode();
+      IElement currentNode = getCurrentNode();
       if (currentNode != null) {
         insertInCurrentNode(element);
       } else {
@@ -537,7 +558,7 @@ namespace com.upokecenter.html {
 
     private Element addHtmlElementNoPush(StartTagToken tag) {
       Element element = Element.fromToken(tag);
-      Element currentNode = getCurrentNode();
+      IElement currentNode = getCurrentNode();
       if (currentNode != null) {
         insertInCurrentNode(element);
       }
@@ -1095,7 +1116,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
               doctypeName,
               doctypePublic,
               doctypeSystem);
-              document.doctype = doctypeNode;
+              document.Doctype = doctypeNode;
               document.appendChild(doctypeNode);
               string doctypePublicLC = null;
               if (!"about:srcdoc".Equals(document.Address)) {
@@ -1281,15 +1302,16 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
                   string charset = element.getAttribute("charset");
                   if (charset != null) {
                     charset = Encodings.ResolveAlias(charset);
-                    if (TextEncoding.isAsciiCompatible(charset) ||
-                    "utf-16be".Equals(charset) || "utf-16le".Equals(charset)) {
+                    //if (TextEncoding.isAsciiCompatible(charset) ||
+                    //"utf-16be" .Equals(charset) || "utf-16le"
+                    // .Equals(charset)) {
                     changeEncoding(charset);
                     if (encoding.getConfidence() ==
                     EncodingConfidence.Certain) {
                     inputStream.disableBuffer();
                     }
                     return true;
-                    }
+                    //}
                   }
                   string value = DataUtilities.ToLowerCaseAscii(
                     element.getAttribute("http-equiv"));
@@ -1302,7 +1324,8 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
                     //if (TextEncoding.isAsciiCompatible(charset) ||
                     //"utf-16be" .Equals(charset) || "utf-16le"
                     // .Equals(charset)) {
-                    changeEncoding(charset);
+ changeEncoding(charset);
+}
                     if (encoding.getConfidence() ==
                     EncodingConfidence.Certain) {
                     inputStream.disableBuffer();
@@ -1310,7 +1333,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
                     return true;
                     }
                     }
-                  } else if ("content-language".Equals(value)) {
+                    } else if ("content-language".Equals(value)) {
                     // HTML5 requires us to use this algorithm
                     // to parse the Content-Language, rather than
                     // use HTTP parsing (with HeaderParser.getLanguages)
@@ -1324,62 +1347,62 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
                     document.DefaultLanguage = deflang;
                     }
                     }
+                    }
                   }
+                  if (encoding.getConfidence() == EncodingConfidence.Certain) {
+                    inputStream.disableBuffer();
+                  }
+                  return true;
+                } else if ("title".Equals(name)) {
+                  addHtmlElement(tag);
+                  state = TokenizerState.RcData;
+                  originalInsertionMode = insertionMode;
+                  insertionMode = InsertionMode.Text;
+                  return true;
+                } else if ("noframes".Equals(name) ||
+                    "style".Equals(name)) {
+                  addHtmlElement(tag);
+                  state = TokenizerState.RawText;
+                  originalInsertionMode = insertionMode;
+                  insertionMode = InsertionMode.Text;
+                  return true;
+                } else if ("noscript".Equals(name)) {
+                  addHtmlElement(tag);
+                  insertionMode = InsertionMode.InHeadNoscript;
+                  return true;
+                } else if ("script".Equals(name)) {
+                  addHtmlElement(tag);
+                  state = TokenizerState.ScriptData;
+                  originalInsertionMode = insertionMode;
+                  insertionMode = InsertionMode.Text;
+                  return true;
+                } else if ("head".Equals(name)) {
+                  error = true;
+                  return false;
+                } else {
+                  applyEndTag("head", insMode);
+                  return applyInsertionMode(token, null);
                 }
-                if (encoding.getConfidence() == EncodingConfidence.Certain) {
-                  inputStream.disableBuffer();
+              } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+                var tag = (TagToken)getToken(token);
+                string name = tag.getName();
+                if ("head".Equals(name)) {
+                  openElements.RemoveAt(openElements.Count - 1);
+                  insertionMode = InsertionMode.AfterHead;
+                  return true;
+                } else if (!(
+                    "br".Equals(name) ||
+                    "body".Equals(name) || "html".Equals(name))) {
+                  error = true;
+                  return false;
                 }
-                return true;
-              } else if ("title".Equals(name)) {
-                addHtmlElement(tag);
-                state = TokenizerState.RcData;
-                originalInsertionMode = insertionMode;
-                insertionMode = InsertionMode.Text;
-                return true;
-              } else if ("noframes".Equals(name) ||
-                  "style".Equals(name)) {
-                addHtmlElement(tag);
-                state = TokenizerState.RawText;
-                originalInsertionMode = insertionMode;
-                insertionMode = InsertionMode.Text;
-                return true;
-              } else if ("noscript".Equals(name)) {
-                addHtmlElement(tag);
-                insertionMode = InsertionMode.InHeadNoscript;
-                return true;
-              } else if ("script".Equals(name)) {
-                addHtmlElement(tag);
-                state = TokenizerState.ScriptData;
-                originalInsertionMode = insertionMode;
-                insertionMode = InsertionMode.Text;
-                return true;
-              } else if ("head".Equals(name)) {
-                error = true;
-                return false;
+                applyEndTag("head", insMode);
+                return applyInsertionMode(token, null);
               } else {
                 applyEndTag("head", insMode);
                 return applyInsertionMode(token, null);
               }
-            } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (TagToken)getToken(token);
-              string name = tag.getName();
-              if ("head".Equals(name)) {
-                openElements.RemoveAt(openElements.Count - 1);
-                insertionMode = InsertionMode.AfterHead;
-                return true;
-              } else if (!(
-                  "br".Equals(name) ||
-                  "body".Equals(name) || "html".Equals(name))) {
-                error = true;
-                return false;
-              }
-              applyEndTag("head", insMode);
-              return applyInsertionMode(token, null);
-            } else {
-              applyEndTag("head", insMode);
-              return applyInsertionMode(token, null);
             }
-          }
         case InsertionMode.AfterHead: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               if (token == 0x20 || token == 0x09 || token == 0x0a ||
@@ -1451,7 +1474,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
               string name = tag.getName();
               if ("html".Equals(name)) {
                 error = true;
-                openElements[0].mergeAttributes(tag);
+                ((Element)openElements[0]).mergeAttributes(tag);
                 return true;
               } else if ("base".Equals(name) ||
                   "bgsound".Equals(name) || "basefont".Equals(name) ||
@@ -1463,22 +1486,22 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
               } else if ("body".Equals(name)) {
                 error = true;
                 if (openElements.Count <= 1 ||
-                    !openElements[1].isHtmlElement("body")) {
+                    !HtmlCommon.isHtmlElement(openElements[1],"body")) {
                   return false;
                 }
                 framesetOk = false;
-                openElements[1].mergeAttributes(tag);
+                ((Element)openElements[1]).mergeAttributes(tag);
                 return true;
               } else if ("frameset".Equals(name)) {
                 error = true;
                 if (!framesetOk ||
                   openElements.Count <= 1 ||
-                    !HtmlCommon.isHtmlElement(openElements[1],"body")) {
+                    !HtmlCommon.isHtmlElement(openElements[1], "body")) {
                   return false;
                 }
                 var parent = (Node)openElements[1].getParentNode();
                 if (parent != null) {
-                  parent.removeChild(openElements[1]);
+                  parent.removeChild((Node)openElements[1]);
                 }
                 while (openElements.Count > 1) {
                   popCurrentNode();
@@ -1867,7 +1890,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
                     }
                     break;
                   }
-           int formattingElementPos =
+                  int formattingElementPos =
                     openElements.IndexOf(formatting.element);
                   if (formattingElementPos < 0) {  // not found
                     error = true;
@@ -1886,11 +1909,11 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
                   if (!formatting.element.Equals(getCurrentNode())) {
                     error = true;
                   }
-                  Element furthestBlock = null;
+                  IElement furthestBlock = null;
                   var furthestBlockPos = -1;
                   for (int j = openElements.Count - 1; j > formattingElementPos;
                     --j) {
-                    Element e = openElements[j];
+                    IElement e = openElements[j];
                     if (isSpecialElement(e)) {
                     furthestBlock = e;
                     furthestBlockPos = j;
@@ -1910,14 +1933,14 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
                     //DebugUtility.Log(formattingElements);
                     break;
                   }
-                  Element commonAncestor = openElements[formattingElementPos -
+                  IElement commonAncestor = openElements[formattingElementPos -
                     1];
                   // DebugUtility.Log("common ancestor: %s",commonAncestor);
                   int bookmark = formattingElements.IndexOf(formatting);
                   // DebugUtility.Log("bookmark=%d",bookmark);
-                  Element myNode = furthestBlock;
-                  Element superiorNode = openElements[furthestBlockPos - 1];
-                  Element lastNode = furthestBlock;
+                  IElement myNode = furthestBlock;
+                  IElement superiorNode = openElements[furthestBlockPos - 1];
+                  IElement lastNode = furthestBlock;
                   for (int j = 0; j < 3; ++j) {
                     myNode = superiorNode;
                     FormattingElement nodeFE = getFormattingElement(myNode);
@@ -1931,7 +1954,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
                     // DebugUtility.Log("node is the formatting element");
                     break;
                     }
-                    Element e = Element.fromToken(nodeFE.token);
+                    IElement e = Element.fromToken(nodeFE.token);
                     nodeFE.element = e;
                     int io = openElements.IndexOf(myNode);
                     superiorNode = openElements[io - 1];
@@ -1944,7 +1967,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
                     // element, the foster parenting rule doesn't
                     // apply here
                     if (lastNode.getParentNode() != null) {
-                    ((Node)lastNode.getParentNode()).removeChild(lastNode);
+((Node)lastNode.getParentNode()) .removeChild((Node)lastNode);
                     }
                     myNode.appendChild(lastNode);
                     lastNode = myNode;
@@ -1958,19 +1981,19 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
                     commonAncestor.getLocalName().Equals("tfoot")
 ) {
                     if (lastNode.getParentNode() != null) {
-                    ((Node)lastNode.getParentNode()).removeChild(lastNode);
+((Node)lastNode.getParentNode()) .removeChild((Node)lastNode);
                     }
                     fosterParent(lastNode);
                   } else {
                     if (lastNode.getParentNode() != null) {
-                    ((Node)lastNode.getParentNode()).removeChild(lastNode);
+((Node)lastNode.getParentNode()) .removeChild((Node)lastNode);
                     }
                     commonAncestor.appendChild(lastNode);
                   }
                   Element e2 = Element.fromToken(formatting.token);
                   foreach (var child in new
-                    List<Node>(furthestBlock.getChildNodesInternal())) {
-                    furthestBlock.removeChild(child);
+                    List<INode>(furthestBlock.getChildNodes())) {
+                    furthestBlock.removeChild((Node)child);
                     // NOTE: Because 'e' can only be a formatting
                     // element, the foster parenting rule doesn't
                     // apply here
@@ -2210,7 +2233,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
           }
         case InsertionMode.InTable: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              Element currentNode = getCurrentNode();
+              IElement currentNode = getCurrentNode();
               if (currentNode.getLocalName().Equals("table") ||
                   currentNode.getLocalName().Equals("tbody") ||
                   currentNode.getLocalName().Equals("tfoot") ||
@@ -2344,8 +2367,8 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
               addCommentNodeToCurrentNode(token);
               return true;
             } else if (token == TOKEN_EOF) {
- error |= (getCurrentNode() == null ||
-                !getCurrentNode().getLocalName().Equals(
+              error |= (getCurrentNode() == null ||
+                    !getCurrentNode().getLocalName().Equals(
                     "html"));
               stopParsing();
             }
@@ -2357,20 +2380,24 @@ HtmlCommon.SVG_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())) {
                 error = true;
                 return false;
               } else {
-         if (token <= 0xffff) {
+                if (token <= 0xffff) {
                   pendingTableCharacters.Append((char)(token));
-  } else if (token <= 0x10ffff) {
-pendingTableCharacters.Append((char)((((token - 0x10000) >> 10) & 0x3ff) +
-  0xd800));
-pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
-}
+                } else if (token <= 0x10ffff) {
+     pendingTableCharacters.Append((char)((((token - 0x10000) >> 10) &
+                    0x3ff) +
+                    0xd800));
+   pendingTableCharacters.Append((char)(((token - 0x10000) & 0x3ff) +
+                    0xdc00));
+                }
               }
             } else {
               var nonspace = false;
               string str = pendingTableCharacters.ToString();
-              int size = pendingTableCharacters.Length;
               for (int i = 0; i < str.Length; ++i) {
-                int c = str[i];
+                int c = DataUtilities.CodePointAt(str, i);
+                if (c >= 0x10000) {
+ ++c;
+}
                 if (c != 0x9 && c != 0xa && c != 0xc && c != 0xd && c != 0x20) {
                   nonspace = true;
                   break;
@@ -2380,8 +2407,11 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
                 // See 'anything else' for 'in table'
                 error = true;
                 doFosterParent = true;
-                for (int i = 0; i < size; ++i) {
-                  int c = array[i];
+                for (int i = 0; i < str.Length; ++i) {
+                  int c = DataUtilities.CodePointAt(str, i);
+                  if (c >= 0x10000) {
+ ++c;
+}
                   applyInsertionMode(c, InsertionMode.InBody);
                 }
                 doFosterParent = false;
@@ -2453,9 +2483,9 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
           }
         case InsertionMode.InColumnGroup: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        if (token == 0x20 || token == 0x0c || token == 0x0a || token == 0x0d
-                ||
-                    token == 0x09) {
+           if (token == 0x20 || token == 0x0c || token == 0x0a || token ==
+                0x0d||
+                token == 0x09) {
                 insertCharacter(getCurrentNode(), token);
               } else {
                 if (applyEndTag("colgroup", insMode)) {
@@ -2829,8 +2859,8 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
               addCommentNodeToCurrentNode(token);
             } else if (token == TOKEN_EOF) {
-       if (getCurrentNode() == null ||
-                !getCurrentNode().getLocalName().Equals(
+              if (getCurrentNode() == null ||
+                    !getCurrentNode().getLocalName().Equals(
                     "html")) {
                 error = true;
               }
@@ -2881,9 +2911,9 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
           }
         case InsertionMode.AfterBody: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        if (token == 0x09 || token == 0x0a || token == 0x0c || token == 0x0d
-                ||
-                    token == 0x20) {
+           if (token == 0x09 || token == 0x0a || token == 0x0c || token ==
+                0x0d||
+                token == 0x20) {
                 applyInsertionMode(token, InsertionMode.InBody);
               } else {
                 error = true;
@@ -2963,7 +2993,7 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
               if (name.Equals("frameset")) {
                 popCurrentNode();
                 if (context == null &&
-                    !getCurrentNode().isHtmlElement("frameset")) {
+                    !HtmlCommon.isHtmlElement(getCurrentNode(),"frameset")) {
                   insertionMode = InsertionMode.AfterFrameset;
                 }
               } else {
@@ -2972,7 +3002,7 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
               addCommentNodeToCurrentNode(token);
             } else if (token == TOKEN_EOF) {
-              if (!HtmlCommon.isHtmlElement(getCurrentNode(),"html")) {
+              if (!HtmlCommon.isHtmlElement(getCurrentNode(), "html")) {
                 error = true;
               }
               stopParsing();
@@ -2981,9 +3011,9 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
           }
         case InsertionMode.AfterFrameset: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        if (token == 0x09 || token == 0x0a || token == 0x0c || token == 0x0d
-                ||
-                    token == 0x20) {
+           if (token == 0x09 || token == 0x0a || token == 0x0c || token ==
+                0x0d||
+                token == 0x20) {
                 insertCharacter(getCurrentNode(), token);
               } else {
                 error = true;
@@ -3017,9 +3047,9 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
           }
         case InsertionMode.AfterAfterBody: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        if (token == 0x09 || token == 0x0a || token == 0x0c || token == 0x0d
-                ||
-                    token == 0x20) {
+           if (token == 0x09 || token == 0x0a || token == 0x0c || token ==
+                0x0d||
+                token == 0x20) {
                 applyInsertionMode(token, InsertionMode.InBody);
               } else {
                 error = true;
@@ -3051,9 +3081,9 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
           }
         case InsertionMode.AfterAfterFrameset: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        if (token == 0x09 || token == 0x0a || token == 0x0c || token == 0x0d
-                ||
-                    token == 0x20) {
+           if (token == 0x09 || token == 0x0a || token == 0x0c || token ==
+                0x0d||
+                token == 0x20) {
                 applyInsertionMode(token, InsertionMode.InBody);
               } else {
                 error = true;
@@ -3111,11 +3141,9 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
       // Rewind the input stream and set the new encoding
       inputStream.rewind();
       encoding = new EncodingConfidence(charset, EncodingConfidence.Certain);
-   decoder = new
-        Html5Decoder(TextEncoding.getDecoder(encoding.getEncoding()));
+      ICharacterEncoding henc = new Html5Encoding(encoding);
       charInput = new StackableCharacterInput(
-        new
-         DecoderCharacterInput(inputStream, decoder));
+        Encodings.GetDecoderInput(henc, (IByteReader)null));
     }
 
     private void clearFormattingToMarker() {
@@ -3156,13 +3184,13 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
       return ret;
     }
 
-    private void fosterParent(Node element) {
+    private void fosterParent(INode element) {
       if (openElements.Count == 0) {
         return;
       }
       INode fosterParent = openElements[0];
       for (int i = openElements.Count - 1; i >= 0; --i) {
-        Element e = openElements[i];
+        IElement e = openElements[i];
         if (e.getLocalName().Equals("table")) {
           var parent = (Node)e.getParentNode();
           bool isElement = (parent != null &&
@@ -3177,12 +3205,12 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
             break;
           } else {
             // Parent of the table, insert before the table
-            parent.insertBefore(element, e);
+            parent.insertBefore((Node)element, (Node)e);
             return;
           }
         }
       }
-      fosterParent.appendChild(element);
+      ((Node)fosterParent).appendChild(element);
     }
 
     private void generateImpliedEndTags() {
@@ -3239,7 +3267,7 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
             (openElements[openElements.Count - 1]);
     }
 
-    private FormattingElement getFormattingElement(Element node) {
+    private FormattingElement getFormattingElement(IElement node) {
       foreach (var fe in formattingElements) {
         if (!fe.isMarker() && node.Equals(fe.element)) {
           return fe;
@@ -3281,7 +3309,7 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
                   return (Text)childNodes[j - 1];
                 } else {
                   var textNode = new Text();
-                  parent.insertBefore(textNode, e);
+                  parent.insertBefore(textNode, (Node)e);
                   return textNode;
                 }
               }
@@ -3290,8 +3318,8 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
           }
         }
       }
-      childNodes = fosterParent.getChildNodesInternal();
-      Node lastChild = (childNodes.Count == 0) ? null :
+      childNodes = fosterParent.getChildNodes();
+      INode lastChild = (childNodes.Count == 0) ? null :
           childNodes[childNodes.Count - 1];
       if (lastChild == null || lastChild.getNodeType() != NodeType.TEXT_NODE) {
         var textNode = new Text();
@@ -3301,7 +3329,7 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
         return (Text)lastChild;
       }
     }
-    private Text getTextNodeToInsert(Node node) {
+    private Text getTextNodeToInsert(INode node) {
       if (doFosterParent && node.Equals(getCurrentNode())) {
         string name = ((Element)node).getLocalName();
         if ("table".Equals(name) || "tbody".Equals(name) ||
@@ -3310,8 +3338,8 @@ pendingTableCharacters.Append((char)((((token - 0x10000)) & 0x3ff) + 0xdc00));
           return getFosterParentedTextNode();
         }
       }
-      IList<Node> childNodes = node.getChildNodesInternal();
-      Node lastChild = (childNodes.Count == 0) ? null :
+      IList<INode> childNodes = ((Node)node).getChildNodesInternal();
+      INode lastChild = (childNodes.Count == 0) ? null :
           childNodes[childNodes.Count - 1];
       if (lastChild == null || lastChild.getNodeType() != NodeType.TEXT_NODE) {
         var textNode = new Text();
@@ -3404,7 +3432,7 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
       }
       return false;
     }
-    private bool hasHtmlElementInScope(Element node) {
+    private bool hasHtmlElementInScope(IElement node) {
       for (int i = openElements.Count - 1; i >= 0; --i) {
         IElement e = openElements[i];
         if (e == node) {
@@ -3591,7 +3619,7 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
       pendingTableCharacters.Remove(0, pendingTableCharacters.Length);
     }
 
-    private void insertCharacter(Node node, int ch) {
+    private void insertCharacter(INode node, int ch) {
       Text textNode = getTextNodeToInsert(node);
       if (textNode != null) {
         StringBuilder builder = textNode.ValueText;
@@ -3616,7 +3644,7 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
       if (xlink != null && !xlink.Equals(HtmlCommon.XLINK_NAMESPACE)) {
         error = true;
       }
-      Element currentNode = getCurrentNode();
+      IElement currentNode = getCurrentNode();
       if (currentNode != null) {
         insertInCurrentNode(element);
       } else {
@@ -3651,7 +3679,7 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
       }
     }
 
-    private void insertString(Node node, string str) {
+    private void insertString(INode node, string str) {
       Text textNode = getTextNodeToInsert(node);
       if (textNode != null) {
         textNode.ValueText.Append(str);
@@ -3671,7 +3699,7 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
     }
     private bool isForeignContext(int token) {
       if (hasForeignContent && token != TOKEN_EOF) {
-        Element element = (context != null && openElements.Count == 1) ?
+        IElement element = (context != null && openElements.Count == 1) ?
             context : getCurrentNode();  // adjusted current node
         if (element == null) {
           return false;
@@ -3689,11 +3717,10 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
               return false;
             }
           }
-       return (HtmlCommon.MATHML_NAMESPACE.Equals(element.getNamespaceURI())
-            &&
-                 (
-               name.Equals("annotation-xml")) && "svg"
-                     .Equals(tag.getName())) ?
+          return (HtmlCommon.MATHML_NAMESPACE.Equals(element.getNamespaceURI())&&
+               (
+                  name.Equals("annotation-xml")) && "svg"
+                    .Equals(tag.getName())) ?
                     (false) : (isHtmlIntegrationPoint(element));
         } else if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
           return isMathMLTextIntegrationPoint(element) ||
@@ -4073,7 +4100,7 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                   error = true;
                 }
               }
-              return HtmlEntities.entityValues[index];
+              return HtmlEntities.EntityDoubles[index];
             }
           }
         }
@@ -4098,7 +4125,7 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
       }
     }
 
-    public IList<Node> parseFragment(Element context) {
+    public IList<INode> parseFragment(Element context) {
       if (context == null) {
         throw new ArgumentException();
       }
@@ -4156,10 +4183,10 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
             EncodingConfidence.Irrelevant);
       }
       parse();
-      return new List<Node>(element.getChildNodesInternal());
+      return new List<INode>(element.getChildNodes());
     }
 
-    public IList<Node> parseFragment(string contextName) {
+    public IList<INode> parseFragment(string contextName) {
       var element = new Element();
       element.setLocalName(contextName);
       element.setNamespace(HtmlCommon.HTML_NAMESPACE);
@@ -4341,7 +4368,7 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 return emitCurrentTag();
               } else if (ch >= 'A' && ch <= 'Z') {
                 currentTag.appendChar((char)(ch + 0x20));
-                  tempBuilder.Append((char)(ch));
+                tempBuilder.Append((char)(ch));
               } else if (ch >= 'a' && ch <= 'z') {
                 currentTag.appendChar((char)ch);
                 tempBuilder.Append((char)(ch));
@@ -4378,9 +4405,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch + 0x20 <= 0xffff) {
                   tempBuilder.Append((char)(ch + 0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-            tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
+                  tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) &
+                0x3ff) + 0xd800));
                   tempBuilder.Append((char)(((ch + 0x20 - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
@@ -4416,9 +4442,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch + 0x20 <= 0xffff) {
                   tempBuilder.Append((char)(ch + 0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-            tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
+                  tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) &
+                0x3ff) + 0xd800));
                   tempBuilder.Append((char)(((ch + 0x20 - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
@@ -4748,9 +4773,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch + 0x20 <= 0xffff) {
                   tempBuilder.Append((char)(ch + 0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-            tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
+                  tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >> 10) &
+                0x3ff) + 0xd800));
                   tempBuilder.Append((char)(((ch + 0x20 - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
@@ -5008,9 +5032,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 error = true;
                 state = TokenizerState.Data;
               } else {
-              if (ch == 0x22 || ch == 0x27 || ch == 0x3c || ch == 0x3d || ch
-                  ==
-                    0x60) {
+                if (ch == 0x22 || ch == 0x27 || ch == 0x3c || ch == 0x3d || ch
+                == 0x60) {
                   error = true;
                 }
                 currentAttribute.appendToValue(ch);
@@ -5073,12 +5096,12 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                   break;
                 }
               } else if (ch == '[' && true) {
-              if (charInput.ReadChar() == 'C' && charInput.ReadChar() == 'D'
-                  &&
-                  charInput.ReadChar() == 'A' && charInput.ReadChar() == 'T' &&
-                  charInput.ReadChar() == 'A' && charInput.ReadChar() == '[' &&
-                  getCurrentNode() != null &&
-  !HtmlCommon.HTML_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())
+                if (charInput.ReadChar() == 'C' && charInput.ReadChar() == 'D'&&
+                charInput.ReadChar() == 'A' && charInput.ReadChar() == 'T' &&
+                  charInput.ReadChar() == 'A' && charInput.ReadChar() == '['
+                      &&
+                    getCurrentNode() != null &&
+    !HtmlCommon.HTML_NAMESPACE.Equals(getCurrentNode().getNamespaceURI())
 ) {
                   state = TokenizerState.CData;
                   break;
@@ -5330,9 +5353,10 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                     comment.Append((char)(bogusChar));
                   }
                 } else if (bogusChar <= 0x10ffff) {
-      comment.Append((char)((((bogusChar - 0x10000) >> 10) & 0x3ff) +
+                comment.Append((char)((((bogusChar - 0x10000) >> 10) &
+                    0x3ff) +
                     0xd800));
-              comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) +
+                  comment.Append((char)(((bogusChar - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
               }
@@ -5390,9 +5414,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 } else if (ch + 0x20 <= 0x10ffff) {
                   docTypeToken.name.Append((char)((((ch + 0x20 - 0x10000) >>
                     10) & 0x3ff) + 0xd800));
-              docTypeToken.name.Append((char)(((ch + 0x20 - 0x10000) &
-                    0x3ff) +
-                    0xdc00));
+                  docTypeToken.name.Append((char)(((ch + 0x20 - 0x10000) &
+                0x3ff) + 0xdc00));
                 }
                 state = TokenizerState.DocTypeName;
               } else if (ch == 0) {
@@ -5415,9 +5438,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch <= 0xffff) {
                   docTypeToken.name.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-             docTypeToken.name.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
+                  docTypeToken.name.Append((char)((((ch - 0x10000) >> 10) &
+                0x3ff) + 0xd800));
                   docTypeToken.name.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
@@ -5441,9 +5463,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 } else if (ch + 0x20 <= 0x10ffff) {
                   docTypeToken.name.Append((char)((((ch + 0x20 - 0x10000) >>
                     10) & 0x3ff) + 0xd800));
-              docTypeToken.name.Append((char)(((ch + 0x20 - 0x10000) &
-                    0x3ff) +
-                    0xdc00));
+                  docTypeToken.name.Append((char)(((ch + 0x20 - 0x10000) &
+                0x3ff) + 0xdc00));
                 }
               } else if (ch == 0) {
                 error = true;
@@ -5459,9 +5480,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch <= 0xffff) {
                   docTypeToken.name.Append((char)(ch));
                 } else if (ch <= 0x10ffff) {
-             docTypeToken.name.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
+                  docTypeToken.name.Append((char)((((ch - 0x10000) >> 10) &
+                0x3ff) + 0xd800));
                   docTypeToken.name.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
@@ -5753,16 +5773,27 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                   }
                 }
               }
-              int[] arr = buffer.array();
-              int size = buffer.Count;
+              string str = buffer.ToString();
+              int size = buffer.Length;
               if (phase == 3) {
+                if (size < 0) {
+                  throw new InvalidOperationException();
+                }
                 size -= 3;  // don't count the ']]>'
               }
               if (size > 0) {
                 // Emit the tokens
-                int ret1 = arr[0];
-                for (int i = 1; i < size; ++i) {
-                  tokenQueue.Add(arr[i]);
+                var ret1 = 0;
+                for (int i = 0; i < size; ++i) {
+                  int c2 = DataUtilities.CodePointAt(str, i);
+                  if (i > 0) {
+ tokenQueue.Add(c2);
+} else {
+ ret1 = c2;
+}
+                  if (c2 >= 0x10000) {
+ ++i;
+}
                 }
                 return ret1;
               }
@@ -5861,7 +5892,7 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
         fe.marker = false;
       }
     }
-    private void removeFormattingElement(Element aElement) {
+    private void removeFormattingElement(IElement aElement) {
       FormattingElement f = null;
       foreach (var fe in formattingElements) {
         if (!fe.isMarker() && aElement.Equals(fe.element)) {
@@ -5979,7 +6010,7 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
           document.DefaultLanguage = contentLanguage[0];
         }
       }
-      document.encoding = encoding.getEncoding();
+      document.Encoding = encoding.getEncoding();
       string docbase = document.getBaseURI();
       if (docbase == null || docbase.Length == 0) {
         docbase = baseurl;

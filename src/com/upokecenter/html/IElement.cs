@@ -27,8 +27,7 @@ THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-namespace com.upokecenter.html {;
-
+namespace com.upokecenter.html {
     /// <summary>* Represents an HTML element. @author Peter.</summary>
 public interface IElement : INode {
     /// <summary>* Gets an attribute declared on this element. @param name

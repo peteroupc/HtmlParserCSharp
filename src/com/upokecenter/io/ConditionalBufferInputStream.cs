@@ -8,8 +8,7 @@ at: http://peteroupc.github.io/
 */
 using System;
 using System.IO;
-namespace com.upokecenter.io {;
-
+namespace com.upokecenter.io {
     /// <summary>* An input stream that stores the first bytes of the
     /// stream in a buffer and supports rewinding to the beginning of the
     /// stream. However, when the buffer is disabled, no further bytes are

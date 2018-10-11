@@ -26,8 +26,7 @@ THE SOFTWARE.
 */
 
 using System;
-namespace com.upokecenter.html {;
-
+namespace com.upokecenter.html {
     /// <summary>* Represents the HTML "!DOCTYPE" tag. @author
     /// Peter.</summary>
 public interface IDocumentType : INode {

@@ -26,8 +26,7 @@ THE SOFTWARE.
 */
 
 using System;
-namespace com.upokecenter.html {;
-
+namespace com.upokecenter.html {
 sealed class EncodingConfidence {
   private int valueConfidence;
   private string valueEncoding;

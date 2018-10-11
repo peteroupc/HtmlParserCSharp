@@ -83,6 +83,7 @@
     <Compile Include="src\com\upokecenter\html\Html5Decoder.cs" />
     <Compile Include="src\com\upokecenter\net\HeaderParser.cs" />
     <Compile Include="src\com\upokecenter\html\INameAndAttributes.cs" />
+    <Compile Include="src\com\upokecenter\html\HtmlParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -92,7 +93,6 @@
     <None Include="src\com\upokecenter\net\DownloadHelper.cs" />
     <None Include="DownloadHelperImpl.cs" />
     <None Include="HttpHeaders.cs" />
-    <None Include="src\com\upokecenter\html\HtmlParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>
