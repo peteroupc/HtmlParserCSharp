@@ -100,14 +100,13 @@ sealed class ExclusiveCanonicalXML {
     var builder = new StringBuilder();
 IList<IDictionary<string, string>> stack = new
       List<IDictionary<string, string>>();
-    prefixList = prefixList ?? (new PeterO.Support.LenientDictionary<string,
+    prefixList = prefixList ?? (new Dictionary<string,
       string>());
       foreach (var valuePrefix in prefixList.Keys) {
         string nsvalue = prefixList[valuePrefix];
         checkNamespacePrefix(valuePrefix, nsvalue);
     }
-    PeterO.Support.LenientDictionary<string, string> item = new
-      PeterO.Support.LenientDictionary<string, string>();
+    Dictionary<string, string> item = new Dictionary<string, string>();
     stack.Add(item);
     if (node is IDocument) {
       var beforeElement = true;
@@ -238,8 +237,7 @@ IList<IDictionary<string, string>> stack = new
   value);
           if (!copied) {
             copied = true;
-    valueNsRendered = new
-              PeterO.Support.LenientDictionary<string, string>(valueNsRendered);
+    valueNsRendered = new Dictionary<string, string>(valueNsRendered);
           }
           valueNsRendered.Add(valuePrefix, value);
         }

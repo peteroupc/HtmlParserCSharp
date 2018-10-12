@@ -216,7 +216,7 @@ internal class Element : Node, IElement {
   public string getTagName() {
     string tagName = this.name;
     if (this.prefix != null) {
-      tagName = this.prefix + ":"+this.name;
+      tagName = this.prefix + ":" + this.name;
     }
     return ((getOwnerDocument() is Document) &&
         HtmlCommon.HTML_NAMESPACE.Equals(this._namespace)) ?
@@ -272,7 +272,7 @@ internal class Element : Node, IElement {
     if (HtmlCommon.SVG_NAMESPACE.Equals(this._namespace)) {
       extra = "svg ";
     }
-    builder.Append("<" + extra+this.name.ToString()+">\n");
+    builder.Append("<" + extra + this.name.ToString() + ">\n");
     var attribs = new List<IAttr>(this.getAttributes());
     attribs.Sort(new AttributeNameComparator());
     foreach (var attribute in attribs) {

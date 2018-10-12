@@ -17,7 +17,7 @@ namespace com.upokecenter.io {
     /// put into the buffer, but any remaining bytes in the buffer will
     /// still be used until it's exhausted. @author Peter O.</summary>
 public sealed class ConditionalBufferInputStream :
-  IReader, IDisposable, com.upokecenter.html.HtmlParser.IInputStream {
+  IReader, com.upokecenter.html.HtmlParser.IInputStream {
   private byte[] buffer = null;
   private int pos = 0;
   private int endpos = 0;
@@ -25,24 +25,14 @@ public sealed class ConditionalBufferInputStream :
   private long markpos = -1;
   private int posAtMark = 0;
   private long marklimit = 0;
-  private PeterO.Support.InputStream stream = null;
+  private IReader stream = null;
 
     /// <summary>Initializes a new instance of the
     /// ConditionalBufferInputStream class.</summary>
     /// <param name='input'>A PeterO.Support.InputStream object.</param>
-  public ConditionalBufferInputStream(PeterO.Support.InputStream input) {
+  public ConditionalBufferInputStream(IReader input) {
     this.stream = input;
     this.buffer = new byte[1024];
-  }
-
-    /// <summary>Not documented yet.</summary>
-  public void Dispose() {
-    this.disabled = true;
-    this.pos = 0;
-    this.endpos = 0;
-    this.buffer = null;
-    this.markpos = -1;
-    this.stream.Dispose();
   }
 
     /// <summary>Disables buffering of future bytes read from the
@@ -93,8 +83,9 @@ public sealed class ConditionalBufferInputStream :
   public void mark(int limit) {
     // DebugUtility.Log("mark %d: %s",limit,isDisabled());
     if (this.isDisabled()) {
-      this.stream.mark(limit);
-      return;
+        // this.stream.mark(limit);
+        // return;
+        throw new NotSupportedException();
     }
     if (limit < 0) {
  throw new ArgumentException();
@@ -273,8 +264,9 @@ count = this.stream.Read(
   public void reset() {
     // DebugUtility.Log("reset: %s",isDisabled());
     if (this.isDisabled()) {
-      this.stream.reset();
-      return;
+        throw new NotSupportedException();
+      // this.stream.reset();
+      // return;
     }
     if (this.markpos < 0) {
  throw new IOException();
@@ -298,7 +290,8 @@ count = this.stream.Read(
     /// <returns>A 64-bit signed integer.</returns>
   public long skip(long byteCount) {
     if (this.isDisabled()) {
- return this.stream.skip(byteCount);
+        throw new NotSupportedException();
+ // return this.stream.skip(byteCount);
 }
     var data = new byte[1024];
     long ret = 0;

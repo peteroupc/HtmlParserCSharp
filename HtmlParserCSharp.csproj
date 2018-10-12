@@ -52,8 +52,6 @@
     <Compile Include="src\com\upokecenter\html\data\Microformats.cs" />
     <Compile Include="src\com\upokecenter\html\data\RDFInternal.cs" />
     <Compile Include="src\com\upokecenter\io\ConditionalBufferInputStream.cs" />
-    <Compile Include="src\com\upokecenter\io\IMarkableCharacterInput.cs" />
-    <Compile Include="src\com\upokecenter\io\StackableCharacterInput.cs" />
     <Compile Include="src\com\upokecenter\net\IDownloadEventListener.cs" />
     <Compile Include="src\com\upokecenter\net\IHttpHeaders.cs" />
     <Compile Include="src\com\upokecenter\net\IOnFinishedListener.cs" />
@@ -82,10 +80,10 @@
     <Compile Include="src\com\upokecenter\net\HeaderParser.cs" />
     <Compile Include="src\com\upokecenter\html\INameAndAttributes.cs" />
     <Compile Include="src\com\upokecenter\html\HtmlParser.cs" />
+    <Compile Include="src\com\upokecenter\html\HtmlDocument.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
-    <None Include="src\com\upokecenter\html\HtmlDocument.cs" />
     <None Include="src\com\upokecenter\html\XhtmlParser.cs" />
     <None Include="src\com\upokecenter\net\CacheControl.cs" />
     <None Include="src\com\upokecenter\net\DownloadHelper.cs" />

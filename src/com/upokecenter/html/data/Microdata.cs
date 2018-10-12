@@ -92,7 +92,7 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
   private static PeterO.Cbor.CBORObject getMicrodataObject(
   IElement item,
   IList<IElement> memory) {
- string[] itemtypes = StringUtility.splitAtSpaces(item.getAttribute(
+ string[] itemtypes = StringUtility.SplitAtSpTabCrLfFf(item.getAttribute(
   "itemtype"));
     PeterO.Cbor.CBORObject result = PeterO.Cbor.CBORObject.NewMap();
     memory.Add(item);
@@ -113,7 +113,7 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
     }
     PeterO.Cbor.CBORObject properties = PeterO.Cbor.CBORObject.NewMap();
     foreach (var valueElement in getMicrodataProperties(item)) {
-  string[] names = StringUtility.splitAtSpaces(valueElement.getAttribute(
+  string[] names = StringUtility.SplitAtSpTabCrLfFf(valueElement.getAttribute(
   "itemprop"));
       Object obj = null;
       if (valueElement.getAttribute("itemscope") != null) {
@@ -147,7 +147,7 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
         pending.Add((IElement)child);
       }
     }
-  string[] itemref = StringUtility.splitAtSpaces(root.getAttribute(
+  string[] itemref = StringUtility.SplitAtSpTabCrLfFf(root.getAttribute(
   "itemref"));
     foreach (var item in itemref) {
       IElement valueElement = document.getElementById(item);

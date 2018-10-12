@@ -106,7 +106,7 @@ public sealed class HeaderParser {
     if (index + 3 >= length) {
  return -1;
 }
-    if (skipDigits(s, index) != index + 3 || s[index+3] != ' ') {
+    if (skipDigits(s, index) != index + 3 || s[index + 3] != ' ') {
  return -1;
 }
     int num = getPositiveNumber(s, index);
@@ -175,7 +175,8 @@ public sealed class HeaderParser {
     if (
   v.StartsWith(
   "Mon",
-  StringComparison.Ordinal) || v.StartsWith("Sun",
+  StringComparison.Ordinal) || v.StartsWith(
+  "Sun",
   StringComparison.Ordinal) || v.StartsWith(
   "Fri",
   StringComparison.Ordinal)) {
@@ -381,7 +382,7 @@ public sealed class HeaderParser {
     if (com.upokecenter.util.StringUtility.startsWith(v, "Nov", index)) {
  return 11;
 }
-    return com.upokecenter.util.StringUtility.startsWith(v, "Dec",index) ?
+    return com.upokecenter.util.StringUtility.startsWith(v, "Dec", index) ?
       12 : (-1);
   }
 
@@ -411,7 +412,7 @@ public sealed class HeaderParser {
     int length = str.Length;
     var j = 0;
     int startIndex = index;
-    for (int i = index; i < length && j<token.Length;i++, j++) {
+    for (int i = index; i < length && j < token.Length; i++, j++) {
       char c = str[i];
       char cj = token[j];
       if (c != cj && c != (cj >= 'a' && cj <= 'z' ? cj - 0x20 : cj)) {
@@ -452,7 +453,7 @@ public sealed class HeaderParser {
     var j = 0;
     int startIndex = index;
     result[0] = -1;
-    for (int i = index; i < length && j<token.Length;i++, j++) {
+    for (int i = index; i < length && j < token.Length; i++, j++) {
       char c = str[i];
       char cj = token[j];
       if (c != cj && c != (cj >= 'a' && cj <= 'z' ? cj - 0x20 : cj)) {

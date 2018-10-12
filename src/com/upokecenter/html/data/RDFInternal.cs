@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using PeterO.Rdf;
@@ -21,7 +21,7 @@ sealed class RDFInternal {
  return;
 }
     IDictionary<string, RDFTerm> newBlankNodes = new
-      PeterO.Support.LenientDictionary<string, RDFTerm>();
+      Dictionary<string, RDFTerm>();
     IList<RDFTriple[]> changedTriples = new List<RDFTriple[]>();
     var nodeindex = new int[] { 0 };
     foreach (var triple in triples) {

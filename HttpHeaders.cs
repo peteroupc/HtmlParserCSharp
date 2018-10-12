@@ -106,7 +106,7 @@ namespace com.upokecenter.net {
 
     public IDictionary<string, IList<string>> getHeaderFields() {
       IDictionary<string, IList<string>> map = new
-        PeterO.Support.LenientDictionary<string, IList<string>>();
+        Dictionary<string, IList<string>>();
       if (this.response is IHttpWebResponse) {
  map.Add(null, PeterO.Support.Collections.UnmodifiableList(new
    String[] { GetStatusLine((IHttpWebResponse)this.response)}));

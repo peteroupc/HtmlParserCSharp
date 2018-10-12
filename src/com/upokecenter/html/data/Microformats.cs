@@ -11,7 +11,7 @@ namespace com.upokecenter.html.data {
     /// <summary>Not documented yet.</summary>
   public sealed class Microformats {
     private static IDictionary<string, string[]> complexLegacyMap = new
-      PeterO.Support.LenientDictionary<string, string[]>();
+      Dictionary<string, string[]>();
 
     static Microformats() {
       complexLegacyMap.Add("adr", new string[] { "p-adr", "h-adr" });
@@ -169,8 +169,7 @@ namespace com.upokecenter.html.data {
     }
 
     private static IDictionary<string, string> createLegacyLabelsMap() {
-      IDictionary<string, string> map = new
-        PeterO.Support.LenientDictionary<string, string>();
+      IDictionary<string, string> map = new Dictionary<string, string>();
       for (int i = 0; i < ValueLegacyLabels.Length; i += 2) {
         map.Add(ValueLegacyLabels[i], ValueLegacyLabels[i + 1]);
       }
@@ -192,7 +191,8 @@ namespace com.upokecenter.html.data {
     }
 
     private static string[] getClassNames(IElement element) {
-      string[] ret = StringUtility.splitAtSpaces(element.getAttribute("class"));
+string[] ret = StringUtility.SplitAtSpTabCrLfFf(element.getAttribute(
+  "class"));
       string[] rel = parseLegacyRel(element.getAttribute("rel"));
       if (ret.Length == 0 && rel.Length == 0) {
         return ret;
@@ -572,7 +572,7 @@ namespace com.upokecenter.html.data {
     }
 
     private static string[] getRelNames(IElement element) {
-      string[] ret = StringUtility.splitAtSpaces(
+      string[] ret = StringUtility.SplitAtSpTabCrLfFf(
           DataUtilities.ToLowerCaseAscii(element.getAttribute("rel")));
       if (ret.Length == 0) {
         return ret;
@@ -741,7 +741,7 @@ namespace com.upokecenter.html.data {
       if (attr == null || attr.Length < className.Length) {
         return false;
       }
-      string[] cls = StringUtility.splitAtSpaces(attr);
+      string[] cls = StringUtility.SplitAtSpTabCrLfFf(attr);
       foreach (var c in cls) {
         if (c.Equals(className)) {
           return true;
@@ -1078,7 +1078,7 @@ namespace com.upokecenter.html.data {
     }
 
     private static string[] parseLegacyRel(string str) {
-      string[] ret = StringUtility.splitAtSpaces(
+      string[] ret = StringUtility.SplitAtSpTabCrLfFf(
           DataUtilities.ToLowerCaseAscii(str));
       if (ret.Length == 0) {
         return ret;

@@ -144,7 +144,7 @@ public sealed class StringUtility {
     /// <param name='s'>The parameter <paramref name='s'/> is not
     /// documented yet.</param>
     /// <returns>A string[] object.</returns>
-  public static string[] splitAtSpaces(string s) {
+  public static string[] SplitAtSpTabCrLfFf(string s) {
     if (s == null || s.Length == 0) {
  return ValueEmptyStringArray;
 }

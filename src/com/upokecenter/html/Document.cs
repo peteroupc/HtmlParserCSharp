@@ -162,7 +162,11 @@ internal class Document : Node, IDocument {
     this.docmode = mode;
   }
 
-  internal override string toDebugString() {
+    public override string ToString() {
+      return this.toDebugString();
+    }
+
+    internal override string toDebugString() {
     var builder = new StringBuilder();
     foreach (var node in this.getChildNodesInternal()) {
         string str = ((Node)node).toDebugString();

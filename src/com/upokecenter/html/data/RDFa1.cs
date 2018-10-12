@@ -144,7 +144,7 @@ namespace com.upokecenter.html.data {
     private int blankNode;
 
     private IDictionary<string, RDFTerm> bnodeLabels = new
-      PeterO.Support.LenientDictionary<string, RDFTerm>();
+      Dictionary<string, RDFTerm>();
 
     private static readonly string RDFA_DEFAULT_PREFIX =
       "http://www.w3.org/1999/xhtml/vocab#";
@@ -153,17 +153,16 @@ namespace com.upokecenter.html.data {
       this.document = document;
       this.context = new RDFa.EvalContext();
       this.context.ValueBaseURI = document.getBaseURI();
-      this.context.ValueNamespaces = new
-           PeterO.Support.LenientDictionary<string, string>();
+      this.context.ValueNamespaces = new Dictionary<string, string>();
       if (!URIUtility.hasScheme(this.context.ValueBaseURI)) {
         throw new ArgumentException("baseURI: " + this.context.ValueBaseURI);
       }
   this.context.ValueParentSubject = RDFTerm.fromIRI(this.context.ValueBaseURI);
       this.context.ValueParentObject = null;
-      this.context.ValueIriMap = new PeterO.Support.LenientDictionary<string,
+      this.context.ValueIriMap = new Dictionary<string,
           string>();
       this.context.ValueListMap = new
-        PeterO.Support.LenientDictionary<string, IList<RDFTerm>>();
+        Dictionary<string, IList<RDFTerm>>();
       this.context.ValueIncompleteTriples = new List<RDFa.IncompleteTriple>();
       this.context.ValueLanguage = null;
       this.outputGraph = new HashSet<RDFTriple>();
@@ -287,14 +286,12 @@ namespace com.upokecenter.html.data {
     this.getNamedBlankNode(
     attribute.Substring(
     refIndex,
-    (refIndex + refLength) - (refIndex))); } #if DEBUG
-        if (!(refIndex >= 0)) {
+    (refIndex + refLength) - (refIndex))); } if (!(refIndex >= 0)) {
           throw new InvalidOperationException(attribute);
         }
         if (!(refIndex + refLength <= attribute.Length)) {
           throw new InvalidOperationException(attribute);
         }
-#endif
         return
     this.relativeResolve(
     prefixIri + attribute.Substring(
@@ -439,10 +436,10 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
       var skipElement = false;
       RDFTerm currentObject = null;
       IDictionary<string, string> namespacesLocal =
-        new PeterO.Support.LenientDictionary<string,
+        new Dictionary<string,
             string>(this.context.ValueNamespaces);
       IDictionary<string, string> iriMapLocal =
-       new PeterO.Support.LenientDictionary<string,
+       new Dictionary<string,
             string>(this.context.ValueIriMap);
       string attr = null;
       if (!this.xhtml) {

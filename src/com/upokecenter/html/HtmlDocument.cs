@@ -1,36 +1,15 @@
+using System;
+using PeterO;
+using PeterO.Text;
+using com.upokecenter.net;
 using com.upokecenter.util;
 
-/*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
-
-Licensed under the Expat License.
-
-Copyright (C) 2013 Peter Occil
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
-
 namespace com.upokecenter.html {
+    /// <summary>Not documented yet.</summary>
 public static class HtmlDocument {
+    /*
   private sealed class ParseURLListener : IResponseListener<IDocument> {
-public IDocument processResponse(string url, PeterO.Support.InputStream
+public IDocument processResponse(string url, IReader
       stream,
         IHttpHeaders headers) {
       string contentType=headers.getHeaderField("content-type");
@@ -79,8 +58,21 @@ public IDocument processResponse(string url, PeterO.Support.InputStream
     /// <returns>A string object.</returns>
   public static string getHref(INode node, string href) {
     return (href==null || href.Length==0) ? ("") :
-      (HtmlDocument.resolveURL(node, href, null));
+
+        (HtmlDocument.resolveURL(
+         node,
+         href,
+         null));
   }
+    */
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='str'>Not documented yet.</param>
+    /// <returns>An IDocument object.</returns>
+    public static IDocument FromString(string str) {
+      byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
+      return null;
+    }
 
     /// <summary>Parses an HTML document from an input stream, using
     /// "about:blank" as its address. @param stream an input stream @ if an
@@ -88,18 +80,27 @@ public IDocument processResponse(string url, PeterO.Support.InputStream
     /// <param name='stream'>The parameter <paramref name='stream'/> is not
     /// documented yet.</param>
     /// <returns>An IDocument object.</returns>
-  public static IDocument parseStream(PeterO.Support.InputStream stream) {
-    return parseStream(stream,"about:blank");
+  public static IDocument parseStream(IReader stream) {
+    return parseStream(stream, "about:blank");
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='stream'>Not documented yet.</param>
+    /// <param name='address'>Not documented yet.</param>
+    /// <returns>An IDocument object.</returns>
   public static IDocument parseStream(
-      PeterO.Support.InputStream stream,
+      IReader stream,
       string address) {
-    return parseStream(stream,address,"text/html");
+    return parseStream(stream, address,"text/html");
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='stream'>Not documented yet.</param>
+    /// <param name='address'>Not documented yet.</param>
+    /// <param name='contentType'>Not documented yet. (3).</param>
+    /// <returns>An IDocument object.</returns>
   public static IDocument parseStream(
-      PeterO.Support.InputStream stream,
+      IReader stream,
       string address,
       string contentType) {
     return parseStream(stream, address, contentType, null);
@@ -127,25 +128,22 @@ public IDocument processResponse(string url, PeterO.Support.InputStream
     /// name='stream'/> or <paramref name='address'/> or <paramref
     /// name='contentType'/> is null.</exception>
   public static IDocument parseStream(
-      PeterO.Support.InputStream stream,
+      IReader stream,
       string address,
       string contentType,
       string contentLang) {
-    if ((stream) == null) {
+    if (stream == null) {
  throw new ArgumentNullException(nameof(stream));
 }
-    if ((address) == null) {
+    if (address == null) {
  throw new ArgumentNullException(nameof(address));
 }
-    if ((contentType) == null) {
+    if (contentType == null) {
  throw new ArgumentNullException(nameof(contentType));
 }
-    if (!stream.markSupported()) {
-      stream = new PeterO.Support.BufferedInputStream(stream);
-    }
       // TODO: Use MediaType to get media type and charset
       string mediatype = contentType;
-      string charset = contentType;
+      string charset = "utf-8";
     if (mediatype.Equals("text/html")) {
         // TODO: add lang (from Content-Language?)
       var parser = new HtmlParser(stream, address, charset, contentLang);
@@ -154,23 +152,12 @@ public IDocument processResponse(string url, PeterO.Support.InputStream
         mediatype.Equals("application/xml") ||
         mediatype.Equals("image/svg+xml") ||
         mediatype.Equals("text/xml")) {
-      var parser = new XhtmlParser(stream, address, charset, contentLang);
-      return parser.parse();
+        throw new NotSupportedException();
+// var parser = new XhtmlParser(stream, address, charset, contentLang);
+ // return parser.parse();
     } else {
- throw new ArgumentException("content type not supported: "+mediatype);
+ throw new ArgumentException("content type not supported: " + mediatype);
 }
   }
-
-    /// <summary>* Parses an HTML document from a URL. @param url URL of
-    /// the HTML document. In addition to HTTP and other URLs supported by
-    /// URLConnection, this method also supports Data URLs. @return a
-    /// document _object from the HTML document @ if an I/O error occurs,
-    /// such as a network error, a download error, and so on.</summary>
-    /// <param name='url'>The parameter <paramref name='url'/> is not
-    /// documented yet.</param>
-    /// <returns>An IDocument object.</returns>
-  public static IDocument parseURL(string url) {
-    return DownloadHelper.downloadUrl(url,
-        new ParseURLListener(), false);
-  }
+}
 }

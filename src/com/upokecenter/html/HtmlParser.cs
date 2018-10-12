@@ -30,34 +30,35 @@ using System.Collections.Generic;
 using System.Text;
 using PeterO;
 using PeterO.Text;
+using com.upokecenter.io;
 using com.upokecenter.net;
 using com.upokecenter.util;
 
 namespace com.upokecenter.html {
   internal sealed class HtmlParser {
     internal class CommentToken : IToken {
-      private StringBuilder Value;
+      public StringBuilder value { get; set; }
 
       public CommentToken() {
-        this.Value = new StringBuilder();
+        this.value = new StringBuilder();
       }
 
       public void Append(char ch) {
-        this.Value.Append(ch);
+        this.value.Append(ch);
       }
 
       public void Append(string str) {
-        this.Value.Append(str);
+        this.value.Append(str);
       }
 
       public void appendChar(int ch) {
         if (ch <= 0xffff) {
           {
-            this.Value.Append((char)ch);
+            this.value.Append((char)ch);
           }
         } else if (ch <= 0x10ffff) {
-          this.Value.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) + 0xd800));
-          this.Value.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
+          this.value.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) + 0xd800));
+          this.value.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
         }
       }
 
@@ -66,15 +67,18 @@ namespace com.upokecenter.html {
       }
 
       public string getValue() {
-        return this.Value.ToString();
+        return this.value.ToString();
       }
     }
 
     internal class DocTypeToken : IToken {
-      private StringBuilder ValueName;
-      private StringBuilder ValuePublicID;
-      private StringBuilder ValueSystemID;
-      private bool ValueForceQuirks;
+      public StringBuilder Name { get; set; }
+
+      public StringBuilder ValuePublicID { get; set; }
+
+      public StringBuilder ValueSystemID { get; set; }
+
+      public bool ValueForceQuirks { get; set; }
 
       public int getType() {
         return TOKEN_DOCTYPE;
@@ -85,27 +89,28 @@ namespace com.upokecenter.html {
       public EndTagToken(char c) : base(c) {
       }
 
-      public EndTagToken(string ValueName) : base(ValueName) {
+      public EndTagToken(string name) : base(name) {
       }
 
       public override sealed int getType() {
-        return this.TOKEN_END_TAG;
+        return HtmlParser.TOKEN_END_TAG;
       }
     }
 
     private class FormattingElement {
-      private bool ValueMarker;
-      private IElement ValueElement;
-      private StartTagToken ValueToken;
+      public bool ValueMarker { get; set; }
+
+      public IElement Element { get; set; }
+
+      public StartTagToken Token { get; set; }
 
       public bool isMarker() {
         return this.ValueMarker;
       }
 
       public override sealed string ToString() {
-        return "FormattingElement [this.ValueMarker=" + ValueMarker +
-          ", this.ValueToken=" + ValueToken +
-             "]\n";
+        return "FormattingElement [this.ValueMarker=" + this.ValueMarker +
+          ", this.valueToken=" + this.Token + "]\n";
       }
     }
 
@@ -142,11 +147,11 @@ namespace com.upokecenter.html {
       public StartTagToken(char c) : base(c) {
       }
 
-      public StartTagToken(string ValueName) : base(ValueName) {
+      public StartTagToken(string name) : base(name) {
       }
 
       public override sealed int getType() {
-        return this.TOKEN_START_TAG;
+        return HtmlParser.TOKEN_START_TAG;
       }
 
       public void setName(string _string) {
@@ -157,20 +162,24 @@ namespace com.upokecenter.html {
 
     internal abstract class TagToken : IToken, INameAndAttributes {
       protected StringBuilder builder;
-      private IList<Attr> ValueAttributes = null;
-      private bool ValueSelfClosing;
-      private bool ValueSelfClosingAck;
+
+      public IList<Attr> valueAttributes { get; set; }
+
+      public bool valueSelfClosing { get; set; }
+
+      public bool ValueSelfClosingAck { get; set; }
 
       public TagToken(char ch) {
         this.builder = new StringBuilder();
         this.builder.Append(ch);
-        this.ValueSelfClosing = false;
+        this.valueAttributes = null;
+        this.valueSelfClosing = false;
         this.ValueSelfClosingAck = false;
       }
 
-      public TagToken(string ValueName) {
+      public TagToken(string valueName) {
         this.builder = new StringBuilder();
-        this.builder.Append(ValueName);
+        this.builder.Append(valueName);
       }
 
       public void ackSelfClosing() {
@@ -178,16 +187,16 @@ namespace com.upokecenter.html {
       }
 
       public Attr addAttribute(char ch) {
-        this.ValueAttributes = this.ValueAttributes ?? (new List<Attr>());
+        this.valueAttributes = this.valueAttributes ?? (new List<Attr>());
         var a = new Attr(ch);
-        this.ValueAttributes.Add(a);
+        this.valueAttributes.Add(a);
         return a;
       }
 
       public Attr addAttribute(int ch) {
-        this.ValueAttributes = this.ValueAttributes ?? (new List<Attr>());
+        this.valueAttributes = this.valueAttributes ?? (new List<Attr>());
         var a = new Attr(ch);
-        this.ValueAttributes.Add(a);
+        this.valueAttributes.Add(a);
         return a;
       }
 
@@ -208,17 +217,17 @@ namespace com.upokecenter.html {
       }
 
       public bool checkAttributeName() {
-        if (this.ValueAttributes == null) {
+        if (this.valueAttributes == null) {
           return true;
         }
-        int size = this.ValueAttributes.Count;
+        int size = this.valueAttributes.Count;
         if (size >= 2) {
-          string thisname = this.ValueAttributes[size - 1].getName();
+          string thisname = this.valueAttributes[size - 1].getName();
           for (int i = 0; i < size - 1; ++i) {
-            if (this.ValueAttributes[i].getName().Equals(thisname)) {
-              // Attribute with this ValueName already exists;
+            if (this.valueAttributes[i].getName().Equals(thisname)) {
+              // Attribute with this valueName already exists;
               // remove it
-              this.ValueAttributes.RemoveAt(size - 1);
+              this.valueAttributes.RemoveAt(size - 1);
               return false;
             }
           }
@@ -226,29 +235,29 @@ namespace com.upokecenter.html {
         return true;
       }
 
-      public string getAttribute(string ValueName) {
-        if (this.ValueAttributes == null) {
+      public string getAttribute(string valueName) {
+        if (this.valueAttributes == null) {
           return null;
         }
-        int size = this.ValueAttributes.Count;
+        int size = this.valueAttributes.Count;
         for (int i = 0; i < size; ++i) {
-          IAttr a = this.ValueAttributes[i];
+          IAttr a = this.valueAttributes[i];
           string thisname = a.getName();
-          if (thisname.Equals(ValueName)) {
+          if (thisname.Equals(valueName)) {
             return a.getValue();
           }
         }
         return null;
       }
 
-      public string getAttributeNS(string ValueName, string _namespace) {
-        if (this.ValueAttributes == null) {
+      public string getAttributeNS(string valueName, string _namespace) {
+        if (this.valueAttributes == null) {
           return null;
         }
-        int size = this.ValueAttributes.Count;
+        int size = this.valueAttributes.Count;
         for (int i = 0; i < size; ++i) {
-          Attr a = this.ValueAttributes[i];
-          if (a.isAttribute(ValueName, _namespace)) {
+          Attr a = this.valueAttributes[i];
+          if (a.isAttribute(valueName, _namespace)) {
             return a.getValue();
           }
         }
@@ -256,10 +265,10 @@ namespace com.upokecenter.html {
       }
 
       public IList<Attr> getAttributes() {
-        if (this.ValueAttributes == null) {
+        if (this.valueAttributes == null) {
           return new Attr[0];
         } else {
-          return this.ValueAttributes;
+          return this.valueAttributes;
         }
       }
 
@@ -270,42 +279,42 @@ namespace com.upokecenter.html {
       public abstract int getType();
 
       public bool isAckSelfClosing() {
-        return !this.ValueSelfClosing || this.ValueSelfClosingAck;
+        return !this.valueSelfClosing || this.ValueSelfClosingAck;
       }
 
       public bool isSelfClosing() {
-        return this.ValueSelfClosing;
+        return this.valueSelfClosing;
       }
 
       public bool isSelfClosingAck() {
         return this.ValueSelfClosingAck;
       }
 
-      public void setAttribute(string attrname, string Value) {
-        if (this.ValueAttributes == null) {
-          this.ValueAttributes = new List<Attr>();
-          this.ValueAttributes.Add(new Attr(attrname, Value));
+      public void setAttribute(string attrname, string value) {
+        if (this.valueAttributes == null) {
+          this.valueAttributes = new List<Attr>();
+          this.valueAttributes.Add(new Attr(attrname, value));
         } else {
-          int size = this.ValueAttributes.Count;
+          int size = this.valueAttributes.Count;
           for (int i = 0; i < size; ++i) {
-            Attr a = this.ValueAttributes[i];
+            Attr a = this.valueAttributes[i];
             string thisname = a.getName();
             if (thisname.Equals(attrname)) {
-              a.setValue(Value);
+              a.setValue(value);
               return;
             }
           }
-          this.ValueAttributes.Add(new Attr(attrname, Value));
+          this.valueAttributes.Add(new Attr(attrname, value));
         }
       }
 
-      public void setSelfClosing(bool ValueSelfClosing) {
-        this.ValueSelfClosing = ValueSelfClosing;
+      public void setSelfClosing(bool valueSelfClosing) {
+        this.valueSelfClosing = valueSelfClosing;
       }
 
       public override sealed string ToString() {
         return "TagToken [" + this.builder.ToString() + ", " +
-    this.ValueAttributes + (this.ValueSelfClosing ?
+    this.valueAttributes + (this.valueSelfClosing ?
               (", ValueSelfClosingAck=" +
               this.ValueSelfClosingAck) : String.Empty) + "]";
       }
@@ -406,18 +415,18 @@ namespace com.upokecenter.html {
       CData
     }
 
-    private static int TOKEN_EOF = 0x10000000;
+    private const int TOKEN_EOF = 0x10000000;
 
-    private static int TOKEN_START_TAG = 0x20000000;
+    private const int TOKEN_START_TAG = 0x20000000;
 
-    private static int TOKEN_END_TAG = 0x30000000;
+    private const int TOKEN_END_TAG = 0x30000000;
 
-    private static int TOKEN_COMMENT = 0x40000000;
+    private const int TOKEN_COMMENT = 0x40000000;
 
-    private static int TOKEN_DOCTYPE = 0x50000000;
-    private static int TOKEN_TYPE_MASK = unchecked((int)0xf0000000);
-    private static int TOKEN_CHARACTER = 0x00000000;
-    private static int valueTOKEN_INDEX_MASK = 0x0fffffff;
+    private const int TOKEN_DOCTYPE = 0x50000000;
+    private const int TOKEN_TYPE_MASK = unchecked((int)0xf0000000);
+    private const int TOKEN_CHARACTER = 0x00000000;
+    private const int TOKEN_INDEX_MASK = 0x0fffffff;
 
     private static string[] quirksModePublicIdPrefixes = new string[] {
     "+//silmaril//dtd html pro v0r11 19970101//",
@@ -479,7 +488,7 @@ namespace com.upokecenter.html {
     "-//webtechs//dtd mozilla html//"
   };
 
-    private IInputStream inputStream;
+    private ConditionalBufferInputStream inputStream;
     private IMarkableCharacterInput charInput = null;
     private EncodingConfidence encoding = null;
 
@@ -510,7 +519,7 @@ namespace com.upokecenter.html {
     private Element inputElement = null;
     private string baseurl = null;
     private bool hasForeignContent = false;
-    private Document ValueDocument = null;
+    private Document valueDocument = null;
     private bool done = false;
 
     private StringBuilder pendingTableCharacters = new StringBuilder();
@@ -527,18 +536,18 @@ namespace com.upokecenter.html {
       return ret;
     }
 
-    public HtmlParser(PeterO.Support.InputStream s, string address) :
+    public HtmlParser(IReader s, string address) :
       this(s, address, null, null) {
     }
 
     public HtmlParser(
-  PeterO.Support.InputStream s,
-  string address,
-  string charset) : this(s, address, charset, null) {
+      IReader s,
+      string address,
+      string charset) : this(s, address, charset, null) {
     }
 
     public HtmlParser(
-  PeterO.Support.InputStream source,
+  IReader source,
   string address,
   string charset,
   string contentLanguage) {
@@ -555,314 +564,320 @@ namespace com.upokecenter.html {
       this.contentLanguage = new string[] { contentLanguage };
       this.address = address;
       this.initialize();
-      this.inputStream = null;  // TODO: ???
-      this.encoding = CharsetSniffer.sniffEncoding(null, charset);
+      this.inputStream = new ConditionalBufferInputStream(source);  // TODO: ???
+      this.encoding = new EncodingConfidence(
+     charset,
+     EncodingConfidence.Certain);
+      // TODO: Use the following below
+      // this.encoding = CharsetSniffer.sniffEncoding(this.inputStream,
+      // charset);
       this.inputStream.rewind();
       ICharacterEncoding henc = new Html5Encoding(this.encoding);
       this.charInput = new StackableCharacterInput(
-        Encodings.GetDecoderInput(henc, (IByteReader)null));
+        Encodings.GetDecoderInput(henc, this.inputStream));
     }
 
-    private void addCommentNodeToCurrentNode(int ValueToken) {
-      this.insertInCurrentNode(this.createCommentNode(ValueToken));
+    private void addCommentNodeToCurrentNode(int valueToken) {
+      this.insertInCurrentNode(this.createCommentNode(valueToken));
     }
 
-    private void addCommentNodeToDocument(int ValueToken) {
-((Document)this.ValueDocument)
-        .appendChild(this.createCommentNode(ValueToken));
+    private void addCommentNodeToDocument(int valueToken) {
+      ((Document)this.valueDocument)
+              .appendChild(this.createCommentNode(valueToken));
     }
 
-    private void addCommentNodeToFirst(int ValueToken) {
-((Node)this.openElements[0])
-        .appendChild(this.createCommentNode(ValueToken));
+    private void addCommentNodeToFirst(int valueToken) {
+      ((Node)this.openElements[0])
+              .appendChild(this.createCommentNode(valueToken));
     }
 
     private Element addHtmlElement(StartTagToken tag) {
-      Element ValueElement = Element.fromToken(tag);
+      Element valueElement = Element.fromToken(tag);
       IElement currentNode = this.getCurrentNode();
       if (currentNode != null) {
-        this.insertInCurrentNode(ValueElement);
+        this.insertInCurrentNode(valueElement);
       } else {
-        this.ValueDocument.appendChild(ValueElement);
+        this.valueDocument.appendChild(valueElement);
       }
-      this.openElements.Add(ValueElement);
-      return ValueElement;
+      this.openElements.Add(valueElement);
+      return valueElement;
     }
 
     private Element addHtmlElementNoPush(StartTagToken tag) {
-      Element ValueElement = Element.fromToken(tag);
+      Element valueElement = Element.fromToken(tag);
       IElement currentNode = this.getCurrentNode();
       if (currentNode != null) {
-        this.insertInCurrentNode(ValueElement);
+        this.insertInCurrentNode(valueElement);
       }
-      return ValueElement;
+      return valueElement;
     }
 
-    private void adjustForeignAttributes(StartTagToken ValueToken) {
-      IList<Attr> ValueAttributes = ValueToken.getAttributes();
-      foreach (var attr in ValueAttributes) {
-        string ValueName = attr.getName();
-  if (ValueName.Equals("xlink:actuate") || ValueName.Equals("xlink:arcrole"
-) ||
-            ValueName.Equals("xlink:href") || ValueName.Equals("xlink:role") ||
-            ValueName.Equals("xlink:show") || ValueName.Equals("xlink:title") ||
-            ValueName.Equals("xlink:type")) {
+    private void adjustForeignAttributes(StartTagToken valueToken) {
+      IList<Attr> valueAttributes = valueToken.getAttributes();
+      foreach (var attr in valueAttributes) {
+        string valueName = attr.getName();
+        if (valueName.Equals("xlink:actuate") || valueName.Equals(
+        "xlink:arcrole") ||
+            valueName.Equals("xlink:href") || valueName.Equals(
+  "xlink:role") ||
+           valueName.Equals("xlink:show") || valueName.Equals(
+  "xlink:title") ||
+                  valueName.Equals("xlink:type")) {
           attr.setNamespace(HtmlCommon.XLINK_NAMESPACE);
-     } else if (ValueName.Equals("xml:base") || ValueName.Equals("xml:lang"
-) ||
-                ValueName.Equals("xml:space")) {
+        } else if (valueName.Equals("xml:base") || valueName.Equals(
+     "xml:lang") || valueName.Equals("xml:space")) {
           attr.setNamespace(HtmlCommon.XML_NAMESPACE);
-     } else if (ValueName.Equals("xmlns") || ValueName.Equals("xmlns:xlink"
-)) {
+        } else if (valueName.Equals("xmlns") || valueName.Equals(
+     "xmlns:xlink")) {
           attr.setNamespace(HtmlCommon.XMLNS_NAMESPACE);
         }
       }
     }
 
-    private void adjustMathMLAttributes(StartTagToken ValueToken) {
-      IList<Attr> ValueAttributes = ValueToken.getAttributes();
-      foreach (var attr in ValueAttributes) {
+    private void adjustMathMLAttributes(StartTagToken valueToken) {
+      IList<Attr> valueAttributes = valueToken.getAttributes();
+      foreach (var attr in valueAttributes) {
         if (attr.getName().Equals("definitionurl")) {
           attr.setName("definitionURL");
         }
       }
     }
 
-    private void adjustSvgAttributes(StartTagToken ValueToken) {
-      IList<Attr> ValueAttributes = ValueToken.getAttributes();
-      foreach (var attr in ValueAttributes) {
-        string ValueName = attr.getName();
-        if (ValueName.Equals("attributename")) {
+    private void adjustSvgAttributes(StartTagToken valueToken) {
+      IList<Attr> valueAttributes = valueToken.getAttributes();
+      foreach (var attr in valueAttributes) {
+        string valueName = attr.getName();
+        if (valueName.Equals("attributename")) {
           {
             attr.setName("attributeName");
           }
-        } else if (ValueName.Equals("attributetype")) {
+        } else if (valueName.Equals("attributetype")) {
           {
             attr.setName("attributeType");
           }
-        } else if (ValueName.Equals("basefrequency")) {
+        } else if (valueName.Equals("basefrequency")) {
           {
             attr.setName("baseFrequency");
           }
-        } else if (ValueName.Equals("baseprofile")) {
+        } else if (valueName.Equals("baseprofile")) {
           {
             attr.setName("baseProfile");
           }
-        } else if (ValueName.Equals("calcmode")) {
+        } else if (valueName.Equals("calcmode")) {
           {
             attr.setName("calcMode");
           }
-        } else if (ValueName.Equals("clippathunits")) {
+        } else if (valueName.Equals("clippathunits")) {
           {
             attr.setName("clipPathUnits");
           }
-        } else if (ValueName.Equals("contentscripttype")) {
+        } else if (valueName.Equals("contentscripttype")) {
           attr.setName("contentScriptType");
-        } else if (ValueName.Equals("contentstyletype")) {
+        } else if (valueName.Equals("contentstyletype")) {
           {
             attr.setName("contentStyleType");
           }
-        } else if (ValueName.Equals("diffuseconstant")) {
+        } else if (valueName.Equals("diffuseconstant")) {
           {
             attr.setName("diffuseConstant");
           }
-        } else if (ValueName.Equals("edgemode")) {
+        } else if (valueName.Equals("edgemode")) {
           {
             attr.setName("edgeMode");
           }
-        } else if (ValueName.Equals("externalresourcesrequired")) {
+        } else if (valueName.Equals("externalresourcesrequired")) {
           attr.setName("externalResourcesRequired");
-        } else if (ValueName.Equals("filterres")) {
+        } else if (valueName.Equals("filterres")) {
           {
             attr.setName("filterRes");
           }
-        } else if (ValueName.Equals("filterunits")) {
+        } else if (valueName.Equals("filterunits")) {
           {
             attr.setName("filterUnits");
           }
-        } else if (ValueName.Equals("glyphref")) {
+        } else if (valueName.Equals("glyphref")) {
           {
             attr.setName("glyphRef");
           }
-        } else if (ValueName.Equals("gradienttransform")) {
+        } else if (valueName.Equals("gradienttransform")) {
           attr.setName("gradientTransform");
-        } else if (ValueName.Equals("gradientunits")) {
+        } else if (valueName.Equals("gradientunits")) {
           {
             attr.setName("gradientUnits");
           }
-        } else if (ValueName.Equals("kernelmatrix")) {
+        } else if (valueName.Equals("kernelmatrix")) {
           {
             attr.setName("kernelMatrix");
           }
-        } else if (ValueName.Equals("kernelunitlength")) {
+        } else if (valueName.Equals("kernelunitlength")) {
           {
             attr.setName("kernelUnitLength");
           }
-        } else if (ValueName.Equals("keypoints")) {
+        } else if (valueName.Equals("keypoints")) {
           {
             attr.setName("keyPoints");
           }
-        } else if (ValueName.Equals("keysplines")) {
+        } else if (valueName.Equals("keysplines")) {
           {
             attr.setName("keySplines");
           }
-        } else if (ValueName.Equals("keytimes")) {
+        } else if (valueName.Equals("keytimes")) {
           {
             attr.setName("keyTimes");
           }
-        } else if (ValueName.Equals("lengthadjust")) {
+        } else if (valueName.Equals("lengthadjust")) {
           {
             attr.setName("lengthAdjust");
           }
-        } else if (ValueName.Equals("limitingconeangle")) {
+        } else if (valueName.Equals("limitingconeangle")) {
           attr.setName("limitingConeAngle");
-        } else if (ValueName.Equals("markerheight")) {
+        } else if (valueName.Equals("markerheight")) {
           {
             attr.setName("markerHeight");
           }
-        } else if (ValueName.Equals("markerunits")) {
+        } else if (valueName.Equals("markerunits")) {
           {
             attr.setName("markerUnits");
           }
-        } else if (ValueName.Equals("markerwidth")) {
+        } else if (valueName.Equals("markerwidth")) {
           {
             attr.setName("markerWidth");
           }
-        } else if (ValueName.Equals("maskcontentunits")) {
+        } else if (valueName.Equals("maskcontentunits")) {
           {
             attr.setName("maskContentUnits");
           }
-        } else if (ValueName.Equals("maskunits")) {
+        } else if (valueName.Equals("maskunits")) {
           {
             attr.setName("maskUnits");
           }
-        } else if (ValueName.Equals("numoctaves")) {
+        } else if (valueName.Equals("numoctaves")) {
           {
             attr.setName("numOctaves");
           }
-        } else if (ValueName.Equals("pathlength")) {
+        } else if (valueName.Equals("pathlength")) {
           {
             attr.setName("pathLength");
           }
-        } else if (ValueName.Equals("patterncontentunits")) {
+        } else if (valueName.Equals("patterncontentunits")) {
           attr.setName("patternContentUnits");
-        } else if (ValueName.Equals("patterntransform")) {
+        } else if (valueName.Equals("patterntransform")) {
           {
             attr.setName("patternTransform");
           }
-        } else if (ValueName.Equals("patternunits")) {
+        } else if (valueName.Equals("patternunits")) {
           {
             attr.setName("patternUnits");
           }
-        } else if (ValueName.Equals("pointsatx")) {
+        } else if (valueName.Equals("pointsatx")) {
           {
             attr.setName("pointsAtX");
           }
-        } else if (ValueName.Equals("pointsaty")) {
+        } else if (valueName.Equals("pointsaty")) {
           {
             attr.setName("pointsAtY");
           }
-        } else if (ValueName.Equals("pointsatz")) {
+        } else if (valueName.Equals("pointsatz")) {
           {
             attr.setName("pointsAtZ");
           }
-        } else if (ValueName.Equals("preservealpha")) {
+        } else if (valueName.Equals("preservealpha")) {
           {
             attr.setName("preserveAlpha");
           }
-        } else if (ValueName.Equals("preserveaspectratio")) {
+        } else if (valueName.Equals("preserveaspectratio")) {
           attr.setName("preserveAspectRatio");
-        } else if (ValueName.Equals("primitiveunits")) {
+        } else if (valueName.Equals("primitiveunits")) {
           {
             attr.setName("primitiveUnits");
           }
-        } else if (ValueName.Equals("refx")) {
+        } else if (valueName.Equals("refx")) {
           {
             attr.setName("refX");
           }
-        } else if (ValueName.Equals("refy")) {
+        } else if (valueName.Equals("refy")) {
           {
             attr.setName("refY");
           }
-        } else if (ValueName.Equals("repeatcount")) {
+        } else if (valueName.Equals("repeatcount")) {
           {
             attr.setName("repeatCount");
           }
-        } else if (ValueName.Equals("repeatdur")) {
+        } else if (valueName.Equals("repeatdur")) {
           {
             attr.setName("repeatDur");
           }
-        } else if (ValueName.Equals("requiredextensions")) {
+        } else if (valueName.Equals("requiredextensions")) {
           attr.setName("requiredExtensions");
-        } else if (ValueName.Equals("requiredfeatures")) {
+        } else if (valueName.Equals("requiredfeatures")) {
           {
             attr.setName("requiredFeatures");
           }
-        } else if (ValueName.Equals("specularconstant")) {
+        } else if (valueName.Equals("specularconstant")) {
           {
             attr.setName("specularConstant");
           }
-        } else if (ValueName.Equals("specularexponent")) {
+        } else if (valueName.Equals("specularexponent")) {
           {
             attr.setName("specularExponent");
           }
-        } else if (ValueName.Equals("spreadmethod")) {
+        } else if (valueName.Equals("spreadmethod")) {
           {
             attr.setName("spreadMethod");
           }
-        } else if (ValueName.Equals("startoffset")) {
+        } else if (valueName.Equals("startoffset")) {
           {
             attr.setName("startOffset");
           }
-        } else if (ValueName.Equals("stddeviation")) {
+        } else if (valueName.Equals("stddeviation")) {
           {
             attr.setName("stdDeviation");
           }
-        } else if (ValueName.Equals("stitchtiles")) {
+        } else if (valueName.Equals("stitchtiles")) {
           {
             attr.setName("stitchTiles");
           }
-        } else if (ValueName.Equals("surfacescale")) {
+        } else if (valueName.Equals("surfacescale")) {
           {
             attr.setName("surfaceScale");
           }
-        } else if (ValueName.Equals("systemlanguage")) {
+        } else if (valueName.Equals("systemlanguage")) {
           {
             attr.setName("systemLanguage");
           }
-        } else if (ValueName.Equals("tablevalues")) {
+        } else if (valueName.Equals("tablevalues")) {
           {
             attr.setName("tableValues");
           }
-        } else if (ValueName.Equals("targetx")) {
+        } else if (valueName.Equals("targetx")) {
           {
             attr.setName("targetX");
           }
-        } else if (ValueName.Equals("targety")) {
+        } else if (valueName.Equals("targety")) {
           {
             attr.setName("targetY");
           }
-        } else if (ValueName.Equals("textlength")) {
+        } else if (valueName.Equals("textlength")) {
           {
             attr.setName("textLength");
           }
-        } else if (ValueName.Equals("viewbox")) {
+        } else if (valueName.Equals("viewbox")) {
           {
             attr.setName("viewBox");
           }
-        } else if (ValueName.Equals("viewtarget")) {
+        } else if (valueName.Equals("viewtarget")) {
           {
             attr.setName("viewTarget");
           }
-        } else if (ValueName.Equals("xchannelselector")) {
+        } else if (valueName.Equals("xchannelselector")) {
           {
             attr.setName("xChannelSelector");
           }
-        } else if (ValueName.Equals("ychannelselector")) {
+        } else if (valueName.Equals("ychannelselector")) {
           {
             attr.setName("yChannelSelector");
           }
-        } else if (ValueName.Equals("zoomandpan")) {
+        } else if (valueName.Equals("zoomandpan")) {
           {
             attr.setName("zoomAndPan");
           }
@@ -870,33 +885,33 @@ namespace com.upokecenter.html {
       }
     }
 
-    private bool applyEndTag(string ValueName, InsertionMode? insMode) {
+    private bool applyEndTag(string valueName, InsertionMode? insMode) {
       return this.applyInsertionMode(
-  this.getArtificialToken(TOKEN_END_TAG, ValueName),
+  this.getArtificialToken(TOKEN_END_TAG, valueName),
   insMode);
     }
 
-    private bool applyForeignContext(int ValueToken) {
-      if (ValueToken == 0) {
+    private bool applyForeignContext(int valueToken) {
+      if (valueToken == 0) {
         this.error = true;
         this.insertCharacter(this.getCurrentNode(), 0xfffd);
         return true;
-      } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        this.insertCharacter(this.getCurrentNode(), ValueToken);
-        if (ValueToken != 0x09 && ValueToken != 0x0c && ValueToken != 0x0a &&
-            ValueToken != 0x0d && ValueToken != 0x20) {
+      } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+        this.insertCharacter(this.getCurrentNode(), valueToken);
+        if (valueToken != 0x09 && valueToken != 0x0c && valueToken != 0x0a &&
+            valueToken != 0x0d && valueToken != 0x20) {
           this.framesetOk = false;
         }
         return true;
-      } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-        this.addCommentNodeToCurrentNode(ValueToken);
-      } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+      } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+        this.addCommentNodeToCurrentNode(valueToken);
+      } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
         this.error = true;
         return false;
-      } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-        var tag = (StartTagToken)this.getToken(ValueToken);
-        string ValueName = tag.getName();
-        if (ValueName.Equals("font")) {
+      } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+        var tag = (StartTagToken)this.getToken(valueToken);
+        string valueName = tag.getName();
+        if (valueName.Equals("font")) {
           if (tag.getAttribute("color") != null || tag.getAttribute("size") !=
                    null || tag.getAttribute("face") != null) {
             this.error = true;
@@ -909,44 +924,41 @@ namespace com.upokecenter.html {
                 break;
               }
             }
-            return this.applyInsertionMode(ValueToken, null);
+            return this.applyInsertionMode(valueToken, null);
           }
-        } else if (ValueName.Equals("b") ||
-            ValueName.Equals("big") || ValueName.Equals("blockquote") ||
-              ValueName.Equals("body") || ValueName.Equals("br") ||
-    ValueName.Equals("center") || ValueName.Equals("code") ||
-              ValueName.Equals(
-    "dd") || ValueName.Equals("div") ||
-  ValueName.Equals("dl") || ValueName.Equals("dt") ||
-              ValueName.Equals("em") ||
-              ValueName.Equals("embed") ||
-  ValueName.Equals("h1") || ValueName.Equals("h2") ||
-              ValueName.Equals("h3") ||
-              ValueName.Equals("h4") ||
-ValueName.Equals("h5") || ValueName.Equals("h6") ||
-              ValueName.Equals("head") ||
-              ValueName.Equals("hr") ||
-  ValueName.Equals("i") || ValueName.Equals("img") ||
-              ValueName.Equals("li") ||
-              ValueName.Equals("listing") ||
-      ValueName.Equals("menu") || ValueName.Equals("meta") ||
-              ValueName.Equals(
-    "nobr") || ValueName.Equals("ol") ||
-ValueName.Equals("p") || ValueName.Equals("pre") ||
-              ValueName.Equals("ruby") ||
-              ValueName.Equals("s") || ValueName.Equals("small") ||
-                ValueName.Equals("span") ||
-              ValueName.Equals("strong") || ValueName.Equals("strike") ||
-        ValueName.Equals("sub") || ValueName.Equals("sup") ||
-              ValueName.Equals(
-    "table") || ValueName.Equals("tt") ||
-  ValueName.Equals("u") || ValueName.Equals("ul") ||
-              ValueName.Equals("var")) {
+        } else if (valueName.Equals("b") ||
+            valueName.Equals("big") || valueName.Equals("blockquote") ||
+              valueName.Equals("body") || valueName.Equals("br") ||
+    valueName.Equals("center") || valueName.Equals("code") ||
+              valueName.Equals(
+    "dd") || valueName.Equals("div") ||
+  valueName.Equals("dl") || valueName.Equals("dt") ||
+              valueName.Equals("em") || valueName.Equals("embed") ||
+  valueName.Equals("h1") || valueName.Equals("h2") ||
+              valueName.Equals("h3") || valueName.Equals("h4") ||
+valueName.Equals("h5") || valueName.Equals("h6") ||
+              valueName.Equals("head") || valueName.Equals("hr") ||
+  valueName.Equals("i") || valueName.Equals("img") ||
+              valueName.Equals("li") || valueName.Equals("listing") ||
+      valueName.Equals("menu") || valueName.Equals("meta") ||
+              valueName.Equals(
+    "nobr") || valueName.Equals("ol") ||
+valueName.Equals("p") || valueName.Equals("pre") ||
+              valueName.Equals("ruby") ||
+              valueName.Equals("s") || valueName.Equals("small") ||
+                valueName.Equals("span") ||
+              valueName.Equals("strong") || valueName.Equals("strike") ||
+        valueName.Equals("sub") || valueName.Equals("sup") ||
+              valueName.Equals(
+    "table") || valueName.Equals("tt") ||
+  valueName.Equals("u") || valueName.Equals("ul") ||
+              valueName.Equals("var")) {
           this.error = true;
           if (this.context != null && !this.hasNativeElementInScope()) {
             this.noforeign = true;
-     bool ret = this.applyInsertionMode(ValueToken,
-              InsertionMode.InBody);
+            bool ret = this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InBody);
             this.noforeign = false;
             return ret;
           }
@@ -959,82 +971,82 @@ ValueName.Equals("p") || ValueName.Equals("pre") ||
               break;
             }
           }
-          return this.applyInsertionMode(ValueToken, null);
+          return this.applyInsertionMode(valueToken, null);
         } else {
           string _namespace = this.getCurrentNode().getNamespaceURI();
           var mathml = false;
           if (HtmlCommon.SVG_NAMESPACE.Equals(_namespace)) {
-            if (ValueName.Equals("altglyph")) {
+            if (valueName.Equals("altglyph")) {
               tag.setName("altGlyph");
-            } else if (ValueName.Equals("altglyphdef")) {
+            } else if (valueName.Equals("altglyphdef")) {
               tag.setName("altGlyphDef");
-            } else if (ValueName.Equals("altglyphitem")) {
+            } else if (valueName.Equals("altglyphitem")) {
               tag.setName("altGlyphItem");
-            } else if (ValueName.Equals("animatecolor")) {
+            } else if (valueName.Equals("animatecolor")) {
               tag.setName("animateColor");
-            } else if (ValueName.Equals("animatemotion")) {
+            } else if (valueName.Equals("animatemotion")) {
               tag.setName("animateMotion");
-            } else if (ValueName.Equals("animatetransform")) {
+            } else if (valueName.Equals("animatetransform")) {
               tag.setName("animateTransform");
-            } else if (ValueName.Equals("clippath")) {
+            } else if (valueName.Equals("clippath")) {
               tag.setName("clipPath");
-            } else if (ValueName.Equals("feblend")) {
+            } else if (valueName.Equals("feblend")) {
               tag.setName("feBlend");
-            } else if (ValueName.Equals("fecolormatrix")) {
+            } else if (valueName.Equals("fecolormatrix")) {
               tag.setName("feColorMatrix");
-            } else if (ValueName.Equals("fecomponenttransfer")) {
+            } else if (valueName.Equals("fecomponenttransfer")) {
               tag.setName("feComponentTransfer");
-            } else if (ValueName.Equals("fecomposite")) {
+            } else if (valueName.Equals("fecomposite")) {
               tag.setName("feComposite");
-            } else if (ValueName.Equals("feconvolvematrix")) {
+            } else if (valueName.Equals("feconvolvematrix")) {
               tag.setName("feConvolveMatrix");
-            } else if (ValueName.Equals("fediffuselighting")) {
+            } else if (valueName.Equals("fediffuselighting")) {
               tag.setName("feDiffuseLighting");
-            } else if (ValueName.Equals("fedisplacementmap")) {
+            } else if (valueName.Equals("fedisplacementmap")) {
               tag.setName("feDisplacementMap");
-            } else if (ValueName.Equals("fedistantlight")) {
+            } else if (valueName.Equals("fedistantlight")) {
               tag.setName("feDistantLight");
-            } else if (ValueName.Equals("feflood")) {
+            } else if (valueName.Equals("feflood")) {
               tag.setName("feFlood");
-            } else if (ValueName.Equals("fefunca")) {
+            } else if (valueName.Equals("fefunca")) {
               tag.setName("feFuncA");
-            } else if (ValueName.Equals("fefuncb")) {
+            } else if (valueName.Equals("fefuncb")) {
               tag.setName("feFuncB");
-            } else if (ValueName.Equals("fefuncg")) {
+            } else if (valueName.Equals("fefuncg")) {
               tag.setName("feFuncG");
-            } else if (ValueName.Equals("fefuncr")) {
+            } else if (valueName.Equals("fefuncr")) {
               tag.setName("feFuncR");
-            } else if (ValueName.Equals("fegaussianblur")) {
+            } else if (valueName.Equals("fegaussianblur")) {
               tag.setName("feGaussianBlur");
-            } else if (ValueName.Equals("feimage")) {
+            } else if (valueName.Equals("feimage")) {
               tag.setName("feImage");
-            } else if (ValueName.Equals("femerge")) {
+            } else if (valueName.Equals("femerge")) {
               tag.setName("feMerge");
-            } else if (ValueName.Equals("femergenode")) {
+            } else if (valueName.Equals("femergenode")) {
               tag.setName("feMergeNode");
-            } else if (ValueName.Equals("femorphology")) {
+            } else if (valueName.Equals("femorphology")) {
               tag.setName("feMorphology");
-            } else if (ValueName.Equals("feoffset")) {
+            } else if (valueName.Equals("feoffset")) {
               tag.setName("feOffset");
-            } else if (ValueName.Equals("fepointlight")) {
+            } else if (valueName.Equals("fepointlight")) {
               tag.setName("fePointLight");
-            } else if (ValueName.Equals("fespecularlighting")) {
+            } else if (valueName.Equals("fespecularlighting")) {
               tag.setName("feSpecularLighting");
-            } else if (ValueName.Equals("fespotlight")) {
+            } else if (valueName.Equals("fespotlight")) {
               tag.setName("feSpotLight");
-            } else if (ValueName.Equals("fetile")) {
+            } else if (valueName.Equals("fetile")) {
               tag.setName("feTile");
-            } else if (ValueName.Equals("feturbulence")) {
+            } else if (valueName.Equals("feturbulence")) {
               tag.setName("feTurbulence");
-            } else if (ValueName.Equals("foreignobject")) {
+            } else if (valueName.Equals("foreignobject")) {
               tag.setName("foreignObject");
-            } else if (ValueName.Equals("glyphref")) {
+            } else if (valueName.Equals("glyphref")) {
               tag.setName("glyphRef");
-            } else if (ValueName.Equals("lineargradient")) {
+            } else if (valueName.Equals("lineargradient")) {
               tag.setName("linearGradient");
-            } else if (ValueName.Equals("radialgradient")) {
+            } else if (valueName.Equals("radialgradient")) {
               tag.setName("radialGradient");
-            } else if (ValueName.Equals("textpath")) {
+            } else if (valueName.Equals("textpath")) {
               tag.setName("textPath");
             }
             this.adjustSvgAttributes(tag);
@@ -1055,7 +1067,7 @@ ValueName.Equals("p") || ValueName.Equals("pre") ||
             }
           }
           if (tag.isSelfClosing()) {
-            if (ValueName.Equals("script")) {
+            if (valueName.Equals("script")) {
               tag.ackSelfClosing();
               this.applyEndTag("script", null);
             } else {
@@ -1066,17 +1078,17 @@ ValueName.Equals("p") || ValueName.Equals("pre") ||
           return true;
         }
         return false;
-      } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-        var tag = (EndTagToken)this.getToken(ValueToken);
-        string ValueName = tag.getName();
-        if (ValueName.Equals("script") &&
+      } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+        var tag = (EndTagToken)this.getToken(valueToken);
+        string valueName = tag.getName();
+        if (valueName.Equals("script") &&
             this.getCurrentNode().getLocalName().Equals("script") &&
 HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
           this.popCurrentNode();
         } else {
- if
-  (!DataUtilities.ToLowerCaseAscii(this.getCurrentNode().getLocalName())
-                    .Equals(ValueName)) {
+          if
+(!DataUtilities.ToLowerCaseAscii(this.getCurrentNode().getLocalName())
+                    .Equals(valueName)) {
             this.error = true;
           }
           int originalSize = this.openElements.Count;
@@ -1088,11 +1100,11 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
             if (i1 < originalSize - 1 &&
                 HtmlCommon.HTML_NAMESPACE.Equals(node.getNamespaceURI())) {
               this.noforeign = true;
-              return this.applyInsertionMode(ValueToken, null);
+              return this.applyInsertionMode(valueToken, null);
             }
             string nodeName =
                  DataUtilities.ToLowerCaseAscii(node.getLocalName());
-            if (ValueName.Equals(nodeName)) {
+            if (valueName.Equals(nodeName)) {
               while (true) {
                 IElement node2 = this.popCurrentNode();
                 if (node2.Equals(node)) {
@@ -1105,33 +1117,38 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
         }
         return false;
       } else {
-        return (ValueToken == TOKEN_EOF) ?
-          this.applyInsertionMode(ValueToken, null) :
+        return (valueToken == TOKEN_EOF) ?
+          this.applyInsertionMode(valueToken, null) :
             true;
       }
       throw new InvalidOperationException();
     }
 
-    private bool applyInsertionMode(int ValueToken, InsertionMode? insMode) {
+    private const string XhtmlStrict =
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd";
+
+ private const string Xhtml11 = "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
+
+    private bool applyInsertionMode(int valueToken, InsertionMode? insMode) {
       // DebugUtility.Log("[[%08X %s %s %s(%s)"
-      // , ValueToken, getToken(ValueToken), insMode == null ? insertionMode :
-      // insMode, isForeignContext(ValueToken), noforeign);
-      if (!this.noforeign && this.isForeignContext(ValueToken)) {
-        return this.applyForeignContext(ValueToken);
+      // , valueToken, getToken(valueToken), insMode == null ? insertionMode :
+      // insMode, isForeignContext(valueToken), noforeign);
+      if (!this.noforeign && this.isForeignContext(valueToken)) {
+        return this.applyForeignContext(valueToken);
       }
       this.noforeign = false;
       insMode = insMode ?? this.insertionMode;
       switch (insMode) {
         case InsertionMode.Initial: {
-            if (ValueToken == 0x09 || ValueToken == 0x0a ||
-              ValueToken == 0x0c || ValueToken == 0x0d || ValueToken ==
+            if (valueToken == 0x09 || valueToken == 0x0a ||
+              valueToken == 0x0c || valueToken == 0x0d || valueToken ==
                   0x20) {
               return false;
             }
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              var doctype = (DocTypeToken)this.getToken(ValueToken);
-              string doctypeName = (doctype.ValueName == null) ? String.Empty :
-                    doctype.ValueName.ToString();
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+              var doctype = (DocTypeToken)this.getToken(valueToken);
+              string doctypeName = (doctype.Name == null) ? String.Empty :
+                    doctype.Name.ToString();
               string doctypePublic = (doctype.ValuePublicID == null) ? null :
                 doctype.ValuePublicID.ToString();
               string doctypeSystem = (doctype.ValueSystemID == null) ? null :
@@ -1141,24 +1158,23 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
               if (!matchesHtml || doctypePublic != null ||
               (doctypeSystem != null && !"about:legacy-compat"
                     .Equals(doctypeSystem))) {
-                bool html4 = (matchesHtml && "-//W3C//DTD HTML 4.0//EN"
-                  Equals(doctypePublic) && (doctypeSystem == null ||
-                    "http://www.w3.org/TR/REC-html40/strict.dtd"
+                string h4public = "-//W3C//DTD HTML 4.0//EN";
+                bool html4 = (matchesHtml && h4public.Equals(doctypePublic)&&
+                  (doctypeSystem ==
+                null || "http://www.w3.org/TR/REC-html40/strict.dtd"
                     .Equals(doctypeSystem)));
                 bool html401 = (matchesHtml && "-//W3C//DTD HTML 4.01//EN"
-                  Equals(doctypePublic) && (doctypeSystem == null ||
-                    "http://www.w3.org/TR/html4/strict.dtd"
+                  .Equals(doctypePublic) && (doctypeSystem ==
+                null || "http://www.w3.org/TR/html4/strict.dtd"
                     .Equals(doctypeSystem)));
-                bool xhtml = (matchesHtml &&
-                  "-//W3C//DTD XHTML 1.0 Strict//EN" Equals(doctypePublic)
+                bool xhtml = (matchesHtml && "-//W3C//DTD XHTML 1.0 Strict//EN"
+                  .Equals(doctypePublic) &&
+                  (XhtmlStrict.Equals(doctypeSystem))); string xhtmlPublic =
+                    "-//W3C//DTD XHTML 1.1//EN" ;
+            bool xhtml11 = (matchesHtml && xhtmlPublic.Equals(doctypePublic)
                   &&
-   ("http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
-          Equals(doctypeSystem)));
-                bool xhtml11 = (matchesHtml && "-//W3C//DTD XHTML 1.1//EN"
-                  Equals(doctypePublic) &&
-        ("http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
-               Equals(doctypeSystem)));
-                if (!html4 && !html401 && !xhtml && !xhtml11) {
+          Xhtml11.Equals(doctypeSystem)); if (!html4 && !html401 && !xhtml&&
+              !xhtml11) {
                   this.error = true;
                 }
               }
@@ -1168,12 +1184,12 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
               doctypeName,
               doctypePublic,
               doctypeSystem);
-              this.ValueDocument.Doctype = doctypeNode;
-              this.ValueDocument.appendChild(doctypeNode);
+              this.valueDocument.Doctype = doctypeNode;
+              this.valueDocument.appendChild(doctypeNode);
               string doctypePublicLC = null;
-              if (!"about:srcdoc".Equals(this.ValueDocument.Address)) {
+              if (!"about:srcdoc".Equals(this.valueDocument.Address)) {
                 if (!matchesHtml || doctype.ValueForceQuirks) {
-                  this.ValueDocument.setMode(DocumentMode.QuirksMode);
+                  this.valueDocument.setMode(DocumentMode.QuirksMode);
                 } else {
                   doctypePublicLC =
                     DataUtilities.ToLowerCaseAscii(doctypePublic);
@@ -1182,19 +1198,20 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                     .Equals(doctypePublicLC) ||
                     "-/w3c/dtd html 4.0 transitional/en".Equals(doctypePublicLC)
 ) {
-                    this.ValueDocument.setMode(DocumentMode.QuirksMode);
+                    this.valueDocument.setMode(DocumentMode.QuirksMode);
                   } else if (doctypePublic.Length > 0) {
                     foreach (var id in quirksModePublicIdPrefixes) {
                     if (
-  doctypePublicLC.StartsWith(id,
-                    StringComparison.Ordinal)) {
-                    this.ValueDocument.setMode(DocumentMode.QuirksMode);
+    doctypePublicLC.StartsWith(
+    id,
+    StringComparison.Ordinal)) {
+                    this.valueDocument.setMode(DocumentMode.QuirksMode);
                     break;
                     }
                     }
                   }
                 }
-                if (this.ValueDocument.getMode() != DocumentMode.QuirksMode) {
+                if (this.valueDocument.getMode() != DocumentMode.QuirksMode) {
                   doctypePublicLC = doctypePublicLC ??
                     DataUtilities.ToLowerCaseAscii(doctypePublic);
                   if
@@ -1207,160 +1224,161 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
   doctypePublicLC.StartsWith(
   "-//w3c//dtd html 4.01 transitional//",
   StringComparison.Ordinal))) {
-                    this.ValueDocument.setMode(DocumentMode.QuirksMode);
+                    this.valueDocument.setMode(DocumentMode.QuirksMode);
                   }
                 }
-                if (this.ValueDocument.getMode() != DocumentMode.QuirksMode) {
+                if (this.valueDocument.getMode() != DocumentMode.QuirksMode) {
                   doctypePublicLC = doctypePublicLC ??
                     DataUtilities.ToLowerCaseAscii(doctypePublic);
-                if (
-  doctypePublicLC.StartsWith("-//w3c//dtd xhtml 1.0 frameset//",
-              StringComparison.Ordinal) ||
-  doctypePublicLC.StartsWith(
-  "-//w3c//dtd xhtml 1.0 transitional//",
-  StringComparison.Ordinal) || (hasSystemId &&
-               doctypePublicLC.StartsWith(
-  "-//w3c//dtd html 4.01 frameset//",
-  StringComparison.Ordinal)) || (hasSystemId &&
-  doctypePublicLC.StartsWith(
-  "-//w3c//dtd html 4.01 transitional//",
-  StringComparison.Ordinal))) {
-                    this.ValueDocument.setMode(DocumentMode.LimitedQuirksMode);
+                  if (
+    doctypePublicLC.StartsWith(
+    "-//w3c//dtd xhtml 1.0 frameset//",
+    StringComparison.Ordinal) ||
+    doctypePublicLC.StartsWith(
+    "-//w3c//dtd xhtml 1.0 transitional//",
+    StringComparison.Ordinal) || (hasSystemId &&
+                 doctypePublicLC.StartsWith(
+    "-//w3c//dtd html 4.01 frameset//",
+    StringComparison.Ordinal)) || (hasSystemId &&
+    doctypePublicLC.StartsWith(
+    "-//w3c//dtd html 4.01 transitional//",
+    StringComparison.Ordinal))) {
+                    this.valueDocument.setMode(DocumentMode.LimitedQuirksMode);
                   }
                 }
               }
               this.insertionMode = InsertionMode.BeforeHtml;
               return true;
             }
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToDocument(ValueToken);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.addCommentNodeToDocument(valueToken);
 
               return true;
             }
-            if (!"about:srcdoc".Equals(this.ValueDocument.Address)) {
+            if (!"about:srcdoc".Equals(this.valueDocument.Address)) {
               this.error = true;
-              this.ValueDocument.setMode(DocumentMode.QuirksMode);
+              this.valueDocument.setMode(DocumentMode.QuirksMode);
             }
             this.insertionMode = InsertionMode.BeforeHtml;
-            return this.applyInsertionMode(ValueToken, null);
+            return this.applyInsertionMode(valueToken, null);
           }
         case InsertionMode.BeforeHtml: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
               this.error = true;
               return false;
             }
-            if (ValueToken == 0x09 || ValueToken == 0x0a ||
-              ValueToken == 0x0c || ValueToken == 0x0d || ValueToken ==
+            if (valueToken == 0x09 || valueToken == 0x0a ||
+              valueToken == 0x0c || valueToken == 0x0d || valueToken ==
                   0x20) {
               return false;
             }
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToDocument(ValueToken);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.addCommentNodeToDocument(valueToken);
 
               return true;
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if ("html".Equals(ValueName)) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if ("html".Equals(valueName)) {
                 this.addHtmlElement(tag);
                 this.insertionMode = InsertionMode.BeforeHead;
                 return true;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (TagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (!"html".Equals(ValueName) && !"br".Equals(ValueName) &&
-                  !"head".Equals(ValueName) && !"body".Equals(ValueName)) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (TagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (!"html".Equals(valueName) && !"br".Equals(valueName) &&
+                  !"head".Equals(valueName) && !"body".Equals(valueName)) {
                 this.error = true;
                 return false;
               }
             }
-            var ValueElement = new Element();
-            ValueElement.setLocalName("html");
-            ValueElement.setNamespace(HtmlCommon.HTML_NAMESPACE);
-            this.ValueDocument.appendChild(ValueElement);
-            this.openElements.Add(ValueElement);
+            var valueElement = new Element();
+            valueElement.setLocalName("html");
+            valueElement.setNamespace(HtmlCommon.HTML_NAMESPACE);
+            this.valueDocument.appendChild(valueElement);
+            this.openElements.Add(valueElement);
             this.insertionMode = InsertionMode.BeforeHead;
-            return this.applyInsertionMode(ValueToken, null);
+            return this.applyInsertionMode(valueToken, null);
           }
         case InsertionMode.BeforeHead: {
-            if (ValueToken == 0x09 || ValueToken == 0x0a ||
-              ValueToken == 0x0c || ValueToken == 0x0d || ValueToken ==
+            if (valueToken == 0x09 || valueToken == 0x0a ||
+              valueToken == 0x0c || valueToken == 0x0d || valueToken ==
                   0x20) {
               return false;
             }
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(ValueToken);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.addCommentNodeToCurrentNode(valueToken);
               return true;
             }
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
               this.error = true;
               return false;
             }
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if ("html".Equals(ValueName)) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if ("html".Equals(valueName)) {
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
                 return true;
-              } else if ("head".Equals(ValueName)) {
-                Element ValueElement = this.addHtmlElement(tag);
-                this.headElement = ValueElement;
+              } else if ("head".Equals(valueName)) {
+                Element valueElement = this.addHtmlElement(tag);
+                this.headElement = valueElement;
                 this.insertionMode = InsertionMode.InHead;
                 return true;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (TagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if ("head".Equals(ValueName) || "br".Equals(ValueName) ||
-                  "body".Equals(ValueName) || "html".Equals(ValueName)) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (TagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if ("head".Equals(valueName) || "br".Equals(valueName) ||
+                  "body".Equals(valueName) || "html".Equals(valueName)) {
                 this.applyStartTag("head", insMode);
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               } else {
                 this.error = true;
                 return false;
               }
             }
             this.applyStartTag("head", insMode);
-            return this.applyInsertionMode(ValueToken, null);
+            return this.applyInsertionMode(valueToken, null);
           }
         case InsertionMode.InHead: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(ValueToken);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.addCommentNodeToCurrentNode(valueToken);
               return true;
             }
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
               this.error = true;
               return false;
             }
-            if (ValueToken == 0x09 || ValueToken == 0x0a ||
-              ValueToken == 0x0c || ValueToken == 0x0d || ValueToken ==
+            if (valueToken == 0x09 || valueToken == 0x0a ||
+              valueToken == 0x0c || valueToken == 0x0d || valueToken ==
                   0x20) {
-              this.insertCharacter(this.getCurrentNode(), ValueToken);
+              this.insertCharacter(this.getCurrentNode(), valueToken);
               return true;
             }
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if ("html".Equals(ValueName)) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if ("html".Equals(valueName)) {
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
                 return true;
-              } else if ("base".Equals(ValueName) ||
-                  "bgsound".Equals(ValueName) || "basefont".Equals(ValueName) ||
-                  "link".Equals(ValueName)) {
+              } else if ("base".Equals(valueName) ||
+                  "bgsound".Equals(valueName) || "basefont".Equals(valueName) ||
+                  "link".Equals(valueName)) {
                 Element e = this.addHtmlElementNoPush(tag);
-                if (this.baseurl == null && "base".Equals(ValueName)) {
-                  // Get the ValueDocument _base URL
+                if (this.baseurl == null && "base".Equals(valueName)) {
+                  // Get the valueDocument _base URL
                   this.baseurl = e.getAttribute("href");
                 }
                 tag.ackSelfClosing();
                 return true;
-              } else if ("meta".Equals(ValueName)) {
-                Element ValueElement = this.addHtmlElementNoPush(tag);
+              } else if ("meta".Equals(valueName)) {
+                Element valueElement = this.addHtmlElementNoPush(tag);
                 tag.ackSelfClosing();
-           if (this.encoding.getConfidence() ==
-                  EncodingConfidence.Tentative) {
-                  string charset = ValueElement.getAttribute("charset");
+                if (this.encoding.getConfidence() ==
+                    EncodingConfidence.Tentative) {
+                  string charset = valueElement.getAttribute("charset");
                   if (charset != null) {
                     charset = Encodings.ResolveAlias(charset);
                     // if (TextEncoding.isAsciiCompatible(charset) ||
@@ -1374,13 +1392,13 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                     return true;
                     // }
                   }
-                  string Value = DataUtilities.ToLowerCaseAscii(
-                    ValueElement.getAttribute("http-equiv"));
-                  if ("content-type".Equals(Value)) {
-                    Value = ValueElement.getAttribute("content");
-                    if (Value != null) {
-                    Value = DataUtilities.ToLowerCaseAscii(Value);
-                    charset = CharsetSniffer.extractCharsetFromMeta(Value);
+                  string value = DataUtilities.ToLowerCaseAscii(
+                    valueElement.getAttribute("http-equiv"));
+                  if ("content-type".Equals(value)) {
+                    value = valueElement.getAttribute("content");
+                    if (value != null) {
+                    value = DataUtilities.ToLowerCaseAscii(value);
+                    charset = CharsetSniffer.extractCharsetFromMeta(value);
                     if (true) {
                     // TODO
                     this.changeEncoding(charset);
@@ -1391,161 +1409,160 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                     return true;
                     }
                     }
-                  } else if ("content-language".Equals(Value)) {
+                  } else if ("content-language".Equals(value)) {
                     // HTML5 requires us to use this algorithm
                     // to parse the Content-Language, rather than
                     // use HTTP parsing (with HeaderParser.getLanguages)
                     // NOTE: this pragma is non-conforming
-                    Value = ValueElement.getAttribute("content");
-                    if (!String.IsNullOrEmpty(Value) &&
-                    Value.IndexOf(',') < 0) {
-                    string[] data = StringUtility.splitAtSpaces(Value);
-                  string deflang = (data.Length == 0) ? String.Empty :
-                      data[0];
+                    value = valueElement.getAttribute("content");
+                  if (!String.IsNullOrEmpty(value) && value.IndexOf(',') <
+                    0) {
+                    string[] data = StringUtility.SplitAtSpTabCrLfFf(value);
+                    string deflang = (data.Length == 0) ? String.Empty :
+                    data[0];
                     if (!String.IsNullOrEmpty(deflang)) {
-                    this.ValueDocument.DefaultLanguage = deflang;
+                    this.valueDocument.DefaultLanguage = deflang;
                     }
                     }
                   }
                 }
-             if (this.encoding.getConfidence() ==
-                  EncodingConfidence.Certain) {
+             if (this.encoding.getConfidence() == EncodingConfidence.Certain) {
                   this.inputStream.disableBuffer();
                 }
                 return true;
-              } else if ("title".Equals(ValueName)) {
+              } else if ("title".Equals(valueName)) {
                 this.addHtmlElement(tag);
                 this.state = TokenizerState.RcData;
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
                 return true;
-              } else if ("noframes".Equals(ValueName) ||
-                  "style".Equals(ValueName)) {
+              } else if ("noframes".Equals(valueName) ||
+                  "style".Equals(valueName)) {
                 this.addHtmlElement(tag);
                 this.state = TokenizerState.RawText;
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
                 return true;
-              } else if ("noscript".Equals(ValueName)) {
+              } else if ("noscript".Equals(valueName)) {
                 this.addHtmlElement(tag);
                 this.insertionMode = InsertionMode.InHeadNoscript;
                 return true;
-              } else if ("script".Equals(ValueName)) {
+              } else if ("script".Equals(valueName)) {
                 this.addHtmlElement(tag);
                 this.state = TokenizerState.ScriptData;
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
                 return true;
-              } else if ("head".Equals(ValueName)) {
+              } else if ("head".Equals(valueName)) {
                 this.error = true;
                 return false;
               } else {
                 this.applyEndTag("head", insMode);
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (TagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if ("head".Equals(ValueName)) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (TagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if ("head".Equals(valueName)) {
                 this.openElements.RemoveAt(this.openElements.Count - 1);
                 this.insertionMode = InsertionMode.AfterHead;
                 return true;
               } else if (!(
-                  "br".Equals(ValueName) ||
-                  "body".Equals(ValueName) || "html".Equals(ValueName))) {
+                  "br".Equals(valueName) ||
+                  "body".Equals(valueName) || "html".Equals(valueName))) {
                 this.error = true;
                 return false;
               }
               this.applyEndTag("head", insMode);
-              return this.applyInsertionMode(ValueToken, null);
+              return this.applyInsertionMode(valueToken, null);
             } else {
               this.applyEndTag("head", insMode);
-              return this.applyInsertionMode(ValueToken, null);
+              return this.applyInsertionMode(valueToken, null);
             }
           }
         case InsertionMode.AfterHead: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-          if (ValueToken == 0x20 || ValueToken == 0x09 || ValueToken == 0x0a
-                ||
-                  ValueToken == 0x0c || ValueToken == 0x0d) {
-             this.insertCharacter(this.getCurrentNode(),
-                  ValueToken);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+          if (valueToken == 0x20 || valueToken == 0x09 || valueToken == 0x0a||
+                valueToken == 0x0c || valueToken == 0x0d) {
+                this.insertCharacter(
+     this.getCurrentNode(),
+     valueToken);
               } else {
                 this.applyStartTag("body", insMode);
                 this.framesetOk = true;
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
               this.error = true;
               return false;
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("html")) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("html")) {
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
                 return true;
-              } else if (ValueName.Equals("body")) {
+              } else if (valueName.Equals("body")) {
                 this.addHtmlElement(tag);
                 this.framesetOk = false;
                 this.insertionMode = InsertionMode.InBody;
                 return true;
-              } else if (ValueName.Equals("frameset")) {
+              } else if (valueName.Equals("frameset")) {
                 this.addHtmlElement(tag);
                 this.insertionMode = InsertionMode.InFrameset;
                 return true;
-          } else if ("base" .Equals(ValueName) || "bgsound"
-                .Equals(ValueName) ||
-                  "basefont".Equals(ValueName) || "link".Equals(ValueName) ||
-                  "noframes".Equals(ValueName) || "script".Equals(ValueName) ||
-                  "style".Equals(ValueName) || "title".Equals(ValueName) ||
-                  "meta".Equals(ValueName)) {
+              } else if ("base".Equals(valueName) || "bgsound"
+                    .Equals(valueName) ||
+                    "basefont".Equals(valueName) || "link".Equals(valueName) ||
+                  "noframes" .Equals(valueName) || "script"
+                    .Equals(valueName) ||
+                    "style".Equals(valueName) || "title".Equals(valueName) ||
+                    "meta".Equals(valueName)) {
                 this.error = true;
                 this.openElements.Add(this.headElement);
-                this.applyInsertionMode(ValueToken, InsertionMode.InHead);
+                this.applyInsertionMode(valueToken, InsertionMode.InHead);
                 this.openElements.Remove(this.headElement);
                 return true;
-              } else if ("head".Equals(ValueName)) {
+              } else if ("head".Equals(valueName)) {
                 this.error = true;
                 return false;
               } else {
                 this.applyStartTag("body", insMode);
                 this.framesetOk = true;
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("body") || ValueName.Equals("html") ||
-                  ValueName.Equals("br")) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("body") || valueName.Equals("html") ||
+                  valueName.Equals("br")) {
                 this.applyStartTag("body", insMode);
                 this.framesetOk = true;
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               } else {
                 this.error = true;
                 return false;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(ValueToken);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.addCommentNodeToCurrentNode(valueToken);
 
               return true;
             }
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
               // START TAGS
-
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if ("html".Equals(ValueName)) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if ("html".Equals(valueName)) {
                 this.error = true;
                 ((Element)this.openElements[0]).mergeAttributes(tag);
                 return true;
-              } else if ("base".Equals(ValueName) ||
-                  "bgsound".Equals(ValueName) || "basefont".Equals(ValueName) ||
-                  "link".Equals(ValueName) || "noframes".Equals(ValueName) ||
-                  "script".Equals(ValueName) || "style".Equals(ValueName) ||
-                  "title".Equals(ValueName) || "meta".Equals(ValueName)) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InHead);
+              } else if ("base".Equals(valueName) ||
+                  "bgsound".Equals(valueName) || "basefont".Equals(valueName) ||
+                  "link".Equals(valueName) || "noframes".Equals(valueName) ||
+                  "script".Equals(valueName) || "style".Equals(valueName) ||
+                  "title".Equals(valueName) || "meta".Equals(valueName)) {
+                this.applyInsertionMode(valueToken, InsertionMode.InHead);
                 return true;
-              } else if ("body".Equals(ValueName)) {
+              } else if ("body".Equals(valueName)) {
                 this.error = true;
                 if (this.openElements.Count <= 1 ||
                     !HtmlCommon.isHtmlElement(this.openElements[1], "body")) {
@@ -1554,7 +1571,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.framesetOk = false;
                 ((Element)this.openElements[1]).mergeAttributes(tag);
                 return true;
-              } else if ("frameset".Equals(ValueName)) {
+              } else if ("frameset".Equals(valueName)) {
                 this.error = true;
                 if (!this.framesetOk ||
                   this.openElements.Count <= 1 ||
@@ -1571,27 +1588,27 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.addHtmlElement(tag);
                 this.insertionMode = InsertionMode.InFrameset;
                 return true;
-              } else if ("address".Equals(ValueName) ||
-                  "article".Equals(ValueName) || "aside".Equals(ValueName) ||
-                "blockquote" .Equals(ValueName) || "center"
-                    .Equals(ValueName) ||
-                  "details".Equals(ValueName) || "dialog".Equals(ValueName) ||
-                  "dir".Equals(ValueName) || "div".Equals(ValueName) ||
-                  "dl".Equals(ValueName) || "fieldset".Equals(ValueName) ||
-                "figcaption" .Equals(ValueName) || "figure"
-                    .Equals(ValueName) ||
-                  "footer".Equals(ValueName) || "header".Equals(ValueName) ||
-                  "hgroup".Equals(ValueName) || "menu".Equals(ValueName) ||
-                  "nav".Equals(ValueName) || "ol".Equals(ValueName) ||
-                  "p".Equals(ValueName) || "section".Equals(ValueName) ||
-                  "summary".Equals(ValueName) || "ul".Equals(ValueName)
+              } else if ("address".Equals(valueName) ||
+                  "article".Equals(valueName) || "aside".Equals(valueName) ||
+                "blockquote".Equals(valueName) || "center"
+                    .Equals(valueName) ||
+                  "details".Equals(valueName) || "dialog".Equals(valueName) ||
+                  "dir".Equals(valueName) || "div".Equals(valueName) ||
+                  "dl".Equals(valueName) || "fieldset".Equals(valueName) ||
+                "figcaption".Equals(valueName) || "figure"
+                    .Equals(valueName) ||
+                  "footer".Equals(valueName) || "header".Equals(valueName) ||
+                  "hgroup".Equals(valueName) || "menu".Equals(valueName) ||
+                  "nav".Equals(valueName) || "ol".Equals(valueName) ||
+                  "p".Equals(valueName) || "section".Equals(valueName) ||
+                  "summary".Equals(valueName) || "ul".Equals(valueName)
 ) {
                 this.closeParagraph(insMode);
                 this.addHtmlElement(tag);
                 return true;
-              } else if ("h1".Equals(ValueName) || "h2".Equals(ValueName) ||
-                  "h3".Equals(ValueName) || "h4".Equals(ValueName) ||
-                "h5".Equals(ValueName) || "h6".Equals(ValueName)) {
+              } else if ("h1".Equals(valueName) || "h2".Equals(valueName) ||
+                  "h3".Equals(valueName) || "h4".Equals(valueName) ||
+                "h5".Equals(valueName) || "h6".Equals(valueName)) {
                 this.closeParagraph(insMode);
                 IElement node = this.getCurrentNode();
                 string name1 = node.getLocalName();
@@ -1603,14 +1620,14 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 }
                 this.addHtmlElement(tag);
                 return true;
-              } else if ("pre".Equals(ValueName) ||
-                  "listing".Equals(ValueName)) {
+              } else if ("pre".Equals(valueName) ||
+                  "listing".Equals(valueName)) {
                 this.closeParagraph(insMode);
                 this.addHtmlElement(tag);
                 this.skipLineFeed();
                 this.framesetOk = false;
                 return true;
-              } else if ("form".Equals(ValueName)) {
+              } else if ("form".Equals(valueName)) {
                 if (this.formElement != null) {
                   this.error = true;
                   return true;
@@ -1618,7 +1635,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.closeParagraph(insMode);
                 this.formElement = this.addHtmlElement(tag);
                 return true;
-              } else if ("li".Equals(ValueName)) {
+              } else if ("li".Equals(valueName)) {
                 this.framesetOk = false;
                 for (int i = this.openElements.Count - 1; i >= 0; --i) {
                   IElement node = this.openElements[i];
@@ -1629,7 +1646,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                     insMode);
                     break;
                   }
-         if (this.isSpecialElement(node) && !"address"
+                  if (this.isSpecialElement(node) && !"address"
                     .Equals(nodeName) &&
                     !"div".Equals(nodeName) && !"p".Equals(nodeName)) {
                     break;
@@ -1638,7 +1655,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.closeParagraph(insMode);
                 this.addHtmlElement(tag);
                 return true;
-              } else if ("dd".Equals(ValueName) || "dt".Equals(ValueName)) {
+              } else if ("dd".Equals(valueName) || "dt".Equals(valueName)) {
                 this.framesetOk = false;
                 for (int i = this.openElements.Count - 1; i >= 0; --i) {
                   IElement node = this.openElements[i];
@@ -1657,22 +1674,22 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.closeParagraph(insMode);
                 this.addHtmlElement(tag);
                 return true;
-              } else if ("plaintext".Equals(ValueName)) {
+              } else if ("plaintext".Equals(valueName)) {
                 this.closeParagraph(insMode);
                 this.addHtmlElement(tag);
                 this.state = TokenizerState.PlainText;
                 return true;
-              } else if ("button".Equals(ValueName)) {
+              } else if ("button".Equals(valueName)) {
                 if (this.hasHtmlElementInScope("button")) {
                   this.error = true;
                   this.applyEndTag("button", insMode);
-                  return this.applyInsertionMode(ValueToken, null);
+                  return this.applyInsertionMode(valueToken, null);
                 }
                 this.reconstructFormatting();
                 this.addHtmlElement(tag);
                 this.framesetOk = false;
                 return true;
-              } else if ("a".Equals(ValueName)) {
+              } else if ("a".Equals(valueName)) {
                 while (true) {
                   IElement node = null;
                   for (int i = this.formattingElements.Count - 1; i >= 0; --i) {
@@ -1680,8 +1697,8 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                     if (fe.isMarker()) {
                     break;
                     }
-                    if (fe.ValueElement.getLocalName().Equals("a")) {
-                    node = fe.ValueElement;
+                    if (fe.Element.getLocalName().Equals("a")) {
+                    node = fe.Element;
                     break;
                     }
                   }
@@ -1696,16 +1713,16 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 }
                 this.reconstructFormatting();
                 this.pushFormattingElement(tag);
-              } else if ("b".Equals(ValueName) ||
-                  "big".Equals(ValueName) || "code".Equals(ValueName) ||
-                  "em".Equals(ValueName) || "font".Equals(ValueName) ||
-                  "i".Equals(ValueName) || "s".Equals(ValueName) ||
-                  "small".Equals(ValueName) || "strike".Equals(ValueName) ||
-                  "strong".Equals(ValueName) || "tt".Equals(ValueName) ||
-                  "u".Equals(ValueName)) {
+              } else if ("b".Equals(valueName) ||
+                  "big".Equals(valueName) || "code".Equals(valueName) ||
+                  "em".Equals(valueName) || "font".Equals(valueName) ||
+                  "i".Equals(valueName) || "s".Equals(valueName) ||
+                  "small".Equals(valueName) || "strike".Equals(valueName) ||
+                  "strong".Equals(valueName) || "tt".Equals(valueName) ||
+                  "u".Equals(valueName)) {
                 this.reconstructFormatting();
                 this.pushFormattingElement(tag);
-              } else if ("nobr".Equals(ValueName)) {
+              } else if ("nobr".Equals(valueName)) {
                 this.reconstructFormatting();
                 if (this.hasHtmlElementInScope("nobr")) {
                   this.error = true;
@@ -1713,23 +1730,23 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                   this.reconstructFormatting();
                 }
                 this.pushFormattingElement(tag);
-              } else if ("table".Equals(ValueName)) {
-                if (this.ValueDocument.getMode() != DocumentMode.QuirksMode) {
+              } else if ("table".Equals(valueName)) {
+                if (this.valueDocument.getMode() != DocumentMode.QuirksMode) {
                   this.closeParagraph(insMode);
                 }
                 this.addHtmlElement(tag);
                 this.framesetOk = false;
                 this.insertionMode = InsertionMode.InTable;
                 return true;
-              } else if ("area".Equals(ValueName) || "br".Equals(ValueName) ||
-                  "embed".Equals(ValueName) || "img".Equals(ValueName) ||
-                  "keygen".Equals(ValueName) || "wbr".Equals(ValueName)
+              } else if ("area".Equals(valueName) || "br".Equals(valueName) ||
+                  "embed".Equals(valueName) || "img".Equals(valueName) ||
+                  "keygen".Equals(valueName) || "wbr".Equals(valueName)
 ) {
                 this.reconstructFormatting();
                 this.addHtmlElementNoPush(tag);
                 tag.ackSelfClosing();
                 this.framesetOk = false;
-              } else if ("input".Equals(ValueName)) {
+              } else if ("input".Equals(valueName)) {
                 this.reconstructFormatting();
                 this.inputElement = this.addHtmlElementNoPush(tag);
                 tag.ackSelfClosing();
@@ -1738,22 +1755,22 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                     .Equals(DataUtilities.ToLowerCaseAscii(attr))) {
                   this.framesetOk = false;
                 }
-          } else if ("param" .Equals(ValueName) || "source"
-                .Equals(ValueName) ||
-                  "menuitem".Equals(ValueName) || "track".Equals(ValueName)
+              } else if ("param".Equals(valueName) || "source"
+                    .Equals(valueName) ||
+                    "menuitem".Equals(valueName) || "track".Equals(valueName)
 ) {
                 this.addHtmlElementNoPush(tag);
                 tag.ackSelfClosing();
-              } else if ("hr".Equals(ValueName)) {
+              } else if ("hr".Equals(valueName)) {
                 this.closeParagraph(insMode);
                 this.addHtmlElementNoPush(tag);
                 tag.ackSelfClosing();
                 this.framesetOk = false;
-              } else if ("image".Equals(ValueName)) {
+              } else if ("image".Equals(valueName)) {
                 this.error = true;
                 tag.setName("img");
-                return this.applyInsertionMode(ValueToken, null);
-              } else if ("isindex".Equals(ValueName)) {
+                return this.applyInsertionMode(valueToken, null);
+              } else if ("isindex".Equals(valueName)) {
                 this.error = true;
                 if (this.formElement != null) {
                   return false;
@@ -1769,7 +1786,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 var isindex = new StartTagToken("input");
                 foreach (var attr in tag.getAttributes()) {
                   string attrname = attr.getName();
-                  if (!"ValueName".Equals(attrname) &&
+                  if (!"valueName".Equals(attrname) &&
                     !"action".Equals(attrname) && !"prompt".Equals(attrname)) {
                     isindex.setAttribute(attrname, attr.getValue());
                   }
@@ -1784,24 +1801,25 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                   this.insertString(this.getCurrentNode(), prompt);
                 } else {
                   this.reconstructFormatting();
-  this.insertString(this.getCurrentNode(),
-                    "Enter search keywords:");
+                  this.insertString(
+                  this.getCurrentNode(),
+                  "Enter search keywords:");
                 }
                 int isindexToken = this.tokens.Count | isindex.getType();
                 this.tokens.Add(isindex);
                 this.applyInsertionMode(isindexToken, insMode);
-                this.inputElement.setAttribute("ValueName", "isindex");
+                this.inputElement.setAttribute("valueName", "isindex");
                 this.applyEndTag("label", insMode);
                 this.applyStartTag("hr", insMode);
                 this.applyEndTag("form", insMode);
-              } else if ("textarea".Equals(ValueName)) {
+              } else if ("textarea".Equals(valueName)) {
                 this.addHtmlElement(tag);
                 this.skipLineFeed();
                 this.state = TokenizerState.RcData;
                 this.originalInsertionMode = this.insertionMode;
                 this.framesetOk = false;
                 this.insertionMode = InsertionMode.Text;
-              } else if ("xmp".Equals(ValueName)) {
+              } else if ("xmp".Equals(valueName)) {
                 this.closeParagraph(insMode);
                 this.reconstructFormatting();
                 this.framesetOk = false;
@@ -1809,65 +1827,64 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.state = TokenizerState.RawText;
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
-              } else if ("iframe".Equals(ValueName)) {
+              } else if ("iframe".Equals(valueName)) {
                 this.framesetOk = false;
                 this.addHtmlElement(tag);
                 this.state = TokenizerState.RawText;
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
-              } else if ("noembed".Equals(ValueName)) {
+              } else if ("noembed".Equals(valueName)) {
                 this.addHtmlElement(tag);
                 this.state = TokenizerState.RawText;
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
-              } else if ("select".Equals(ValueName)) {
+              } else if ("select".Equals(valueName)) {
                 this.reconstructFormatting();
                 this.addHtmlElement(tag);
                 this.framesetOk = false;
-           this.insertionMode = (this.insertionMode == InsertionMode.InTable
-                  ||
-                    this.insertionMode == InsertionMode.InCaption ||
+           this.insertionMode = (this.insertionMode == InsertionMode.InTable||
+                this.insertionMode == InsertionMode.InCaption ||
                     this.insertionMode == InsertionMode.InTableBody ||
                     this.insertionMode == InsertionMode.InRow ||
                     this.insertionMode == InsertionMode.InCell) ?
-                    InsertionMode.InSelectInTable : (InsertionMode.InSelect);
-       } else if ("option" .Equals(ValueName) || "optgroup"
-                .Equals(ValueName)) {
-              if (this.getCurrentNode().getLocalName().Equals("option"
-)) {
+                    InsertionMode.InSelectInTable : InsertionMode.InSelect;
+              } else if ("option".Equals(valueName) || "optgroup"
+                    .Equals(valueName)) {
+                if (this.getCurrentNode().getLocalName().Equals(
+    "option")) {
                   this.applyEndTag("option", insMode);
                 }
                 this.reconstructFormatting();
                 this.addHtmlElement(tag);
-              } else if ("rp".Equals(ValueName) || "rt".Equals(ValueName)) {
+              } else if ("rp".Equals(valueName) || "rt".Equals(valueName)) {
                 if (this.hasHtmlElementInScope("ruby")) {
                   this.generateImpliedEndTags();
-               if (!this.getCurrentNode().getLocalName().Equals("ruby"
-)) {
+                  if (!this.getCurrentNode().getLocalName().Equals(
+     "ruby")) {
                     this.error = true;
                   }
                 }
                 this.addHtmlElement(tag);
-        } else if ("applet" .Equals(ValueName) || "marquee"
-                .Equals(ValueName) ||
-                  "object".Equals(ValueName)) {
+              } else if ("applet".Equals(valueName) || "marquee"
+                    .Equals(valueName) || "object".Equals(valueName)) {
                 this.reconstructFormatting();
                 Element e = this.addHtmlElement(tag);
                 this.insertFormattingMarker(tag, e);
                 this.framesetOk = false;
-              } else if ("math".Equals(ValueName)) {
+              } else if ("math".Equals(valueName)) {
                 this.reconstructFormatting();
                 this.adjustMathMLAttributes(tag);
                 this.adjustForeignAttributes(tag);
-              this.insertForeignElement(tag,
-                  HtmlCommon.MATHML_NAMESPACE);
+                this.insertForeignElement(
+    tag,
+    HtmlCommon.MATHML_NAMESPACE);
                 if (tag.isSelfClosing()) {
                   tag.ackSelfClosing();
                   this.popCurrentNode();
                 } else {
                   this.hasForeignContent = true;
                 }
-              } else if ("svg".Equals(ValueName)) {
+              } else if ("svg".Equals(valueName)) {
                 this.reconstructFormatting();
                 this.adjustSvgAttributes(tag);
                 this.adjustForeignAttributes(tag);
@@ -1878,12 +1895,12 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 } else {
                   this.hasForeignContent = true;
                 }
-              } else if ("caption".Equals(ValueName) ||
-                  "col".Equals(ValueName) || "colgroup".Equals(ValueName) ||
-                  "frame".Equals(ValueName) || "head".Equals(ValueName) ||
-                  "tbody".Equals(ValueName) || "td".Equals(ValueName) ||
-                  "tfoot".Equals(ValueName) || "th".Equals(ValueName) ||
-                  "thead".Equals(ValueName) || "tr".Equals(ValueName)
+              } else if ("caption".Equals(valueName) ||
+                  "col".Equals(valueName) || "colgroup".Equals(valueName) ||
+                  "frame".Equals(valueName) || "head".Equals(valueName) ||
+                  "tbody".Equals(valueName) || "td".Equals(valueName) ||
+                  "tfoot".Equals(valueName) || "th".Equals(valueName) ||
+                  "thead".Equals(valueName) || "tr".Equals(valueName)
 ) {
                 this.error = true;
                 return false;
@@ -1892,13 +1909,12 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.reconstructFormatting();
                 this.addHtmlElement(tag);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
               // END TAGS
               // NOTE: Have all cases
-
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("body")) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("body")) {
                 if (!this.hasHtmlElementInScope("body")) {
                   this.error = true;
                   return false;
@@ -1914,18 +1930,18 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                     !"thead".Equals(name2) && !"body".Equals(name2) &&
                     !"html".Equals(name2)) {
                     this.error = true;
-                    // ValueToken not ignored here
+                    // valueToken not ignored here
                   }
                 }
                 this.insertionMode = InsertionMode.AfterBody;
-              } else if (ValueName.Equals("a") ||
-                  ValueName.Equals("b") || ValueName.Equals("big") ||
-                  ValueName.Equals("code") || ValueName.Equals("em") ||
-                  ValueName.Equals("b") || ValueName.Equals("font") ||
-                  ValueName.Equals("i") || ValueName.Equals("nobr") ||
-                  ValueName.Equals("s") || ValueName.Equals("small") ||
-                  ValueName.Equals("strike") || ValueName.Equals("strong") ||
-                ValueName.Equals("tt") || ValueName.Equals("u")) {
+              } else if (valueName.Equals("a") ||
+                  valueName.Equals("b") || valueName.Equals("big") ||
+                  valueName.Equals("code") || valueName.Equals("em") ||
+                  valueName.Equals("b") || valueName.Equals("font") ||
+                  valueName.Equals("i") || valueName.Equals("nobr") ||
+                  valueName.Equals("s") || valueName.Equals("small") ||
+                  valueName.Equals("strike") || valueName.Equals("strong") ||
+                valueName.Equals("tt") || valueName.Equals("u")) {
                 for (int i = 0; i < 8; ++i) {
                   FormattingElement formatting = null;
                   for (int j = this.formattingElements.Count - 1; j >= 0; --j) {
@@ -1933,20 +1949,19 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                     if (fe.isMarker()) {
                     break;
                     }
-                    if (fe.ValueElement.getLocalName().Equals(ValueName)) {
+                    if (fe.Element.getLocalName().Equals(valueName)) {
                     formatting = fe;
                     break;
                     }
                   }
                   if (formatting == null) {
                     // NOTE: Steps for "any other end tag"
-                    // DebugUtility.Log("no such formatting ValueElement");
+                    // DebugUtility.Log("no such formatting valueElement");
                     for (int i1 = this.openElements.Count - 1; i1 >= 0; --i1) {
                     IElement node = this.openElements[i1];
-                    if (ValueName.Equals(node.getLocalName())) {
-                    this.generateImpliedEndTagsExcept(ValueName);
-            if
-  (!ValueName.Equals(this.getCurrentNode().getLocalName())) {
+                    if (valueName.Equals(node.getLocalName())) {
+                    this.generateImpliedEndTagsExcept(valueName);
+                if (!valueName.Equals(this.getCurrentNode().getLocalName())) {
                     this.error = true;
                     }
                     while (true) {
@@ -1964,7 +1979,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                     break;
                   }
                   int formattingElementPos =
-                    this.openElements.IndexOf(formatting.ValueElement);
+                    this.openElements.IndexOf(formatting.Element);
                   if (formattingElementPos < 0) {  // not found
                     this.error = true;
                     // DebugUtility.Log("Not in stack of open elements");
@@ -1975,18 +1990,18 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                   // DebugUtility.Log(openElements);
                   // DebugUtility.Log("Formatting elements:");
                   // DebugUtility.Log(formattingElements);
-               if
-  (!this.hasHtmlElementInScope(formatting.ValueElement)) {
+                  if
+     (!this.hasHtmlElementInScope(formatting.Element)) {
                     this.error = true;
                     return false;
                   }
-             if
-  (!formatting.ValueElement.Equals(this.getCurrentNode())) {
+                  if
+       (!formatting.Element.Equals(this.getCurrentNode())) {
                     this.error = true;
                   }
                   IElement furthestBlock = null;
                   var furthestBlockPos = -1;
-            for (int j = this.openElements.Count - 1; j >
+                  for (int j = this.openElements.Count - 1; j >
                     formattingElementPos;
                     --j) {
                     IElement e = this.openElements[j];
@@ -1998,7 +2013,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                   // DebugUtility.Log("furthest block: %s",furthestBlock);
                   if (furthestBlock == null) {
                     // Pop up to and including the
-                    // formatting ValueElement
+                    // formatting valueElement
                     while (this.openElements.Count > formattingElementPos) {
                     this.popCurrentNode();
                     }
@@ -2009,33 +2024,30 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                     // DebugUtility.Log(formattingElements);
                     break;
                   }
-             IElement commonAncestor =
-                    this.openElements[formattingElementPos -
+             IElement commonAncestor = this.openElements[formattingElementPos -
                     1];
                   // DebugUtility.Log("common ancestor: %s",commonAncestor);
                   int bookmark = this.formattingElements.IndexOf(formatting);
                   // DebugUtility.Log("bookmark=%d",bookmark);
                   IElement myNode = furthestBlock;
-               IElement superiorNode = this.openElements[furthestBlockPos -
+                  IElement superiorNode = this.openElements[furthestBlockPos -
                     1];
                   IElement lastNode = furthestBlock;
                   for (int j = 0; j < 3; ++j) {
                     myNode = superiorNode;
-             FormattingElement nodeFE =
-                      this.getFormattingElement(myNode);
+                FormattingElement nodeFE = this.getFormattingElement(myNode);
                     if (nodeFE == null) {
-                    // DebugUtility.Log("node not a formatting ValueElement");
-           superiorNode =
-                      this.openElements[this.openElements.IndexOf(myNode) -
+                    // DebugUtility.Log("node not a formatting valueElement");
+           superiorNode = this.openElements[this.openElements.IndexOf(myNode) -
                     1];
                     this.openElements.Remove(myNode);
                     continue;
-                    } else if (myNode.Equals(formatting.ValueElement)) {
-                    // DebugUtility.Log("node is the formatting ValueElement");
+                    } else if (myNode.Equals(formatting.Element)) {
+                    // DebugUtility.Log("node is the formatting valueElement");
                     break;
                     }
-                    IElement e = Element.fromToken(nodeFE.ValueToken);
-                    nodeFE.ValueElement = e;
+                    IElement e = Element.fromToken(nodeFE.Token);
+                    nodeFE.Element = e;
                     int io = this.openElements.IndexOf(myNode);
                     superiorNode = this.openElements[io - 1];
                     this.openElements[io] = e;
@@ -2044,7 +2056,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                     bookmark = this.formattingElements.IndexOf(nodeFE) + 1;
                     }
                     // NOTE: Because 'node' can only be a formatting
-                    // ValueElement, the foster parenting rule doesn't
+                    // valueElement, the foster parenting rule doesn't
                     // apply here
                     if (lastNode.getParentNode() != null) {
 ((Node)lastNode.getParentNode()).removeChild((Node)lastNode);
@@ -2070,12 +2082,12 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                     }
                     commonAncestor.appendChild(lastNode);
                   }
-                  Element e2 = Element.fromToken(formatting.ValueToken);
+                  Element e2 = Element.fromToken(formatting.Token);
                   foreach (var child in new
                     List<INode>(furthestBlock.getChildNodes())) {
                     furthestBlock.removeChild((Node)child);
                     // NOTE: Because 'e' can only be a formatting
-                    // ValueElement, the foster parenting rule doesn't
+                    // valueElement, the foster parenting rule doesn't
                     // apply here
                     e2.appendChild(child);
                   }
@@ -2087,73 +2099,71 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                   furthestBlock.appendChild(e2);
                   var newFE = new FormattingElement();
                   newFE.ValueMarker = false;
-                  newFE.ValueElement = e2;
-                  newFE.ValueToken = formatting.ValueToken;
-                  // DebugUtility.Log("Adding formatting ValueElement at %d"
+                  newFE.Element = e2;
+                  newFE.Token = formatting.Token;
+                  // DebugUtility.Log("Adding formatting valueElement at %d"
                   // , bookmark);
                   this.formattingElements.Insert(bookmark, newFE);
                   this.formattingElements.Remove(formatting);
-                  // DebugUtility.Log("Replacing open ValueElement at %d"
+                  // DebugUtility.Log("Replacing open valueElement at %d"
                   // , openElements.IndexOf(furthestBlock)+1);
                   int idx = this.openElements.IndexOf(furthestBlock) + 1;
                   this.openElements.Insert(idx, e2);
-                  this.openElements.Remove(formatting.ValueElement);
+                  this.openElements.Remove(formatting.Element);
                 }
-              } else if ("applet".Equals(ValueName) ||
-                  "marquee".Equals(ValueName) || "object".Equals(ValueName)) {
-                if (!this.hasHtmlElementInScope(ValueName)) {
+              } else if ("applet".Equals(valueName) ||
+                  "marquee".Equals(valueName) || "object".Equals(valueName)) {
+                if (!this.hasHtmlElementInScope(valueName)) {
                   this.error = true;
                   return false;
                 } else {
                   this.generateImpliedEndTags();
-            if
-  (!this.getCurrentNode().getLocalName().Equals(ValueName)) {
+                if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                     this.error = true;
                   }
                   while (true) {
                     IElement node = this.popCurrentNode();
-                    if (node.getLocalName().Equals(ValueName)) {
+                    if (node.getLocalName().Equals(valueName)) {
                     break;
                     }
                   }
                   this.clearFormattingToMarker();
                 }
-              } else if (ValueName.Equals("html")) {
+              } else if (valueName.Equals("html")) {
                 return this.applyEndTag("body", insMode) ?
-                  this.applyInsertionMode(ValueToken, null) : (false);
-              } else if ("address".Equals(ValueName) ||
-                  "article".Equals(ValueName) || "aside".Equals(ValueName) ||
-                "blockquote" .Equals(ValueName) || "button"
-                    .Equals(ValueName) ||
-                  "center".Equals(ValueName) || "details".Equals(ValueName) ||
-                  "dialog".Equals(ValueName) || "dir".Equals(ValueName) ||
-                  "div".Equals(ValueName) || "dl".Equals(ValueName) ||
-              "fieldset" .Equals(ValueName) || "figcaption"
-                    .Equals(ValueName) ||
-                  "figure".Equals(ValueName) || "footer".Equals(ValueName) ||
-                  "header".Equals(ValueName) || "hgroup".Equals(ValueName) ||
-                  "listing".Equals(ValueName) || "main".Equals(ValueName) ||
-                  "menu".Equals(ValueName) || "nav".Equals(ValueName) ||
-                  "ol".Equals(ValueName) || "pre".Equals(ValueName) ||
-                  "section".Equals(ValueName) || "summary".Equals(ValueName) ||
-                  "ul".Equals(ValueName)) {
-                if (!this.hasHtmlElementInScope(ValueName)) {
+                  this.applyInsertionMode(valueToken, null) : false;
+              } else if ("address".Equals(valueName) ||
+                  "article".Equals(valueName) || "aside".Equals(valueName) ||
+                "blockquote".Equals(valueName) || "button"
+                    .Equals(valueName) ||
+                  "center".Equals(valueName) || "details".Equals(valueName) ||
+                  "dialog".Equals(valueName) || "dir".Equals(valueName) ||
+                  "div".Equals(valueName) || "dl".Equals(valueName) ||
+              "fieldset".Equals(valueName) || "figcaption"
+                    .Equals(valueName) ||
+                  "figure".Equals(valueName) || "footer".Equals(valueName) ||
+                  "header".Equals(valueName) || "hgroup".Equals(valueName) ||
+                  "listing".Equals(valueName) || "main".Equals(valueName) ||
+                  "menu".Equals(valueName) || "nav".Equals(valueName) ||
+                  "ol".Equals(valueName) || "pre".Equals(valueName) ||
+                  "section".Equals(valueName) || "summary".Equals(valueName) ||
+                  "ul".Equals(valueName)) {
+                if (!this.hasHtmlElementInScope(valueName)) {
                   this.error = true;
                   return true;
                 } else {
                   this.generateImpliedEndTags();
-            if
-  (!this.getCurrentNode().getLocalName().Equals(ValueName)) {
+                if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                     this.error = true;
                   }
                   while (true) {
                     IElement node = this.popCurrentNode();
-                    if (node.getLocalName().Equals(ValueName)) {
+                    if (node.getLocalName().Equals(valueName)) {
                     break;
                     }
                   }
                 }
-              } else if (ValueName.Equals("form")) {
+              } else if (valueName.Equals("form")) {
                 IElement node = this.formElement;
                 this.formElement = null;
                 if (node == null || this.hasHtmlElementInScope(node)) {
@@ -2165,49 +2175,46 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                   this.error = true;
                 }
                 this.openElements.Remove(node);
-              } else if (ValueName.Equals("p")) {
-                if (!this.hasHtmlElementInButtonScope(ValueName)) {
+              } else if (valueName.Equals("p")) {
+                if (!this.hasHtmlElementInButtonScope(valueName)) {
                   this.error = true;
                   this.applyStartTag("p", insMode);
-                  return this.applyInsertionMode(ValueToken, null);
+                  return this.applyInsertionMode(valueToken, null);
                 }
-                this.generateImpliedEndTagsExcept(ValueName);
-            if
-  (!this.getCurrentNode().getLocalName().Equals(ValueName)) {
+                this.generateImpliedEndTagsExcept(valueName);
+                if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                   this.error = true;
                 }
                 while (true) {
                   IElement node = this.popCurrentNode();
-                  if (node.getLocalName().Equals(ValueName)) {
+                  if (node.getLocalName().Equals(valueName)) {
                     break;
                   }
                 }
-              } else if (ValueName.Equals("li")) {
-                if (!this.hasHtmlElementInListItemScope(ValueName)) {
+              } else if (valueName.Equals("li")) {
+                if (!this.hasHtmlElementInListItemScope(valueName)) {
                   this.error = true;
                   return false;
                 }
-                this.generateImpliedEndTagsExcept(ValueName);
-            if
-  (!this.getCurrentNode().getLocalName().Equals(ValueName)) {
+                this.generateImpliedEndTagsExcept(valueName);
+                if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                   this.error = true;
                 }
                 while (true) {
                   IElement node = this.popCurrentNode();
-                  if (node.getLocalName().Equals(ValueName)) {
+                  if (node.getLocalName().Equals(valueName)) {
                     break;
                   }
                 }
-              } else if (ValueName.Equals("h1") || ValueName.Equals("h2") ||
-                  ValueName.Equals("h3") || ValueName.Equals("h4") ||
-                  ValueName.Equals("h5") || ValueName.Equals("h6")) {
+              } else if (valueName.Equals("h1") || valueName.Equals("h2") ||
+                  valueName.Equals("h3") || valueName.Equals("h4") ||
+                  valueName.Equals("h5") || valueName.Equals("h6")) {
                 if (!this.hasHtmlHeaderElementInScope()) {
                   this.error = true;
                   return false;
                 }
                 this.generateImpliedEndTags();
-            if
-  (!this.getCurrentNode().getLocalName().Equals(ValueName)) {
+                if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                   this.error = true;
                 }
                 while (true) {
@@ -2221,33 +2228,31 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                   }
                 }
                 return true;
-              } else if (ValueName.Equals("dd") || ValueName.Equals("dt")) {
-                if (!this.hasHtmlElementInScope(ValueName)) {
+              } else if (valueName.Equals("dd") || valueName.Equals("dt")) {
+                if (!this.hasHtmlElementInScope(valueName)) {
                   this.error = true;
                   return false;
                 }
-                this.generateImpliedEndTagsExcept(ValueName);
-            if
-  (!this.getCurrentNode().getLocalName().Equals(ValueName)) {
+                this.generateImpliedEndTagsExcept(valueName);
+                if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                   this.error = true;
                 }
                 while (true) {
                   IElement node = this.popCurrentNode();
-                  if (node.getLocalName().Equals(ValueName)) {
+                  if (node.getLocalName().Equals(valueName)) {
                     break;
                   }
                 }
-              } else if ("br".Equals(ValueName)) {
+              } else if ("br".Equals(valueName)) {
                 this.error = true;
                 this.applyStartTag("br", insMode);
                 return false;
               } else {
                 for (int i = this.openElements.Count - 1; i >= 0; --i) {
                   IElement node = this.openElements[i];
-                  if (ValueName.Equals(node.getLocalName())) {
-                    this.generateImpliedEndTagsExcept(ValueName);
-            if
-  (!ValueName.Equals(this.getCurrentNode().getLocalName())) {
+                  if (valueName.Equals(node.getLocalName())) {
+                    this.generateImpliedEndTagsExcept(valueName);
+                if (!valueName.Equals(this.getCurrentNode().getLocalName())) {
                     this.error = true;
                     }
                     while (true) {
@@ -2267,114 +2272,119 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
             return true;
           }
         case InsertionMode.InHeadNoscript: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-          if (ValueToken == 0x09 || ValueToken == 0x0a || ValueToken == 0x0c
-                ||
-                  ValueToken == 0x0d || ValueToken == 0x20) {
-         return this.applyInsertionMode(ValueToken,
-                  InsertionMode.InBody);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+          if (valueToken == 0x09 || valueToken == 0x0a || valueToken == 0x0c||
+                valueToken == 0x0d || valueToken == 0x20) {
+                return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InBody);
               } else {
                 this.error = true;
                 this.applyEndTag("noscript", insMode);
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
               this.error = true;
               return false;
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("html")) {
-         return this.applyInsertionMode(ValueToken,
-                  InsertionMode.InBody);
-      } else if (ValueName.Equals("basefont") || ValueName.Equals("bgsound"
-) ||
-                    ValueName.Equals("link") || ValueName.Equals("meta") ||
-                    ValueName.Equals("noframes") || ValueName.Equals("style")
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("html")) {
+                return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InBody);
+              } else if (valueName.Equals("basefont") || valueName.Equals(
+          "bgsound") || valueName.Equals("link") || valueName.Equals("meta") ||
+                    valueName.Equals("noframes") || valueName.Equals("style")
 ) {
-         return this.applyInsertionMode(ValueToken,
-                  InsertionMode.InHead);
-         } else if (ValueName.Equals("head") || ValueName.Equals("noscript"
-)) {
+                return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InHead);
+              } else if (valueName.Equals("head") || valueName.Equals(
+       "noscript")) {
                 this.error = true;
                 return false;
               } else {
                 this.error = true;
                 this.applyEndTag("noscript", insMode);
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("noscript")) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("noscript")) {
                 this.popCurrentNode();
                 this.insertionMode = InsertionMode.InHead;
-              } else if (ValueName.Equals("br")) {
+              } else if (valueName.Equals("br")) {
                 this.error = true;
                 this.applyEndTag("noscript", insMode);
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               } else {
                 this.error = true;
                 return false;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-         return this.applyInsertionMode(ValueToken,
-                InsertionMode.InHead);
-            } else if (ValueToken == TOKEN_EOF) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              return this.applyInsertionMode(
+       valueToken,
+       InsertionMode.InHead);
+            } else if (valueToken == TOKEN_EOF) {
               this.error = true;
               this.applyEndTag("noscript", insMode);
-              return this.applyInsertionMode(ValueToken, null);
+              return this.applyInsertionMode(valueToken, null);
             }
             return true;
           }
         case InsertionMode.InTable: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               IElement currentNode = this.getCurrentNode();
               if (currentNode.getLocalName().Equals("table") ||
                   currentNode.getLocalName().Equals("tbody") ||
                   currentNode.getLocalName().Equals("tfoot") ||
                   currentNode.getLocalName().Equals("thead") ||
                   currentNode.getLocalName().Equals("tr")) {
-     this.pendingTableCharacters.Remove(0,
-                  this.pendingTableCharacters.Length);
+                this.pendingTableCharacters.Remove(
+             0,
+             this.pendingTableCharacters.Length);
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.InTableText;
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               } else {
                 // NOTE: Foster parenting rules don't apply here, since
                 // the current node isn't table, tbody, tfoot, thead, or
                 // tr and won't change while In Body is being applied
                 this.error = true;
-         return this.applyInsertionMode(ValueToken,
-                  InsertionMode.InBody);
+                return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InBody);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
               this.error = true;
               return false;
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("table")) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("table")) {
                 this.error = true;
                 return this.applyEndTag("table", insMode) ?
-                  this.applyInsertionMode(ValueToken, null) : (false);
-              } else if (ValueName.Equals("caption")) {
+                  this.applyInsertionMode(valueToken, null) : false;
+              } else if (valueName.Equals("caption")) {
                 while (true) {
                   IElement node = this.getCurrentNode();
-                if (node == null || node.getLocalName().Equals("table") ||
+                  if (node == null || node.getLocalName().Equals("table") ||
                     node.getLocalName().Equals("html")) {
                     break;
                   }
                   this.popCurrentNode();
                 }
-          this.insertFormattingMarker(tag,
-                  this.addHtmlElement(tag));
+                this.insertFormattingMarker(
+        tag,
+        this.addHtmlElement(tag));
                 this.insertionMode = InsertionMode.InCaption;
                 return true;
-              } else if (ValueName.Equals("colgroup")) {
+              } else if (valueName.Equals("colgroup")) {
                 while (true) {
                   IElement node = this.getCurrentNode();
-                if (node == null || node.getLocalName().Equals("table") ||
+                  if (node == null || node.getLocalName().Equals("table") ||
                     node.getLocalName().Equals("html")) {
                     break;
                   }
@@ -2383,15 +2393,14 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.addHtmlElement(tag);
                 this.insertionMode = InsertionMode.InColumnGroup;
                 return true;
-              } else if (ValueName.Equals("col")) {
+              } else if (valueName.Equals("col")) {
                 this.applyStartTag("colgroup", insMode);
-                return this.applyInsertionMode(ValueToken, null);
-           } else if (ValueName.Equals("tbody") || ValueName.Equals("tfoot"
-) ||
-                  ValueName.Equals("thead")) {
+                return this.applyInsertionMode(valueToken, null);
+              } else if (valueName.Equals("tbody") || valueName.Equals(
+     "tfoot") || valueName.Equals("thead")) {
                 while (true) {
                   IElement node = this.getCurrentNode();
-                if (node == null || node.getLocalName().Equals("table") ||
+                  if (node == null || node.getLocalName().Equals("table") ||
                     node.getLocalName().Equals("html")) {
                     break;
                   }
@@ -2399,28 +2408,29 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 }
                 this.addHtmlElement(tag);
                 this.insertionMode = InsertionMode.InTableBody;
-              } else if (ValueName.Equals("td") || ValueName.Equals("th") ||
-                  ValueName.Equals("tr")) {
+              } else if (valueName.Equals("td") || valueName.Equals("th") ||
+                  valueName.Equals("tr")) {
                 this.applyStartTag("tbody", insMode);
-                return this.applyInsertionMode(ValueToken, null);
-              } else if (ValueName.Equals("style") ||
-                  ValueName.Equals("script")) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InHead);
-              } else if (ValueName.Equals("input")) {
+                return this.applyInsertionMode(valueToken, null);
+              } else if (valueName.Equals("style") ||
+                  valueName.Equals("script")) {
+                this.applyInsertionMode(valueToken, InsertionMode.InHead);
+              } else if (valueName.Equals("input")) {
                 string attr = tag.getAttribute("type");
                 if (attr == null || !"hidden"
                     .Equals(DataUtilities.ToLowerCaseAscii(attr))) {
                   this.error = true;
                   this.doFosterParent = true;
-                this.applyInsertionMode(ValueToken,
-                    InsertionMode.InBody);
+                  this.applyInsertionMode(
+    valueToken,
+    InsertionMode.InBody);
                   this.doFosterParent = false;
                 } else {
                   this.error = true;
                   this.addHtmlElementNoPush(tag);
                   tag.ackSelfClosing();
                 }
-              } else if (ValueName.Equals("form")) {
+              } else if (valueName.Equals("form")) {
                 this.error = true;
                 if (this.formElement != null) {
                   return false;
@@ -2429,43 +2439,42 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
               } else {
                 this.error = true;
                 this.doFosterParent = true;
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
                 this.doFosterParent = false;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("table")) {
-                if (!this.hasHtmlElementInTableScope(ValueName)) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("table")) {
+                if (!this.hasHtmlElementInTableScope(valueName)) {
                   this.error = true;
                   return false;
                 } else {
                   while (true) {
                     IElement node = this.popCurrentNode();
-                    if (node.getLocalName().Equals(ValueName)) {
+                    if (node.getLocalName().Equals(valueName)) {
                     break;
                     }
                   }
                   this.resetInsertionMode();
                 }
-          } else if (ValueName.Equals("body") || ValueName.Equals("caption"
-) ||
-                  ValueName.Equals("col") || ValueName.Equals("colgroup") ||
-                  ValueName.Equals("html") || ValueName.Equals("tbody") ||
-                  ValueName.Equals("td") || ValueName.Equals("tfoot") ||
-                  ValueName.Equals("th") || ValueName.Equals("thead") ||
-                  ValueName.Equals("tr")) {
+              } else if (valueName.Equals("body") || valueName.Equals(
+      "caption") || valueName.Equals("col") || valueName.Equals("colgroup") ||
+                    valueName.Equals("html") || valueName.Equals("tbody") ||
+                    valueName.Equals("td") || valueName.Equals("tfoot") ||
+                    valueName.Equals("th") || valueName.Equals("thead") ||
+                    valueName.Equals("tr")) {
                 this.error = true;
                 return false;
               } else {
                 this.doFosterParent = true;
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
                 this.doFosterParent = false;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(ValueToken);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.addCommentNodeToCurrentNode(valueToken);
               return true;
-            } else if (ValueToken == TOKEN_EOF) {
+            } else if (valueToken == TOKEN_EOF) {
               this.error |= (this.getCurrentNode() == null ||
                 !getCurrentNode().getLocalName().Equals(
                     "html"));
@@ -2474,19 +2483,18 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
             return true;
           }
         case InsertionMode.InTableText: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              if (ValueToken == 0) {
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+              if (valueToken == 0) {
                 this.error = true;
                 return false;
               } else {
-                if (ValueToken <= 0xffff) {
-                  this.pendingTableCharacters.Append((char)ValueToken);
-                } else if (ValueToken <= 0x10ffff) {
-          this.pendingTableCharacters.Append((char)((((ValueToken - 0x10000)
-                >>
+                if (valueToken <= 0xffff) {
+                  this.pendingTableCharacters.Append((char)valueToken);
+                } else if (valueToken <= 0x10ffff) {
+          this.pendingTableCharacters.Append((char)((((valueToken - 0x10000)>>
                 10) & 0x3ff) + 0xd800));
-             this.pendingTableCharacters.Append((char)(((ValueToken - 0x10000) &
-                0x3ff) + 0xdc00));
+            this.pendingTableCharacters.Append((char)(((valueToken -
+                0x10000) & 0x3ff) + 0xdc00));
                 }
               }
             } else {
@@ -2520,38 +2528,39 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
   this.pendingTableCharacters.ToString());
               }
               this.insertionMode = this.originalInsertionMode;
-              return this.applyInsertionMode(ValueToken, null);
+              return this.applyInsertionMode(valueToken, null);
             }
             return true;
           }
         case InsertionMode.InCaption: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("caption") ||
-                  ValueName.Equals("col") || ValueName.Equals("colgroup") ||
-                  ValueName.Equals("tbody") || ValueName.Equals("thead") ||
-                  ValueName.Equals("td") || ValueName.Equals("tfoot") ||
-                ValueName.Equals("th") || ValueName.Equals("tr")) {
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("caption") ||
+                  valueName.Equals("col") || valueName.Equals("colgroup") ||
+                  valueName.Equals("tbody") || valueName.Equals("thead") ||
+                  valueName.Equals("td") || valueName.Equals("tfoot") ||
+                valueName.Equals("th") || valueName.Equals("tr")) {
                 this.error = true;
                 if (this.applyEndTag("caption", insMode)) {
-                  return this.applyInsertionMode(ValueToken, null);
+                  return this.applyInsertionMode(valueToken, null);
                 }
               } else {
-         return this.applyInsertionMode(ValueToken,
-                  InsertionMode.InBody);
+                return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InBody);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("caption")) {
-                if (!this.hasHtmlElementInScope(ValueName)) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("caption")) {
+                if (!this.hasHtmlElementInScope(valueName)) {
                   this.error = true;
                   return false;
                 }
                 this.generateImpliedEndTags();
-            if (!this.getCurrentNode().getLocalName().Equals("caption"
-)) {
+                if (!this.getCurrentNode().getLocalName().Equals(
+      "caption")) {
                   this.error = true;
                 }
                 while (true) {
@@ -2562,96 +2571,99 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 }
                 this.clearFormattingToMarker();
                 this.insertionMode = InsertionMode.InTable;
-              } else if (ValueName.Equals("table")) {
+              } else if (valueName.Equals("table")) {
                 this.error = true;
                 if (this.applyEndTag("caption", insMode)) {
-                  return this.applyInsertionMode(ValueToken, null);
+                  return this.applyInsertionMode(valueToken, null);
                 }
-              } else if (ValueName.Equals("body") ||
-                  ValueName.Equals("col") || ValueName.Equals("colgroup") ||
-                  ValueName.Equals("tbody") || ValueName.Equals("thead") ||
-                  ValueName.Equals("td") || ValueName.Equals("tfoot") ||
-                  ValueName.Equals("th") || ValueName.Equals("tr") ||
-                  ValueName.Equals("html")) {
+              } else if (valueName.Equals("body") ||
+                  valueName.Equals("col") || valueName.Equals("colgroup") ||
+                  valueName.Equals("tbody") || valueName.Equals("thead") ||
+                  valueName.Equals("td") || valueName.Equals("tfoot") ||
+                  valueName.Equals("th") || valueName.Equals("tr") ||
+                  valueName.Equals("html")) {
                 this.error = true;
                 return false;
               } else {
-         return this.applyInsertionMode(ValueToken,
-                  InsertionMode.InBody);
+                return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InBody);
               }
             } else {
-         return this.applyInsertionMode(ValueToken,
-                InsertionMode.InBody);
+              return this.applyInsertionMode(
+       valueToken,
+       InsertionMode.InBody);
             }
             return true;
           }
         case InsertionMode.InColumnGroup: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              if (ValueToken == 0x20 || ValueToken == 0x0c || ValueToken ==
-                0x0a || ValueToken ==
-                0x0d || ValueToken == 0x09) {
-             this.insertCharacter(this.getCurrentNode(),
-                  ValueToken);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+              if (valueToken == 0x20 || valueToken == 0x0c || valueToken ==
+                0x0a || valueToken == 0x0d || valueToken == 0x09) {
+                this.insertCharacter(
+     this.getCurrentNode(),
+     valueToken);
               } else {
                 if (this.applyEndTag("colgroup", insMode)) {
-                  return this.applyInsertionMode(ValueToken, null);
+                  return this.applyInsertionMode(valueToken, null);
                 }
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
               this.error = true;
               return false;
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("html")) {
-         return this.applyInsertionMode(ValueToken,
-                  InsertionMode.InBody);
-              } else if (ValueName.Equals("col")) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("html")) {
+                return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InBody);
+              } else if (valueName.Equals("col")) {
                 this.addHtmlElementNoPush(tag);
                 tag.ackSelfClosing();
               } else {
                 if (this.applyEndTag("colgroup", insMode)) {
-                  return this.applyInsertionMode(ValueToken, null);
+                  return this.applyInsertionMode(valueToken, null);
                 }
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("colgroup")) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("colgroup")) {
                 if (this.getCurrentNode().getLocalName().Equals("html")) {
                   this.error = true;
                   return false;
                 }
                 this.popCurrentNode();
                 this.insertionMode = InsertionMode.InTable;
-              } else if (ValueName.Equals("col")) {
+              } else if (valueName.Equals("col")) {
                 this.error = true;
                 return false;
               } else {
                 if (this.applyEndTag("colgroup", insMode)) {
-                  return this.applyInsertionMode(ValueToken, null);
+                  return this.applyInsertionMode(valueToken, null);
                 }
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
               if (this.applyEndTag("colgroup", insMode)) {
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-            } else if (ValueToken == TOKEN_EOF) {
+            } else if (valueToken == TOKEN_EOF) {
               if (this.getCurrentNode().getLocalName().Equals("html")) {
                 this.stopParsing();
                 return true;
               }
               if (this.applyEndTag("colgroup", insMode)) {
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
             }
             return true;
           }
         case InsertionMode.InTableBody: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("tr")) {
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("tr")) {
                 while (true) {
                   IElement node = this.getCurrentNode();
                   if (node == null || node.getLocalName().Equals("tbody") ||
@@ -2664,14 +2676,14 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 }
                 this.addHtmlElement(tag);
                 this.insertionMode = InsertionMode.InRow;
-              } else if (ValueName.Equals("th") || ValueName.Equals("td")) {
+              } else if (valueName.Equals("th") || valueName.Equals("td")) {
                 this.error = true;
                 this.applyStartTag("tr", insMode);
-                return this.applyInsertionMode(ValueToken, null);
-              } else if (ValueName.Equals("caption") ||
-                  ValueName.Equals("col") || ValueName.Equals("colgroup") ||
-                  ValueName.Equals("tbody") || ValueName.Equals("tfoot") ||
-                  ValueName.Equals("thead")) {
+                return this.applyInsertionMode(valueToken, null);
+              } else if (valueName.Equals("caption") ||
+                  valueName.Equals("col") || valueName.Equals("colgroup") ||
+                  valueName.Equals("tbody") || valueName.Equals("tfoot") ||
+                  valueName.Equals("thead")) {
                 if (!this.hasHtmlElementInTableScope("tbody") &&
                     !this.hasHtmlElementInTableScope("thead") &&
                     !this.hasHtmlElementInTableScope("tfoot")
@@ -2689,19 +2701,21 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                   }
                   this.popCurrentNode();
                 }
-     this.applyEndTag(this.getCurrentNode().getLocalName(),
-                  insMode);
-                return this.applyInsertionMode(ValueToken, null);
+                this.applyEndTag(
+             this.getCurrentNode().getLocalName(),
+             insMode);
+                return this.applyInsertionMode(valueToken, null);
               } else {
-        return this.applyInsertionMode(ValueToken,
-                  InsertionMode.InTable);
+                return this.applyInsertionMode(
+          valueToken,
+          InsertionMode.InTable);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("tbody") ||
-                  ValueName.Equals("tfoot") || ValueName.Equals("thead")) {
-                if (!this.hasHtmlElementInScope(ValueName)) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("tbody") ||
+                  valueName.Equals("tfoot") || valueName.Equals("thead")) {
+                if (!this.hasHtmlElementInScope(valueName)) {
                   this.error = true;
                   return false;
                 }
@@ -2717,7 +2731,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 }
                 this.popCurrentNode();
                 this.insertionMode = InsertionMode.InTable;
-              } else if (ValueName.Equals("table")) {
+              } else if (valueName.Equals("table")) {
                 if (!this.hasHtmlElementInTableScope("tbody") &&
                     !this.hasHtmlElementInTableScope("thead") &&
                     !this.hasHtmlElementInTableScope("tfoot")
@@ -2735,106 +2749,106 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                   }
                   this.popCurrentNode();
                 }
-     this.applyEndTag(this.getCurrentNode().getLocalName(),
-                  insMode);
-                return this.applyInsertionMode(ValueToken, null);
-              } else if (ValueName.Equals("body") ||
-                  ValueName.Equals("caption") || ValueName.Equals("col") ||
-                  ValueName.Equals("colgroup") || ValueName.Equals("html") ||
-                  ValueName.Equals("td") || ValueName.Equals("th") ||
-                  ValueName.Equals("tr")) {
+                this.applyEndTag(
+             this.getCurrentNode().getLocalName(),
+             insMode);
+                return this.applyInsertionMode(valueToken, null);
+              } else if (valueName.Equals("body") ||
+                  valueName.Equals("caption") || valueName.Equals("col") ||
+                  valueName.Equals("colgroup") || valueName.Equals("html") ||
+                  valueName.Equals("td") || valueName.Equals("th") ||
+                  valueName.Equals("tr")) {
                 this.error = true;
                 return false;
               } else {
-        return this.applyInsertionMode(ValueToken,
-                  InsertionMode.InTable);
+                return this.applyInsertionMode(
+          valueToken,
+          InsertionMode.InTable);
               }
             } else {
-        return this.applyInsertionMode(ValueToken,
-                InsertionMode.InTable);
+              return this.applyInsertionMode(
+        valueToken,
+        InsertionMode.InTable);
             }
             return true;
           }
         case InsertionMode.InRow: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              this.applyInsertionMode(ValueToken, InsertionMode.InTable);
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.applyInsertionMode(ValueToken, InsertionMode.InTable);
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("th") || ValueName.Equals("td")) {
-              while (!this.getCurrentNode().getLocalName().Equals("tr"
-) &&
-                    !this.getCurrentNode().getLocalName().Equals("html")) {
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+              this.applyInsertionMode(valueToken, InsertionMode.InTable);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+              this.applyInsertionMode(valueToken, InsertionMode.InTable);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("th") || valueName.Equals("td")) {
+                while (!this.getCurrentNode().getLocalName().Equals(
+    "tr") && !this.getCurrentNode().getLocalName().Equals("html")) {
                   this.popCurrentNode();
                 }
                 this.insertionMode = InsertionMode.InCell;
-          this.insertFormattingMarker(tag,
-                  this.addHtmlElement(tag));
-           } else if (ValueName.Equals("caption") || ValueName.Equals("col"
-) ||
-                  ValueName.Equals("colgroup") || ValueName.Equals("tbody") ||
-                  ValueName.Equals("tfoot") || ValueName.Equals("thead") ||
-                  ValueName.Equals("tr")) {
+                this.insertFormattingMarker(
+        tag,
+        this.addHtmlElement(tag));
+              } else if (valueName.Equals("caption") || valueName.Equals(
+     "col") || valueName.Equals("colgroup") || valueName.Equals("tbody") ||
+                    valueName.Equals("tfoot") || valueName.Equals("thead") ||
+                    valueName.Equals("tr")) {
                 if (this.applyEndTag("tr", insMode)) {
-                  return this.applyInsertionMode(ValueToken, null);
+                  return this.applyInsertionMode(valueToken, null);
                 }
               } else {
-                this.applyInsertionMode(ValueToken, InsertionMode.InTable);
+                this.applyInsertionMode(valueToken, InsertionMode.InTable);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("tr")) {
-                if (!this.hasHtmlElementInTableScope(ValueName)) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("tr")) {
+                if (!this.hasHtmlElementInTableScope(valueName)) {
                   this.error = true;
                   return false;
                 }
-              while (!this.getCurrentNode().getLocalName().Equals("tr"
-) &&
-                    !this.getCurrentNode().getLocalName().Equals("html")) {
+                while (!this.getCurrentNode().getLocalName().Equals(
+    "tr") && !this.getCurrentNode().getLocalName().Equals("html")) {
                   this.popCurrentNode();
                 }
                 this.popCurrentNode();
                 this.insertionMode = InsertionMode.InTableBody;
-           } else if (ValueName.Equals("tbody") || ValueName.Equals("tfoot"
-) ||
-                  ValueName.Equals("thead")) {
-                if (!this.hasHtmlElementInTableScope(ValueName)) {
+              } else if (valueName.Equals("tbody") || valueName.Equals(
+     "tfoot") || valueName.Equals("thead")) {
+                if (!this.hasHtmlElementInTableScope(valueName)) {
                   this.error = true;
                   return false;
                 }
                 this.applyEndTag("tr", insMode);
-                return this.applyInsertionMode(ValueToken, null);
-              } else if (ValueName.Equals("caption") ||
-                  ValueName.Equals("col") || ValueName.Equals("colgroup") ||
-                  ValueName.Equals("html") || ValueName.Equals("body") ||
-                  ValueName.Equals("td") || ValueName.Equals("th")) {
+                return this.applyInsertionMode(valueToken, null);
+              } else if (valueName.Equals("caption") ||
+                  valueName.Equals("col") || valueName.Equals("colgroup") ||
+                  valueName.Equals("html") || valueName.Equals("body") ||
+                  valueName.Equals("td") || valueName.Equals("th")) {
                 this.error = true;
               } else {
-                this.applyInsertionMode(ValueToken, InsertionMode.InTable);
+                this.applyInsertionMode(valueToken, InsertionMode.InTable);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.applyInsertionMode(ValueToken, InsertionMode.InTable);
-            } else if (ValueToken == TOKEN_EOF) {
-              this.applyInsertionMode(ValueToken, InsertionMode.InTable);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.applyInsertionMode(valueToken, InsertionMode.InTable);
+            } else if (valueToken == TOKEN_EOF) {
+              this.applyInsertionMode(valueToken, InsertionMode.InTable);
             }
             return true;
           }
         case InsertionMode.InCell: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              this.applyInsertionMode(ValueToken, InsertionMode.InBody);
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.applyInsertionMode(ValueToken, InsertionMode.InBody);
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("caption") ||
-                  ValueName.Equals("col") || ValueName.Equals("colgroup") ||
-                  ValueName.Equals("tbody") || ValueName.Equals("td") ||
-                  ValueName.Equals("tfoot") || ValueName.Equals("th") ||
-                  ValueName.Equals("thead") || ValueName.Equals("tr")) {
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+              this.applyInsertionMode(valueToken, InsertionMode.InBody);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+              this.applyInsertionMode(valueToken, InsertionMode.InBody);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("caption") ||
+                  valueName.Equals("col") || valueName.Equals("colgroup") ||
+                  valueName.Equals("tbody") || valueName.Equals("td") ||
+                  valueName.Equals("tfoot") || valueName.Equals("th") ||
+                  valueName.Equals("thead") || valueName.Equals("tr")) {
                 if (!this.hasHtmlElementInTableScope("td") &&
                     !this.hasHtmlElementInTableScope("th")) {
                   this.error = true;
@@ -2843,142 +2857,140 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.applyEndTag(
   this.hasHtmlElementInTableScope("td") ? "td" : "th",
   insMode);
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               } else {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("td") || ValueName.Equals("th")) {
-                if (!this.hasHtmlElementInTableScope(ValueName)) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("td") || valueName.Equals("th")) {
+                if (!this.hasHtmlElementInTableScope(valueName)) {
                   this.error = true;
                   return false;
                 }
                 this.generateImpliedEndTags();
-            if
-  (!this.getCurrentNode().getLocalName().Equals(ValueName)) {
+                if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                   this.error = true;
                 }
                 while (true) {
                   IElement node = this.popCurrentNode();
-                  if (node.getLocalName().Equals(ValueName)) {
+                  if (node.getLocalName().Equals(valueName)) {
                     break;
                   }
                 }
                 this.clearFormattingToMarker();
                 this.insertionMode = InsertionMode.InRow;
-           } else if (ValueName.Equals("caption") || ValueName.Equals("col"
-) ||
-                  ValueName.Equals("colgroup") || ValueName.Equals("body") ||
-                  ValueName.Equals("html")) {
+              } else if (valueName.Equals("caption") || valueName.Equals(
+     "col") || valueName.Equals("colgroup") || valueName.Equals("body") ||
+                    valueName.Equals("html")) {
                 this.error = true;
                 return false;
-              } else if (ValueName.Equals("table") ||
-                  ValueName.Equals("tbody") || ValueName.Equals("tfoot") ||
-                  ValueName.Equals("thead") || ValueName.Equals("tr")) {
-                if (!this.hasHtmlElementInTableScope(ValueName)) {
+              } else if (valueName.Equals("table") ||
+                  valueName.Equals("tbody") || valueName.Equals("tfoot") ||
+                  valueName.Equals("thead") || valueName.Equals("tr")) {
+                if (!this.hasHtmlElementInTableScope(valueName)) {
                   this.error = true;
                   return false;
                 }
                 this.applyEndTag(
   this.hasHtmlElementInTableScope("td") ? "td" : "th",
   insMode);
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               } else {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.applyInsertionMode(ValueToken, InsertionMode.InBody);
-            } else if (ValueToken == TOKEN_EOF) {
-              this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.applyInsertionMode(valueToken, InsertionMode.InBody);
+            } else if (valueToken == TOKEN_EOF) {
+              this.applyInsertionMode(valueToken, InsertionMode.InBody);
             }
             return true;
           }
         case InsertionMode.InSelect: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              if (ValueToken == 0) {
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+              if (valueToken == 0) {
                 this.error = true; return false;
               } else {
-             this.insertCharacter(this.getCurrentNode(),
-                  ValueToken);
+                this.insertCharacter(
+     this.getCurrentNode(),
+     valueToken);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
               this.error = true; return false;
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("html")) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
-              } else if (ValueName.Equals("option")) {
-              if (this.getCurrentNode().getLocalName().Equals("option"
-)) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("html")) {
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
+              } else if (valueName.Equals("option")) {
+                if (this.getCurrentNode().getLocalName().Equals(
+    "option")) {
                   this.applyEndTag("option", insMode);
                 }
                 this.addHtmlElement(tag);
-              } else if (ValueName.Equals("optgroup")) {
-              if (this.getCurrentNode().getLocalName().Equals("option"
-)) {
+              } else if (valueName.Equals("optgroup")) {
+                if (this.getCurrentNode().getLocalName().Equals(
+    "option")) {
                   this.applyEndTag("option", insMode);
                 }
-            if (this.getCurrentNode().getLocalName().Equals("optgroup"
-)) {
+                if (this.getCurrentNode().getLocalName().Equals(
+      "optgroup")) {
                   this.applyEndTag("optgroup", insMode);
                 }
                 this.addHtmlElement(tag);
-              } else if (ValueName.Equals("select")) {
+              } else if (valueName.Equals("select")) {
                 this.error = true;
                 return this.applyEndTag("select", insMode);
-          } else if (ValueName.Equals("input") || ValueName.Equals("keygen"
-) ||
-                  ValueName.Equals("textarea")) {
+              } else if (valueName.Equals("input") || valueName.Equals(
+      "keygen") || valueName.Equals("textarea")) {
                 this.error = true;
                 if (!this.hasHtmlElementInSelectScope("select")) {
                   return false;
                 }
                 this.applyEndTag("select", insMode);
-                return this.applyInsertionMode(ValueToken, null);
-              } else if (ValueName.Equals("script")) {
-         return this.applyInsertionMode(ValueToken,
-                  InsertionMode.InHead);
+                return this.applyInsertionMode(valueToken, null);
+              } else if (valueName.Equals("script")) {
+                return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InHead);
               } else {
                 this.error = true; return false;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("optgroup")) {
-              if (this.getCurrentNode().getLocalName().Equals("option"
-) &&
-                    this.openElements.Count >= 2 &&
-          this.openElements[this.openElements.Count -
-                 2].getLocalName().Equals(
-        "optgroup")) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("optgroup")) {
+                if (this.getCurrentNode().getLocalName().Equals(
+    "option") && this.openElements.Count >= 2 &&
+            this.openElements[this.openElements.Count -
+                   2].getLocalName().Equals(
+          "optgroup")) {
                   this.applyEndTag("option", insMode);
                 }
-            if (this.getCurrentNode().getLocalName().Equals("optgroup"
-)) {
+                if (this.getCurrentNode().getLocalName().Equals(
+      "optgroup")) {
                   this.popCurrentNode();
                 } else {
                   this.error = true;
                   return false;
                 }
-              } else if (ValueName.Equals("option")) {
-              if (this.getCurrentNode().getLocalName().Equals("option"
-)) {
+              } else if (valueName.Equals("option")) {
+                if (this.getCurrentNode().getLocalName().Equals(
+    "option")) {
                   this.popCurrentNode();
                 } else {
                   this.error = true;
                   return false;
                 }
-              } else if (ValueName.Equals("select")) {
-                if (!this.hasHtmlElementInScope(ValueName)) {
+              } else if (valueName.Equals("select")) {
+                if (!this.hasHtmlElementInScope(valueName)) {
                   this.error = true;
                   return false;
                 }
                 while (true) {
                   IElement node = this.popCurrentNode();
-                  if (node.getLocalName().Equals(ValueName)) {
+                  if (node.getLocalName().Equals(valueName)) {
                     break;
                   }
                 }
@@ -2986,9 +2998,9 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
               } else {
                 this.error = true; return false;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(ValueToken);
-            } else if (ValueToken == TOKEN_EOF) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.addCommentNodeToCurrentNode(valueToken);
+            } else if (valueToken == TOKEN_EOF) {
               if (this.getCurrentNode() == null ||
                     !this.getCurrentNode().getLocalName().Equals(
                     "html")) {
@@ -2999,80 +3011,84 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
             return true;
           }
         case InsertionMode.InSelectInTable: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-       return this.applyInsertionMode(ValueToken,
-                InsertionMode.InSelect);
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-       return this.applyInsertionMode(ValueToken,
-                InsertionMode.InSelect);
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("caption") ||
-                  ValueName.Equals("table") || ValueName.Equals("tbody") ||
-                  ValueName.Equals("tfoot") || ValueName.Equals("thead") ||
-                  ValueName.Equals("tr") || ValueName.Equals("td") ||
-                  ValueName.Equals("th")) {
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+              return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InSelect);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+              return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InSelect);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("caption") ||
+                  valueName.Equals("table") || valueName.Equals("tbody") ||
+                  valueName.Equals("tfoot") || valueName.Equals("thead") ||
+                  valueName.Equals("tr") || valueName.Equals("td") ||
+                  valueName.Equals("th")) {
                 this.error = true;
                 this.applyEndTag("select", insMode);
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-       return this.applyInsertionMode(ValueToken,
-                InsertionMode.InSelect);
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("caption") ||
-                  ValueName.Equals("table") || ValueName.Equals("tbody") ||
-                  ValueName.Equals("tfoot") || ValueName.Equals("thead") ||
-                  ValueName.Equals("tr") || ValueName.Equals("td") ||
-                  ValueName.Equals("th")) {
+              return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InSelect);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("caption") ||
+                  valueName.Equals("table") || valueName.Equals("tbody") ||
+                  valueName.Equals("tfoot") || valueName.Equals("thead") ||
+                  valueName.Equals("tr") || valueName.Equals("td") ||
+                  valueName.Equals("th")) {
                 this.error = true;
-                if (!this.hasHtmlElementInTableScope(ValueName)) {
+                if (!this.hasHtmlElementInTableScope(valueName)) {
                   return false;
                 }
                 this.applyEndTag("select", insMode);
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-       return this.applyInsertionMode(ValueToken,
-                InsertionMode.InSelect);
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-       return this.applyInsertionMode(ValueToken,
-                InsertionMode.InSelect);
+              return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InSelect);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InSelect);
             } else {
-              return (ValueToken == TOKEN_EOF) ?
-     this.applyInsertionMode(ValueToken, InsertionMode.InSelect) :
-                  (true);
+              return (valueToken == TOKEN_EOF) ?
+     this.applyInsertionMode(valueToken, InsertionMode.InSelect) :
+                  true;
             }
           }
         case InsertionMode.AfterBody: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              if (ValueToken == 0x09 || ValueToken == 0x0a || ValueToken ==
-                0x0c || ValueToken ==
-                0x0d || ValueToken == 0x20) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+              if (valueToken == 0x09 || valueToken == 0x0a || valueToken ==
+                0x0c || valueToken == 0x0d || valueToken == 0x20) {
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
               } else {
                 this.error = true;
                 this.insertionMode = InsertionMode.InBody;
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
               this.error = true;
               return true;
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("html")) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("html")) {
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
               } else {
                 this.error = true;
                 this.insertionMode = InsertionMode.InBody;
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("html")) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("html")) {
                 if (this.context != null) {
                   this.error = true;
                   return false;
@@ -3081,11 +3097,11 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
               } else {
                 this.error = true;
                 this.insertionMode = InsertionMode.InBody;
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToFirst(ValueToken);
-            } else if (ValueToken == TOKEN_EOF) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.addCommentNodeToFirst(valueToken);
+            } else if (valueToken == TOKEN_EOF) {
               this.stopParsing();
 
               return true;
@@ -3093,42 +3109,42 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
             return true;
           }
         case InsertionMode.InFrameset: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-          if (ValueToken == 0x09 || ValueToken == 0x0a || ValueToken == 0x0c
-                ||
-                  ValueToken == 0x0d || ValueToken == 0x20) {
-             this.insertCharacter(this.getCurrentNode(),
-                  ValueToken);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+          if (valueToken == 0x09 || valueToken == 0x0a || valueToken == 0x0c||
+                valueToken == 0x0d || valueToken == 0x20) {
+                this.insertCharacter(
+     this.getCurrentNode(),
+     valueToken);
               } else {
                 this.error = true;
                 return false;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
               this.error = true;
               return false;
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("html")) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
-              } else if (ValueName.Equals("frameset")) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("html")) {
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
+              } else if (valueName.Equals("frameset")) {
                 this.addHtmlElement(tag);
-              } else if (ValueName.Equals("frame")) {
+              } else if (valueName.Equals("frame")) {
                 this.addHtmlElementNoPush(tag);
                 tag.ackSelfClosing();
-              } else if (ValueName.Equals("noframes")) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InHead);
+              } else if (valueName.Equals("noframes")) {
+                this.applyInsertionMode(valueToken, InsertionMode.InHead);
               } else {
                 this.error = true;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
               if (this.getCurrentNode().getLocalName().Equals("html")) {
                 this.error = true;
                 return false;
               }
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("frameset")) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("frameset")) {
                 this.popCurrentNode();
                 if (this.context == null &&
            !HtmlCommon.isHtmlElement(this.getCurrentNode(), "frameset"
@@ -3138,10 +3154,10 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
               } else {
                 this.error = true;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(ValueToken);
-            } else if (ValueToken == TOKEN_EOF) {
-           if (!HtmlCommon.isHtmlElement(this.getCurrentNode(), "html"
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.addCommentNodeToCurrentNode(valueToken);
+            } else if (valueToken == TOKEN_EOF) {
+              if (!HtmlCommon.isHtmlElement(this.getCurrentNode(), "html"
 )) {
                 this.error = true;
               }
@@ -3150,104 +3166,104 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
             return true;
           }
         case InsertionMode.AfterFrameset: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              if (ValueToken == 0x09 || ValueToken == 0x0a || ValueToken ==
-                0x0c || ValueToken ==
-                0x0d || ValueToken == 0x20) {
-             this.insertCharacter(this.getCurrentNode(),
-                  ValueToken);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+              if (valueToken == 0x09 || valueToken == 0x0a || valueToken ==
+                0x0c || valueToken == 0x0d || valueToken == 0x20) {
+                this.insertCharacter(
+     this.getCurrentNode(),
+     valueToken);
               } else {
                 this.error = true;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
               this.error = true;
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("html")) {
-         return this.applyInsertionMode(ValueToken,
-                  InsertionMode.InBody);
-              } else if (ValueName.Equals("noframes")) {
-         return this.applyInsertionMode(ValueToken,
-                  InsertionMode.InHead);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("html")) {
+                return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InBody);
+              } else if (valueName.Equals("noframes")) {
+                return this.applyInsertionMode(
+         valueToken,
+         InsertionMode.InHead);
               } else {
                 this.error = true;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("html")) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("html")) {
                 this.insertionMode = InsertionMode.AfterAfterFrameset;
               } else {
                 this.error = true;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(ValueToken);
-            } else if (ValueToken == TOKEN_EOF) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.addCommentNodeToCurrentNode(valueToken);
+            } else if (valueToken == TOKEN_EOF) {
               this.stopParsing();
             }
             return true;
           }
         case InsertionMode.AfterAfterBody: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              if (ValueToken == 0x09 || ValueToken == 0x0a || ValueToken ==
-                0x0c || ValueToken ==
-                0x0d || ValueToken == 0x20) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+              if (valueToken == 0x09 || valueToken == 0x0a || valueToken ==
+                0x0c || valueToken == 0x0d || valueToken == 0x20) {
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
               } else {
                 this.error = true;
                 this.insertionMode = InsertionMode.InBody;
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.applyInsertionMode(ValueToken, InsertionMode.InBody);
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if (ValueName.Equals("html")) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+              this.applyInsertionMode(valueToken, InsertionMode.InBody);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if (valueName.Equals("html")) {
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
               } else {
                 this.error = true;
                 this.insertionMode = InsertionMode.InBody;
-                return this.applyInsertionMode(ValueToken, null);
+                return this.applyInsertionMode(valueToken, null);
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
               this.error = true;
               this.insertionMode = InsertionMode.InBody;
-              return this.applyInsertionMode(ValueToken, null);
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToDocument(ValueToken);
-            } else if (ValueToken == TOKEN_EOF) {
+              return this.applyInsertionMode(valueToken, null);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.addCommentNodeToDocument(valueToken);
+            } else if (valueToken == TOKEN_EOF) {
               this.stopParsing();
             }
             return true;
           }
         case InsertionMode.AfterAfterFrameset: {
-            if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              if (ValueToken == 0x09 || ValueToken == 0x0a || ValueToken ==
-                0x0c || ValueToken ==
-                0x0d || ValueToken == 0x20) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
+            if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+              if (valueToken == 0x09 || valueToken == 0x0a || valueToken ==
+                0x0c || valueToken == 0x0d || valueToken == 0x20) {
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
               } else {
                 this.error = true;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.applyInsertionMode(ValueToken, InsertionMode.InBody);
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(ValueToken);
-              string ValueName = tag.getName();
-              if ("html".Equals(ValueName)) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InBody);
-              } else if ("noframes".Equals(ValueName)) {
-                this.applyInsertionMode(ValueToken, InsertionMode.InHead);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
+              this.applyInsertionMode(valueToken, InsertionMode.InBody);
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(valueToken);
+              string valueName = tag.getName();
+              if ("html".Equals(valueName)) {
+                this.applyInsertionMode(valueToken, InsertionMode.InBody);
+              } else if ("noframes".Equals(valueName)) {
+                this.applyInsertionMode(valueToken, InsertionMode.InHead);
               } else {
                 this.error = true;
               }
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
               this.error = true;
-            } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToDocument(ValueToken);
-            } else if (ValueToken == TOKEN_EOF) {
+            } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+              this.addCommentNodeToDocument(valueToken);
+            } else if (valueToken == TOKEN_EOF) {
               this.stopParsing();
             }
             return true;
@@ -3256,9 +3272,9 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
       }
     }
 
-    private bool applyStartTag(string ValueName, InsertionMode? insMode) {
+    private bool applyStartTag(string valueName, InsertionMode? insMode) {
       return this.applyInsertionMode(
-  this.getArtificialToken(TOKEN_START_TAG, ValueName),
+  this.getArtificialToken(TOKEN_START_TAG, valueName),
   insMode);
     }
 
@@ -3284,18 +3300,20 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
       this.initialize();
       // Rewind the input stream and set the new encoding
       this.inputStream.rewind();
-   this.encoding = new EncodingConfidence(charset,
-        EncodingConfidence.Certain);
+      this.encoding = new EncodingConfidence(
+     charset,
+     EncodingConfidence.Certain);
       ICharacterEncoding henc = new Html5Encoding(this.encoding);
       this.charInput = new StackableCharacterInput(
-        Encodings.GetDecoderInput(henc, (IByteReader)null));
+        Encodings.GetDecoderInput(henc, this.inputStream));
     }
 
     private void clearFormattingToMarker() {
       while (this.formattingElements.Count > 0) {
         FormattingElement
-fe = removeAtIndex(this.formattingElements, this.formattingElements.Count -
-            1);
+fe = removeAtIndex(
+  this.formattingElements,
+  this.formattingElements.Count - 1);
         if (fe.isMarker()) {
           break;
         }
@@ -3308,8 +3326,8 @@ fe = removeAtIndex(this.formattingElements, this.formattingElements.Count -
       }
     }
 
-    private Comment createCommentNode(int ValueToken) {
-      var comment = (CommentToken)this.getToken(ValueToken);
+    private Comment createCommentNode(int valueToken) {
+      var comment = (CommentToken)this.getToken(valueToken);
       var node = new Comment();
       node.setData(comment.getValue());
       return node;
@@ -3330,7 +3348,7 @@ fe = removeAtIndex(this.formattingElements, this.formattingElements.Count -
       return ret;
     }
 
-    private void fosterParent(INode ValueElement) {
+    private void fosterParent(INode valueElement) {
       if (this.openElements.Count == 0) {
         return;
       }
@@ -3341,33 +3359,33 @@ fe = removeAtIndex(this.formattingElements, this.formattingElements.Count -
           var parent = (Node)e.getParentNode();
           bool isElement = (parent != null && parent.getNodeType() ==
             NodeType.ELEMENT_NODE);
-          if (!isElement) {  // the parent is not an ValueElement
+          if (!isElement) {  // the parent is not an valueElement
             if (i <= 1) {
               // This usually won't happen
               throw new InvalidOperationException();
             }
-            // append to the ValueElement before this table
+            // append to the valueElement before this table
             fosterParent = this.openElements[i - 1];
             break;
           } else {
             // Parent of the table, insert before the table
-            parent.insertBefore((Node)ValueElement, (Node)e);
+            parent.insertBefore((Node)valueElement, (Node)e);
             return;
           }
         }
       }
-      ((Node)fosterParent).appendChild(ValueElement);
+      ((Node)fosterParent).appendChild(valueElement);
     }
 
     private void generateImpliedEndTags() {
       while (true) {
         IElement node = this.getCurrentNode();
-        string ValueName = node.getLocalName();
-        if ("dd" .Equals(ValueName) || "dd" .Equals(ValueName) || "dt"
-          .Equals(ValueName) ||
-            "li".Equals(ValueName) || "option".Equals(ValueName) ||
-            "optgroup".Equals(ValueName) || "p".Equals(ValueName) ||
-            "rp".Equals(ValueName) || "rt".Equals(ValueName)) {
+        string valueName = node.getLocalName();
+        if ("dd".Equals(valueName) || "dd".Equals(valueName) || "dt"
+          .Equals(valueName) ||
+            "li".Equals(valueName) || "option".Equals(valueName) ||
+            "optgroup".Equals(valueName) || "p".Equals(valueName) ||
+            "rp".Equals(valueName) || "rt".Equals(valueName)) {
           this.popCurrentNode();
         } else {
           break;
@@ -3378,15 +3396,15 @@ fe = removeAtIndex(this.formattingElements, this.formattingElements.Count -
     private void generateImpliedEndTagsExcept(string _string) {
       while (true) {
         IElement node = this.getCurrentNode();
-        string ValueName = node.getLocalName();
-        if (_string.Equals(ValueName)) {
+        string valueName = node.getLocalName();
+        if (_string.Equals(valueName)) {
           break;
         }
-        if ("dd".Equals(ValueName) || "dd".Equals(ValueName) ||
-            "dt".Equals(ValueName) || "li".Equals(ValueName) ||
-            "option".Equals(ValueName) || "optgroup".Equals(ValueName) ||
-   "p" .Equals(ValueName) || "rp" .Equals(ValueName) || "rt"
-              .Equals(ValueName)) {
+        if ("dd".Equals(valueName) || "dd".Equals(valueName) ||
+            "dt".Equals(valueName) || "li".Equals(valueName) ||
+            "option".Equals(valueName) || "optgroup".Equals(valueName) ||
+   "p".Equals(valueName) || "rp".Equals(valueName) || "rt"
+              .Equals(valueName)) {
           this.popCurrentNode();
         } else {
           break;
@@ -3394,17 +3412,17 @@ fe = removeAtIndex(this.formattingElements, this.formattingElements.Count -
       }
     }
 
-    private int getArtificialToken(int type, string ValueName) {
+    private int getArtificialToken(int type, string valueName) {
       if (type == TOKEN_END_TAG) {
-        var ValueToken = new EndTagToken(ValueName);
+        var valueToken = new EndTagToken(valueName);
         int ret = this.tokens.Count | type;
-        this.tokens.Add(ValueToken);
+        this.tokens.Add(valueToken);
         return ret;
       }
       if (type == TOKEN_START_TAG) {
-        var ValueToken = new StartTagToken(ValueName);
+        var valueToken = new StartTagToken(valueName);
         int ret = this.tokens.Count | type;
-        this.tokens.Add(ValueToken);
+        this.tokens.Add(valueToken);
         return ret;
       }
       throw new ArgumentException();
@@ -3417,7 +3435,7 @@ fe = removeAtIndex(this.formattingElements, this.formattingElements.Count -
 
     private FormattingElement getFormattingElement(IElement node) {
       foreach (var fe in this.formattingElements) {
-        if (!fe.isMarker() && node.Equals(fe.ValueElement)) {
+        if (!fe.isMarker() && node.Equals(fe.Element)) {
           return fe;
         }
       }
@@ -3436,12 +3454,12 @@ fe = removeAtIndex(this.formattingElements, this.formattingElements.Count -
           var parent = (Node)e.getParentNode();
           bool isElement = (parent != null && parent.getNodeType() ==
             NodeType.ELEMENT_NODE);
-          if (!isElement) {  // the parent is not an ValueElement
+          if (!isElement) {  // the parent is not an valueElement
             if (i <= 1) {
               // This usually won't happen
               throw new InvalidOperationException();
             }
-            // append to the ValueElement before this table
+            // append to the valueElement before this table
             fosterParent = this.openElements[i - 1];
             break;
           } else {
@@ -3480,10 +3498,10 @@ fe = removeAtIndex(this.formattingElements, this.formattingElements.Count -
 
     private Text getTextNodeToInsert(INode node) {
       if (this.doFosterParent && node.Equals(this.getCurrentNode())) {
-        string ValueName = ((Element)node).getLocalName();
-        if ("table".Equals(ValueName) || "tbody".Equals(ValueName) ||
-            "tfoot".Equals(ValueName) || "thead".Equals(ValueName) ||
-            "tr".Equals(ValueName)) {
+        string valueName = ((Element)node).getLocalName();
+        if ("table".Equals(valueName) || "tbody".Equals(valueName) ||
+            "tfoot".Equals(valueName) || "thead".Equals(valueName) ||
+            "tr".Equals(valueName)) {
           return this.getFosterParentedTextNode();
         }
       }
@@ -3499,19 +3517,19 @@ fe = removeAtIndex(this.formattingElements, this.formattingElements.Count -
       }
     }
 
-    internal IToken getToken(int ValueToken) {
-      if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER ||
-          (ValueToken & TOKEN_TYPE_MASK) == TOKEN_EOF) {
+    internal IToken getToken(int valueToken) {
+      if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER ||
+          (valueToken & TOKEN_TYPE_MASK) == TOKEN_EOF) {
         return null;
       } else {
-        return this.tokens[ValueToken & valueTOKEN_INDEX_MASK];
+        return this.tokens[valueToken & TOKEN_INDEX_MASK];
       }
     }
 
-    private bool hasHtmlElementInButtonScope(string ValueName) {
+    private bool hasHtmlElementInButtonScope(string valueName) {
       var found = false;
       foreach (var e in this.openElements) {
-        if (e.getLocalName().Equals(ValueName)) {
+        if (e.getLocalName().Equals(valueName)) {
           found = true;
         }
       }
@@ -3523,7 +3541,7 @@ fe = removeAtIndex(this.formattingElements, this.formattingElements.Count -
         string _namespace = e.getNamespaceURI();
         string thisName = e.getLocalName();
         if (HtmlCommon.HTML_NAMESPACE.Equals(_namespace)) {
-          if (thisName.Equals(ValueName)) {
+          if (thisName.Equals(valueName)) {
             return true;
           }
           if (thisName.Equals("applet") || thisName.Equals("caption") ||
@@ -3553,10 +3571,10 @@ fe = removeAtIndex(this.formattingElements, this.formattingElements.Count -
       return false;
     }
 
-    private bool hasHtmlElementInListItemScope(string ValueName) {
+    private bool hasHtmlElementInListItemScope(string valueName) {
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
-        if (HtmlCommon.isHtmlElement(e, ValueName)) {
+        if (HtmlCommon.isHtmlElement(e, valueName)) {
           return true;
         }
         if (HtmlCommon.isHtmlElement(e, "applet") ||
@@ -3578,8 +3596,9 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
             HtmlCommon.isSvgElement(e, "foreignObject") ||
       HtmlCommon.isSvgElement(
   e,
-  "desc") || HtmlCommon.isSvgElement(e,
-              "title")
+  "desc") || HtmlCommon.isSvgElement(
+  e,
+  "title")
 ) {
           return false;
         }
@@ -3610,8 +3629,9 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
             HtmlCommon.isSvgElement(e, "foreignObject") ||
       HtmlCommon.isSvgElement(
   e,
-  "desc") || HtmlCommon.isSvgElement(e,
-              "title")
+  "desc") || HtmlCommon.isSvgElement(
+  e,
+  "title")
 ) {
           return false;
         }
@@ -3619,10 +3639,10 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
       return false;
     }
 
-    private bool hasHtmlElementInScope(string ValueName) {
+    private bool hasHtmlElementInScope(string valueName) {
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
-        if (HtmlCommon.isHtmlElement(e, ValueName)) {
+        if (HtmlCommon.isHtmlElement(e, valueName)) {
           return true;
         }
         if (HtmlCommon.isHtmlElement(e, "applet") ||
@@ -3642,8 +3662,9 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
             HtmlCommon.isSvgElement(e, "foreignObject") ||
       HtmlCommon.isSvgElement(
   e,
-  "desc") || HtmlCommon.isSvgElement(e,
-              "title")
+  "desc") || HtmlCommon.isSvgElement(
+  e,
+  "title")
 ) {
           return false;
         }
@@ -3651,10 +3672,10 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
       return false;
     }
 
-    private bool hasHtmlElementInSelectScope(string ValueName) {
+    private bool hasHtmlElementInSelectScope(string valueName) {
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
-        if (HtmlCommon.isHtmlElement(e, ValueName)) {
+        if (HtmlCommon.isHtmlElement(e, valueName)) {
           return true;
         }
         if (!HtmlCommon.isHtmlElement(e, "optgroup") &&
@@ -3665,10 +3686,10 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
       return false;
     }
 
-    private bool hasHtmlElementInTableScope(string ValueName) {
+    private bool hasHtmlElementInTableScope(string valueName) {
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
-        if (HtmlCommon.isHtmlElement(e, ValueName)) {
+        if (HtmlCommon.isHtmlElement(e, valueName)) {
           return true;
         }
         if (HtmlCommon.isHtmlElement(e, "html") ||
@@ -3739,8 +3760,9 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
             HtmlCommon.isSvgElement(e, "foreignObject") ||
       HtmlCommon.isSvgElement(
   e,
-  "desc") || HtmlCommon.isSvgElement(e,
-              "title")
+  "desc") || HtmlCommon.isSvgElement(
+  e,
+  "title")
 ) {
           return false;
         }
@@ -3750,9 +3772,9 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
 
     private void initialize() {
       this.noforeign = false;
-      this.ValueDocument = new Document();
-      this.ValueDocument.Address = this.address;
-      this.ValueDocument.setBaseURI(this.address);
+      this.valueDocument = new Document();
+      this.valueDocument.Address = this.address;
+      this.valueDocument.setBaseURI(this.address);
       this.context = null;
       this.openElements.Clear();
       this.error = false;
@@ -3797,11 +3819,11 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
     }
 
     private Element insertForeignElement(StartTagToken tag, string _namespace) {
-      Element ValueElement = Element.fromToken(tag, _namespace);
-      string xmlns = ValueElement.getAttributeNS(
+      Element valueElement = Element.fromToken(tag, _namespace);
+      string xmlns = valueElement.getAttributeNS(
   HtmlCommon.XMLNS_NAMESPACE,
   "xmlns");
-      string xlink = ValueElement.getAttributeNS(
+      string xlink = valueElement.getAttributeNS(
   HtmlCommon.XMLNS_NAMESPACE,
   "xlink");
       if (xmlns != null && !xmlns.Equals(_namespace)) {
@@ -3812,12 +3834,12 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
       }
       IElement currentNode = this.getCurrentNode();
       if (currentNode != null) {
-        this.insertInCurrentNode(ValueElement);
+        this.insertInCurrentNode(valueElement);
       } else {
-        this.ValueDocument.appendChild(ValueElement);
+        this.valueDocument.appendChild(valueElement);
       }
-      this.openElements.Add(ValueElement);
-      return ValueElement;
+      this.openElements.Add(valueElement);
+      return valueElement;
     }
 
     private void insertFormattingMarker(
@@ -3825,24 +3847,24 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
   Element addHtmlElement) {
       var fe = new FormattingElement();
       fe.ValueMarker = true;
-      fe.ValueElement = addHtmlElement;
-      fe.ValueToken = tag;
+      fe.Element = addHtmlElement;
+      fe.Token = tag;
       this.formattingElements.Add(fe);
     }
 
-    private void insertInCurrentNode(Node ValueElement) {
+    private void insertInCurrentNode(Node valueElement) {
       IElement node = this.getCurrentNode();
       if (this.doFosterParent) {
-        string ValueName = node.getLocalName();
-        if ("table".Equals(ValueName) || "tbody".Equals(ValueName) ||
-            "tfoot".Equals(ValueName) || "thead".Equals(ValueName) ||
-            "tr".Equals(ValueName)) {
-          this.fosterParent(ValueElement);
+        string valueName = node.getLocalName();
+        if ("table".Equals(valueName) || "tbody".Equals(valueName) ||
+            "tfoot".Equals(valueName) || "thead".Equals(valueName) ||
+            "tr".Equals(valueName)) {
+          this.fosterParent(valueElement);
         } else {
-          node.appendChild(ValueElement);
+          node.appendChild(valueElement);
         }
       } else {
-        node.appendChild(ValueElement);
+        node.appendChild(valueElement);
       }
     }
 
@@ -3866,36 +3888,36 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
       return this.error;
     }
 
-    private bool isForeignContext(int ValueToken) {
-      if (this.hasForeignContent && ValueToken != TOKEN_EOF) {
-        IElement ValueElement = (this.context != null &&
+    private bool isForeignContext(int valueToken) {
+      if (this.hasForeignContent && valueToken != TOKEN_EOF) {
+        IElement valueElement = (this.context != null &&
           this.openElements.Count == 1) ?
             this.context : this.getCurrentNode();  // adjusted current node
-        if (ValueElement == null) {
+        if (valueElement == null) {
           return false;
         }
-        if (ValueElement.getNamespaceURI().Equals(HtmlCommon.HTML_NAMESPACE)) {
+        if (valueElement.getNamespaceURI().Equals(HtmlCommon.HTML_NAMESPACE)) {
           return false;
         }
-        if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-          var tag = (StartTagToken)this.getToken(ValueToken);
-          string ValueName = ValueElement.getLocalName();
-          if (this.isMathMLTextIntegrationPoint(ValueElement)) {
+        if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+          var tag = (StartTagToken)this.getToken(valueToken);
+          string valueName = valueElement.getLocalName();
+          if (this.isMathMLTextIntegrationPoint(valueElement)) {
             string tokenName = tag.getName();
             if (!"mglyph".Equals(tokenName) &&
                 !"malignmark".Equals(tokenName)) {
               return false;
             }
           }
-     return
-         (HtmlCommon.MATHML_NAMESPACE.Equals(ValueElement.getNamespaceURI())&&
-            (ValueName.Equals("annotation-xml")) && "svg"
+          return
+         (HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI())&&
+                valueName.Equals("annotation-xml") && "svg"
 
                     .Equals(tag.getName())) ?
-                    false : (this.isHtmlIntegrationPoint(ValueElement));
-        } else if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-          return this.isMathMLTextIntegrationPoint(ValueElement) ||
-              this.isHtmlIntegrationPoint(ValueElement);
+                    false : this.isHtmlIntegrationPoint(valueElement);
+        } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
+          return this.isMathMLTextIntegrationPoint(valueElement) ||
+              this.isHtmlIntegrationPoint(valueElement);
         } else {
           return true;
         }
@@ -3903,24 +3925,22 @@ HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
       return false;
     }
 
-    private bool isHtmlIntegrationPoint(IElement ValueElement) {
-      if (this.integrationElements.Contains(ValueElement)) {
+    private bool isHtmlIntegrationPoint(IElement valueElement) {
+      if (this.integrationElements.Contains(valueElement)) {
         return true;
       }
-      string ValueName = ValueElement.getLocalName();
-    return HtmlCommon.SVG_NAMESPACE.Equals(ValueElement.getNamespaceURI())&&
-        (
-          ValueName.Equals("foreignObject") || ValueName.Equals("desc") ||
-          ValueName.Equals("title"));
+      string valueName = valueElement.getLocalName();
+return HtmlCommon.SVG_NAMESPACE.Equals(valueElement.getNamespaceURI()) && (
+                valueName.Equals("foreignObject") || valueName.Equals("desc") ||
+                valueName.Equals("title"));
     }
 
-    private bool isMathMLTextIntegrationPoint(IElement ValueElement) {
-      string ValueName = ValueElement.getLocalName();
- return HtmlCommon.MATHML_NAMESPACE.Equals(ValueElement.getNamespaceURI())&&
-        (
-          ValueName.Equals("mi") || ValueName.Equals("mo") ||
-          ValueName.Equals("mn") || ValueName.Equals("ms") ||
-          ValueName.Equals("mtext"));
+    private bool isMathMLTextIntegrationPoint(IElement valueElement) {
+      string valueName = valueElement.getLocalName();
+return HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI()) && (
+                valueName.Equals("mi") || valueName.Equals("mo") ||
+                valueName.Equals("mn") || valueName.Equals("ms") ||
+                valueName.Equals("mtext"));
     }
 
     private bool isSpecialElement(IElement node) {
@@ -4044,22 +4064,22 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
 
     public IDocument parse() {
       while (true) {
-        int ValueToken = this.parserRead();
-        this.applyInsertionMode(ValueToken, null);
-        if ((ValueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-          var tag = (StartTagToken)this.getToken(ValueToken);
+        int valueToken = this.parserRead();
+        this.applyInsertionMode(valueToken, null);
+        if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+          var tag = (StartTagToken)this.getToken(valueToken);
           // DebugUtility.Log(tag);
           if (!tag.isAckSelfClosing()) {
             this.error = true;
           }
         }
-        // DebugUtility.Log("ValueToken=%08X, insertionMode=%s, error=%s"
-        // , ValueToken, insertionMode, error);
+        // DebugUtility.Log("valueToken=%08X, insertionMode=%s, error=%s"
+        // , valueToken, insertionMode, error);
         if (this.done) {
           break;
         }
       }
-      return this.ValueDocument;
+      return this.valueDocument;
     }
 
     private int parseCharacterReference(int allowedCharacter) {
@@ -4072,7 +4092,7 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
         return 0x26;  // emit ampersand
       } else if (c1 == 0x23) {
         c1 = this.charInput.ReadChar();
-        var Value = 0;
+        var value = 0;
         var haveHex = false;
         if (c1 == 0x78 || c1 == 0x58) {
           // Hex number
@@ -4091,17 +4111,17 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
             int number = this.charInput.ReadChar();
             if (number >= '0' && number <= '9') {
               if (!overflow) {
-                Value = (Value << 4) + (number - '0');
+                value = (value << 4) + (number - '0');
               }
               haveHex = true;
             } else if (number >= 'a' && number <= 'f') {
               if (!overflow) {
-                Value = (Value << 4) + (number - 'a') + 10;
+                value = (value << 4) + (number - 'a') + 10;
               }
               haveHex = true;
             } else if (number >= 'A' && number <= 'F') {
               if (!overflow) {
-                Value = (Value << 4) + (number - 'A') + 10;
+                value = (value << 4) + (number - 'A') + 10;
               }
               haveHex = true;
             } else {
@@ -4111,8 +4131,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
               }
               break;
             }
-            if (Value > 0x10ffff) {
-              Value = 0x110000; overflow = true;
+            if (value > 0x10ffff) {
+              value = 0x110000; overflow = true;
             }
           }
         } else {
@@ -4135,7 +4155,7 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
             int number = this.charInput.ReadChar();
             if (number >= '0' && number <= '9') {
               if (!overflow) {
-                Value = (Value * 10) + (number - '0');
+                value = (value * 10) + (number - '0');
               }
               haveHex = true;
             } else {
@@ -4145,8 +4165,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
               }
               break;
             }
-            if (Value > 0x10ffff) {
-              Value = 0x110000; overflow = true;
+            if (value > 0x10ffff) {
+              value = 0x110000; overflow = true;
             }
           }
         }
@@ -4163,10 +4183,10 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
             this.charInput.moveBack(1);  // parse error
           }
         }
-        if (Value > 0x10ffff || ((Value & 0xf800) == 0xd800)) {
+        if (value > 0x10ffff || ((value & 0xf800) == 0xd800)) {
           this.error = true;
-          Value = 0xfffd;  // parse error
-        } else if (Value >= 0x80 && Value < 0xa0) {
+          value = 0xfffd;  // parse error
+        } else if (value >= 0x80 && value < 0xa0) {
           this.error = true;
           // parse error
           var replacements = new int[] { 0x20ac, 0x81, 0x201a, 0x192,
@@ -4174,50 +4194,51 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
             0x152, 0x8d, 0x17d, 0x8f, 0x90, 0x2018, 0x2019, 0x201c, 0x201d,
             0x2022, 0x2013, 0x2014, 0x2dc, 0x2122, 0x161, 0x203a, 0x153,
             0x9d, 0x17e, 0x178 };
-          Value = replacements[Value - 0x80];
-        } else if (Value == 0x0d) {
+          value = replacements[value - 0x80];
+        } else if (value == 0x0d) {
           // parse error
           this.error = true;
-        } else if (Value == 0x00) {
+        } else if (value == 0x00) {
           // parse error
           this.error = true;
-          Value = 0xfffd;
+          value = 0xfffd;
         }
-        if (Value == 0x08 || Value == 0x0b ||
-            (Value & 0xfffe) == 0xfffe || (Value >= 0x0e && Value <= 0x1f) ||
-            Value == 0x7f || (Value >= 0xfdd0 && Value <= 0xfdef)) {
+        if (value == 0x08 || value == 0x0b ||
+            (value & 0xfffe) == 0xfffe || (value >= 0x0e && value <= 0x1f) ||
+            value == 0x7f || (value >= 0xfdd0 && value <= 0xfdef)) {
           // parse error
           this.error = true;
         }
-        return Value;
+        return value;
       } else if ((c1 >= 'A' && c1 <= 'Z') || (c1 >= 'a' && c1 <= 'z') ||
           (c1 >= '0' && c1 <= '9')) {
         int[] data = null;
         // check for certain well-known entities
         if (c1 == 'g') {
-    if (this.charInput.ReadChar() == 't' && this.charInput.ReadChar() == ';'
+       if (this.charInput.ReadChar() == 't' && this.charInput.ReadChar() ==
+            ';'
 ) {
             return '>';
           }
           this.charInput.setMarkPosition(markStart + 1);
         } else if (c1 == 'l') {
-    if (this.charInput.ReadChar() == 't' && this.charInput.ReadChar() == ';'
+       if (this.charInput.ReadChar() == 't' && this.charInput.ReadChar() ==
+            ';'
 ) {
             return '<';
           }
           this.charInput.setMarkPosition(markStart + 1);
         } else if (c1 == 'a') {
-    if (this.charInput.ReadChar() == 'm' && this.charInput.ReadChar() == 'p'
-            &&
-            this.charInput.ReadChar() == ';'
-) {
+    if (this.charInput.ReadChar() == 'm' && this.charInput.ReadChar() == 'p'&&
+            this.charInput.ReadChar() == ';') {
             return '&';
           }
           this.charInput.setMarkPosition(markStart + 1);
         } else if (c1 == 'n') {
-    if (this.charInput.ReadChar() == 'b' && this.charInput.ReadChar() == 's'
-            &&
-        this.charInput.ReadChar() == 'p' && this.charInput.ReadChar() == ';'
+       if (this.charInput.ReadChar() == 'b' && this.charInput.ReadChar() ==
+            's' &&
+           this.charInput.ReadChar() == 'p' && this.charInput.ReadChar() ==
+                ';'
 ) {
             return 0xa0;
           }
@@ -4312,14 +4333,14 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
         throw new ArgumentException();
       }
       this.initialize();
-      this.ValueDocument = new Document();
+      this.valueDocument = new Document();
       INode ownerDocument = context;
       INode lastForm = null;
       while (ownerDocument != null) {
         if (lastForm == null && ownerDocument.getNodeType() ==
                 NodeType.ELEMENT_NODE) {
-          string ValueName = ((Element)ownerDocument).getLocalName();
-          if (ValueName.Equals("form")) {
+          string valueName = ((Element)ownerDocument).getLocalName();
+          if (valueName.Equals("form")) {
             lastForm = ownerDocument;
           }
         }
@@ -4333,7 +4354,7 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
       if (ownerDocument != null &&
             ownerDocument.getNodeType() == NodeType.DOCUMENT_NODE) {
         ownerDoc = (Document)ownerDocument;
-        this.ValueDocument.setMode(ownerDoc.getMode());
+        this.valueDocument.setMode(ownerDoc.getMode());
       }
       string name2 = context.getLocalName();
       this.state = TokenizerState.Data;
@@ -4350,13 +4371,13 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
       } else if (name2.Equals("plaintext")) {
         this.state = TokenizerState.PlainText;
       }
-      var ValueElement = new Element();
-      ValueElement.setLocalName("html");
-      ValueElement.setNamespace(HtmlCommon.HTML_NAMESPACE);
-      this.ValueDocument.appendChild(ValueElement);
+      var valueElement = new Element();
+      valueElement.setLocalName("html");
+      valueElement.setNamespace(HtmlCommon.HTML_NAMESPACE);
+      this.valueDocument.appendChild(valueElement);
       this.done = false;
       this.openElements.Clear();
-      this.openElements.Add(ValueElement);
+      this.openElements.Add(valueElement);
       this.context = context;
       this.resetInsertionMode();
       this.formElement = (lastForm == null) ? null : ((Element)lastForm);
@@ -4366,23 +4387,23 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
   EncodingConfidence.Irrelevant);
       }
       this.parse();
-      return new List<INode>(ValueElement.getChildNodes());
+      return new List<INode>(valueElement.getChildNodes());
     }
 
     public IList<INode> parseFragment(string contextName) {
-      var ValueElement = new Element();
-      ValueElement.setLocalName(contextName);
-      ValueElement.setNamespace(HtmlCommon.HTML_NAMESPACE);
-      return this.parseFragment(ValueElement);
+      var valueElement = new Element();
+      valueElement.setLocalName(contextName);
+      valueElement.setNamespace(HtmlCommon.HTML_NAMESPACE);
+      return this.parseFragment(valueElement);
     }
 
     internal int parserRead() {
-      int ValueToken = this.parserReadInternal();
-      // DebugUtility.Log("ValueToken=%08X [%c]",ValueToken,ValueToken&0xFF);
+      int valueToken = this.parserReadInternal();
+      // DebugUtility.Log("valueToken=%08X [%c]",valueToken,valueToken&0xFF);
       if (this.decoder.isError()) {
         this.error = true;
       }
-      return ValueToken;
+      return valueToken;
     }
 
     private int parserReadInternal() {
@@ -4427,8 +4448,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
               if (charref < 0) {
                 // more than one character in this reference
                 int index = Math.Abs(charref + 1);
-              this.tokenQueue.Add(HtmlEntities.EntityDoubles[(index * 2) +
-                  1]);
+                this.tokenQueue.Add(HtmlEntities.EntityDoubles[(index * 2) +
+                    1]);
                 return HtmlEntities.EntityDoubles[index * 2];
               }
               return charref;
@@ -4439,8 +4460,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
               if (charref < 0) {
                 // more than one character in this reference
                 int index = Math.Abs(charref + 1);
-              this.tokenQueue.Add(HtmlEntities.EntityDoubles[(index * 2) +
-                  1]);
+                this.tokenQueue.Add(HtmlEntities.EntityDoubles[(index * 2) +
+                    1]);
                 return HtmlEntities.EntityDoubles[index * 2];
               }
               return charref;
@@ -4501,43 +4522,39 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
               this.charInput.setHardMark();
               int ch = this.charInput.ReadChar();
               if (ch >= 'A' && ch <= 'Z') {
-                var ValueToken = new EndTagToken((char)(ch + 0x20));
+                var valueToken = new EndTagToken((char)(ch + 0x20));
                 if (ch <= 0xffff) {
                   this.tempBuilder.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
-            this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) + 0xd800));
+                  this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
-                this.currentTag = ValueToken;
-                this.currentEndTag = ValueToken;
-             this.state = (this.state ==
-                  TokenizerState.ScriptDataEndTagOpen) ?
-                  TokenizerState.ScriptDataEndTagName :
-                  TokenizerState.ScriptDataEscapedEndTagName;
+                this.currentTag = valueToken;
+                this.currentEndTag = valueToken;
+             this.state = (this.state == TokenizerState.ScriptDataEndTagOpen) ?
+                    TokenizerState.ScriptDataEndTagName :
+                    TokenizerState.ScriptDataEscapedEndTagName;
               } else if (ch >= 'a' && ch <= 'z') {
-                var ValueToken = new EndTagToken((char)ch);
+                var valueToken = new EndTagToken((char)ch);
                 if (ch <= 0xffff) {
                   this.tempBuilder.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
-            this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) + 0xd800));
+                  this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
-                this.currentTag = ValueToken;
-                this.currentEndTag = ValueToken;
-             this.state = (this.state ==
-                  TokenizerState.ScriptDataEndTagOpen) ?
-                  TokenizerState.ScriptDataEndTagName :
-                  TokenizerState.ScriptDataEscapedEndTagName;
+                this.currentTag = valueToken;
+                this.currentEndTag = valueToken;
+             this.state = (this.state == TokenizerState.ScriptDataEndTagOpen) ?
+                    TokenizerState.ScriptDataEndTagName :
+                    TokenizerState.ScriptDataEscapedEndTagName;
               } else {
-             this.state = (this.state ==
-                  TokenizerState.ScriptDataEndTagOpen) ?
-              TokenizerState.ScriptData : (TokenizerState.ScriptDataEscaped);
+                this.state = (this.state ==
+                    TokenizerState.ScriptDataEndTagOpen) ?
+                 TokenizerState.ScriptData : TokenizerState.ScriptDataEscaped;
                 this.tokenQueue.Add(0x2f);
                 if (ch >= 0) {
                   this.charInput.moveBack(1);
@@ -4565,9 +4582,9 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 this.currentTag.appendChar((char)ch);
                 this.tempBuilder.Append((char)ch);
               } else {
-             this.state = (this.state ==
-                  TokenizerState.ScriptDataEndTagName) ?
-              TokenizerState.ScriptData : (TokenizerState.ScriptDataEscaped);
+                this.state = (this.state ==
+                    TokenizerState.ScriptDataEndTagName) ?
+                 TokenizerState.ScriptData : TokenizerState.ScriptDataEscaped;
                 this.tokenQueue.Add(0x2f);
                 string tbs = this.tempBuilder.ToString();
                 for (int i = 0; i < tbs.Length; ++i) {
@@ -4598,22 +4615,19 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch + 0x20 <= 0xffff) {
                   this.tempBuilder.Append((char)(ch + 0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-                this.tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >>
-                    10) &
-                0x3ff) + 0xd800));
-               this.tempBuilder.Append((char)(((ch + 0x20 - 0x10000) &
-                    0x3ff) +
-                    0xdc00));
+                  this.tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >>
+                  10) & 0x3ff) + 0xd800));
+                  this.tempBuilder.Append((char)(((ch + 0x20 - 0x10000) &
+                   0x3ff) + 0xdc00));
                 }
                 return ch;
               } else if (ch >= 'a' && ch <= 'z') {
                 if (ch <= 0xffff) {
                   this.tempBuilder.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
-            this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) + 0xd800));
+                  this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
                 return ch;
@@ -4639,22 +4653,19 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch + 0x20 <= 0xffff) {
                   this.tempBuilder.Append((char)(ch + 0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-                this.tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >>
-                    10) &
-                0x3ff) + 0xd800));
-               this.tempBuilder.Append((char)(((ch + 0x20 - 0x10000) &
-                    0x3ff) +
-                    0xdc00));
+                  this.tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >>
+                  10) & 0x3ff) + 0xd800));
+                  this.tempBuilder.Append((char)(((ch + 0x20 - 0x10000) &
+                   0x3ff) + 0xdc00));
                 }
                 return ch;
               } else if (ch >= 'a' && ch <= 'z') {
                 if (ch <= 0xffff) {
                   this.tempBuilder.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
-            this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) + 0xd800));
+                  this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
                 return ch;
@@ -4671,10 +4682,10 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
               this.charInput.setHardMark();
               int ch = this.charInput.ReadChar();
               if (ch == 0x2d) {
-            this.state = (this.state ==
-                  TokenizerState.ScriptDataEscapeStart) ?
-                  TokenizerState.ScriptDataEscapeStartDash :
-                  TokenizerState.ScriptDataEscapedDashDash;
+                this.state = (this.state ==
+                    TokenizerState.ScriptDataEscapeStart) ?
+                    TokenizerState.ScriptDataEscapeStartDash :
+                    TokenizerState.ScriptDataEscapedDashDash;
                 return '-';
               } else {
                 if (ch >= 0) {
@@ -4868,12 +4879,12 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
               } else if (c11 == 0x2f) {
                 this.state = TokenizerState.EndTagOpen;
               } else if (c11 >= 'A' && c11 <= 'Z') {
-                TagToken ValueToken = new StartTagToken((char)(c11 + 0x20));
-                this.currentTag = ValueToken;
+                TagToken valueToken = new StartTagToken((char)(c11 + 0x20));
+                this.currentTag = valueToken;
                 this.state = TokenizerState.TagName;
               } else if (c11 >= 'a' && c11 <= 'z') {
-                TagToken ValueToken = new StartTagToken((char)c11);
-                this.currentTag = ValueToken;
+                TagToken valueToken = new StartTagToken((char)c11);
+                this.currentTag = valueToken;
                 this.state = TokenizerState.TagName;
               } else if (c11 == 0x3f) {
                 this.error = true;
@@ -4892,14 +4903,14 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
           case TokenizerState.EndTagOpen: {
               int ch = this.charInput.ReadChar();
               if (ch >= 'A' && ch <= 'Z') {
-                TagToken ValueToken = new EndTagToken((char)(ch + 0x20));
-                this.currentEndTag = ValueToken;
-                this.currentTag = ValueToken;
+                TagToken valueToken = new EndTagToken((char)(ch + 0x20));
+                this.currentEndTag = valueToken;
+                this.currentTag = valueToken;
                 this.state = TokenizerState.TagName;
               } else if (ch >= 'a' && ch <= 'z') {
-                TagToken ValueToken = new EndTagToken((char)ch);
-                this.currentEndTag = ValueToken;
-                this.currentTag = ValueToken;
+                TagToken valueToken = new EndTagToken((char)ch);
+                this.currentEndTag = valueToken;
+                this.currentTag = valueToken;
                 this.state = TokenizerState.TagName;
               } else if (ch == 0x3e) {
                 this.error = true;
@@ -4921,34 +4932,32 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
               this.charInput.setHardMark();
               int ch = this.charInput.ReadChar();
               if (ch >= 'A' && ch <= 'Z') {
-                TagToken ValueToken = new EndTagToken((char)(ch + 0x20));
+                TagToken valueToken = new EndTagToken((char)(ch + 0x20));
                 if (ch <= 0xffff) {
                   this.tempBuilder.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
-            this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) + 0xd800));
+                  this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
-                this.currentEndTag = ValueToken;
-                this.currentTag = ValueToken;
+                this.currentEndTag = valueToken;
+                this.currentTag = valueToken;
                 this.state = (this.state == TokenizerState.RcDataEndTagOpen) ?
                     TokenizerState.RcDataEndTagName :
                     TokenizerState.RawTextEndTagName;
               } else if (ch >= 'a' && ch <= 'z') {
-                TagToken ValueToken = new EndTagToken((char)ch);
+                TagToken valueToken = new EndTagToken((char)ch);
                 if (ch <= 0xffff) {
                   this.tempBuilder.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
-            this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) + 0xd800));
+                  this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
-                this.currentEndTag = ValueToken;
-                this.currentTag = ValueToken;
+                this.currentEndTag = valueToken;
+                this.currentTag = valueToken;
                 this.state = (this.state == TokenizerState.RcDataEndTagOpen) ?
                     TokenizerState.RcDataEndTagName :
                     TokenizerState.RawTextEndTagName;
@@ -4979,22 +4988,19 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch + 0x20 <= 0xffff) {
                   this.tempBuilder.Append((char)(ch + 0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-                this.tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >>
-                    10) &
-                0x3ff) + 0xd800));
-               this.tempBuilder.Append((char)(((ch + 0x20 - 0x10000) &
-                    0x3ff) +
-                    0xdc00));
+                  this.tempBuilder.Append((char)((((ch + 0x20 - 0x10000) >>
+                  10) & 0x3ff) + 0xd800));
+                  this.tempBuilder.Append((char)(((ch + 0x20 - 0x10000) &
+                   0x3ff) + 0xdc00));
                 }
               } else if (ch >= 'a' && ch <= 'z') {
                 this.currentTag.append(ch);
                 if (ch <= 0xffff) {
                   this.tempBuilder.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
-            this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) + 0xd800));
+                  this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
               } else {
@@ -5026,13 +5032,12 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 this.state = TokenizerState.Data;
                 return this.emitCurrentTag();
               } else if (ch >= 'A' && ch <= 'Z') {
-       this.currentAttribute = this.currentTag.addAttribute((char)(ch +
-                  0x20));
+                this.currentAttribute = this.currentTag.addAttribute((char)(ch +
+                    0x20));
                 this.state = TokenizerState.AttributeName;
               } else if (ch == 0) {
                 this.error = true;
-            this.currentAttribute =
-                  this.currentTag.addAttribute((char)0xfffd);
+            this.currentAttribute = this.currentTag.addAttribute((char)0xfffd);
                 this.state = TokenizerState.AttributeName;
               } else if (ch < 0) {
                 this.error = true;
@@ -5101,13 +5106,12 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 this.state = TokenizerState.Data;
                 return this.emitCurrentTag();
               } else if (ch >= 'A' && ch <= 'Z') {
-       this.currentAttribute = this.currentTag.addAttribute((char)(ch +
-                  0x20));
+                this.currentAttribute = this.currentTag.addAttribute((char)(ch +
+                    0x20));
                 this.state = TokenizerState.AttributeName;
               } else if (ch == 0) {
                 this.error = true;
-            this.currentAttribute =
-                  this.currentTag.addAttribute((char)0xfffd);
+            this.currentAttribute = this.currentTag.addAttribute((char)0xfffd);
                 this.state = TokenizerState.AttributeName;
               } else if (ch < 0) {
                 this.error = true;
@@ -5295,8 +5299,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
               int mark = this.charInput.setSoftMark();
               int ch = this.charInput.ReadChar();
               if (ch == '-' && this.charInput.ReadChar() == '-') {
-                var ValueToken = new CommentToken();
-                this.lastComment = ValueToken;
+                var valueToken = new CommentToken();
+                this.lastComment = valueToken;
                 this.state = TokenizerState.CommentStart;
                 break;
               } else if (ch == 'D' || ch == 'd') {
@@ -5310,17 +5314,14 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                   break;
                 }
               } else if (ch == '[' && true) {
-       if (this.charInput.ReadChar() == 'C' && this.charInput.ReadChar() ==
-                'D'
-                  &&
-        this.charInput.ReadChar() == 'A' && this.charInput.ReadChar() == 'T'
-                  &&
-        this.charInput.ReadChar() == 'A' && this.charInput.ReadChar() == '['
-                    &&
+           if (this.charInput.ReadChar() == 'C' && this.charInput.ReadChar()
+                == 'D' &&
+           this.charInput.ReadChar() == 'A' && this.charInput.ReadChar() ==
+                'T' &&
+        this.charInput.ReadChar() == 'A' && this.charInput.ReadChar() == '['&&
                 this.getCurrentNode() != null &&
-!HtmlCommon.HTML_NAMESPACE.Equals(this.getCurrentNode()
-      .getNamespaceURI())
-) {
+         !HtmlCommon.HTML_NAMESPACE.Equals(this.getCurrentNode()
+               .getNamespaceURI())) {
                   this.state = TokenizerState.CData;
                   break;
                 }
@@ -5349,10 +5350,9 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch <= 0xffff) {
                   this.lastComment.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.lastComment.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
-            this.lastComment.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  this.lastComment.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) + 0xd800));
+                  this.lastComment.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
                 this.state = TokenizerState.Comment;
@@ -5379,10 +5379,9 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch <= 0xffff) {
                   this.lastComment.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.lastComment.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
-            this.lastComment.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  this.lastComment.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) + 0xd800));
+                  this.lastComment.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
                 this.state = TokenizerState.Comment;
@@ -5406,10 +5405,9 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch <= 0xffff) {
                   this.lastComment.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.lastComment.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
-            this.lastComment.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  this.lastComment.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) + 0xd800));
+                  this.lastComment.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
               }
@@ -5466,10 +5464,9 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch <= 0xffff) {
                   this.lastComment.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.lastComment.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
-            this.lastComment.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  this.lastComment.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) + 0xd800));
+                  this.lastComment.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
                 this.state = TokenizerState.Comment;
@@ -5502,10 +5499,9 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch <= 0xffff) {
                   this.lastComment.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.lastComment.Append((char)((((ch - 0x10000) >> 10) &
-                    0x3ff) +
-                    0xd800));
-            this.lastComment.Append((char)(((ch - 0x10000) & 0x3ff) +
+                  this.lastComment.Append((char)((((ch - 0x10000) >> 10) &
+                    0x3ff) + 0xd800));
+                  this.lastComment.Append((char)(((ch - 0x10000) & 0x3ff) +
                     0xdc00));
                 }
                 this.state = TokenizerState.Comment;
@@ -5526,8 +5522,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 int index = Math.Abs(ch + 1);
   this.currentAttribute.appendToValue(HtmlEntities.EntityDoubles[index *
                     2]);
-  this.currentAttribute.appendToValue(HtmlEntities.EntityDoubles[(index *)
-                    2 + 1]);
+                this.currentAttribute.appendToValue(
+                    HtmlEntities.EntityDoubles[(index * 2) + 1]);
               } else {
                 this.currentAttribute.appendToValue(ch);
               }
@@ -5616,10 +5612,10 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
               } else if (ch < 0) {
                 this.error = true;
                 this.state = TokenizerState.Data;
-                var ValueToken = new DocTypeToken();
-                ValueToken.ValueForceQuirks = true;
-                int ret = this.tokens.Count | ValueToken.getType();
-                this.tokens.Add(ValueToken);
+                var valueToken = new DocTypeToken();
+                valueToken.ValueForceQuirks = true;
+                int ret = this.tokens.Count | valueToken.getType();
+                this.tokens.Add(valueToken);
                 return ret;
               } else {
                 this.error = true;
@@ -5634,45 +5630,41 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 break;
               } else if (ch >= 'A' && ch <= 'Z') {
                 this.docTypeToken = new DocTypeToken();
-                this.docTypeToken.ValueName = new StringBuilder();
+                this.docTypeToken.Name = new StringBuilder();
                 if (ch + 0x20 <= 0xffff) {
-                  this.docTypeToken.ValueName.Append((char)(ch +
+                  this.docTypeToken.Name.Append((char)(ch +
 0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-           this.docTypeToken.ValueName.Append((char)((((ch + 0x20 - 0x10000)
-                    >>
-                    10) & 0x3ff) + 0xd800));
-             this.docTypeToken.ValueName.Append((char)(((ch + 0x20 -
-                    0x10000) &
-                0x3ff) + 0xdc00));
+                this.docTypeToken.Name.Append((char)((((ch + 0x20 - 0x10000)>>
+                10) & 0x3ff) + 0xd800));
+                  this.docTypeToken.Name.Append((char)(((ch + 0x20 -
+                    0x10000) & 0x3ff) + 0xdc00));
                 }
                 this.state = TokenizerState.DocTypeName;
               } else if (ch == 0) {
                 this.error = true;
                 this.docTypeToken = new DocTypeToken();
-                this.docTypeToken.ValueName = new StringBuilder();
-                this.docTypeToken.ValueName.Append((char)0xfffd);
+                this.docTypeToken.Name = new StringBuilder();
+                this.docTypeToken.Name.Append((char)0xfffd);
                 this.state = TokenizerState.DocTypeName;
               } else if (ch == 0x3e || ch < 0) {
                 this.error = true;
                 this.state = TokenizerState.Data;
-                var ValueToken = new DocTypeToken();
-                ValueToken.ValueForceQuirks = true;
-                int ret = this.tokens.Count | ValueToken.getType();
-                this.tokens.Add(ValueToken);
+                var valueToken = new DocTypeToken();
+                valueToken.ValueForceQuirks = true;
+                int ret = this.tokens.Count | valueToken.getType();
+                this.tokens.Add(valueToken);
                 return ret;
               } else {
                 this.docTypeToken = new DocTypeToken();
-                this.docTypeToken.ValueName = new StringBuilder();
+                this.docTypeToken.Name = new StringBuilder();
                 if (ch <= 0xffff) {
-                  this.docTypeToken.ValueName.Append((char)ch);
+                  this.docTypeToken.Name.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-            this.docTypeToken.ValueName.Append((char)((((ch - 0x10000) >>
-                    10) &
-                0x3ff) + 0xd800));
-           this.docTypeToken.ValueName.Append((char)(((ch - 0x10000) &
-                    0x3ff) +
-                    0xdc00));
+                  this.docTypeToken.Name.Append((char)((((ch - 0x10000) >>
+                    10) & 0x3ff) + 0xd800));
+                  this.docTypeToken.Name.Append((char)(((ch - 0x10000) &
+                    0x3ff) + 0xdc00));
                 }
                 this.state = TokenizerState.DocTypeName;
               }
@@ -5689,19 +5681,17 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 return ret;
               } else if (ch >= 'A' && ch <= 'Z') {
                 if (ch + 0x20 <= 0xffff) {
-                  this.docTypeToken.ValueName.Append((char)(ch +
+                  this.docTypeToken.Name.Append((char)(ch +
 0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-           this.docTypeToken.ValueName.Append((char)((((ch + 0x20 - 0x10000)
-                    >>
-                    10) & 0x3ff) + 0xd800));
-             this.docTypeToken.ValueName.Append((char)(((ch + 0x20 -
-                    0x10000) &
-                0x3ff) + 0xdc00));
+                this.docTypeToken.Name.Append((char)((((ch + 0x20 - 0x10000)>>
+                10) & 0x3ff) + 0xd800));
+                  this.docTypeToken.Name.Append((char)(((ch + 0x20 -
+                    0x10000) & 0x3ff) + 0xdc00));
                 }
               } else if (ch == 0) {
                 this.error = true;
-                this.docTypeToken.ValueName.Append((char)0xfffd);
+                this.docTypeToken.Name.Append((char)0xfffd);
               } else if (ch < 0) {
                 this.error = true;
                 this.docTypeToken.ValueForceQuirks = true;
@@ -5711,14 +5701,12 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 return ret;
               } else {
                 if (ch <= 0xffff) {
-                  this.docTypeToken.ValueName.Append((char)ch);
+                  this.docTypeToken.Name.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-            this.docTypeToken.ValueName.Append((char)((((ch - 0x10000) >>
-                    10) &
-                0x3ff) + 0xd800));
-           this.docTypeToken.ValueName.Append((char)(((ch - 0x10000) &
-                    0x3ff) +
-                    0xdc00));
+                  this.docTypeToken.Name.Append((char)((((ch - 0x10000) >>
+                    10) & 0x3ff) + 0xd800));
+                  this.docTypeToken.Name.Append((char)(((ch - 0x10000) &
+                    0x3ff) + 0xdc00));
                 }
               }
               break;
@@ -5743,9 +5731,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 var ch2 = 0;
                 int pos = this.charInput.setSoftMark();
                 if (ch == 'P' || ch == 'p') {
-                if (((ch2 = this.charInput.ReadChar()) == 'u' || ch2 == 'U'
-) &&
-                    ((ch2 = this.charInput.ReadChar()) == 'b' || ch2 == 'B') &&
+                  if (((ch2 = this.charInput.ReadChar()) == 'u' || ch2 == 'U'
+) && ((ch2 = this.charInput.ReadChar()) == 'b' || ch2 == 'B') &&
                     ((ch2 = this.charInput.ReadChar()) == 'l' || ch2 == 'L') &&
                     ((ch2 = this.charInput.ReadChar()) == 'i' || ch2 == 'I') &&
                     ((ch2 = this.charInput.ReadChar()) == 'c' || ch2 == 'C')
@@ -5758,9 +5745,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                     this.state = TokenizerState.BogusDocType;
                   }
                 } else if (ch == 'S' || ch == 's') {
-                if (((ch2 = this.charInput.ReadChar()) == 'y' || ch2 == 'Y'
-) &&
-                    ((ch2 = this.charInput.ReadChar()) == 's' || ch2 == 'S') &&
+                  if (((ch2 = this.charInput.ReadChar()) == 'y' || ch2 == 'Y'
+) && ((ch2 = this.charInput.ReadChar()) == 's' || ch2 == 'S') &&
                     ((ch2 = this.charInput.ReadChar()) == 't' || ch2 == 'T') &&
                     ((ch2 = this.charInput.ReadChar()) == 'e' || ch2 == 'E') &&
                     ((ch2 = this.charInput.ReadChar()) == 'm' || ch2 == 'M')
@@ -5850,8 +5836,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
           case TokenizerState.DocTypePublicIDDoubleQuoted:
           case TokenizerState.DocTypePublicIDSingleQuoted: {
               int ch = this.charInput.ReadChar();
-          if (ch == (this.state ==
-                TokenizerState.DocTypePublicIDDoubleQuoted ?
+              if (ch == (this.state ==
+                    TokenizerState.DocTypePublicIDDoubleQuoted ?
                     0x22 : 0x27)) {
                 this.state = TokenizerState.AfterDocTypePublicID;
               } else if (ch == 0) {
@@ -5868,12 +5854,10 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch <= 0xffff) {
                   this.docTypeToken.ValuePublicID.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.docTypeToken.ValuePublicID.Append((char)((((ch - 0x10000)
-                    >>
-                    10) & 0x3ff) + 0xd800));
-       this.docTypeToken.ValuePublicID.Append((char)(((ch - 0x10000) &
-                    0x3ff) +
-                    0xdc00));
+              this.docTypeToken.ValuePublicID.Append((char)((((ch - 0x10000)>>
+                10) & 0x3ff) + 0xd800));
+                this.docTypeToken.ValuePublicID.Append((char)(((ch -
+                0x10000) & 0x3ff) + 0xdc00));
                 }
               }
               break;
@@ -5881,8 +5865,8 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
           case TokenizerState.DocTypeSystemIDDoubleQuoted:
           case TokenizerState.DocTypeSystemIDSingleQuoted: {
               int ch = this.charInput.ReadChar();
-          if (ch == (this.state ==
-                TokenizerState.DocTypeSystemIDDoubleQuoted ?
+              if (ch == (this.state ==
+                    TokenizerState.DocTypeSystemIDDoubleQuoted ?
                     0x22 : 0x27)) {
                 this.state = TokenizerState.AfterDocTypeSystemID;
               } else if (ch == 0) {
@@ -5899,12 +5883,10 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                 if (ch <= 0xffff) {
                   this.docTypeToken.ValueSystemID.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.docTypeToken.ValueSystemID.Append((char)((((ch - 0x10000)
-                    >>
-                    10) & 0x3ff) + 0xd800));
-       this.docTypeToken.ValueSystemID.Append((char)(((ch - 0x10000) &
-                    0x3ff) +
-                    0xdc00));
+              this.docTypeToken.ValueSystemID.Append((char)((((ch - 0x10000)>>
+                10) & 0x3ff) + 0xd800));
+                this.docTypeToken.ValueSystemID.Append((char)(((ch -
+                0x10000) & 0x3ff) + 0xdc00));
                 }
               }
               break;
@@ -6012,7 +5994,7 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
                     ++phase;
                     break;
                   } else {
-                    phase = (ch == ']') ? 2 : (0);
+                    phase = (ch == ']') ? 2 : 0;
                   }
                 }
               }
@@ -6064,32 +6046,33 @@ HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
 
     private IElement popCurrentNode() {
       return (this.openElements.Count > 0) ?
-        removeAtIndex(this.openElements, this.openElements.Count - 1) : (null);
+        removeAtIndex(this.openElements, this.openElements.Count - 1) : null;
     }
 
     private void pushFormattingElement(StartTagToken tag) {
-      Element ValueElement = this.addHtmlElement(tag);
+      Element valueElement = this.addHtmlElement(tag);
       var matchingElements = 0;
       var lastMatchingElement = -1;
-      string ValueName = ValueElement.getLocalName();
+      string valueName = valueElement.getLocalName();
       for (int i = this.formattingElements.Count - 1; i >= 0; --i) {
         FormattingElement fe = this.formattingElements[i];
         if (fe.isMarker()) {
           break;
         }
-        if (fe.ValueElement.getLocalName().Equals(ValueName) &&
-fe.ValueElement.getNamespaceURI() .Equals(ValueElement.getNamespaceURI())) {
-          IList<IAttr> attribs = fe.ValueElement.getAttributes();
-          IList<IAttr> myAttribs = ValueElement.getAttributes();
+        if (fe.Element.getLocalName().Equals(valueName) &&
+fe.Element.getNamespaceURI().Equals(valueElement.getNamespaceURI())) {
+          IList<IAttr> attribs = fe.Element.getAttributes();
+          IList<IAttr> myAttribs = valueElement.getAttributes();
           if (attribs.Count == myAttribs.Count) {
             var match = true;
             for (int j = 0; j < myAttribs.Count; ++j) {
               string name1 = myAttribs[j].getName();
               string _namespace = myAttribs[j].getNamespaceURI();
-              string Value = myAttribs[j].getValue();
-         string otherValue = fe.ValueElement.getAttributeNS(_namespace,
-                name1);
-              if (otherValue == null || !otherValue.Equals(Value)) {
+              string value = myAttribs[j].getValue();
+              string otherValue = fe.Element.getAttributeNS(
+       _namespace,
+       name1);
+              if (otherValue == null || !otherValue.Equals(value)) {
                 match = false;
               }
             }
@@ -6105,8 +6088,8 @@ fe.ValueElement.getNamespaceURI() .Equals(ValueElement.getNamespaceURI())) {
       }
       var fe2 = new FormattingElement();
       fe2.ValueMarker = false;
-      fe2.ValueToken = tag;
-      fe2.ValueElement = ValueElement;
+      fe2.Token = tag;
+      fe2.Element = valueElement;
       this.formattingElements.Add(fe2);
     }
 
@@ -6118,14 +6101,14 @@ fe.ValueElement.getNamespaceURI() .Equals(ValueElement.getNamespaceURI())) {
       // DebugUtility.Log(formattingElements);
       FormattingElement fe =
         this.formattingElements[this.formattingElements.Count - 1];
-      if (fe.isMarker() || this.openElements.Contains(fe.ValueElement)) {
+      if (fe.isMarker() || this.openElements.Contains(fe.Element)) {
         return;
       }
       int i = this.formattingElements.Count - 1;
       while (i > 0) {
         fe = this.formattingElements[i - 1];
         --i;
-        if (!fe.isMarker() && !this.openElements.Contains(fe.ValueElement)) {
+        if (!fe.isMarker() && !this.openElements.Contains(fe.Element)) {
           continue;
         }
         ++i;
@@ -6133,8 +6116,8 @@ fe.ValueElement.getNamespaceURI() .Equals(ValueElement.getNamespaceURI())) {
       }
       for (int j = i; j < this.formattingElements.Count; ++j) {
         fe = this.formattingElements[j];
-        Element ValueElement = this.addHtmlElement(fe.ValueToken);
-        fe.ValueElement = ValueElement;
+        Element valueElement = this.addHtmlElement(fe.Token);
+        fe.Element = valueElement;
         fe.ValueMarker = false;
       }
     }
@@ -6142,7 +6125,7 @@ fe.ValueElement.getNamespaceURI() .Equals(ValueElement.getNamespaceURI())) {
     private void removeFormattingElement(IElement valueAElement) {
       FormattingElement f = null;
       foreach (var fe in this.formattingElements) {
-        if (!fe.isMarker() && valueAElement.Equals(fe.ValueElement)) {
+        if (!fe.isMarker() && valueAElement.Equals(fe.Element)) {
           f = fe;
           break;
         }
@@ -6160,45 +6143,45 @@ fe.ValueElement.getNamespaceURI() .Equals(ValueElement.getNamespaceURI())) {
           e = this.context;
           last = true;
         }
-        string ValueName = e.getLocalName();
-        if (!last && (ValueName.Equals("th") || ValueName.Equals("td"))) {
+        string valueName = e.getLocalName();
+        if (!last && (valueName.Equals("th") || valueName.Equals("td"))) {
           this.insertionMode = InsertionMode.InCell;
           break;
         }
-        if (ValueName.Equals("select")) {
+        if (valueName.Equals("select")) {
           this.insertionMode = InsertionMode.InSelect;
           break;
         }
-        if (ValueName.Equals("colgroup")) {
+        if (valueName.Equals("colgroup")) {
           this.insertionMode = InsertionMode.InColumnGroup;
           break;
         }
-        if (ValueName.Equals("tr")) {
+        if (valueName.Equals("tr")) {
           this.insertionMode = InsertionMode.InRow;
           break;
         }
-        if (ValueName.Equals("caption")) {
+        if (valueName.Equals("caption")) {
           this.insertionMode = InsertionMode.InCaption;
           break;
         }
-        if (ValueName.Equals("table")) {
+        if (valueName.Equals("table")) {
           this.insertionMode = InsertionMode.InTable;
           break;
         }
-        if (ValueName.Equals("frameset")) {
+        if (valueName.Equals("frameset")) {
           this.insertionMode = InsertionMode.InFrameset;
           break;
         }
-        if (ValueName.Equals("html")) {
+        if (valueName.Equals("html")) {
           this.insertionMode = InsertionMode.BeforeHead;
           break;
         }
-        if (ValueName.Equals("head") || ValueName.Equals("body")) {
+        if (valueName.Equals("head") || valueName.Equals("body")) {
           this.insertionMode = InsertionMode.InBody;
           break;
         }
-        if (ValueName.Equals("thead") || ValueName.Equals("tbody") ||
-              ValueName.Equals("tfoot")) {
+        if (valueName.Equals("thead") || valueName.Equals("tbody") ||
+              valueName.Equals("tfoot")) {
           this.insertionMode = InsertionMode.InTableBody;
           break;
         }
@@ -6229,7 +6212,7 @@ fe.ValueElement.getNamespaceURI() .Equals(ValueElement.getNamespaceURI())) {
       int mark = this.charInput.setSoftMark();
       int nextToken = this.charInput.ReadChar();
       if (nextToken == 0x0a) {
-        return;  // ignore the ValueToken if it's 0x0A
+        return;  // ignore the valueToken if it's 0x0A
       } else if (nextToken == 0x26) {  // start of character reference
         int charref = this.parseCharacterReference(-1);
         if (charref < 0) {
@@ -6238,7 +6221,7 @@ fe.ValueElement.getNamespaceURI() .Equals(ValueElement.getNamespaceURI())) {
           this.tokenQueue.Add(HtmlEntities.EntityDoubles[index * 2]);
           this.tokenQueue.Add(HtmlEntities.EntityDoubles[(index * 2) + 1]);
         } else if (charref == 0x0a) {
-          return;  // ignore the ValueToken
+          return;  // ignore the valueToken
         } else {
           this.tokenQueue.Add(charref);
         }
@@ -6250,24 +6233,25 @@ fe.ValueElement.getNamespaceURI() .Equals(ValueElement.getNamespaceURI())) {
 
     private void stopParsing() {
       this.done = true;
-      if (String.IsNullOrEmpty(this.ValueDocument.DefaultLanguage)) {
+      if (String.IsNullOrEmpty(this.valueDocument.DefaultLanguage)) {
         if (this.contentLanguage.Length == 1) {
           // set the fallback language if there is
-          // only one language defined and no meta ValueElement
+          // only one language defined and no meta valueElement
           // defines the language
-          this.ValueDocument.DefaultLanguage = this.contentLanguage[0];
+          this.valueDocument.DefaultLanguage = this.contentLanguage[0];
         }
       }
-      this.ValueDocument.Encoding = this.encoding.getEncoding();
-      string docbase = this.ValueDocument.getBaseURI();
+      this.valueDocument.Encoding = this.encoding.getEncoding();
+      string docbase = this.valueDocument.getBaseURI();
       if (docbase == null || docbase.Length == 0) {
         docbase = this.baseurl;
       } else {
         if (this.baseurl != null && this.baseurl.Length > 0) {
-          this.ValueDocument.setBaseURI(
-  HtmlCommon.resolveURL(this.ValueDocument,
- this.baseurl,
-              docbase));
+          this.valueDocument.setBaseURI(
+  HtmlCommon.resolveURL(
+  this.valueDocument,
+  this.baseurl,
+  docbase));
         }
       }
       this.openElements.Clear();

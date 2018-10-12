@@ -24,13 +24,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-namespace com.upokecenter.net {
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using com.upokecenter.io;
-using com.upokecenter.util;
+using com.upokecenter.util
+namespace com.upokecenter.net {
 internal class CacheControl {
   private class AgedHeaders : IHttpHeaders {
     CacheControl cc = null;
@@ -86,7 +86,7 @@ internal class CacheControl {
     }
     public IDictionary<string, IList<string>> getHeaderFields() {
       IDictionary<string, IList<string>> map = new
-        PeterO.Support.LenientDictionary<string, IList<string>>();
+        Dictionary<string, IList<string>>();
       map.Add(null, (new string[] { list[0]}));
       for (int i = 1;i<list.Count;i+=2) {
         string key = list[i];

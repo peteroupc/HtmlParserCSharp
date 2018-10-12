@@ -43,13 +43,13 @@ using com.upokecenter.util;
         ec.ValueIncompleteTriples = new
           List<IncompleteTriple>(this.ValueIncompleteTriples);
         ec.ValueListMap = (this.ValueListMap == null) ? null : new
-   PeterO.Support.LenientDictionary<string,
+   Dictionary<string,
             IList<RDFTerm>>(this.ValueListMap);
         ec.ValueNamespaces = (this.ValueNamespaces == null) ? null : new
-        PeterO.Support.LenientDictionary<string,
+        Dictionary<string,
             string>(this.ValueNamespaces);
         ec.ValueTermMap = (this.ValueTermMap == null) ? null : new
-          PeterO.Support.LenientDictionary<string, string>(this.ValueTermMap);
+          Dictionary<string, string>(this.ValueTermMap);
         return ec;
       }
     }
@@ -360,7 +360,7 @@ using com.upokecenter.util;
 
     private int blankNode;
     private IDictionary<string, RDFTerm> bnodeLabels = new
-      PeterO.Support.LenientDictionary<string, RDFTerm>();
+      Dictionary<string, RDFTerm>();
 
     /// <summary>Initializes a new instance of the RDFa class.</summary>
     /// <param name='document'>An IDocument object.</param>
@@ -377,12 +377,12 @@ using com.upokecenter.util;
   this.context.ValueParentSubject = RDFTerm.fromIRI(this.context.ValueBaseURI);
       this.context.ValueParentObject = null;
       this.context.ValueNamespaces = new
-           PeterO.Support.LenientDictionary<string, string>();
-      this.context.ValueIriMap = new PeterO.Support.LenientDictionary<string,
+           Dictionary<string, string>();
+      this.context.ValueIriMap = new Dictionary<string,
           string>();
       this.context.ValueListMap = new
-        PeterO.Support.LenientDictionary<string, IList<RDFTerm>>();
-      this.context.ValueTermMap = new PeterO.Support.LenientDictionary<string,
+        Dictionary<string, IList<RDFTerm>>();
+      this.context.ValueTermMap = new Dictionary<string,
            string>();
       this.context.ValueIncompleteTriples = new List<IncompleteTriple>();
       this.context.ValueLanguage = null;
@@ -587,14 +587,12 @@ using com.upokecenter.util;
     this.getNamedBlankNode(
   attribute.Substring(
   refIndex,
-  (refIndex + refLength) - (refIndex))); } #if DEBUG
-        if (!(refIndex >= 0)) {
+  (refIndex + refLength) - refIndex)); } if (!(refIndex >= 0)) {
           throw new InvalidOperationException(attribute);
         }
         if (!(refIndex + refLength <= attribute.Length)) {
           throw new InvalidOperationException(attribute);
         }
-#endif
         return
     this.relativeResolve(
   prefixIri + attribute.Substring(
@@ -696,15 +694,15 @@ using com.upokecenter.util;
       RDFTerm currentObject = null;
       RDFTerm typedResource = null;
       IDictionary<string, string> iriMapLocal =
-new PeterO.Support.LenientDictionary<string,
+new Dictionary<string,
             string>(this.context.ValueIriMap);
       IDictionary<string, string> namespacesLocal =
-        new PeterO.Support.LenientDictionary<string,
+        new Dictionary<string,
             string>(this.context.ValueNamespaces);
       IDictionary<string, IList<RDFTerm>> listMapLocal =
             this.context.ValueListMap;
       IDictionary<string, string> termMapLocal =
-          new PeterO.Support.LenientDictionary<string,
+          new Dictionary<string,
             string>(this.context.ValueTermMap);
       string localDefaultVocab = this.context.valueDefaultVocab;
       string attr = null;

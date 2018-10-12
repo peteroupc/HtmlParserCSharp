@@ -74,9 +74,11 @@ public interface INode {
   string getTextContent();
 
     /// <summary>Not documented yet.</summary>
+    /// <param name='node'>Not documented yet.</param>
     void appendChild(INode node);
 
     /// <summary>Not documented yet.</summary>
+    /// <param name='node'>Not documented yet.</param>
     void removeChild(INode node);
 }
 }
