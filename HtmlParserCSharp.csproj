@@ -54,8 +54,6 @@
     <Compile Include="src\com\upokecenter\io\ConditionalBufferInputStream.cs" />
     <Compile Include="src\com\upokecenter\io\IMarkableCharacterInput.cs" />
     <Compile Include="src\com\upokecenter\io\StackableCharacterInput.cs" />
-    <Compile Include="src\com\upokecenter\io\StreamUtility.cs" />
-    <Compile Include="src\com\upokecenter\net\HttpHeadersFromMap.cs" />
     <Compile Include="src\com\upokecenter\net\IDownloadEventListener.cs" />
     <Compile Include="src\com\upokecenter\net\IHttpHeaders.cs" />
     <Compile Include="src\com\upokecenter\net\IOnFinishedListener.cs" />

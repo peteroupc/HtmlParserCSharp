@@ -271,46 +271,6 @@ namespace com.upokecenter.util {
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <returns>An array of 32-bit unsigned integers.</returns>
-    public static int[] getCurrentLocalDateComponents() {
-      DateTime dt = DateTime.Now;
-      var ret = new int[9];
-      ret[0] = dt.Year;
-      ret[1] = dt.Month;
-      ret[2] = dt.Day;
-      ret[3] = dt.Hour;
-      ret[4] = dt.Minute;
-      ret[5] = dt.Second;
-      ret[6] = dt.Millisecond;
-      // time zone offset
-      // TODO: Alternative to TimeZone and use int array
-      // format from MailLib
-#if TODO
-      ret[8]=(int)Math.Round(TimeZone.CurrentTimeZone.GetUtcOffset(dt)
-        .TotalMinutes);
-#endif
-      DayOfWeek dow = dt.DayOfWeek;
-      if (dow == DayOfWeek.Sunday) {
- ret[7] = 1;
-  } else if (dow == DayOfWeek.Monday) {
- ret[7] = 2;
-  } else if (dow == DayOfWeek.Tuesday) {
- ret[7] = 3;
-  } else if (dow == DayOfWeek.Wednesday) {
- ret[7] = 4;
-  } else if (dow == DayOfWeek.Thursday) {
- ret[7] = 5;
-  } else if (dow == DayOfWeek.Friday) {
- ret[7] = 6;
-  } else if (dow == DayOfWeek.Saturday) {
- ret[7] = 7;
-} else {
- ret[7] = 0;
-}
-      return ret;
-    }
-
-    /// <summary>Not documented yet.</summary>
     /// <param name='components'>Not documented yet.</param>
     /// <returns>A String object.</returns>
     public static String toXmlSchemaDate(int[] components) {
@@ -358,19 +318,6 @@ namespace com.upokecenter.util {
     return b.ToString();
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='time'>Not documented yet.</param>
-    /// <returns>A String object.</returns>
-  public static String toXmlSchemaGmtDate(long time) {
-    return toXmlSchemaDate(getGmtDateComponents(time));
-  }
-
-    /// <summary>Not documented yet.</summary>
-    /// <param name='time'>Not documented yet.</param>
-    /// <returns>A String object.</returns>
-  public static String toXmlSchemaLocalDate(long time) {
-    return toXmlSchemaDate(getLocalDateComponents(time));
-  }
 
     /// <summary>Not documented yet.</summary>
     /// <param name='year'>Not documented yet.</param>

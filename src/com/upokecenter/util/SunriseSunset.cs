@@ -215,13 +215,12 @@ namespace com.upokecenter.util {
 
     // The "workhorse" function
 
-    /// <summary>* Gets a value indicating whether it's currently day or
-    /// night at the given geographic location. @param lat a geographic
-    /// latitude, in degrees. South coordinates are negative. @param lon a
+    /// <summary>Gets a value indicating whether it's currently day or
+    /// night at the given geographic location. @param lat  @param lon a
     /// geographic longitude, in degrees. West coordinates are negative.
     /// @return A day state value.</summary>
-    /// <param name='lat'>The parameter <paramref name='lat'/> is not
-    /// documented yet.</param>
+    /// <param name='lat'>a geographic
+    /// latitude, in degrees. South coordinates are negative.</param>
     /// <param name='lon'>The parameter <paramref name='lon'/> is not
     /// documented yet.</param>
     /// <returns>A DayState object.</returns>

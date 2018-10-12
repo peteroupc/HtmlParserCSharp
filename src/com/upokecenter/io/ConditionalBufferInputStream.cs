@@ -8,13 +8,15 @@ at: http://peteroupc.github.io/
 */
 using System;
 using System.IO;
+using PeterO;
 namespace com.upokecenter.io {
     /// <summary>* An input stream that stores the first bytes of the
     /// stream in a buffer and supports rewinding to the beginning of the
     /// stream. However, when the buffer is disabled, no further bytes are
     /// put into the buffer, but any remaining bytes in the buffer will
     /// still be used until it's exhausted. @author Peter O.</summary>
-public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
+public sealed class ConditionalBufferInputStream : 
+  IReader, com.upokecenter.html.HtmlParser.IInputStream {
   private byte[] buffer = null;
   private int pos = 0;
   private int endpos = 0;
@@ -34,7 +36,7 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 
     /// <summary>Not documented yet.</summary>
     /// <returns>Not documented yet.</returns>
-  public override sealed int available() {
+  public  int available() {
     return this.isDisabled() ? this.stream.available() : 0;
   }
 
@@ -94,7 +96,7 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 
     /// <summary>Not documented yet.</summary>
     /// <param name='limit'>Not documented yet.</param>
-  public override sealed void mark(int limit) {
+  public  void mark(int limit) {
     // DebugUtility.Log("mark %d: %s",limit,isDisabled());
     if (this.isDisabled()) {
       this.stream.mark(limit);
@@ -110,13 +112,13 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 
     /// <summary>Not documented yet.</summary>
     /// <returns>Not documented yet.</returns>
-  public override sealed bool markSupported() {
+  public  bool markSupported() {
     return true;
   }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>Not documented yet.</returns>
-  public override sealed int ReadByte() {
+  public int ReadByte() {
     if (this.markpos < 0) {
  return this.readInternal();
 } else {
@@ -140,7 +142,7 @@ public sealed class ConditionalBufferInputStream : PeterO.Support.InputStream {
 
     /// <summary>Not documented yet.</summary>
     /// <returns>Not documented yet.</returns>
-  public override sealed int Read(byte[] buffer, int offset, int byteCount) {
+  public int Read(byte[] buffer, int offset, int byteCount) {
     return this.doRead(buffer, offset, byteCount);
   }
 
@@ -271,7 +273,7 @@ count = this.stream.Read(
   }
 
     /// <summary>Not documented yet.</summary>
-  public override sealed void reset() {
+  public  void reset() {
     // DebugUtility.Log("reset: %s",isDisabled());
     if (this.isDisabled()) {
       this.stream.reset();
@@ -297,7 +299,7 @@ count = this.stream.Read(
     /// <summary>Not documented yet.</summary>
     /// <param name='byteCount'>Not documented yet.</param>
     /// <returns>Not documented yet.</returns>
-  public override sealed long skip(long byteCount) {
+  public  long skip(long byteCount) {
     if (this.isDisabled()) {
  return this.stream.skip(byteCount);
 }
