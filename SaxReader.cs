@@ -241,8 +241,8 @@ namespace PeterO.Support {
 // settings.ProhibitDtd = false;
 // settings.XmlResolver = new Resolver();
         XmlReader reader = XmlReader.Create(
-          new StreamReader(new InputStreamWrapper(iss.Source), System.Text.Encoding.GetEncoding(input.Encoding)),
-          settings);
+      new StreamReader(null, System.Text.Encoding.GetEncoding(input.Encoding)),
+      settings);
         char[] charray = null;
         this.valueStatus = XmlReaderStatus.Parsing;
         var startdoc = false;

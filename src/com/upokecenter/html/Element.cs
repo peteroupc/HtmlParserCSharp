@@ -184,14 +184,14 @@ internal class Element : Node, IElement {
 
   public override sealed string getLanguage() {
     INode parent = getParentNode();
-    string a = this.getAttributeNS(HtmlCommon.XML_NAMESPACE,"lang");
-    a = a ?? (this.getAttribute("lang"));
+    string a = this.getAttributeNS(HtmlCommon.XML_NAMESPACE, "lang");
+    a = a ?? this.getAttribute("lang");
     if (a != null) {
  return a;
 }
     if (parent == null) {
       parent = this.getOwnerDocument();
-      return (parent == null) ? String.Empty : (parent.getLanguage());
+      return (parent == null) ? String.Empty : parent.getLanguage();
     } else {
  return parent.getLanguage();
 }
@@ -216,11 +216,11 @@ internal class Element : Node, IElement {
   public string getTagName() {
     string tagName = this.name;
     if (this.prefix != null) {
-      tagName = this.prefix+":"+this.name;
+      tagName = this.prefix + ":"+this.name;
     }
     return ((getOwnerDocument() is Document) &&
         HtmlCommon.HTML_NAMESPACE.Equals(this._namespace)) ?
-          DataUtilities.ToUpperCaseAscii(tagName) : (tagName);
+          DataUtilities.ToUpperCaseAscii(tagName) : tagName;
   }
 
   public override sealed string getTextContent() {
@@ -272,7 +272,7 @@ internal class Element : Node, IElement {
     if (HtmlCommon.SVG_NAMESPACE.Equals(this._namespace)) {
       extra = "svg ";
     }
-    builder.Append("<"+extra+this.name.ToString()+">\n");
+    builder.Append("<" + extra+this.name.ToString()+">\n");
     var attribs = new List<IAttr>(this.getAttributes());
     attribs.Sort(new AttributeNameComparator());
     foreach (var attribute in attribs) {
@@ -288,10 +288,10 @@ internal class Element : Node, IElement {
         }
         extra1 += attribute.getLocalName();
         builder.Append(" " +extra1 + "=\""
-          +attribute.getValue().ToString().Replace("\n", "~~~~")+"\"\n");
+          +attribute.getValue().ToString().Replace("\n", "~~~~") + "\"\n");
       } else {
         builder.Append(" " +attribute.getName().ToString() + "=\""
-          +attribute.getValue().ToString().Replace("\n", "~~~~")+"\"\n");
+          +attribute.getValue().ToString().Replace("\n", "~~~~") + "\"\n");
       }
     }
     foreach (var node in this.getChildNodesInternal()) {
@@ -299,7 +299,7 @@ internal class Element : Node, IElement {
       if (str == null) {
         continue;
       }
-      string[] strarray = StringUtility.splitAt(str,"\n");
+      string[] strarray = StringUtility.splitAt(str, "\n");
       int len = strarray.Length;
       if (len > 0 && strarray[len - 1].Length == 0) {
         --len;  // ignore trailing empty _string

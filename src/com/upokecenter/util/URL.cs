@@ -12,6 +12,7 @@ using System.IO;
 using System.Text;
 using PeterO;
 using PeterO.Text;
+
 namespace com.upokecenter.util {
     /// <summary>* A URL _object under the WHATWG's URL specification. See
     /// http://url.spec.whatwg.org/ @author Peter.</summary>

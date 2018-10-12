@@ -26,6 +26,7 @@ THE SOFTWARE.
 */
 
 using System;
+
 namespace com.upokecenter.html {
     /// <summary>* Contains constants for node types. @author
     /// Peter.</summary>

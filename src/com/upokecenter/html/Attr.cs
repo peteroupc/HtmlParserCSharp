@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+
 namespace com.upokecenter.html {
 internal class Attr : IAttr {
   private StringBuilder valueName;

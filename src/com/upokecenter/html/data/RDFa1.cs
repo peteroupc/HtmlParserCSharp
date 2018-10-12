@@ -287,8 +287,7 @@ namespace com.upokecenter.html.data {
     this.getNamedBlankNode(
     attribute.Substring(
     refIndex,
-    (refIndex + refLength) - (refIndex))); }
-#if DEBUG
+    (refIndex + refLength) - (refIndex))); } #if DEBUG
         if (!(refIndex >= 0)) {
           throw new InvalidOperationException(attribute);
         }

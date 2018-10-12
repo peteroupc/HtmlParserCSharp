@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using PeterO.Rdf;
+
 namespace com.upokecenter.html.data {
 sealed class RDFInternal {
     /// <summary>Replaces certain blank nodes with blank nodes whose names

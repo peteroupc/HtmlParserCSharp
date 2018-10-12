@@ -31,16 +31,16 @@ using PeterO.Text;
 
 namespace com.upokecenter.html {
   internal class Html5Decoder : ICharacterDecoder {
-    private ICharacterDecoder ValueDecoder = null;
-    private bool ValueHavebom = false;
-    private bool ValueHavecr = false;
-    private bool ValueIserror = false;
+    private ICharacterDecoder valueDecoder = null;
+    private bool valueHavebom = false;
+    private bool valueHavecr = false;
+    private bool valueIserror = false;
 
-    public Html5Decoder(ICharacterDecoder ValueDecoder) {
-      if (ValueDecoder == null) {
-        throw new ArgumentNullException(nameof(ValueDecoder));
+    public Html5Decoder(ICharacterDecoder valueDecoder) {
+      if (valueDecoder == null) {
+        throw new ArgumentNullException(nameof(valueDecoder));
       }
-      this.ValueDecoder = ValueDecoder;
+      this.valueDecoder = valueDecoder;
     }
 
     public int ReadChar(IByteReader byteReader) {
@@ -79,8 +79,8 @@ namespace com.upokecenter.html {
       }
       var count = 0;
       while (length > 0) {
-        int c = this.ValueDecoder.ReadChar(stream);
-        if (!this.ValueHavebom && !this.ValueHavecr && c >= 0x20 && c <= 0x7e) {
+        int c = this.valueDecoder.ReadChar(stream);
+        if (!this.valueHavebom && !this.valueHavecr && c >= 0x20 && c <= 0x7e) {
           buffer[offset] = c;
           ++offset;
           ++count;
@@ -92,26 +92,26 @@ namespace com.upokecenter.html {
         }
         if (c == 0x0d) {
           // CR character
-          this.ValueHavecr = true;
+          this.valueHavecr = true;
           c = 0x0a;
-        } else if (c == 0x0a && this.ValueHavecr) {
-          this.ValueHavecr = false;
+        } else if (c == 0x0a && this.valueHavecr) {
+          this.valueHavecr = false;
           continue;
         } else {
-          this.ValueHavecr = false;
+          this.valueHavecr = false;
         }
-        if (c == 0xfeff && !this.ValueHavebom) {
+        if (c == 0xfeff && !this.valueHavebom) {
           // leading BOM
-          this.ValueHavebom = true;
+          this.valueHavebom = true;
           continue;
         } else if (c != 0xfeff) {
-          this.ValueHavebom = false;
+          this.valueHavebom = false;
         }
         if (c < 0x09 || (c >= 0x0e && c <= 0x1f) || (c >= 0x7f && c <= 0x9f) ||
         (c & 0xfffe) == 0xfffe || c > 0x10ffff || c == 0x0b || (c >= 0xfdd0 &&
               c <= 0xfdef)) {
           // control character or noncharacter
-          this.ValueIserror = true;
+          this.valueIserror = true;
         }
         buffer[offset] = c;
         ++offset;
@@ -122,7 +122,7 @@ namespace com.upokecenter.html {
     }
 
     public bool isError() {
-      return this.ValueIserror;
+      return this.valueIserror;
     }
   }
 }

@@ -216,11 +216,11 @@ namespace com.upokecenter.util {
     // The "workhorse" function
 
     /// <summary>Gets a value indicating whether it's currently day or
-    /// night at the given geographic location. @param lat  @param lon a
+    /// night at the given geographic location. @param lat @param lon a
     /// geographic longitude, in degrees. West coordinates are negative.
     /// @return A day state value.</summary>
-    /// <param name='lat'>a geographic
-    /// latitude, in degrees. South coordinates are negative.</param>
+    /// <param name='lat'>A geographic latitude, in degrees. South
+    /// coordinates are negative.</param>
     /// <param name='lon'>The parameter <paramref name='lon'/> is not
     /// documented yet.</param>
     /// <returns>A DayState object.</returns>
@@ -268,10 +268,10 @@ namespace com.upokecenter.util {
 
       // This function computes the Sun's position at
       // any instant
-      return (hours < trise[0]) ? (DayState.NightToDay) : ((hours < tset[0])?
-        (DayState.Day) : ((hours < twiset[0]) ? (DayState.DayToNight) :
-        (DayState.Night))); }
-    // **
+      return (hours < trise[0]) ? (DayState.NightToDay) : ((hours <
+        tset[0])? (DayState.Day) : ((hours < twiset[0]) ?
+        (DayState.DayToNight) :
+        (DayState.Night))); }  // **
     // This function computes GMST0, the Greenwich Mean Sidereal Time
     // at 0h UT (i.e. the sidereal time at the Greenwhich meridian at
     // 0h UT). GMST is then the sidereal time at Greenwich at any

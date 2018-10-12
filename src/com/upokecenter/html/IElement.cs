@@ -27,6 +27,7 @@ THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
+
 namespace com.upokecenter.html {
     /// <summary>* Represents an HTML element. @author Peter.</summary>
 public interface IElement : INode {

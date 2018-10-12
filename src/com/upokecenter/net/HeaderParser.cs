@@ -82,7 +82,7 @@ public sealed class HeaderParser {
   internal static int getResponseCode(string s) {
     var index = 0;
     int length = s.Length;
-    if (s.IndexOf("HTTP/", index,StringComparison.Ordinal) != index) {
+    if (s.IndexOf("HTTP/", index, StringComparison.Ordinal) != index) {
  return -1;
 }
     index += 5;
@@ -106,7 +106,7 @@ public sealed class HeaderParser {
     if (index + 3 >= length) {
  return -1;
 }
-    if (skipDigits(s, index) != index+3 || s[index+3] != ' ') {
+    if (skipDigits(s, index) != index + 3 || s[index+3] != ' ') {
  return -1;
 }
     int num = getPositiveNumber(s, index);
@@ -116,12 +116,12 @@ public sealed class HeaderParser {
   private static int parse2Digit(string v, int index) {
     var value = 0;
     var c = (char)0;
-    if (index < v.Length && (c=v[index]) >= '0' && c <= '9') {
+    if (index < v.Length && (c = v[index]) >= '0' && c <= '9') {
       value += 10 * (c - '0'); index++;
     } else {
  return -1;
 }
-    if (index < v.Length && (c=v[index]) >= '0' && c <= '9') {
+    if (index < v.Length && (c = v[index]) >= '0' && c <= '9') {
       value += c - '0'; index++;
     } else {
  return -1;
@@ -132,22 +132,22 @@ public sealed class HeaderParser {
   private static int parse4Digit(string v, int index) {
     var value = 0;
     var c = (char)0;
-    if (index < v.Length && (c=v[index]) >= '0' && c <= '9') {
+    if (index < v.Length && (c = v[index]) >= '0' && c <= '9') {
       value += 1000 * (c - '0'); index++;
     } else {
  return -1;
 }
-    if (index < v.Length && (c=v[index]) >= '0' && c <= '9') {
+    if (index < v.Length && (c = v[index]) >= '0' && c <= '9') {
       value += 100 * (c - '0'); index++;
     } else {
  return -1;
 }
-    if (index < v.Length && (c=v[index]) >= '0' && c <= '9') {
+    if (index < v.Length && (c = v[index]) >= '0' && c <= '9') {
       value += 10 * (c - '0'); index++;
     } else {
  return -1;
 }
-    if (index < v.Length && (c=v[index]) >= '0' && c <= '9') {
+    if (index < v.Length && (c = v[index]) >= '0' && c <= '9') {
       value += c - '0'; index++;
     } else {
  return -1;
@@ -165,7 +165,7 @@ public sealed class HeaderParser {
     /// <param name='defaultValue'>The parameter <paramref
     /// name='defaultValue'/> is not documented yet.</param>
     /// <returns>A 64-bit signed integer.</returns>
-  public static long parseHttpDate(string v, long defaultValue) {
+    public static DateTime parseHttpDate(string v, DateTime defaultValue) {
     if (v == null) {
  return defaultValue;
 }
@@ -173,39 +173,41 @@ public sealed class HeaderParser {
     var rfc850 = false;
     var asctime = false;
     if (
-  v.StartsWith("Mon" ,StringComparison.Ordinal) || v.StartsWith("Sun",
+  v.StartsWith(
+  "Mon",
+  StringComparison.Ordinal) || v.StartsWith("Sun",
   StringComparison.Ordinal) || v.StartsWith(
   "Fri",
   StringComparison.Ordinal)) {
-      if (com.upokecenter.util.StringUtility.startsWith(v, "day,",3)) {
+      if (com.upokecenter.util.StringUtility.startsWith(v, "day,", 3)) {
         rfc850 = true;
         index = 8;
       } else {
         index = 3;
       }
     } else if (v.StartsWith("Tue", StringComparison.Ordinal)) {
-      if (com.upokecenter.util.StringUtility.startsWith(v, "sday,",3)) {
+      if (com.upokecenter.util.StringUtility.startsWith(v, "sday,", 3)) {
         rfc850 = true;
         index = 9;
       } else {
         index = 3;
       }
     } else if (v.StartsWith("Wed", StringComparison.Ordinal)) {
-      if (com.upokecenter.util.StringUtility.startsWith(v, "nesday,",3)) {
+      if (com.upokecenter.util.StringUtility.startsWith(v, "nesday,", 3)) {
         rfc850 = true;
         index = 11;
       } else {
         index = 3;
       }
     } else if (v.StartsWith("Thu", StringComparison.Ordinal)) {
-      if (com.upokecenter.util.StringUtility.startsWith(v, "rsday,",3)) {
+      if (com.upokecenter.util.StringUtility.startsWith(v, "rsday,", 3)) {
         rfc850 = true;
         index = 10;
       } else {
         index = 3;
       }
     } else if (v.StartsWith("Sat", StringComparison.Ordinal)) {
-      if (com.upokecenter.util.StringUtility.startsWith(v, "urday,",3)) {
+      if (com.upokecenter.util.StringUtility.startsWith(v, "urday,", 3)) {
         rfc850 = true;
         index = 11;
       } else {
@@ -246,7 +248,7 @@ public sealed class HeaderParser {
 }
       ++index;
       year = DateTimeUtility.convertYear(year);
-    } else if (com.upokecenter.util.StringUtility.startsWith(v, ",",index)) {
+    } else if (com.upokecenter.util.StringUtility.startsWith(v, ",", index)) {
       index += 2;
       day = parse2Digit(v, index);
       if (day < 0) {
@@ -275,7 +277,7 @@ public sealed class HeaderParser {
  return defaultValue;
 }
       ++index;
-    } else if (com.upokecenter.util.StringUtility.startsWith(v, " ",index)) {
+    } else if (com.upokecenter.util.StringUtility.startsWith(v, " ", index)) {
       ++index;
       asctime = true;
       month = parseMonth(v, index);
@@ -333,7 +335,7 @@ public sealed class HeaderParser {
 }
       index += 4;
     } else {
-      if (!com.upokecenter.util.StringUtility.startsWith(v, "GMT",index)) {
+      if (!com.upokecenter.util.StringUtility.startsWith(v, "GMT", index)) {
  return defaultValue;
 }
       index += 3;
@@ -342,44 +344,44 @@ public sealed class HeaderParser {
  return defaultValue;
 }
     // NOTE: Here, the month is one-based
-    return DateTimeUtility.toGmtDate(year, month, day, hour, minute, second);
+    return new DateTime(year, month, day, hour, minute, second);
   }
 
   private static int parseMonth(string v, int index) {
-    if (com.upokecenter.util.StringUtility.startsWith(v, "Jan",index)) {
+    if (com.upokecenter.util.StringUtility.startsWith(v, "Jan", index)) {
  return 1;
 }
-    if (com.upokecenter.util.StringUtility.startsWith(v, "Feb",index)) {
+    if (com.upokecenter.util.StringUtility.startsWith(v, "Feb", index)) {
  return 2;
 }
-    if (com.upokecenter.util.StringUtility.startsWith(v, "Mar",index)) {
+    if (com.upokecenter.util.StringUtility.startsWith(v, "Mar", index)) {
  return 3;
 }
-    if (com.upokecenter.util.StringUtility.startsWith(v, "Apr",index)) {
+    if (com.upokecenter.util.StringUtility.startsWith(v, "Apr", index)) {
  return 4;
 }
-    if (com.upokecenter.util.StringUtility.startsWith(v, "May",index)) {
+    if (com.upokecenter.util.StringUtility.startsWith(v, "May", index)) {
  return 5;
 }
-    if (com.upokecenter.util.StringUtility.startsWith(v, "Jun",index)) {
+    if (com.upokecenter.util.StringUtility.startsWith(v, "Jun", index)) {
  return 6;
 }
-    if (com.upokecenter.util.StringUtility.startsWith(v, "Jul",index)) {
+    if (com.upokecenter.util.StringUtility.startsWith(v, "Jul", index)) {
  return 7;
 }
-    if (com.upokecenter.util.StringUtility.startsWith(v, "Aug",index)) {
+    if (com.upokecenter.util.StringUtility.startsWith(v, "Aug", index)) {
  return 8;
 }
-    if (com.upokecenter.util.StringUtility.startsWith(v, "Sep",index)) {
+    if (com.upokecenter.util.StringUtility.startsWith(v, "Sep", index)) {
  return 9;
 }
-    if (com.upokecenter.util.StringUtility.startsWith(v, "Oct",index)) {
+    if (com.upokecenter.util.StringUtility.startsWith(v, "Oct", index)) {
  return 10;
 }
-    if (com.upokecenter.util.StringUtility.startsWith(v, "Nov",index)) {
+    if (com.upokecenter.util.StringUtility.startsWith(v, "Nov", index)) {
  return 11;
 }
-    return com.upokecenter.util.StringUtility.startsWith(v,"Dec",index) ?
+    return com.upokecenter.util.StringUtility.startsWith(v, "Dec",index) ?
       12 : (-1);
   }
 
@@ -388,12 +390,12 @@ public sealed class HeaderParser {
     var c = (char)0;
     if (index < v.Length && v[index] == ' ') {
       value = 0; index++;
-    } else if (index < v.Length && (c=v[index]) >= '0' && c <= '9') {
+    } else if (index < v.Length && (c = v[index]) >= '0' && c <= '9') {
       value += 10 * (c - '0'); index++;
     } else {
  return -1;
 }
-    if (index < v.Length && (c=v[index]) >= '0' && c <= '9') {
+    if (index < v.Length && (c = v[index]) >= '0' && c <= '9') {
       value += c - '0'; index++;
     } else {
  return -1;
@@ -401,13 +403,15 @@ public sealed class HeaderParser {
     return value;
   }
 
-  internal static int parseToken(string str, int index, string token,
- bool
-    optionalQuoted) {
+  internal static int parseToken(
+  string str,
+  int index,
+  string token,
+  bool optionalQuoted) {
     int length = str.Length;
     var j = 0;
     int startIndex = index;
-    for (int i = index; i<length && j<token.Length;i++, j++) {
+    for (int i = index; i < length && j<token.Length;i++, j++) {
       char c = str[i];
       char cj = token[j];
       if (c != cj && c != (cj >= 'a' && cj <= 'z' ? cj - 0x20 : cj)) {
@@ -425,7 +429,7 @@ public sealed class HeaderParser {
         } else {
  return startIndex;
 }
-        //index = skipLws(str, index, length, null);
+        // index = skipLws(str, index, length, null);
       }
     }
     if (index >= length) {
@@ -439,15 +443,16 @@ public sealed class HeaderParser {
     return startIndex;
   }
 
-  internal static int parseTokenWithDelta(string str, int index,
- string
-    token,
- int[] result) {
+  internal static int parseTokenWithDelta(
+  string str,
+  int index,
+  string token,
+  int[] result) {
     int length = str.Length;
     var j = 0;
     int startIndex = index;
     result[0] = -1;
-    for (int i = index; i<length && j<token.Length;i++, j++) {
+    for (int i = index; i < length && j<token.Length;i++, j++) {
       char c = str[i];
       char cj = token[j];
       if (c != cj && c != (cj >= 'a' && cj <= 'z' ? cj - 0x20 : cj)) {
@@ -633,7 +638,7 @@ public sealed class HeaderParser {
   } else if (c >= 'a' && c <= 'z') {
  return 10 + c - 'a';
 } else {
- return (c >= '0' && c <= '9') ? (c-'0') : (-1);
+ return (c >= '0' && c <= '9') ? (c - '0') : (-1);
 }
   }
 

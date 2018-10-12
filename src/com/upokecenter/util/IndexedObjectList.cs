@@ -8,6 +8,7 @@ at: http://peteroupc.github.io/
 */
 using System;
 using System.Collections.Generic;
+
 namespace com.upokecenter.util {
     /// <summary>Not documented yet.</summary>
     /// <typeparam name='T'>Type parameter not documented yet.</typeparam>

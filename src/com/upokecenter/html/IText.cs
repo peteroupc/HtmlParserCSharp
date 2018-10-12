@@ -26,6 +26,7 @@ THE SOFTWARE.
 */
 
 using System;
+
 namespace com.upokecenter.html {
     /// <summary>* Represents text within an HTML document. @author
     /// Peter.</summary>

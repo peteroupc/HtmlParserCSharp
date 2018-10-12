@@ -9,6 +9,7 @@ at: http://peteroupc.github.io/
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 namespace com.upokecenter.util {
     /// <summary>* Contains utility methods for working with strings.
     /// @author Peter.</summary>
