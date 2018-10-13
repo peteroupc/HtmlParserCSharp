@@ -39,8 +39,7 @@ namespace com.upokecenter.html.data {
       RDF_NAMESPACE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
     private static IList<string> relterms = (new string[] { "alternate",
-      "appendix" ,"cite",
-      "bookmark", "chapter", "contents",
+      "appendix" ,"cite", "bookmark", "chapter", "contents",
       "copyright", "first", "glossary",
       "help", "icon", "index", "last",
       "license", "meta", "next", "prev",
@@ -205,8 +204,7 @@ namespace com.upokecenter.html.data {
             attribute.Substring(
   refIndex,
   (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
-    prefix + 1;
-        prefixIri = prefixMapping[prefixName];
+    prefix + 1; prefixIri = prefixMapping[prefixName];
         prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
           prefixMapping[prefixName];
         if (prefixIri == null || "_".Equals(prefixName)) {
@@ -252,8 +250,7 @@ namespace com.upokecenter.html.data {
             attribute.Substring(
   refIndex,
   (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
-    prefix + 1;
-        prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
+    prefix + 1; prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
           prefixMapping[prefixName];
         if (prefixIri == null && !"_".Equals(prefixName)) {
           return null;
@@ -286,7 +283,7 @@ namespace com.upokecenter.html.data {
     this.getNamedBlankNode(
     attribute.Substring(
     refIndex,
-    (refIndex + refLength) - (refIndex))); } if (!(refIndex >= 0)) {
+    (refIndex + refLength) - refIndex)); } if (!(refIndex >= 0)) {
           throw new InvalidOperationException(attribute);
         }
         if (!(refIndex + refLength <= attribute.Length)) {
@@ -735,11 +732,11 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
               ec.ValueIriMap = iriMapLocal;
               ec.ValueNamespaces = namespacesLocal;
               ec.ValueIncompleteTriples = incompleteTriplesLocal;
-              ec.ValueParentSubject = ((newSubject == null) ?
-                oldContext.ValueParentSubject : newSubject);
+              ec.ValueParentSubject = (newSubject == null) ?
+                oldContext.ValueParentSubject : newSubject;
               ec.ValueParentObject = ((currentObject == null) ? ((newSubject
                 == null) ? oldContext.ValueParentSubject : newSubject) :
-                  currentObject);
+                currentObject);
               ec.ValueLanguage = localLanguage;
               this.context = ec;
               this.process(childElement, false);

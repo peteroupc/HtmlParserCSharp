@@ -12,22 +12,54 @@ namespace Org.System.Xml.Sax {
   public enum RsId
   {
     // for Org.System.Xml.Sax namespace
+
+    /// <summary>Not documented yet.</summary>
     CannotChangeExceptionId,
+
+    /// <summary>Not documented yet.</summary>
     FeatureNotSupported,
+
+    /// <summary>Not documented yet.</summary>
     FeatureReadNotSupported,
+
+    /// <summary>Not documented yet.</summary>
     FeatureWriteNotSupported,
+
+    /// <summary>Not documented yet.</summary>
     FeatureWhenParsing,
+
+    /// <summary>Not documented yet.</summary>
     FeatureNotRecognized,
+
+    /// <summary>Not documented yet.</summary>
     PropertyNotSupported,
+
+    /// <summary>Not documented yet.</summary>
     PropertyNotRecognized,
     // for Org.System.Xml.Sax.Helpers namespace
+
+    /// <summary>Not documented yet.</summary>
     CapacityTooSmall,
+
+    /// <summary>Not documented yet.</summary>
     AttIndexOutOfBounds,
+
+    /// <summary>Not documented yet.</summary>
     AttributeNotFound,
+
+    /// <summary>Not documented yet.</summary>
     AttributeNotFoundNS,
+
+    /// <summary>Not documented yet.</summary>
     NonEmptyStringRequired,
+
+    /// <summary>Not documented yet.</summary>
     NoFilterParent,
+
+    /// <summary>Not documented yet.</summary>
     NoXmlReaderInAssembly,
+
+    /// <summary>Not documented yet.</summary>
     NoDefaultXmlReader
   }
 

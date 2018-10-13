@@ -126,8 +126,8 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
     if (!match) {
  return false;
 }
-    match=(value_namespace == null ? this.value_namespace == null :
-      value_namespace.Equals(this.value_namespace));
+    match = value_namespace == null ? this.value_namespace == null :
+      value_namespace.Equals(this.value_namespace);
     return match;
   }
 

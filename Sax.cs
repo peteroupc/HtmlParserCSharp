@@ -208,6 +208,7 @@ namespace Org.System.Xml.Sax {
     /// href='http://www.saxproject.org/apidoc/org/xml/sax/ext/Attributes2.html#isDeclared(int)'>Attributes2.isDeclared</see>
     /// from the Java API.</item></list></remarks></overloads>
     /// <param name='index'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='IndexOutOfRangeException'>Thrown when index out of
     /// range.</exception>
     string GetType(int index);
@@ -219,6 +220,7 @@ namespace Org.System.Xml.Sax {
     /// <item>Throws standard .NET
     /// exceptions.</item></list></remarks></overloads>
     /// <param name='index'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='IndexOutOfRangeException'>Thrown when index out of
     /// range.</exception>
     string GetValue(int index);
@@ -296,6 +298,7 @@ namespace Org.System.Xml.Sax {
     /// <item>For a parser that does not read the DTD this will always
     /// return true.</item></list></remarks></overloads>
     /// <param name='index'>Not documented yet.</param>
+    /// <returns>Not documented yet.</returns>
     /// <exception cref='IndexOutOfRangeException'>Thrown when index out of
     /// range.</exception>
     bool IsSpecified(int index);
@@ -1482,6 +1485,8 @@ namespace Org.System.Xml.Sax {
 
     /// <summary>Not documented yet.</summary>
     /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+    /// <typeparam name='S'>The parameter
+    /// <typeparamref name='S'/> is not documented yet.</typeparam>
   public class InputSource<S> : InputSource
   {
     private S source;

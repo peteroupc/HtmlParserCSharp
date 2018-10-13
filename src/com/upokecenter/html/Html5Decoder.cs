@@ -47,7 +47,39 @@ namespace com.upokecenter.html {
       if (byteReader == null) {
         throw new ArgumentNullException(nameof(byteReader));
       }
-      throw new NotImplementedException();
+      while (true) {
+        int c = this.valueDecoder.ReadChar(byteReader);
+        if (!this.valueHavebom && !this.valueHavecr && c >= 0x20 && c <= 0x7e) {
+          return c;
+        }
+        if (c < 0) {
+          return -1;
+        }
+        if (c == 0x0d) {
+          // CR character
+          this.valueHavecr = true;
+          c = 0x0a;
+        } else if (c == 0x0a && this.valueHavecr) {
+          this.valueHavecr = false;
+          continue;
+        } else {
+          this.valueHavecr = false;
+        }
+        if (c == 0xfeff && !this.valueHavebom) {
+          // leading BOM
+          this.valueHavebom = true;
+          continue;
+        } else if (c != 0xfeff) {
+          this.valueHavebom = false;
+        }
+        if (c < 0x09 || (c >= 0x0e && c <= 0x1f) || (c >= 0x7f && c <= 0x9f) ||
+        (c & 0xfffe) == 0xfffe || c > 0x10ffff || c == 0x0b || (c >= 0xfdd0 &&
+              c <= 0xfdef)) {
+          // control character or noncharacter
+          this.valueIserror = true;
+        }
+        return c;
+      }
     }
 
     public int Read(IByteReader stream, int[] buffer, int offset, int length) {

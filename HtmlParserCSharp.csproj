@@ -19,6 +19,7 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\HtmlParserCSharp.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -81,6 +82,9 @@
     <Compile Include="src\com\upokecenter\html\INameAndAttributes.cs" />
     <Compile Include="src\com\upokecenter\html\HtmlParser.cs" />
     <Compile Include="src\com\upokecenter\html\HtmlDocument.cs" />
+    <Compile Include="..\CBOR\CBOR\PeterO\DebugUtility.cs">
+      <Link>DebugUtility.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

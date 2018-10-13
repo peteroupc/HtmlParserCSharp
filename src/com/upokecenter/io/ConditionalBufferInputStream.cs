@@ -74,8 +74,9 @@ public sealed class ConditionalBufferInputStream :
   }
 
   private bool isDisabled() {
-    return (this.disabled) ? ((this.markpos >= 0 &&
-      this.markpos<this.marklimit) ? false : (pos<endpos)) : (false);
+    return this.disabled ? ((this.markpos >= 0 &&
+      this.markpos<this.marklimit) ? false : (this.pos<this.endpos)) :
+      (false);
   }
 
     /// <summary>Not documented yet.</summary>

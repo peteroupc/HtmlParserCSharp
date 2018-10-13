@@ -279,18 +279,18 @@ internal class Element : Node, IElement {
       // DebugUtility.Log("%s %s"
       // , attribute.getNamespace(), attribute.getLocalName());
       if (attribute.getNamespaceURI() != null) {
-        string extra1 = String.Empty;
+          string attributeName = String.Empty;
         if (HtmlCommon.XLINK_NAMESPACE.Equals(attribute.getNamespaceURI())) {
-          extra1 = "xlink ";
+          attributeName = "xlink ";
         }
         if (HtmlCommon.XML_NAMESPACE.Equals(attribute.getNamespaceURI())) {
-          extra1 = "xml ";
+          attributeName = "xml ";
         }
-        extra1 += attribute.getLocalName();
-        builder.Append(" " +extra1 + "=\""
+        attributeName += attribute.getLocalName();
+        builder.Append("\u0020\u0020" +attributeName + "=\""
           +attribute.getValue().ToString().Replace("\n", "~~~~") + "\"\n");
       } else {
-        builder.Append(" " +attribute.getName().ToString() + "=\""
+          builder.Append("\u0020\u0020" +attribute.getName().ToString() + "=\""
           +attribute.getValue().ToString().Replace("\n", "~~~~") + "\"\n");
       }
     }
@@ -302,11 +302,11 @@ internal class Element : Node, IElement {
       string[] strarray = StringUtility.splitAt(str, "\n");
       int len = strarray.Length;
       if (len > 0 && strarray[len - 1].Length == 0) {
-        --len;  // ignore trailing empty _string
+        --len;  // ignore trailing empty string
       }
       for (int i = 0; i < len; ++i) {
         string el = strarray[i];
-        builder.Append(" ");
+        builder.Append("\u0020\u0020");
         builder.Append(el);
         builder.Append("\n");
       }

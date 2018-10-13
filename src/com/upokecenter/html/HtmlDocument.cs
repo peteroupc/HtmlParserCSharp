@@ -71,7 +71,7 @@ public IDocument processResponse(string url, IReader
     /// <returns>An IDocument object.</returns>
     public static IDocument FromString(string str) {
       byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
-      return null;
+      return parseStream(DataIO.ToReader(bytes));
     }
 
     /// <summary>Parses an HTML document from an input stream, using
@@ -91,7 +91,7 @@ public IDocument processResponse(string url, IReader
   public static IDocument parseStream(
       IReader stream,
       string address) {
-    return parseStream(stream, address,"text/html");
+    return parseStream(stream, address, "text/html");
   }
 
     /// <summary>Not documented yet.</summary>

@@ -6,9 +6,12 @@ using NUnit.Framework;
 using PeterO;
 
 namespace HtmlParserCSharpTest {
-  class MainClass {
-    private static string Implode(string[] arr, int index, int endIndex,
-      string delim) {
+  internal class MainClass {
+    private static string Implode(
+  string[] arr,
+  int index,
+  int endIndex,
+  string delim) {
       var sb = new StringBuilder();
       var i = index;
       while (i < endIndex) {
@@ -20,8 +23,11 @@ namespace HtmlParserCSharpTest {
       }
       return sb.ToString();
     }
-    private static string[] GetTestData(byte[] bytes,
-                    int offset, int endOffset) {
+
+    private static string[] GetTestData(
+  byte[] bytes,
+  int offset,
+  int endOffset) {
       string str = DataUtilities.GetUtf8String(
         bytes,
         offset,
@@ -64,16 +70,17 @@ namespace HtmlParserCSharpTest {
       }
       return null;
     }
+
     public static List<string[]> ReadTestFile(string filename) {
       byte[] bytes;
       bytes = File.ReadAllBytes(filename);
-      int lastIndex = 0;
+      var lastIndex = 0;
       var ret = new List<string[]>();
       string[] data;
       for (var i = 0; i < bytes.Length; ++i) {
         if (i + 1 < bytes.Length && bytes[i] == 0x0a && bytes[i + 1] == 0x0a) {
           data = GetTestData(bytes, lastIndex, i);
-          if ((data) == null) {
+          if (data == null) {
  Assert.Fail();
  }
           ret.Add(data);
@@ -82,12 +89,13 @@ namespace HtmlParserCSharpTest {
         }
       }
       data = GetTestData(bytes, lastIndex, bytes.Length);
-      if ((data) == null) {
+      if (data == null) {
  Assert.Fail();
  }
       ret.Add(data);
       return ret;
     }
+
     public static void Main(string[] args) {
       Console.WriteLine("Hello World!");
     }

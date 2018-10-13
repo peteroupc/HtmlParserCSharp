@@ -514,8 +514,7 @@ using com.upokecenter.util;
             attribute.Substring(
   refIndex,
   (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
-    prefix + 1;
-        prefixIri = prefixMapping[prefixName];
+    prefix + 1; prefixIri = prefixMapping[prefixName];
         prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
           prefixMapping[prefixName];
         if (prefixIri == null || "_".Equals(prefixName)) {
@@ -553,8 +552,7 @@ using com.upokecenter.util;
             attribute.Substring(
   refIndex,
   (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
-    prefix + 1;
-        prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
+    prefix + 1; prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
           prefixMapping[prefixName];
         if (prefixIri == null && !"_".Equals(prefixName)) {
           return null;
@@ -1184,11 +1182,11 @@ new Dictionary<string,
             ec.ValueIncompleteTriples = incompleteTriplesLocal;
             ec.ValueListMap = listMapLocal;
             ec.ValueTermMap = termMapLocal;
-            ec.ValueParentSubject = ((newSubject == null) ?
-              oldContext.ValueParentSubject : newSubject);
+            ec.ValueParentSubject = (newSubject == null) ?
+              oldContext.ValueParentSubject : newSubject;
             ec.ValueParentObject = ((currentObject == null) ? ((newSubject
-              == null) ? oldContext.ValueParentSubject :
-                  newSubject) : currentObject);
+              == null) ? oldContext.ValueParentSubject : newSubject) :
+              currentObject);
             ec.valueDefaultVocab = localDefaultVocab;
             ec.ValueLanguage = localLanguage;
             this.context = ec;

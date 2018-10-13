@@ -37,8 +37,8 @@ internal static class HtmlCommon {
     }
 
     public static string resolveURL(INode node, string url, string _base) {
- string encoding = ((node is IDocument) ? ((IDocument)node).getCharset() :
-   node.getOwnerDocument().getCharset());
+ string encoding = (node is IDocument) ? ((IDocument)node).getCharset() :
+   node.getOwnerDocument().getCharset();
       if ("utf-16be".Equals(encoding) || "utf-16le".Equals(encoding)) {
         encoding = "utf-8";
       }

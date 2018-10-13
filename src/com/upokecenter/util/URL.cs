@@ -204,8 +204,8 @@ namespace com.upokecenter.util {
       }
       if (c < 0x80) {
         return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >=
-          '0' && c <= '9') ||
-             ((c & 0x7F) == c && "!$&'()*+,-./:;=?@_~" .IndexOf((char)c) >=
+          '0' && c <= '9') || ((c & 0x7F) == c && "!$&'()*+,-./:;=?@_~"
+          .IndexOf((char)c) >=
                    0));
       } else if ((c & 0xfffe) == 0xfffe) {
         return false;
@@ -401,7 +401,7 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
             }
             if ((c >= 0 && (!isUrlCodePoint(c) && c != '%') || (c == '%' &&
               (index + 2 > ending || !isHexDigit(s[index]) ||
-                    !isHexDigit(s[index + 1]))))) {
+              !isHexDigit(s[index + 1]))))) {
               error = true;
             }
             if (c >= 0 && c != 0x09 && c != 0x0a && c != 0x0d) {

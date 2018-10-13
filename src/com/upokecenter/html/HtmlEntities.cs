@@ -1,7 +1,7 @@
 using System;
 
-  namespace com.upokecenter.html {
-sealed class HtmlEntities {
+namespace com.upokecenter.html {
+  internal sealed class HtmlEntities {
     private static readonly string[] ValueEntities = new
       string[] { "CounterClockwiseContourIntegral;",
     "ClockwiseContourIntegral;", "DoubleLongLeftRightArrow;",
@@ -629,9 +629,19 @@ sealed class HtmlEntities {
     8765, 817, 8766, 819, 61, 8421, 8921, 824, 8811, 8402, 8920, 824, 8810,
     8402, 8807, 824, 8806, 824 };
 
-    internal static string[] Entities => ValueEntities;
+    internal static string[] Entities { get {
+ return ValueEntities;
+} }
 
-    internal static int[] EntityDoubles => ValueEntityDoubles;
+    internal static int[] EntityDoubles { get {
+ return ValueEntityDoubles;
+} }
+
+    internal static int[] EntityValues {
+      get {
+        return valueEntityValues;
+      }
+    }
 
     public static int getHtmlEntity(string value) {
       if (value.Length < 2 || value.Length > HtmlEntities.Entities[0].Length) {
