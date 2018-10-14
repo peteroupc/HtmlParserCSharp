@@ -268,17 +268,18 @@ namespace com.upokecenter.util {
 
       // This function computes the Sun's position at
       // any instant
-      return (hours < trise[0]) ? (DayState.NightToDay) : ((hours < tset[0])?
-        DayState.Day : ((hours < twiset[0]) ? (DayState.DayToNight) :
-        DayState.Night)); }  // **  // This function  // computes GMST0, the
-        Greenwich Mean Sidereal Time
+      return (hours < trise[0]) ? (DayState.NightToDay) : ((hours <
+        tset[0])? DayState.Day : ((hours < twiset[0]) ? DayState.DayToNight:
+        DayState.Night)); }
+    /*
+     * This function computes GMST0, the Greenwich Mean Sidereal Time
     // at 0h UT (i.e. the sidereal time at the Greenwhich meridian at
     // 0h UT). GMST is then the sidereal time at Greenwich at any
     // time of the day. I've generalized GMST0 as well, and define it
     // as: GMST0 = GMST - UT -- this allows GMST0 to be computed at
     // other times than 0h UT as well. While this sounds somewhat
     // contradictory, it is very practical: instead of computing
-    // GMST like:
+    // GMST like: */
 
     /* GMST = (GMST0) + UT * (366.2422/365.2422) */
 

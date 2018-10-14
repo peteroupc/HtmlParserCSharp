@@ -22,17 +22,17 @@ internal static class HtmlCommon {
         XMLNS_NAMESPACE = "http://www.w3.org/2000/xmlns/";
 
     internal static bool isHtmlElement(IElement ie, string name) {
-      return name.Equals(ie.getLocalName()) &&
+      return ie != null && name.Equals(ie.getLocalName()) &&
           HtmlCommon.HTML_NAMESPACE.Equals(ie.getNamespaceURI());
     }
 
     internal static bool isMathMLElement(IElement ie, string name) {
-      return name.Equals(ie.getLocalName()) &&
+      return ie != null && name.Equals(ie.getLocalName()) &&
         HtmlCommon.MATHML_NAMESPACE.Equals(ie.getNamespaceURI());
     }
 
     internal static bool isSvgElement(IElement ie, string name) {
-      return name.Equals(ie.getLocalName()) &&
+      return ie != null && name.Equals(ie.getLocalName()) &&
          HtmlCommon.SVG_NAMESPACE.Equals(ie.getNamespaceURI());
     }
 

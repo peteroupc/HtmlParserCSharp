@@ -75,8 +75,8 @@ public sealed class ConditionalBufferInputStream :
 
   private bool isDisabled() {
     return this.disabled ? ((this.markpos >= 0 &&
-      this.markpos<this.marklimit) ? false : (this.pos<this.endpos)) :
-      (false);
+      this.markpos < this.marklimit) ? false : (this.pos < this.endpos)) :
+      false;
   }
 
     /// <summary>Not documented yet.</summary>
@@ -136,6 +136,11 @@ public sealed class ConditionalBufferInputStream :
   }
 
   private int readInternal() {
+      if (this.disabled) {
+        // Buffering disabled, so read directly from stream
+        return this.stream.ReadByte();
+      }
+
     // Read from buffer
     if (this.pos < this.endpos) {
  return this.buffer[this.pos++] & 0xff;
@@ -143,10 +148,6 @@ public sealed class ConditionalBufferInputStream :
     // if (buffer != null) {
   // DebugUtility.Log("buffer %s end=%s len=%s",pos,endpos,buffer.Length);
 // }
-    if (this.disabled) {
- // Buffering disabled, so read directly from stream
-      return this.stream.ReadByte();
- }
     // End pos is smaller than buffer size, fill
     // entire buffer if possible
     if (this.endpos < this.buffer.Length) {

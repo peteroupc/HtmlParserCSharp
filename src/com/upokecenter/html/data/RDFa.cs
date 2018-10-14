@@ -514,9 +514,8 @@ using com.upokecenter.util;
             attribute.Substring(
   refIndex,
   (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
-    prefix + 1; prefixIri = prefixMapping[prefixName];
-        prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
-          prefixMapping[prefixName];
+    prefix + 1; prefixIri = prefixMapping[prefixName]; prefixIri = (prefix
+    == 0) ? RDFA_DEFAULT_PREFIX : prefixMapping[prefixName];
         if (prefixIri == null || "_".Equals(prefixName)) {
           return null;
         }
@@ -553,7 +552,7 @@ using com.upokecenter.util;
   refIndex,
   (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
     prefix + 1; prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
-          prefixMapping[prefixName];
+    prefixMapping[prefixName];
         if (prefixIri == null && !"_".Equals(prefixName)) {
           return null;
         }

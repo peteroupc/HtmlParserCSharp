@@ -39,8 +39,9 @@ namespace com.upokecenter.html.data {
       RDF_NAMESPACE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
     private static IList<string> relterms = (new string[] { "alternate",
-      "appendix" ,"cite", "bookmark", "chapter", "contents",
-      "copyright", "first", "glossary",
+      "appendix" ,"cite", "bookmark", "chapter", "contents", "copyright",
+
+ "first", "glossary",
       "help", "icon", "index", "last",
       "license", "meta", "next", "prev",
       "role", "section", "start",
@@ -204,9 +205,8 @@ namespace com.upokecenter.html.data {
             attribute.Substring(
   refIndex,
   (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
-    prefix + 1; prefixIri = prefixMapping[prefixName];
-        prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
-          prefixMapping[prefixName];
+    prefix + 1; prefixIri = prefixMapping[prefixName]; prefixIri = (prefix
+    == 0) ? RDFA_DEFAULT_PREFIX : prefixMapping[prefixName];
         if (prefixIri == null || "_".Equals(prefixName)) {
           return null;
         }
@@ -251,7 +251,7 @@ namespace com.upokecenter.html.data {
   refIndex,
   (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
     prefix + 1; prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
-          prefixMapping[prefixName];
+    prefixMapping[prefixName];
         if (prefixIri == null && !"_".Equals(prefixName)) {
           return null;
         }

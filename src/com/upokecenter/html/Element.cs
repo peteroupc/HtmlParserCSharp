@@ -294,8 +294,12 @@ internal class Element : Node, IElement {
           +attribute.getValue().ToString().Replace("\n", "~~~~") + "\"\n");
       }
     }
+    bool isTemplate = HtmlCommon.isHtmlElement(this, "template");
+    if (isTemplate) {
+       builder.Append("\u0020\u0020content\n");
+    }
     foreach (var node in this.getChildNodesInternal()) {
-        string str = ((Node)node).toDebugString();
+      string str = ((Node)node).toDebugString();
       if (str == null) {
         continue;
       }
@@ -306,6 +310,12 @@ internal class Element : Node, IElement {
       }
       for (int i = 0; i < len; ++i) {
         string el = strarray[i];
+        // TODO: Separate template content from child nodes;
+        // content is child nodes for convenience currently
+        if (isTemplate) {
+  {builder.Append("\u0020\u0020");
+}
+}
         builder.Append("\u0020\u0020");
         builder.Append(el);
         builder.Append("\n");

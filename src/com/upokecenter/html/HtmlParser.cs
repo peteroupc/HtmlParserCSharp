@@ -122,6 +122,7 @@ namespace com.upokecenter.html {
       InHeadNoscript,
       AfterHead,
       InBody,
+      InTemplate,
       Text,
       InTable,
       InTableText,
@@ -509,6 +510,7 @@ namespace com.upokecenter.html {
     private IList<int> tokenQueue = new List<int>();
     private InsertionMode insertionMode = InsertionMode.Initial;
     private InsertionMode originalInsertionMode = InsertionMode.Initial;
+    private IList<InsertionMode> templateModes = new List<InsertionMode>();
     private IList<IElement> openElements = new List<IElement>();
     private IList<FormattingElement> formattingElements = new
       List<FormattingElement>();
@@ -629,6 +631,15 @@ namespace com.upokecenter.html {
         }
       }
     }
+
+private bool hasHtmlOpenElement(string name) {
+  foreach (var e in this.openElements) {
+    if (HtmlCommon.isHtmlElement(e, name)) {
+ return true;
+}
+  }
+  return false;
+}
 
     private void adjustMathMLAttributes(StartTagToken valueToken) {
       IList<Attr> valueAttributes = valueToken.getAttributes();
@@ -1169,15 +1180,12 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                   html401public.Equals(doctypePublic) && (doctypeSystem ==
                   null || "http://www.w3.org/TR/html4/strict.dtd"
                     .Equals(doctypeSystem)));
-                bool xhtml = (matchesHtml &&
-                  xhtmlstrictpublic.Equals(doctypePublic) &&
-                  (XhtmlStrict.Equals(doctypeSystem))); string xhtmlPublic =
+        bool xhtml = (matchesHtml && xhtmlstrictpublic.Equals(doctypePublic)&&
+          (XhtmlStrict.Equals(doctypeSystem))); string xhtmlPublic =
                     "-//W3C//DTD XHTML 1.1//EN";
-                bool xhtml11 = (matchesHtml &&
-                  xhtmlPublic.Equals(doctypePublic) &&
-                  Xhtml11.Equals(doctypeSystem)); if (!html4 && !html401 &&
-                  !xhtml &&
-                !xhtml11) {
+            bool xhtml11 = (matchesHtml && xhtmlPublic.Equals(doctypePublic)&&
+              Xhtml11.Equals(doctypeSystem)); if (!html4 && !html401 &&
+                !xhtml && !xhtml11) {
                   this.error = true;
                 }
               }
@@ -1456,6 +1464,14 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
                 return true;
+} else if ("template".Equals(valueName)) {
+Element e = this.addHtmlElement(tag);
+this.insertFormattingMarker(tag, e);
+this.framesetOk = false;
+                this.insertionMode = InsertionMode.InTemplate;
+this.templateModes.Add(InsertionMode.InTemplate);
+return true;
+                return true;
               } else if ("head".Equals(valueName)) {
                 this.error = true;
                 return false;
@@ -1470,6 +1486,23 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.openElements.RemoveAt(this.openElements.Count - 1);
                 this.insertionMode = InsertionMode.AfterHead;
                 return true;
+} else if ("template".Equals(valueName)) {
+if (!this.hasHtmlOpenElement("template")) {
+this.error = true;
+return false;
+}
+this.generateImpliedEndTagsThoroughly();
+IElement ie = this.getCurrentNode();
+if (!HtmlCommon.isHtmlElement(ie, "template")) {
+ this.error = true;
+}
+this.PopUntilHtmlElementPopped("template");
+this.clearFormattingToMarker();
+if (this.templateModes.Count > 0) {
+ this.templateModes.RemoveAt(this.templateModes.Count - 1);
+}
+                  this.resetInsertionMode();
+return true;
               } else if (!(
                   "br".Equals(valueName) ||
                   "body".Equals(valueName) || "html".Equals(valueName))) {
@@ -1597,6 +1630,83 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
             }
             return true;
           }
+case InsertionMode.InTemplate:{
+  if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE ||
+      (token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER ||
+      (token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
+                return this.applyInsertionMode(
+         token,
+         InsertionMode.InBody);
+  }
+  if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
+              var tag = (StartTagToken)this.getToken(token);
+              string valueName = tag.getName();
+if (valueName.Equals("base") ||
+valueName.Equals("title") ||
+valueName.Equals("template") ||
+valueName.Equals("basefont") ||
+valueName.Equals("bgsound") ||
+valueName.Equals("meta") ||
+valueName.Equals("link") ||
+valueName.Equals("noframes") ||
+valueName.Equals("style") ||
+valueName.Equals("script")) {
+                return this.applyInsertionMode(
+         token,
+         InsertionMode.InHead);
+}
+InsertionMode newMode = InsertionMode.InBody;
+if (valueName.Equals("caption") ||
+valueName.Equals("tbody") ||
+valueName.Equals("thead") ||
+valueName.Equals("tfoot") ||
+valueName.Equals("colgroup")) {
+  newMode = InsertionMode.InTable;
+} else if (valueName.Equals("col")) {
+  newMode = InsertionMode.InColumnGroup;
+} else if (valueName.Equals("tr")) {
+  newMode = InsertionMode.InTableBody;
+} else if (valueName.Equals("td") || valueName.Equals("th")) {
+  newMode = InsertionMode.InRow;
+}
+
+  if (this.templateModes.Count > 0) {
+    this.templateModes.RemoveAt(this.templateModes.Count - 1);
+  }
+  this.templateModes.Add(newMode);
+  this.insertionMode = newMode;
+  return this.applyInsertionMode(token, null);
+  }
+  if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
+              var tag = (EndTagToken)this.getToken(token);
+              string valueName = tag.getName();
+if (valueName.Equals("template")) {
+                return this.applyInsertionMode(
+         token,
+         InsertionMode.InHead);
+} else {
+this.error = true;
+return true;
+}
+}
+  if (token == TOKEN_EOF) {
+if (!this.hasHtmlOpenElement("template")) {
+ this.stopParsing();
+ return true;
+} else {
+ this.error = true;
+}
+this.PopUntilHtmlElementPopped("trmplate");
+this.clearFormattingToMarker();
+  if (this.templateModes.Count > 0) {
+    this.templateModes.RemoveAt(this.templateModes.Count - 1);
+  }
+this.resetInsertionMode();
+  return this.applyInsertionMode(token, null);
+  }
+return false;
+}
+
         case InsertionMode.InBody: {
             if (token == 0) {
               this.error = true;
@@ -1612,11 +1722,12 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
               return true;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              // Console.WriteLine("%c %s",token,getCurrentNode().getTagName());
-              this.reconstructFormatting();
-              Text textNode =
-                    this.getTextNodeToInsert(this.getCurrentNode());
-              int ch = token;
+  DebugUtility.Log(String.Empty + ((char)token) + " " +
+           (this.getCurrentNode().getTagName())); int ch = token;
+              if (ch != 0) {
+ this.reconstructFormatting();
+}
+              Text textNode = this.getTextNodeToInsert(this.getCurrentNode());
               if (textNode == null) {
                 throw new InvalidOperationException();
               }
@@ -1650,23 +1761,35 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                   this.tokenQueue.Insert(0, token);
                   break;
                 }
+                // DebugUtility.Log("{0} {1}"
+                // , (char)token, getCurrentNode().getTagName());
                 ch = token;
               }
               return true;
             } else if (token == TOKEN_EOF) {
+              if (this.templateModes.Count > 0) {
+return this.applyInsertionMode(token, InsertionMode.InTemplate);
+            } else {
               foreach (var e in this.openElements) {
-                string name = e.getLocalName();
-                if (!"dd".Equals(name) &&
-                    !"dt".Equals(name) && !"li".Equals(name) &&
-                    !"p".Equals(name) && !"tbody".Equals(name) &&
-                    !"td".Equals(name) && !"tfoot".Equals(name) &&
-                    !"th".Equals(name) && !"tr".Equals(name) &&
-                    !"thead".Equals(name) && !"body".Equals(name) &&
-                    !"html".Equals(name)) {
+                if (!HtmlCommon.isHtmlElement(e, "dd") &&
+      !HtmlCommon.isHtmlElement(e, "dt") && !HtmlCommon.isHtmlElement(e,"li"
+) &&
+                    !HtmlCommon.isHtmlElement(e, "option") &&
+                    !HtmlCommon.isHtmlElement(e, "optgroup") &&
+    !HtmlCommon.isHtmlElement(e, "p") && !HtmlCommon.isHtmlElement(e,"tbody"
+) &&
+   !HtmlCommon.isHtmlElement(e, "td") && !HtmlCommon.isHtmlElement(e,"tfoot"
+) &&
+      !HtmlCommon.isHtmlElement(e, "th") && !HtmlCommon.isHtmlElement(e,"tr"
+) &&
+ !HtmlCommon.isHtmlElement(e, "thead") && !HtmlCommon.isHtmlElement(e,"body"
+) &&
+                    !HtmlCommon.isHtmlElement(e, "html")) {
                   this.error = true;
                 }
               }
               this.stopParsing();
+              }
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
               // START TAGS
@@ -1683,7 +1806,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 ((Element)this.openElements[0]).mergeAttributes(tag);
                 return true;
               } else if ("base".Equals(valueName) ||
-                // "template".Equals(valueName) ||  // TODO
+                  "template".Equals(valueName) ||
                   "bgsound".Equals(valueName) || "basefont".Equals(valueName) ||
                   "link".Equals(valueName) || "noframes".Equals(valueName) ||
                   "script".Equals(valueName) || "style".Equals(valueName) ||
@@ -1898,7 +2021,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.error = true;
                 tag.setName("img");
                 return this.applyInsertionMode(token, null);
-              } else if ("isindex".Equals(valueName)) {
+              /*} else if ("isindex".Equals(valueName)) {
                 this.error = true;
                 if (this.formElement != null) {
                   return false;
@@ -1939,7 +2062,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.inputElement.setAttribute("valueName", "isindex");
                 this.applyEndTag("label", insMode);
                 this.applyStartTag("hr", insMode);
-                this.applyEndTag("form", insMode);
+                this.applyEndTag("form", insMode);*/
               } else if ("textarea".Equals(valueName)) {
                 this.addHtmlElement(tag);
                 this.skipLineFeed();
@@ -2042,11 +2165,10 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
               // NOTE: Have all cases
               var tag = (EndTagToken)this.getToken(token);
               string valueName = tag.getName();
-              // TODO
-              // if (valueName.Equals("template")) {
-              // this.applyInsertionMode(token, InsertionMode.InHead);
-              // return true;
-              // }
+              if (valueName.Equals("template")) {
+               this.applyInsertionMode(token, InsertionMode.InHead);
+               return true;
+              }
               if (valueName.Equals("body")) {
                 if (!this.hasHtmlElementInScope("body")) {
                   this.error = true;
@@ -2609,8 +2731,8 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
               this.addCommentNodeToCurrentNode(token);
               return true;
             } else if (token == TOKEN_EOF) {
-              this.error |= (this.getCurrentNode() == null ||
-                !this.getCurrentNode().getLocalName().Equals("html"));
+              this.error |= this.getCurrentNode() == null ||
+                !this.getCurrentNode().getLocalName().Equals("html");
               this.stopParsing();
             }
             return true;
@@ -3083,7 +3205,8 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 }
                 this.applyEndTag("select", insMode);
                 return this.applyInsertionMode(token, null);
-              } else if (valueName.Equals("script")) {
+       } else if (valueName.Equals("script") || valueName.Equals(
+  "template")) {
                 return this.applyInsertionMode(
          token,
          InsertionMode.InHead);
@@ -3128,18 +3251,21 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                   }
                 }
                 this.resetInsertionMode();
+              } else if (valueName.Equals("template")) {
+                return this.applyInsertionMode(
+         token,
+         InsertionMode.InHead);
               } else {
-                this.error = true; return false;
+                this.error = true;
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
               this.addCommentNodeToCurrentNode(token);
             } else if (token == TOKEN_EOF) {
-              if (this.getCurrentNode() == null ||
-                    !this.getCurrentNode().getLocalName().Equals(
-                    "html")) {
+                return this.applyInsertionMode(
+         token,
+         InsertionMode.InBody);
+            } else {
                 this.error = true;
-              }
-              this.stopParsing();
             }
             return true;
           }
@@ -3453,6 +3579,13 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
       }
     }
 
+private void PopUntilHtmlElementPopped(string name) {
+        while (!HtmlCommon.isHtmlElement(this.getCurrentNode(), name)) {
+          this.popCurrentNode();
+        }
+        this.popCurrentNode();
+}
+
     private void closeParagraph() {
       if (this.hasHtmlElementInButtonScope("p")) {
         this.generateImpliedEndTagsExcept("p");
@@ -3460,10 +3593,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
         if (!HtmlCommon.isHtmlElement(node, "p")) {
  this.error = true;
 }
-        while (!HtmlCommon.isHtmlElement(this.getCurrentNode(), "p")) {
-          this.popCurrentNode();
-        }
-        this.popCurrentNode();
+this.PopUntilHtmlElementPopped("p");
       }
     }
 
@@ -3521,12 +3651,45 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
     private void generateImpliedEndTags() {
       while (true) {
         IElement node = this.getCurrentNode();
-        string valueName = node.getLocalName();
-        if ("dd".Equals(valueName) || "dd".Equals(valueName) || "dt"
-          .Equals(valueName) ||
-            "li".Equals(valueName) || "option".Equals(valueName) ||
-            "optgroup".Equals(valueName) || "p".Equals(valueName) ||
-            "rp".Equals(valueName) || "rt".Equals(valueName)) {
+        if (HtmlCommon.isHtmlElement(node, "dd") ||
+          HtmlCommon.isHtmlElement(node, "dt") ||
+            HtmlCommon.isHtmlElement(node, "li") ||
+              HtmlCommon.isHtmlElement(node, "option") ||
+            HtmlCommon.isHtmlElement(node, "optgroup") ||
+              HtmlCommon.isHtmlElement(node, "p") ||
+HtmlCommon.isHtmlElement(node, "rp") || HtmlCommon.isHtmlElement(node, "rt"
+) ||
+            HtmlCommon.isHtmlElement(node, "rb") ||
+              HtmlCommon.isHtmlElement(node, "rtc")) {
+          this.popCurrentNode();
+        } else {
+          break;
+        }
+      }
+    }
+
+    private void generateImpliedEndTagsThoroughly() {
+      while (true) {
+        IElement node = this.getCurrentNode();
+        if (HtmlCommon.isHtmlElement(node, "dd") ||
+            HtmlCommon.isHtmlElement(node, "dd") ||
+            HtmlCommon.isHtmlElement(node, "dt") ||
+            HtmlCommon.isHtmlElement(node, "li") ||
+              HtmlCommon.isHtmlElement(node, "option") ||
+            HtmlCommon.isHtmlElement(node, "optgroup") ||
+              HtmlCommon.isHtmlElement(node, "p") ||
+            HtmlCommon.isHtmlElement(node, "rp") ||
+            HtmlCommon.isHtmlElement(node, "caption") ||
+            HtmlCommon.isHtmlElement(node, "colgroup") ||
+            HtmlCommon.isHtmlElement(node, "tbody") ||
+            HtmlCommon.isHtmlElement(node, "tfoot") ||
+            HtmlCommon.isHtmlElement(node, "thead") ||
+            HtmlCommon.isHtmlElement(node, "td") ||
+            HtmlCommon.isHtmlElement(node, "th") ||
+            HtmlCommon.isHtmlElement(node, "tr") ||
+HtmlCommon.isHtmlElement(node, "rt") ||
+            HtmlCommon.isHtmlElement(node, "rb") ||
+              HtmlCommon.isHtmlElement(node, "rtc")) {
           this.popCurrentNode();
         } else {
           break;
@@ -3537,15 +3700,21 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
     private void generateImpliedEndTagsExcept(string _string) {
       while (true) {
         IElement node = this.getCurrentNode();
-        string valueName = node.getLocalName();
-        if (_string.Equals(valueName)) {
+        if (HtmlCommon.isHtmlElement(node, _string)) {
           break;
         }
-        if ("dd".Equals(valueName) || "dd".Equals(valueName) ||
-            "dt".Equals(valueName) || "li".Equals(valueName) ||
-            "option".Equals(valueName) || "optgroup".Equals(valueName) ||
-   "p".Equals(valueName) || "rp".Equals(valueName) || "rt"
-              .Equals(valueName)) {
+        if (HtmlCommon.isHtmlElement(node, "dd") ||
+HtmlCommon.isHtmlElement(node, "dt") || HtmlCommon.isHtmlElement(node, "li"
+) ||
+            HtmlCommon.isHtmlElement(node, "rb") ||
+              HtmlCommon.isHtmlElement(node, "rtc") ||
+            HtmlCommon.isHtmlElement(node, "option") ||
+              HtmlCommon.isHtmlElement(node, "optgroup") ||
+   HtmlCommon.isHtmlElement(
+  node,
+  "p") || HtmlCommon.isHtmlElement(
+  node,
+  "rp") || HtmlCommon.isHtmlElement(node, "rt")) {
           this.popCurrentNode();
         } else {
           break;
@@ -4045,15 +4214,14 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
             return false;
           }
         }
-        bool annotationSVG
-  =(HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI()) &&
-          valueName.Equals("annotation-xml") &&
-              "svg".Equals(tag.getName()));
-return annotationSVG ? false :
-          this.isHtmlIntegrationPoint(valueElement);
+        bool annotationSVG =
+          HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI()) &&
+            valueName.Equals("annotation-xml") && "svg"
+            .Equals(tag.getName());
+        return !annotationSVG && !this.isHtmlIntegrationPoint(valueElement);
       } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        return this.isMathMLTextIntegrationPoint(valueElement) ? false :
-          (this.isHtmlIntegrationPoint(valueElement) ? false : (false));
+        return !this.isMathMLTextIntegrationPoint(valueElement) &&
+          !this.isHtmlIntegrationPoint(valueElement);
       } else {
         return true;
       }

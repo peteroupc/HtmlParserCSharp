@@ -204,9 +204,8 @@ namespace com.upokecenter.util {
       }
       if (c < 0x80) {
         return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >=
-          '0' && c <= '9') || ((c & 0x7F) == c && "!$&'()*+,-./:;=?@_~"
-          .IndexOf((char)c) >=
-                   0));
+          '0' && c <= '9') || ((c & 0x7F) == c &&
+                    "!$&'()*+,-./:;=?@_~".IndexOf((char)c) >= 0));
       } else if ((c & 0xfffe) == 0xfffe) {
         return false;
    } else return ((c >= 0xa0 && c <= 0xd7ff) || (c >= 0xe000 && c <= 0xfdcf)

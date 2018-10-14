@@ -54,7 +54,7 @@ namespace com.upokecenter.util {
   } else if (c >= 'a' && c <= 'z') {
  return 10 + c - 'a';
 } else {
- return (c >= '0' && c <= '9') ? (c - '0') : (-1);
+ return (c >= '0' && c <= '9') ? (c-'0') : (-1);
 }
     }
 
@@ -87,7 +87,7 @@ namespace com.upokecenter.util {
             int a = ToHexNumber(str[i + 1]);
             int b = ToHexNumber(str[i + 2]);
             if (a >= 0 && b >= 0) {
-              b = (byte)(a * 16 + b);
+              b =(byte)(a * 16 + b);
               i += 2;
               // b now contains the byte read
               if (bytesNeeded == 0) {
@@ -134,7 +134,7 @@ namespace com.upokecenter.util {
                 lower = 0x80;
                 upper = 0xbf;
                 ++bytesSeen;
-                cp += (b - 0x80) << (6 * (bytesNeeded-bytesSeen));
+                cp += (b-0x80) << (6 * (bytesNeeded-bytesSeen));
                 markedPos = i;
                 if (bytesSeen != bytesNeeded) {
                   // continue if not all bytes needed
@@ -225,8 +225,8 @@ namespace com.upokecenter.util {
           name = str.Substring(0, (index)-0);
           value = str.Substring(index + 1);
         }
-        name = name.Replace('+', ' ');
-        value = value.Replace('+', ' ');
+        name = name.Replace('+',' ');
+        value = value.Replace('+',' ');
         var pair = new string[] { name, value};
         pairs.Add(pair);
       }
@@ -247,14 +247,14 @@ namespace com.upokecenter.util {
       path.Add(s.Substring(0, (index)-0));
       ++index;  // move to after the bracket
       while (true) {
-        int endBracket = s.IndexOf(']', index);
+        int endBracket = s.IndexOf(']',index);
         if (endBracket < 0) {  // end bracket not found
           path.Add(s.Substring(index));
           break;
         }
         path.Add(s.Substring(index, (endBracket)-index));
         index = endBracket + 1;  // move to after the end bracket
-        index = s.IndexOf('[', index);
+        index = s.IndexOf('[',index);
         if (index < 0) {  // start bracket not found
           break;
         }
@@ -304,7 +304,8 @@ namespace com.upokecenter.util {
     private static void ConvertLists(IList<Object> dict) {
       for (int i = 0; i < dict.Count; ++i) {
         IDictionary<string, Object> value = ((dict[i] is IDictionary<string,
-          Object>) ? (IDictionary<string, Object>)dict[i] : null);
+          Object>) ? (IDictionary<string, Object>)dict[i]:
+          null);
         // A list contains only indexes 0, 1, 2, and so on,
         // with no gaps.
         if (IsList(value)) {
@@ -322,8 +323,8 @@ namespace com.upokecenter.util {
     private static void ConvertLists(IDictionary<string, Object> dict) {
       foreach (var key in new List<string>(dict.Keys)) {
         IDictionary<string, Object> value = ((dict[key] is
-          IDictionary<string, Object>) ? (IDictionary<string,
-          Object>)dict[key] : null);
+          IDictionary<string, Object>) ?
+          (IDictionary<string, Object>)dict[key] : null);
         // A list contains only indexes 0, 1, 2, and so on,
         // with no gaps.
         if (IsList(value)) {
@@ -365,8 +366,8 @@ namespace com.upokecenter.util {
             leaf = newLeaf;
           } else {
             IDictionary<string, Object> o = ((leaf[path[i]] is
-              IDictionary<string, Object>) ? (IDictionary<string,
-              Object>)leaf[path[i]] : null);
+              IDictionary<string, Object>) ?
+              (IDictionary<string, Object>)leaf[path[i]] : null);
             if (o != null) {
               leaf = o;
             } else {
