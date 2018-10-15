@@ -43,12 +43,15 @@ namespace com.upokecenter.html {
       this.valueDecoder = valueDecoder;
     }
 
+
     public int ReadChar(IByteReader byteReader) {
       if (byteReader == null) {
         throw new ArgumentNullException(nameof(byteReader));
       }
+
       while (true) {
         int c = this.valueDecoder.ReadChar(byteReader);
+        //DebugUtility.Log("c={0},cc={1}", (char)c,cc);
         if (!this.valueHavebom && !this.valueHavecr && c >= 0x20 && c <= 0x7e) {
           return c;
         }
@@ -112,6 +115,7 @@ namespace com.upokecenter.html {
       var count = 0;
       while (length > 0) {
         int c = this.valueDecoder.ReadChar(stream);
+        //DebugUtility.Log("read c={0},cc={1}", (char)c, cc);
         if (!this.valueHavebom && !this.valueHavecr && c >= 0x20 && c <= 0x7e) {
           buffer[offset] = c;
           ++offset;

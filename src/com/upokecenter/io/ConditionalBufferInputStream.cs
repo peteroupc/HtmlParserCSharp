@@ -136,15 +136,15 @@ public sealed class ConditionalBufferInputStream :
   }
 
   private int readInternal() {
-      if (this.disabled) {
-        // Buffering disabled, so read directly from stream
-        return this.stream.ReadByte();
-      }
 
     // Read from buffer
     if (this.pos < this.endpos) {
  return this.buffer[this.pos++] & 0xff;
 }
+      if (this.disabled) {
+        // Buffering new bytes is disabled, so read directly from stream
+        return this.stream.ReadByte();
+      }
     // if (buffer != null) {
   // DebugUtility.Log("buffer %s end=%s len=%s",pos,endpos,buffer.Length);
 // }
