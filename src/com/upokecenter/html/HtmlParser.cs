@@ -561,7 +561,7 @@ namespace com.upokecenter.html {
           throw new ArgumentException();
         }
       }
-      // TODO: Use amore sophisticated language parser here
+      // TODO: Use a more sophisticated language parser here
       this.contentLanguage = new string[] { contentLanguage };
       this.address = address;
       this.initialize();
@@ -907,9 +907,8 @@ namespace com.upokecenter.html {
       } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
         var tag = (StartTagToken)this.getToken(valueToken);
         string valueName = tag.getName();
-        if (valueName.Equals("font")) {
-          if (tag.getAttribute("color") != null || tag.getAttribute("size") !=
-                   null || tag.getAttribute("face") != null) {
+        if (valueName.Equals("font") && (tag.getAttribute("color") != null || tag.getAttribute("size") !=
+                   null || tag.getAttribute("face") != null)) {
             this.error = true;
             while (true) {
               this.popCurrentNode();
@@ -921,7 +920,6 @@ namespace com.upokecenter.html {
               }
             }
             return this.applyInsertionMode(valueToken, null);
-          }
         } else if (valueName.Equals("b") ||
             valueName.Equals("big") || valueName.Equals("blockquote") ||
               valueName.Equals("body") || valueName.Equals("br") ||
@@ -1134,14 +1132,18 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
 
     private const string Xhtml11 = "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
 
+int insmode=0;
+
     private bool applyInsertionMode(int token, InsertionMode? insMode) {
-      DebugUtility.Log("[[" + token + " " + this.getToken(token) + " " +
+      DebugUtility.Log("[[" + String.Format("{0:X8}",token) + " " + this.getToken(token) + " " +
           (insMode == null ? this.insertionMode :
          insMode) + " " + this.isForeignContext(token) + "(" +
          this.noforeign + ")");
-      // if (this.openElements.Count>0) {
-      // DebugUtility.Log(((Element)this.openElements[0]).toDebugString());
-      // }
+insmode++;
+if(insmode>200)throw new InvalidOperationException();
+       if (this.openElements.Count>0) {
+       DebugUtility.Log(Implode(openElements));
+       }
       if (!this.noforeign && this.isForeignContext(token)) {
         return this.applyForeignContext(token);
       }
@@ -1547,7 +1549,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
               } else if ("base".Equals(valueName) || "bgsound"
                     .Equals(valueName) ||
                     "basefont".Equals(valueName) || "link".Equals(valueName) ||
-                "noframes".Equals(valueName) || "script".Equals(valueName) ||
+                "noframes".Equals(valueName) || "script".Equals(valueName) || "template".Equals(valueName) ||
                     "style".Equals(valueName) || "title".Equals(valueName) ||
                     "meta".Equals(valueName)) {
                 this.error = true;
@@ -1571,6 +1573,8 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
                 this.applyStartTag("body", insMode);
                 this.framesetOk = true;
                 return this.applyInsertionMode(token, null);
+} else if(valueName.Equals("template")){
+                return this.applyInsertionMode(token, InsertionMode.InHead);
               } else {
                 this.error = true;
                 return false;
@@ -1629,6 +1633,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
             return true;
           }
         case InsertionMode.InTemplate: {
+
             if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE ||
                 (token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER ||
                 (token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
@@ -1667,7 +1672,6 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
               } else if (valueName.Equals("td") || valueName.Equals("th")) {
                 newMode = InsertionMode.InRow;
               }
-
               if (this.templateModes.Count > 0) {
                 this.templateModes.RemoveAt(this.templateModes.Count - 1);
               }
@@ -1694,7 +1698,7 @@ HtmlCommon.SVG_NAMESPACE.Equals(this.getCurrentNode().getNamespaceURI())) {
               } else {
                 this.error = true;
               }
-              this.PopUntilHtmlElementPopped("trmplate");
+              this.PopUntilHtmlElementPopped("template");
               this.clearFormattingToMarker();
               if (this.templateModes.Count > 0) {
                 this.templateModes.RemoveAt(this.templateModes.Count - 1);
@@ -2381,12 +2385,7 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                   if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                     this.error = true;
                   }
-                  while (true) {
-                    IElement node = this.popCurrentNode();
-                    if (node.getLocalName().Equals(valueName)) {
-                      break;
-                    }
-                  }
+PopUntilHtmlElementPopped(valueName);
                   this.clearFormattingToMarker();
                 }
               } else if (valueName.Equals("html")) {
@@ -2416,12 +2415,7 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                   if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                     this.error = true;
                   }
-                  while (true) {
-                    IElement node = this.popCurrentNode();
-                    if (node.getLocalName().Equals(valueName)) {
-                      break;
-                    }
-                  }
+PopUntilHtmlElementPopped(valueName);
                 }
               } else if (valueName.Equals("form")) {
                 if (hasHtmlOpenElement("template")) {
@@ -2457,12 +2451,7 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                 if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                   this.error = true;
                 }
-                while (true) {
-                  IElement node = this.popCurrentNode();
-                  if (node.getLocalName().Equals(valueName)) {
-                    break;
-                  }
-                }
+PopUntilHtmlElementPopped(valueName);
               } else if (valueName.Equals("li")) {
                 if (!this.hasHtmlElementInListItemScope(valueName)) {
                   this.error = true;
@@ -2472,12 +2461,7 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                 if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                   this.error = true;
                 }
-                while (true) {
-                  IElement node = this.popCurrentNode();
-                  if (node.getLocalName().Equals(valueName)) {
-                    break;
-                  }
-                }
+PopUntilHtmlElementPopped(valueName);
               } else if (valueName.Equals("h1") || valueName.Equals("h2") ||
                   valueName.Equals("h3") || valueName.Equals("h4") ||
                   valueName.Equals("h5") || valueName.Equals("h6")) {
@@ -2491,11 +2475,10 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                 }
                 while (true) {
                   IElement node = this.popCurrentNode();
-                  string name2 = node.getLocalName();
-                  if (name2.Equals("h1") ||
-                    name2.Equals("h2") || name2.Equals("h3") ||
-                    name2.Equals("h4") || name2.Equals("h5") ||
-                    name2.Equals("h6")) {
+                  if (HtmlCommon.isHtmlElement(node,"h1") ||
+                    HtmlCommon.isHtmlElement(node,"h2") || HtmlCommon.isHtmlElement(node,"h3") ||
+                    HtmlCommon.isHtmlElement(node,"h4") || HtmlCommon.isHtmlElement(node,"h5") ||
+                    HtmlCommon.isHtmlElement(node,"h6")) {
                     break;
                   }
                 }
@@ -2509,12 +2492,7 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                 if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                   this.error = true;
                 }
-                while (true) {
-                  IElement node = this.popCurrentNode();
-                  if (node.getLocalName().Equals(valueName)) {
-                    break;
-                  }
-                }
+PopUntilHtmlElementPopped(valueName);
               } else if ("br".Equals(valueName)) {
                 this.error = true;
                 this.applyStartTag("br", insMode);
@@ -2614,11 +2592,11 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
         case InsertionMode.InTable: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               IElement currentNode = this.getCurrentNode();
-              if (currentNode.getLocalName().Equals("table") ||
-                  currentNode.getLocalName().Equals("tbody") ||
-                  currentNode.getLocalName().Equals("tfoot") ||
-                  currentNode.getLocalName().Equals("thead") ||
-                  currentNode.getLocalName().Equals("tr")) {
+              if (HtmlCommon.isHtmlElement(currentNode,"table") ||
+                  HtmlCommon.isHtmlElement(currentNode,"tbody") ||
+                  HtmlCommon.isHtmlElement(currentNode,"tfoot") ||
+                  HtmlCommon.isHtmlElement(currentNode,"thead") ||
+                  HtmlCommon.isHtmlElement(currentNode,"tr")) {
                 this.pendingTableCharacters.Remove(
              0,
              this.pendingTableCharacters.Length);
@@ -2727,12 +2705,8 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                   this.error = true;
                   return false;
                 } else {
-                  while (true) {
-                    IElement node = this.popCurrentNode();
-                    if (node.getLocalName().Equals(valueName)) {
-                      break;
-                    }
-                  }
+
+PopUntilHtmlElementPopped(valueName);
                   this.resetInsertionMode();
                 }
               } else if (valueName.Equals("body") || valueName.Equals(
@@ -2752,9 +2726,7 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
               this.addCommentNodeToCurrentNode(token);
               return true;
             } else if (token == TOKEN_EOF) {
-              this.error |= this.getCurrentNode() == null ||
-                !this.getCurrentNode().getLocalName().Equals("html");
-              this.stopParsing();
+return applyInsertionMode(token,InsertionMode.InBody);
             }
             return true;
           }
@@ -2839,12 +2811,8 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
       "caption")) {
                   this.error = true;
                 }
-                while (true) {
-                  IElement node = this.popCurrentNode();
-                  if (node.getLocalName().Equals("caption")) {
-                    break;
-                  }
-                }
+
+PopUntilHtmlElementPopped("caption");
                 this.clearFormattingToMarker();
                 this.insertionMode = InsertionMode.InTable;
               } else if (valueName.Equals("table")) {
@@ -2939,10 +2907,12 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
               if (valueName.Equals("tr")) {
                 while (true) {
                   IElement node = this.getCurrentNode();
-                  if (node == null || node.getLocalName().Equals("tbody") ||
-                    node.getLocalName().Equals("tfoot") ||
-                    node.getLocalName().Equals("thead") ||
-                    node.getLocalName().Equals("html")) {
+                  if (node == null || 
+                    HtmlCommon.isHtmlElement(node,"tbody") ||
+                    HtmlCommon.isHtmlElement(node,"tfoot") ||
+                    HtmlCommon.isHtmlElement(node,"thead") ||
+                    HtmlCommon.isHtmlElement(node,"template") ||
+                    HtmlCommon.isHtmlElement(node,"html")) {
                     break;
                   }
                   this.popCurrentNode();
@@ -2966,10 +2936,12 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                 }
                 while (true) {
                   IElement node = this.getCurrentNode();
-                  if (node == null || node.getLocalName().Equals("tbody") ||
-                    node.getLocalName().Equals("tfoot") ||
-                    node.getLocalName().Equals("thead") ||
-                    node.getLocalName().Equals("html")) {
+                  if (node == null || 
+                    HtmlCommon.isHtmlElement(node,"tbody") ||
+                    HtmlCommon.isHtmlElement(node,"tfoot") ||
+                    HtmlCommon.isHtmlElement(node,"thead") ||
+                    HtmlCommon.isHtmlElement(node,"template") ||
+                    HtmlCommon.isHtmlElement(node,"html")) {
                     break;
                   }
                   this.popCurrentNode();
@@ -2994,10 +2966,12 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                 }
                 while (true) {
                   IElement node = this.getCurrentNode();
-                  if (node == null || node.getLocalName().Equals("tbody") ||
-                    node.getLocalName().Equals("tfoot") ||
-                    node.getLocalName().Equals("thead") ||
-                    node.getLocalName().Equals("html")) {
+                  if (node == null || 
+                    HtmlCommon.isHtmlElement(node,"tbody") ||
+                    HtmlCommon.isHtmlElement(node,"tfoot") ||
+                    HtmlCommon.isHtmlElement(node,"thead") ||
+                    HtmlCommon.isHtmlElement(node,"template") ||
+                    HtmlCommon.isHtmlElement(node,"html")) {
                     break;
                   }
                   this.popCurrentNode();
@@ -3014,10 +2988,12 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                 }
                 while (true) {
                   IElement node = this.getCurrentNode();
-                  if (node == null || node.getLocalName().Equals("tbody") ||
-                    node.getLocalName().Equals("tfoot") ||
-                    node.getLocalName().Equals("thead") ||
-                    node.getLocalName().Equals("html")) {
+                  if (node == null || 
+                    HtmlCommon.isHtmlElement(node,"tbody") ||
+                    HtmlCommon.isHtmlElement(node,"tfoot") ||
+                    HtmlCommon.isHtmlElement(node,"thead") ||
+                    HtmlCommon.isHtmlElement(node,"template") ||
+                    HtmlCommon.isHtmlElement(node,"html")) {
                     break;
                   }
                   this.popCurrentNode();
@@ -3054,8 +3030,9 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
               var tag = (StartTagToken)this.getToken(token);
               string valueName = tag.getName();
               if (valueName.Equals("th") || valueName.Equals("td")) {
-                while (!this.getCurrentNode().getLocalName().Equals(
-    "tr") && !this.getCurrentNode().getLocalName().Equals("html")) {
+                while (!HtmlCommon.isHtmlElement(this.getCurrentNode(),"tr") && 
+!HtmlCommon.isHtmlElement(this.getCurrentNode(),"html") &&
+!HtmlCommon.isHtmlElement(this.getCurrentNode(),"template")) {
                   this.popCurrentNode();
                 }
                 this.insertionMode = InsertionMode.InCell;
@@ -3080,8 +3057,9 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                   this.error = true;
                   return false;
                 }
-                while (!this.getCurrentNode().getLocalName().Equals(
-    "tr") && !this.getCurrentNode().getLocalName().Equals("html")) {
+                while (!HtmlCommon.isHtmlElement(this.getCurrentNode(),"tr") && 
+!HtmlCommon.isHtmlElement(this.getCurrentNode(),"html") &&
+!HtmlCommon.isHtmlElement(this.getCurrentNode(),"template")) {
                   this.popCurrentNode();
                 }
                 this.popCurrentNode();
@@ -3146,12 +3124,7 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                 if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
                   this.error = true;
                 }
-                while (true) {
-                  IElement node = this.popCurrentNode();
-                  if (node.getLocalName().Equals(valueName)) {
-                    break;
-                  }
-                }
+PopUntilHtmlElementPopped(valueName);
                 this.clearFormattingToMarker();
                 this.insertionMode = InsertionMode.InRow;
               } else if (valueName.Equals("caption") || valueName.Equals(
@@ -3262,12 +3235,7 @@ if(nodeFEIndex>=0 && nodeFEIndex<=bookmark){
                   this.error = true;
                   return false;
                 }
-                while (true) {
-                  IElement node = this.popCurrentNode();
-                  if (node.getLocalName().Equals(valueName)) {
-                    break;
-                  }
-                }
+PopUntilHtmlElementPopped(valueName);
                 this.resetInsertionMode();
               } else if (valueName.Equals("template")) {
                 return this.applyInsertionMode(
@@ -6460,45 +6428,66 @@ HtmlCommon.isHtmlElement(node, "dt") || HtmlCommon.isHtmlElement(node, "li"
           e = this.context;
           last = true;
         }
-        string valueName = e.getLocalName();
-        if (!last && (valueName.Equals("th") || valueName.Equals("td"))) {
+        if (!last && (HtmlCommon.isHtmlElement(e,"th") || HtmlCommon.isHtmlElement(e,"td"))) {
           this.insertionMode = InsertionMode.InCell;
           break;
         }
-        if (valueName.Equals("select")) {
+        if (HtmlCommon.isHtmlElement(e,"select")) {
           this.insertionMode = InsertionMode.InSelect;
+  if(!last){
+      for (int j = i - 1; j >= 0; --j) {
+        e = this.openElements[j];
+        if (HtmlCommon.isHtmlElement(e,"template")) {
           break;
         }
-        if (valueName.Equals("colgroup")) {
+        if (HtmlCommon.isHtmlElement(e,"table")) {
+          this.insertionMode = InsertionMode.InSelectInTable;
+          break;
+        }
+      }
+   }
+          break;
+        }
+        if (HtmlCommon.isHtmlElement(e,"colgroup")) {
           this.insertionMode = InsertionMode.InColumnGroup;
           break;
         }
-        if (valueName.Equals("tr")) {
+        if (HtmlCommon.isHtmlElement(e,"tr")) {
           this.insertionMode = InsertionMode.InRow;
           break;
         }
-        if (valueName.Equals("caption")) {
+        if (HtmlCommon.isHtmlElement(e,"caption")) {
           this.insertionMode = InsertionMode.InCaption;
           break;
         }
-        if (valueName.Equals("table")) {
+        if (HtmlCommon.isHtmlElement(e,"table")) {
           this.insertionMode = InsertionMode.InTable;
           break;
         }
-        if (valueName.Equals("frameset")) {
+        if (HtmlCommon.isHtmlElement(e,"template")) {
+          this.insertionMode = this.templateModes[this.templateModes.Count-1];
+          break;
+        }
+        if (HtmlCommon.isHtmlElement(e,"frameset")) {
           this.insertionMode = InsertionMode.InFrameset;
           break;
         }
-        if (valueName.Equals("html")) {
-          this.insertionMode = InsertionMode.BeforeHead;
+        if (HtmlCommon.isHtmlElement(e,"html")) {
+          this.insertionMode = (headElement==null) ? InsertionMode.BeforeHead
+           : InsertionMode.AfterHead;
           break;
         }
-        if (valueName.Equals("head") || valueName.Equals("body")) {
+        if (HtmlCommon.isHtmlElement(e,"head")){
+          this.insertionMode = InsertionMode.InHead;
+          break;
+        }
+
+        if(HtmlCommon.isHtmlElement(e,"body")) {
           this.insertionMode = InsertionMode.InBody;
           break;
         }
-        if (valueName.Equals("thead") || valueName.Equals("tbody") ||
-              valueName.Equals("tfoot")) {
+        if (HtmlCommon.isHtmlElement(e,"thead") || HtmlCommon.isHtmlElement(e,"tbody") ||
+              HtmlCommon.isHtmlElement(e,"tfoot")) {
           this.insertionMode = InsertionMode.InTableBody;
           break;
         }
