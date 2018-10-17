@@ -6,8 +6,7 @@ using System.Runtime.CompilerServices;
 // AssemblyTitle("HtmlParserCSharp")][assembly: AssemblyDescription (""
 //)][assembly: AssemblyConfiguration ("")][assembly: AssemblyCompany (""
 //)][assembly: AssemblyProduct ("")][assembly: AssemblyCopyright
-// ("rooster")][assembly: AssemblyTrademark ("")]
-[assembly: AssemblyCulture ("")]
+// ("rooster")][assembly: AssemblyTrademark ("")][assembly: // AssemblyCulture ("")]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and

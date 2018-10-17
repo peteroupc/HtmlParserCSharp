@@ -136,7 +136,6 @@ public sealed class ConditionalBufferInputStream :
   }
 
   private int readInternal() {
-
     // Read from buffer
     if (this.pos < this.endpos) {
  return this.buffer[this.pos++] & 0xff;
