@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using PeterO;
 using PeterO.Text;
 using com.upokecenter.net;
@@ -74,6 +75,86 @@ public IDocument processResponse(string url, IReader
       return parseStream(DataIO.ToReader(bytes));
     }
 
+   public static IList<string[]> ParseTokens(string str, string state, string lst){
+byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
+
+        // TODO: add lang (from Content-Language?)
+      var parser = new HtmlParser(
+  DataIO.ToReader(bytes),
+  "about:blank",
+  "utf-8",
+  null);
+  return parser.parseTokens(state,lst);
+  }
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='str'>Not documented yet.</param>
+    /// <param name='checkError'>A Boolean object.</param>
+    /// <returns>An IDocument object.</returns>
+    public static IDocument FromString(string str, bool checkError) {
+      byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
+      return parseStream(DataIO.ToReader(bytes), checkError);
+    }
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <returns>An IElement object.</returns>
+  public static IElement CreateHtmlElement(string name) {
+       var valueElement = new Element();
+            valueElement.setLocalName(name);
+            valueElement.setNamespace(HtmlCommon.HTML_NAMESPACE);
+            return valueElement;
+  }
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>Not documented yet.</param>
+    /// <param name='namespaceName'>Not documented yet.</param>
+    /// <returns>An IElement object.</returns>
+  public static IElement CreateElement(string name, string namespaceName) {
+       var valueElement = new Element();
+            valueElement.setLocalName(name);
+            valueElement.setNamespace(namespaceName);
+            return valueElement;
+  }
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='nodes'>Not documented yet.</param>
+    /// <returns>A string object.</returns>
+    public static string ToDebugString(IList<INode> nodes) {
+return Document.toDebugString(nodes);
+  }
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='str'>Not documented yet.</param>
+    /// <param name='context'>Not documented yet.</param>
+    /// <returns>An IList(INode) object.</returns>
+  public static IList<INode> FragmentFromString(
+  string str,
+  IElement context) {
+return FragmentFromString(str, context, false);
+    }
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='str'>Not documented yet.</param>
+    /// <param name='context'>Not documented yet.</param>
+    /// <param name='checkError'>Not documented yet. (3).</param>
+    /// <returns>An IList(INode) object.</returns>
+    public static IList<INode> FragmentFromString(
+  string str,
+  IElement context,
+  bool checkError) {
+byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
+
+        // TODO: add lang (from Content-Language?)
+      var parser = new HtmlParser(
+  DataIO.ToReader(bytes),
+  "about:blank",
+  "utf-8",
+  null);
+      IList<INode> ret = parser.checkError(checkError).parseFragment(context);
+      return ret;
+    }
+
     /// <summary>Parses an HTML document from an input stream, using
     /// "about:blank" as its address. @param stream an input stream @ if an
     /// I/O error occurs.</summary>
@@ -82,6 +163,14 @@ public IDocument processResponse(string url, IReader
     /// <returns>An IDocument object.</returns>
   public static IDocument parseStream(IReader stream) {
     return parseStream(stream, "about:blank");
+  }
+
+    /// <summary>Not documented yet.</summary>
+    /// <param name='stream'>Not documented yet.</param>
+    /// <param name='checkError'>Not documented yet.</param>
+    /// <returns>An IDocument object.</returns>
+  public static IDocument parseStream(IReader stream, bool checkError) {
+    return parseStream(stream, "about:blank", "text/html",null,checkError);
   }
 
     /// <summary>Not documented yet.</summary>
@@ -106,6 +195,20 @@ public IDocument processResponse(string url, IReader
     return parseStream(stream, address, contentType, null);
   }
 
+    /// <summary>Not documented yet.</summary>
+    /// <param name='stream'>Not documented yet.</param>
+    /// <param name='address'>Not documented yet.</param>
+    /// <param name='contentType'>Not documented yet. (3).</param>
+    /// <param name='contentLang'>Not documented yet. (4).</param>
+    /// <returns>An IDocument object.</returns>
+  public static IDocument parseStream(
+      IReader stream,
+      string address,
+      string contentType,
+      string contentLang) {
+return parseStream(stream, address, contentType, contentLang, false);
+  }
+
     /// <summary>* Parses an HTML document from an input stream, using the
     /// given URL as its address. @param stream an input stream
     /// representing an HTML document. @param address an absolute URL
@@ -123,6 +226,7 @@ public IDocument processResponse(string url, IReader
     /// name='contentType'/> is not documented yet.</param>
     /// <param name='contentLang'>The parameter <paramref
     /// name='contentLang'/> is not documented yet.</param>
+    /// <param name='checkError'>A Boolean object.</param>
     /// <returns>An IDocument object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='stream'/> or <paramref name='address'/> or <paramref
@@ -131,7 +235,8 @@ public IDocument processResponse(string url, IReader
       IReader stream,
       string address,
       string contentType,
-      string contentLang) {
+      string contentLang,
+      bool checkError) {
     if (stream == null) {
  throw new ArgumentNullException(nameof(stream));
 }
@@ -147,7 +252,8 @@ public IDocument processResponse(string url, IReader
     if (mediatype.Equals("text/html")) {
         // TODO: add lang (from Content-Language?)
       var parser = new HtmlParser(stream, address, charset, contentLang);
-      return parser.parse();
+      IDocument docret = parser.checkError(checkError).parse();
+      return docret;
     } else if (mediatype.Equals("application/xhtml+xml") ||
         mediatype.Equals("application/xml") ||
         mediatype.Equals("image/svg+xml") ||

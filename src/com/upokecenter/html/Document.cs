@@ -167,8 +167,12 @@ internal class Document : Node, IDocument {
     }
 
     internal override string toDebugString() {
+return toDebugString(this.getChildNodes());
+}
+
+    internal static string toDebugString(IList<INode> nodes) {
     var builder = new StringBuilder();
-    foreach (var node in this.getChildNodesInternal()) {
+    foreach (var node in nodes) {
         string str = ((Node)node).toDebugString();
       if (str == null) {
         continue;
