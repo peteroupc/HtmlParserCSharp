@@ -25,9 +25,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 
-namespace com.upokecenter.html {
 using System;
 
+namespace com.upokecenter.html {
 internal class Comment : Node, IComment {
   private string valueData;
 

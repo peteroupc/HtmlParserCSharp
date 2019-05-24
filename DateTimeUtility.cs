@@ -6,20 +6,6 @@ namespace com.upokecenter.util {
     /// <summary>Not documented yet.</summary>
   public static class DateTimeUtility {
     /// <summary>Not documented yet.</summary>
-    /// <param name='twoDigitYear'>Not documented yet.</param>
-    /// <returns>A 32-bit signed integer.</returns>
-    public static int convertYear(int twoDigitYear) {
-      DateTime dt = DateTime.UtcNow;
-      int thisyear = dt.Year;
-      int this2digityear = thisyear % 100;
-      int actualyear = twoDigitYear + (thisyear - this2digityear);
-      if (twoDigitYear - this2digityear > 50) {
-        actualyear -= 100;
-      }
-      return actualyear;
-    }
-
-    /// <summary>Not documented yet.</summary>
     /// <returns>An array of 32-bit unsigned integers.</returns>
     public static int[] getCurrentGmtDateComponents() {
       DateTime dt = DateTime.UtcNow;

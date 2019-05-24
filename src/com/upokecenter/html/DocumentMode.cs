@@ -25,9 +25,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 
-namespace com.upokecenter.html {
 using System;
 
+namespace com.upokecenter.html {
   internal  // / <summary>Not documented yet.</summary>
 enum DocumentMode {
   NoQuirksMode,

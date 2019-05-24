@@ -62,16 +62,11 @@
     <Compile Include="src\com\upokecenter\util\IAction.cs" />
     <Compile Include="src\com\upokecenter\util\IBoundAction.cs" />
     <Compile Include="src\com\upokecenter\util\IndexedObjectList.cs" />
-    <Compile Include="src\com\upokecenter\util\QueryStringHelper.cs" />
     <Compile Include="src\com\upokecenter\util\StringUtility.cs" />
     <Compile Include="src\com\upokecenter\util\SunriseSunset.cs" />
     <Compile Include="src\com\upokecenter\util\URIUtility.cs" />
     <Compile Include="src\com\upokecenter\util\URL.cs" />
     <Compile Include="DateTimeUtility.cs" />
-    <Compile Include="Sax.cs" />
-    <Compile Include="SaxHelpers.cs" />
-    <Compile Include="SaxReader.cs" />
-    <Compile Include="SaxRes.cs" />
     <Compile Include="Support.cs" />
     <Compile Include="src\com\upokecenter\html\HtmlCommon.cs" />
     <Compile Include="src\com\upokecenter\html\Element.cs" />
@@ -92,7 +87,6 @@
     <None Include="src\com\upokecenter\net\CacheControl.cs" />
     <None Include="src\com\upokecenter\net\DownloadHelper.cs" />
     <None Include="DownloadHelperImpl.cs" />
-    <None Include="HttpHeaders.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

@@ -1,4 +1,3 @@
-namespace com.upokecenter.html {
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +6,8 @@ using Org.System.Xml.Sax;
 using Org.System.Xml.Sax.Helpers;
 using PeterO.Text;
 using com.upokecenter.net;
-using com.upokecenter.util;
+using com.upokecenter.util
+namespace com.upokecenter.html {
 internal class XhtmlParser {
   internal class ProcessingInstruction : Node, IProcessingInstruction {
     public string target, data;

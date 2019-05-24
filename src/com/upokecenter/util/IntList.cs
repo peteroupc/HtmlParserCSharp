@@ -6,13 +6,11 @@ http://creativecommons.org/publicdomain/zero/1.0/
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 */
-namespace com.upokecenter.util {
 using System;
 using System.Globalization;
 using System.Text;
-
-    /// <summary>* Represents a list of integers or Unicode characters.
-    /// @author Peter.</summary>
+namespace com.upokecenter.util {
+    /// <summary>Represents a list of integers or Unicode characters.</summary>
 public sealed class IntList {
   int[] buffer;
   int ptr;

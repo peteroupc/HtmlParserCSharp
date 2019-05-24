@@ -14,33 +14,44 @@ namespace com.upokecenter.html.data {
       Dictionary<string, string[]>();
 
     static Microformats() {
+string[] strarr;
       complexLegacyMap.Add("adr", new string[] { "p-adr", "h-adr" });
+strarr=
+ new string[] { "p-affiliation",
+  "h-card" };
       complexLegacyMap.Add(
   "affiliation",
- new string[] { "p-affiliation",
-  "h-card" });
+  strarr);
       complexLegacyMap.Add("author", new string[] { "p-author", "h-card" });
       complexLegacyMap.Add("contact", new string[] { "p-contact", "h-card" });
+strarr=
+     new string[] { "p-education",
+        "h-event" };
       complexLegacyMap.Add(
       "education",
-     new string[] { "p-education",
-        "h-event" });
+      strarr);
+strarr=
+       new string[] { "p-experience",
+        "h-event" };
       complexLegacyMap.Add(
         "experience",
-       new string[] { "p-experience",
-        "h-event" });
+        strarr);
       complexLegacyMap.Add("fn", new string[] { "p-item", "h-item", "p-name" });
       complexLegacyMap.Add("geo", new string[] { "p-geo", "h-geo" });
-      complexLegacyMap.Add(
-  "location",
+strarr=
  new string[] { "p-location",
  "h-card",
-  "h-adr" });
+  "h-adr" };
       complexLegacyMap.Add(
-       "photo",
+  "location",
+  strarr);
+strarr=
       new string[] { "p-item",
  "h-item",
-        "u-photo" });
+        "u-photo" };
+      complexLegacyMap.Add(
+       "photo",
+       strarr);
       complexLegacyMap.Add("review", new string[] { "p-review", "h-review" });
       complexLegacyMap.Add("reviewer", new string[] { "p-reviewer", "h-card" });
       complexLegacyMap.Add("url", new string[] { "p-item", "h-item", "u-url" });
@@ -217,11 +228,19 @@ string[] ret = StringUtility.SplitAtSpTabCrLfFf(element.getAttribute(
       }
       if (retList.Count >= 2) {
         ISet<string> stringSet = new HashSet<string>(retList);
-        return PeterO.Support.Collections.ToArray(stringSet);
-      } else {
-        return retList.ToArray();
+        retList = new List<string>(stringSet);
       }
+       return retList.ToArray();
     }
+
+private static readonly string[] DatePatterns=new string[] { "%Y-%M-%d",
+  "%Y-%D" };
+private static readonly string[] TimePatterns= new string[] { "%H:%m:%s",
+  "%H:%m",
+          "%H:%m:%s%Z:%z",
+          "%H:%m:%s%Z%z", "%H:%m:%s%G",
+          "%H:%m%Z:%z", "%H:%m%Z%z",
+      "%H:%m%G"};
 
     private static string getDTValue(IElement root, int[] source) {
       IList<IElement> valueElements = getValueClasses(root);
@@ -246,16 +265,12 @@ string[] ret = StringUtility.SplitAtSpTabCrLfFf(element.getAttribute(
         if (
   matchDateTimePattern(
   text,  // check date or date + time
-            new string[] { "%Y-%M-%d", "%Y-%D" },
-            new string[] { "%H:%m:%s", "%H:%m",
-          "%H:%m:%s%Z:%z",
-          "%H:%m:%s%Z%z", "%H:%m:%s%G",
-          "%H:%m%Z:%z", "%H:%m%Z%z",
-      "%H:%m%G"},
- components,
- !haveDate,
- !haveTime,
- !haveTimeZone)) {
+  DatePatterns,
+  TimePatterns,
+  components,
+  !haveDate,
+  !haveTime,
+  !haveTimeZone)) {
           // check if components are defined
           if (components[0] != Int32.MinValue) {
             haveDate = true;
@@ -539,7 +554,8 @@ string[] ret = StringUtility.SplitAtSpTabCrLfFf(element.getAttribute(
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='root'>Not documented yet.</param>
+    /// <param name='root'>The parameter <paramref name='root'/> is not
+    /// documented yet.</param>
     /// <returns>A CBORObject object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
@@ -551,7 +567,8 @@ string[] ret = StringUtility.SplitAtSpTabCrLfFf(element.getAttribute(
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='root'>Not documented yet.</param>
+    /// <param name='root'>The parameter <paramref name='root'/> is not
+    /// documented yet.</param>
     /// <returns>A CBORObject object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
@@ -583,10 +600,9 @@ string[] ret = StringUtility.SplitAtSpTabCrLfFf(element.getAttribute(
       }
       if (retList.Count >= 2) {
         ISet<string> stringSet = new HashSet<string>(retList);
-        return PeterO.Support.Collections.ToArray(stringSet);
-      } else {
-        return retList.ToArray();
+        retList = new List<string>(stringSet);
       }
+      return retList.ToArray();
     }
 
     private static string TrimAndCollapseSpaces(string str) {

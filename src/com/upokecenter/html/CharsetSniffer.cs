@@ -8,7 +8,7 @@ using PeterO.Text;
 using com.upokecenter.net;
 using com.upokecenter.util;
 
-  /*
+/*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
 
@@ -36,7 +36,7 @@ THE SOFTWARE.
 */
 
 namespace com.upokecenter.html {
-internal sealed class CharsetSniffer {
+  internal sealed class CharsetSniffer {
     private const int NoFeed = 0;
 
     private const int RSSFeed = 1;  // application/rss + xml
@@ -436,7 +436,7 @@ internal sealed class CharsetSniffer {
         ++position;
       }
     }
-
+    /*
     public static string sniffContentType(
   PeterO.Support.InputStream input,
   IHttpHeaders headers) {
@@ -455,7 +455,6 @@ internal sealed class CharsetSniffer {
       }
       return sniffContentType(input, contentType);
     }
-
     public static string sniffContentType(
     PeterO.Support.InputStream input,
     string mediaType) {
@@ -466,7 +465,7 @@ internal sealed class CharsetSniffer {
             type.EndsWith("+xml", StringComparison.Ordinal)) {
           return mediaType;
         }
-        if (type.Equals("*/*") || type.Equals("unknown/unknown") ||
+        if (type.Equals("*" + "/*") || type.Equals("unknown/unknown") ||
             type.Equals("application/unknown")) {
           return sniffUnknownContentType(input, true);
         }
@@ -493,11 +492,12 @@ internal sealed class CharsetSniffer {
         return sniffUnknownContentType(input, true);
       }
     }
+*/
 
     public static EncodingConfidence sniffEncoding(
-    PeterO.Support.InputStream stream,
-    string encoding) {
-      stream.mark(3);
+      PeterO.Support.InputStream stream,
+      string encoding) {
+      stream.mark(1026);
       var b = 0;
       try {
         int b1 = stream.ReadByte();
@@ -1015,10 +1015,10 @@ internal sealed class CharsetSniffer {
       (header[index + 5] & 0xFF) == 'D' && (header[index + 6] & 0xFF) == 'F'
 ) {
             index += 7;
-        if (indexOfBytes(header, index, endPos - index, ValueRdfNamespace)
-              >= 0 &&
-              indexOfBytes(header, index, endPos - index, ValueRssNamespace)
-                >= 0) {
+            if (indexOfBytes(header, index, endPos - index, ValueRdfNamespace)
+                  >= 0 &&
+                  indexOfBytes(header, index, endPos - index, ValueRssNamespace)
+                    >= 0) {
               return RSSFeed;
             } else {
               return NoFeed;
@@ -1031,15 +1031,7 @@ internal sealed class CharsetSniffer {
       return NoFeed;
     }
 
-    private static string sniffTextOrBinary(PeterO.Support.InputStream input) {
-      var header = new byte[512];
-      input.mark(514);
-      var count = 0;
-      try {
-        count = input.Read(header, 0, 512);
-      } finally {
-        input.reset();
-      }
+    private static string sniffTextOrBinary(byte[] header, int count) {
       if (count >= 4 && header[0] == (byte)0xfe && header[1] == (byte)0xff) {
         return "text/plain";
       }
@@ -1059,20 +1051,16 @@ internal sealed class CharsetSniffer {
           break;
         }
       }
-      return (!binary) ? "text/plain" : sniffUnknownContentType(input, false);
+      return (!binary) ? "text/plain" : sniffUnknownContentType(
+  header,
+  count,
+  false);
     }
 
     private static string sniffUnknownContentType(
-    PeterO.Support.InputStream input,
-    bool sniffScriptable) {
-      var header = new byte[512];
-      var count = 0;
-      input.mark(514);
-      try {
-        count = input.Read(header, 0, 512);
-      } finally {
-        input.reset();
-      }
+      byte[] header,
+      int count,
+      bool sniffScriptable) {
       if (sniffScriptable) {
         var index = 0;
         while (index < count) {
@@ -1273,17 +1261,17 @@ internal sealed class CharsetSniffer {
         }
       }
       // Archive types
-    if (
-  matchesPattern(
-  new byte[] { 0x1f, (byte)0x8b, 8 },
- header,
- 0,
-        count)) {
+      if (
+    matchesPattern(
+    new byte[] { 0x1f, (byte)0x8b, 8 },
+   header,
+   0,
+          count)) {
         return "application/x-gzip";
       }
       if (
   matchesPattern(
-  new byte[] { (byte)'P' , (byte)'K' ,3,4 }, header,
+  new byte[] { (byte)'P', (byte)'K', 3, 4 }, header,
         0,
  count)) {
         return "application/zip";

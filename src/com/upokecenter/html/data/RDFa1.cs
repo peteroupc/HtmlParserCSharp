@@ -40,9 +40,7 @@ namespace com.upokecenter.html.data {
 
     private static IList<string> relterms = (new string[] { "alternate",
       "appendix" ,"cite", "bookmark", "chapter", "contents", "copyright",
-
- "first", "glossary",
-      "help", "icon", "index", "last",
+ "first", "glossary", "help", "icon", "index", "last",
       "license", "meta", "next", "prev",
       "role", "section", "start",
       "stylesheet", "subsection", "top",
@@ -206,8 +204,8 @@ namespace com.upokecenter.html.data {
   refIndex,
   (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
     prefix + 1; prefixIri = prefixMapping[prefixName]; prefixIri = (prefix
-    == 0) ? RDFA_DEFAULT_PREFIX : prefixMapping[prefixName];
-        if (prefixIri == null || "_".Equals(prefixName)) {
+    == 0) ? RDFA_DEFAULT_PREFIX : prefixMapping[prefixName]; if (prefixIri
+    == null || "_" .Equals(prefixName)) {
           return null;
         }
       } else
@@ -246,13 +244,14 @@ namespace com.upokecenter.html.data {
       string prefixIri = null;
       string prefixName = null;
       if (prefix >= 0) {
+        string blank = "_";
         prefixName = DataUtilities.ToLowerCaseAscii(
             attribute.Substring(
   refIndex,
   (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
     prefix + 1; prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
-    prefixMapping[prefixName];
-        if (prefixIri == null && !"_".Equals(prefixName)) {
+    prefixMapping[prefixName]; if (prefixIri == null &&
+    !blank.Equals(prefixName)) {
           return null;
         }
       } else
@@ -283,7 +282,9 @@ namespace com.upokecenter.html.data {
     this.getNamedBlankNode(
     attribute.Substring(
     refIndex,
-    (refIndex + refLength) - refIndex)); } if (!(refIndex >= 0)) {
+    (refIndex + refLength) - refIndex));
+        }
+        if (!(refIndex >= 0)) {
           throw new InvalidOperationException(attribute);
         }
         if (!(refIndex + refLength <= attribute.Length)) {
@@ -376,8 +377,8 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
             }
           }
           foreach (var child2 in child.getChildNodes()) {
-     IElement childElement2 = (child2 is IElement) ? ((IElement)child2) :
-              null;
+            IElement childElement2 = (child2 is IElement) ? ((IElement)child2) :
+                    null;
             if (childElement2 == null) {
               continue;
             }
@@ -734,9 +735,9 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
               ec.ValueIncompleteTriples = incompleteTriplesLocal;
               ec.ValueParentSubject = (newSubject == null) ?
                 oldContext.ValueParentSubject : newSubject;
-              ec.ValueParentObject = ((currentObject == null) ? ((newSubject
+              ec.ValueParentObject = (currentObject == null) ? ((newSubject
                 == null) ? oldContext.ValueParentSubject : newSubject) :
-                currentObject);
+                currentObject;
               ec.ValueLanguage = localLanguage;
               this.context = ec;
               this.process(childElement, false);

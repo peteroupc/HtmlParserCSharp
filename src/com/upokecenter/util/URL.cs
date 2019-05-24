@@ -54,17 +54,17 @@ namespace com.upokecenter.util {
       }
     }
 
-    private static string hostParse(string _string) {
-      if (_string.Length > 0 && _string[0] == '[') {
-        if (_string[_string.Length - 1] != ']') {
+    private static string hostParse(string stringValue) {
+      if (stringValue.Length > 0 && stringValue[0] == '[') {
+        if (stringValue[stringValue.Length - 1] != ']') {
           var ipv6 = new int[8];
           var piecePointer = 0;
           var index = 1;
           var compress = -1;
-          int ending = _string.Length - 1;
-          int c = (index >= ending) ? -1 : _string[index];
+          int ending = stringValue.Length - 1;
+          int c = (index >= ending) ? -1 : stringValue[index];
           if (c == ':') {
-            if (index + 1 >= ending || _string[index + 1] != ':') {
+            if (index + 1 >= ending || stringValue[index + 1] != ':') {
               return null;
             }
             index += 2;
@@ -75,11 +75,11 @@ namespace com.upokecenter.util {
             if (piecePointer >= 8) {
               return null;
             }
-            c = _string[index];
+            c = stringValue[index];
             if ((c & 0xfc00) == 0xd800 && index + 1 < ending &&
-                (_string[index + 1] & 0xfc00) == 0xdc00) {
+                (stringValue[index + 1] & 0xfc00) == 0xdc00) {
               // Get the Unicode code point for the surrogate pair
-            c = 0x10000 + ((c - 0xd800) << 10) + (_string[index + 1] -
+            c = 0x10000 + ((c - 0xd800) << 10) + (stringValue[index + 1] -
                 0xdc00);
               ++index;
             } else if ((c & 0xf800) == 0xd800) {
@@ -102,17 +102,17 @@ namespace com.upokecenter.util {
                 value = value * 16 + (c - 'A') + 10;
                 ++index;
                 ++length;
-                c = (index >= ending) ? -1 : _string[index];
+                c = (index >= ending) ? -1 : stringValue[index];
               } else if (c >= 'a' && c <= 'f') {
                 value = value * 16 + (c - 'a') + 10;
                 ++index;
                 ++length;
-                c = (index >= ending) ? -1 : _string[index];
+                c = (index >= ending) ? -1 : stringValue[index];
               } else if (c >= '0' && c <= '9') {
                 value = value * 16 + (c - '0');
                 ++index;
                 ++length;
-                c = (index >= ending) ? -1 : _string[index];
+                c = (index >= ending) ? -1 : stringValue[index];
               } else {
                 break;
               }
@@ -125,7 +125,7 @@ namespace com.upokecenter.util {
               break;
             } else if (c == ':') {
               ++index;
-              c = (index >= ending) ? -1 : _string[index];
+              c = (index >= ending) ? -1 : stringValue[index];
               if (c < 0) {
                 return null;
               }
@@ -149,7 +149,7 @@ namespace com.upokecenter.util {
                   return null;
                 }
                 ++index;
-                c = (index >= ending) ? -1 : _string[index];
+                c = (index >= ending) ? -1 : stringValue[index];
               }
               if (dotsSeen < 3 && c != '.') {
                 return null;
@@ -180,17 +180,17 @@ namespace com.upokecenter.util {
         }
       }
       try {
-        // DebugUtility.Log("was: %s",_string);
-        _string = percentDecode(_string, "utf-8");
-        // DebugUtility.Log("now: %s",_string);
+        // DebugUtility.Log("was: %s",stringValue);
+        stringValue = percentDecode(stringValue, "utf-8");
+        // DebugUtility.Log("now: %s",stringValue);
       } catch (IOException) {
         return null;
       }
-      return _string;
+      return stringValue;
     }
 
-    private static string hostSerialize(string _string) {
-      return (_string == null) ? String.Empty : _string;
+    private static string hostSerialize(string stringValue) {
+      return (stringValue == null) ? String.Empty : stringValue;
     }
 
     private static bool isHexDigit(int c) {
@@ -203,9 +203,9 @@ namespace com.upokecenter.util {
         return false;
       }
       if (c < 0x80) {
-        return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >=
-          '0' && c <= '9') || ((c & 0x7F) == c &&
-                    "!$&'()*+,-./:;=?@_~".IndexOf((char)c) >= 0));
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >=
+          '0' && c <= '9') || ((c & 0x7F) == c && "!$&'()*+,-./:;=?@_~"
+          .IndexOf((char)c) >= 0);
       } else if ((c & 0xfffe) == 0xfffe) {
         return false;
    } else return ((c >= 0xa0 && c <= 0xd7ff) || (c >= 0xe000 && c <= 0xfdcf)
@@ -215,23 +215,28 @@ namespace com.upokecenter.util {
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='s'>Not documented yet.</param>
+    /// <param name='s'>The parameter <paramref name='s'/> is not
+    /// documented yet.</param>
     /// <returns>An URL object.</returns>
     public static URL parse(string s) {
       return parse(s, null, null, false);
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='s'>Not documented yet.</param>
-    /// <param name='baseurl'>Not documented yet.</param>
+    /// <param name='s'>The parameter <paramref name='s'/> is not
+    /// documented yet.</param>
+    /// <param name='baseurl'>The parameter <paramref name='baseurl'/> is
+    /// not documented yet.</param>
     /// <returns>An URL object.</returns>
     public static URL parse(string s, URL baseurl) {
       return parse(s, baseurl, null, false);
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='s'>Not documented yet.</param>
-    /// <param name='baseurl'>Not documented yet.</param>
+    /// <param name='s'>The parameter <paramref name='s'/> is not
+    /// documented yet.</param>
+    /// <param name='baseurl'>The parameter <paramref name='baseurl'/> is
+    /// not documented yet.</param>
     /// <param name='encoding'>Not documented yet. (3).</param>
     /// <returns>An URL object.</returns>
     public static URL parse(string s, URL baseurl, string encoding) {
@@ -239,8 +244,10 @@ namespace com.upokecenter.util {
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='s'>Not documented yet.</param>
-    /// <param name='baseurl'>Not documented yet.</param>
+    /// <param name='s'>The parameter <paramref name='s'/> is not
+    /// documented yet.</param>
+    /// <param name='baseurl'>The parameter <paramref name='baseurl'/> is
+    /// not documented yet.</param>
     /// <param name='encoding'>Not documented yet. (3).</param>
     /// <param name='strict'>Not documented yet. (4).</param>
     /// <returns>An URL object.</returns>
@@ -398,9 +405,9 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
               state = ParseState.Fragment;
               break;
             }
-            if ((c >= 0 && (!isUrlCodePoint(c) && c != '%') || (c == '%' &&
+            if (c >= 0 && (!isUrlCodePoint(c) && c != '%') || (c == '%' &&
               (index + 2 > ending || !isHexDigit(s[index]) ||
-              !isHexDigit(s[index + 1]))))) {
+              !isHexDigit(s[index + 1])))) {
               error = true;
             }
             if (c >= 0 && c != 0x09 && c != 0x0a && c != 0x0d) {
@@ -902,8 +909,10 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='input'>Not documented yet.</param>
-    /// <param name='delimiter'>Not documented yet.</param>
+    /// <param name='input'>The parameter <paramref name='input'/> is not
+    /// documented yet.</param>
+    /// <param name='delimiter'>The parameter <paramref name='delimiter'/>
+    /// is not documented yet.</param>
     /// <param name='encoding'>Not documented yet. (3).</param>
     /// <param name='useCharset'>Not documented yet. (4).</param>
     /// <param name='isindex'>Not documented yet. (5).</param>
@@ -961,7 +970,8 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='s'>Not documented yet.</param>
+    /// <param name='s'>The parameter <paramref name='s'/> is not
+    /// documented yet.</param>
     /// <returns>An IList(string) object.</returns>
     public static IList<string> pathList(string s) {
       IList<string> str = new List<string>();
@@ -1009,7 +1019,7 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
               int a = toHexNumber(str[i + 1]);
               int b = toHexNumber(str[i + 2]);
               if (a >= 0 && b >= 0) {
-                mos.WriteByte((byte)(a * 16 + b));
+                mos.WriteByte((byte)((a * 16) + b));
                 i += 2;
                 continue;
               }
@@ -1058,8 +1068,10 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='input'>Not documented yet.</param>
-    /// <param name='encoder'>Not documented yet.</param>
+    /// <param name='input'>The parameter <paramref name='input'/> is not
+    /// documented yet.</param>
+    /// <param name='encoder'>The parameter <paramref name='encoder'/> is
+    /// not documented yet.</param>
     /// <returns>A byte array.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='encoder'/> or <paramref name='input'/> is null.</exception>
@@ -1102,8 +1114,10 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='pairs'>Not documented yet.</param>
-    /// <param name='delimiter'>Not documented yet.</param>
+    /// <param name='pairs'>The parameter <paramref name='pairs'/> is not
+    /// documented yet.</param>
+    /// <param name='delimiter'>The parameter <paramref name='delimiter'/>
+    /// is not documented yet.</param>
     /// <param name='encoding'>Not documented yet. (3).</param>
     /// <returns>A string object.</returns>
     public static string toQueryString(
@@ -1162,7 +1176,8 @@ appendOutputBytes(objectTemp, objectTemp2);
     private string port = String.Empty;
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='obj'>Not documented yet.</param>
+    /// <param name='obj'>The parameter <paramref name='obj'/> is not
+    /// documented yet.</param>
     /// <returns>A Boolean object.</returns>
     public override bool Equals(object obj) {
       if (this == obj) {

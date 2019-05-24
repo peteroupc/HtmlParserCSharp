@@ -2,31 +2,17 @@ using System;
 using System.Text;
 
 namespace com.upokecenter.util {
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="T:PeterO.Cbor.URIUtility"]/*'/>
-  internal static class URIUtility {
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="T:PeterO.Cbor.URIUtility.ParseMode"]/*'/>
+    internal static class URIUtility {
     internal enum ParseMode {
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="F:PeterO.Cbor.URIUtility.ParseMode.IRIStrict"]/*'/>
-      IRIStrict,
+    IRIStrict,
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="F:PeterO.Cbor.URIUtility.ParseMode.URIStrict"]/*'/>
-      URIStrict,
+    URIStrict,
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="F:PeterO.Cbor.URIUtility.ParseMode.IRILenient"]/*'/>
-      IRILenient,
+    IRILenient,
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="F:PeterO.Cbor.URIUtility.ParseMode.URILenient"]/*'/>
-      URILenient,
+    URILenient,
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="F:PeterO.Cbor.URIUtility.ParseMode.IRISurrogateLenient"]/*'/>
-      IRISurrogateLenient
+    IRISurrogateLenient
     }
 
     private const string HexChars = "0123456789ABCDEF";
@@ -104,8 +90,6 @@ namespace com.upokecenter.util {
       }
     }
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="M:PeterO.Cbor.URIUtility.escapeURI(System.String,System.Int32)"]/*'/>
     public static string escapeURI(string s, int mode) {
       if (s == null) {
         return null;
@@ -217,8 +201,6 @@ namespace com.upokecenter.util {
       return builder.ToString();
     }
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="M:PeterO.Cbor.URIUtility.hasScheme(System.String)"]/*'/>
     public static bool hasScheme(string refValue) {
       int[] segments = (refValue == null) ? null : splitIRI(
         refValue,
@@ -228,8 +210,6 @@ namespace com.upokecenter.util {
       return segments != null && segments[0] >= 0;
     }
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="M:PeterO.Cbor.URIUtility.hasSchemeForURI(System.String)"]/*'/>
     public static bool hasSchemeForURI(string refValue) {
       int[] segments = (refValue == null) ? null : splitIRI(
         refValue,
@@ -254,14 +234,10 @@ namespace com.upokecenter.util {
       }
     }
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="M:PeterO.Cbor.URIUtility.PercentDecode(System.String)"]/*'/>
     public static string PercentDecode(string str) {
       return (str == null) ? null : PercentDecode(str, 0, str.Length);
     }
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="M:PeterO.Cbor.URIUtility.PercentDecode(System.String,System.Int32,System.Int32)"]/*'/>
     public static string PercentDecode(string str, int index, int endIndex) {
       if (str == null) {
  return null;
@@ -398,8 +374,6 @@ retString.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
       return retString.ToString();
       }
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="M:PeterO.Cbor.URIUtility.EncodeStringForURI(System.String)"]/*'/>
     public static string EncodeStringForURI(string s) {
       if (s == null) {
   throw new ArgumentNullException(nameof(s));
@@ -486,8 +460,6 @@ return builder.ToString();
           0xfffe) != 0xfffe);
     }
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="M:PeterO.Cbor.URIUtility.isValidCurieReference(System.String,System.Int32,System.Int32)"]/*'/>
     public static bool isValidCurieReference(string s, int offset, int length) {
       if (s == null) {
         return false;
@@ -656,6 +628,15 @@ public static string BuildIRI(
   0,
   s.Length,
   ParseMode.IRIStrict)) != null;
+    }
+
+    public static bool isValidIRI(string s, ParseMode mode) {
+      return ((s == null) ?
+  null : splitIRI(
+  s,
+  0,
+  s.Length,
+  mode)) != null;
     }
 
     private const string ValueDotSlash = "." + "/";
@@ -1023,14 +1004,10 @@ totalParts += 2;
       }
     }
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="M:PeterO.Cbor.URIUtility.relativeResolve(System.String,System.String)"]/*'/>
     public static string relativeResolve(string refValue, string baseURI) {
       return relativeResolve(refValue, baseURI, ParseMode.IRIStrict);
     }
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="M:PeterO.Cbor.URIUtility.relativeResolve(System.String,System.String,PeterO.Cbor.URIUtility.ParseMode)"]/*'/>
     public static string relativeResolve(
   string refValue,
   string baseURI,
@@ -1148,14 +1125,10 @@ return new string[] {
 };
     }
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="M:PeterO.Cbor.URIUtility.splitIRI(System.String)"]/*'/>
     public static int[] splitIRI(string s) {
       return (s == null) ? null : splitIRI(s, 0, s.Length, ParseMode.IRIStrict);
     }
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="M:PeterO.Cbor.URIUtility.splitIRI(System.String,System.Int32,System.Int32,PeterO.Cbor.URIUtility.ParseMode)"]/*'/>
     public static int[] splitIRI(
   string s,
   int offset,
@@ -1408,10 +1381,120 @@ if (s.Length - offset < length) {
       return retval;
     }
 
-    /// <include file='../../docs.xml'
-    /// path='docs/doc[@name="M:PeterO.Cbor.URIUtility.splitIRI(System.String,PeterO.Cbor.URIUtility.ParseMode)"]/*'/>
     public static int[] splitIRI(string s, ParseMode parseMode) {
       return (s == null) ? null : splitIRI(s, 0, s.Length, parseMode);
     }
-  }
+
+ private static bool pathHasDotComponent(string path) {
+  if (path == null || path.Length == 0) {
+ return false;
 }
+  path = PercentDecode(path);
+  if (path.Equals("..")) {
+ return true;
+}
+  if (path.Equals(".")) {
+ return true;
+}
+  if (path.IndexOf(ValueSlashDot, StringComparison.Ordinal) < 0 &&
+          path.IndexOf(
+  ValueDotSlash,
+  StringComparison.Ordinal) < 0) {
+        return false;
+      }
+      var index = 0;
+      var len = path.Length;
+      while (index < len) {
+        char c = path[index];
+        if ((index + 3 <= len && c == '/' && path[index + 1] == '.' &&
+             path[index + 2] == '/') || (index + 2 == len && c == '.' &&
+             path[index + 1] == '.')) {
+          // begins with "/./" or is "..";
+          return true;
+        }
+        if (index + 3 <= len && c == '.' &&
+            path[index + 1] == '.' && path[index + 2] == '/') {
+          // begins with "../";
+          return true;
+        }
+        if ((index + 2 <= len && c == '.' &&
+             path[index + 1] == '/') || (index + 1 == len && c == '.')) {
+          // begins with "./" or is ".";
+          return true;
+        }
+        if (index + 2 == len && c == '/' && path[index + 1] == '.') {
+          // is "/."
+          return true;
+        }
+        if (index + 3 == len && c == '/' &&
+            path[index + 1] == '.' && path[index + 2] == '.') {
+          // is "/.."
+          return true;
+        }
+        if (index + 4 <= len && c == '/' && path[index + 1] == '.' &&
+            path[index + 2] == '.' && path[index + 3] == '/') {
+          // begins with "/../"
+          return true;
+        }
+        ++index;
+        while (index < len) {
+          // Move the rest of the
+          // path segment until the next '/'
+          c = path[index];
+          if (c == '/') {
+            break;
+          }
+          ++index;
+        }
+      }
+      return false;
+ }
+
+ private static string uriPath(string uri, ParseMode parseMode) {
+ int[] indexes = splitIRI(uri, parseMode);
+ return (
+  indexes == null) ? null : uri.Substring(
+  indexes[4],
+  indexes[5] - indexes[4]);
+ }
+
+ public static string directoryPath(string uri) {
+ return directoryPath(uri, ParseMode.IRIStrict);
+}
+
+ public static string directoryPath(string uri, ParseMode parseMode) {
+ int[] indexes = splitIRI(uri, parseMode);
+ if (indexes == null) {
+  return null;
+ }
+ string schemeAndAuthority = uri.Substring(0, indexes[4]);
+ string path = uri.Substring(indexes[4], indexes[5] - indexes[4]);
+ if (path.Length > 0) {
+  for (int i = path.Length - 1; i >= 0; --i) {
+    if (path[i] == '/') {
+       return schemeAndAuthority + path.Substring(0, i + 1);
+    }
+  }
+  return schemeAndAuthority + path;
+ } else {
+  return schemeAndAuthority;
+ }
+}
+
+ public static string relativeResolveWithinBaseURI(
+  string refValue,
+  string absoluteBaseURI) {
+  string rel = relativeResolve(refValue, absoluteBaseURI);
+  if (rel == null) {
+ return null;
+}
+ string relpath = uriPath(refValue, ParseMode.IRIStrict);
+ if (pathHasDotComponent(relpath)) {
+  // Resolved path has a dot component in it (usually
+  // because that component is percent-encoded)
+  return null;
+ }
+  string absuri = directoryPath(absoluteBaseURI);
+  string reluri = directoryPath(rel);
+  return (absuri == null || reluri == null ||
+     !absuri.Equals(reluri)) ? null : rel; } } }

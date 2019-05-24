@@ -515,8 +515,8 @@ using com.upokecenter.util;
   refIndex,
   (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
     prefix + 1; prefixIri = prefixMapping[prefixName]; prefixIri = (prefix
-    == 0) ? RDFA_DEFAULT_PREFIX : prefixMapping[prefixName];
-        if (prefixIri == null || "_".Equals(prefixName)) {
+    == 0) ? RDFA_DEFAULT_PREFIX : prefixMapping[prefixName]; if (prefixIri
+    == null || "_" .Equals(prefixName)) {
           return null;
         }
       } else
@@ -547,13 +547,14 @@ using com.upokecenter.util;
       string prefixIri = null;
       string prefixName = null;
       if (prefix >= 0) {
+        string blank = "_";
         prefixName = DataUtilities.ToLowerCaseAscii(
             attribute.Substring(
   refIndex,
   (refIndex + prefix) - (refIndex))); refIndex += prefix + 1; refLength -=
     prefix + 1; prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
-    prefixMapping[prefixName];
-        if (prefixIri == null && !"_".Equals(prefixName)) {
+    prefixMapping[prefixName]; if (prefixIri == null &&
+    !blank.Equals(prefixName)) {
           return null;
         }
       } else
@@ -1183,9 +1184,9 @@ new Dictionary<string,
             ec.ValueTermMap = termMapLocal;
             ec.ValueParentSubject = (newSubject == null) ?
               oldContext.ValueParentSubject : newSubject;
-            ec.ValueParentObject = ((currentObject == null) ? ((newSubject
-              == null) ? oldContext.ValueParentSubject : newSubject) :
-              currentObject);
+            ec.ValueParentObject = (currentObject == null) ? ((newSubject ==
+              null) ? oldContext.ValueParentSubject : newSubject) :
+              currentObject;
             ec.valueDefaultVocab = localDefaultVocab;
             ec.ValueLanguage = localLanguage;
             this.context = ec;

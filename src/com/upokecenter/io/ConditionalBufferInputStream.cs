@@ -11,11 +11,11 @@ using System.IO;
 using PeterO;
 
 namespace com.upokecenter.io {
-    /// <summary>* An input stream that stores the first bytes of the
-    /// stream in a buffer and supports rewinding to the beginning of the
-    /// stream. However, when the buffer is disabled, no further bytes are
-    /// put into the buffer, but any remaining bytes in the buffer will
-    /// still be used until it's exhausted. @author Peter O.</summary>
+    /// <summary>An input stream that stores the first bytes of the stream
+    /// in a buffer and supports rewinding to the beginning of the stream.
+    /// However, when the buffer is disabled, no further bytes are put into
+    /// the buffer, but any remaining bytes in the buffer will still be
+    /// used until it's exhausted. @author Peter O.</summary>
 public sealed class ConditionalBufferInputStream :
   IReader, com.upokecenter.html.HtmlParser.IInputStream {
   private byte[] buffer = null;
@@ -46,12 +46,7 @@ public sealed class ConditionalBufferInputStream :
     }
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='buffer'>Not documented yet.</param>
-    /// <param name='offset'>Not documented yet.</param>
-    /// <param name='byteCount'>Not documented yet. (3).</param>
-    /// <returns>A 32-bit signed integer.</returns>
-  public int doRead(byte[] buffer, int offset, int byteCount) {
+  private int doRead(byte[] buffer, int offset, int byteCount) {
     if (this.markpos < 0) {
  return this.readInternal(buffer, offset, byteCount);
 } else {
@@ -80,7 +75,7 @@ public sealed class ConditionalBufferInputStream :
   }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='limit'>Not documented yet.</param>
+    /// <param name='limit'>This parameter is not documented yet.</param>
   public void mark(int limit) {
     // DebugUtility.Log("mark %d: %s",limit,isDisabled());
     if (this.isDisabled()) {
@@ -127,9 +122,10 @@ public sealed class ConditionalBufferInputStream :
   }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='buffer'>Not documented yet.</param>
-    /// <param name='offset'>Not documented yet.</param>
-    /// <param name='byteCount'>Not documented yet. (3).</param>
+    /// <param name='buffer'>This parameter is not documented yet.</param>
+    /// <param name='offset'>This parameter is not documented yet.</param>
+    /// <param name='byteCount'>This parameter is not documented yet.
+    /// (3).</param>
     /// <returns>A 32-bit signed integer.</returns>
   public int Read(byte[] buffer, int offset, int byteCount) {
     return this.doRead(buffer, offset, byteCount);
@@ -275,8 +271,8 @@ count = this.stream.Read(
     this.pos = this.posAtMark;
   }
 
-    /// <summary>* Resets the stream to the beginning of the input. This
-    /// will invalidate the mark placed on the stream, if any. @ if
+    /// <summary>Resets the stream to the beginning of the input. This will
+    /// invalidate the mark placed on the stream, if any. @ if
     /// disableBuffer() was already called.</summary>
   public void rewind() {
     if (this.disabled) {
@@ -287,7 +283,8 @@ count = this.stream.Read(
   }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='byteCount'>Not documented yet.</param>
+    /// <param name='byteCount'>This parameter is not documented
+    /// yet.</param>
     /// <returns>A 64-bit signed integer.</returns>
   public long skip(long byteCount) {
     if (this.isDisabled()) {

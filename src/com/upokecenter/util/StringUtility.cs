@@ -11,15 +11,14 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace com.upokecenter.util {
-    /// <summary>* Contains utility methods for working with strings.
-    /// @author Peter.</summary>
-public sealed class StringUtility {
+    /// <summary>Contains utility methods for working with strings. @author
+    /// Peter.</summary>
+public static class StringUtility {
   private static readonly string[] ValueEmptyStringArray = new string[0];
 
-    // contains no characters other than U + 0009, U
-
     /// <summary>Not documented yet.</summary>
-    /// <param name='s'>Not documented yet.</param>
+    /// <param name='s'>The parameter <paramref name='s'/> is not
+    /// documented yet.</param>
     /// <returns>A Boolean object.</returns>
   public static bool isNullOrSpaces(string s) {
     if (s == null) {
@@ -37,53 +36,56 @@ public sealed class StringUtility {
     return true;
   }
 
-    /// <summary>* Splits a _string by a delimiter. If the _string ends
-    /// with the delimiter, the result will end with an empty _string. If
-    /// the _string begins with the delimiter, the result will start with
-    /// an empty _string. If the delimiter is null or empty, exception.
-    /// @param s a _string to split. @param delimiter a _string to signal
-    /// where each substring begins and ends. @return An array containing
-    /// strings that are split by the delimiter. If s is null or empty,
-    /// returns an array whose sole element is the empty _string.</summary>
-    /// <param name='s'>The parameter <paramref name='s'/> is not
-    /// documented yet.</param>
-    /// <param name='delimiter'>The parameter <paramref name='delimiter'/>
-    /// is not documented yet.</param>
+    /// <summary>Splits a _string by a delimiter. If the _string ends with
+    /// the delimiter, the result will end with an empty _string. If the
+    /// _string begins with the delimiter, the result will start with an
+    /// empty _string. If the delimiter is null or empty, exception. @param
+    /// s a _string to split. @param delimiter a _string to signal where
+    /// each substring begins and ends. @return An array containing strings
+    /// that are split by the delimiter. If s is null or empty, returns an
+    /// array whose sole element is the empty _string.</summary>
     /// <returns>A string[] object.</returns>
-  public static string[] splitAt(string s, string delimiter) {
-    if (delimiter == null || delimiter.Length == 0) {
- throw new ArgumentException();
-}
-    if (s == null || s.Length == 0) {
- return new string[] { String.Empty};
-}
-    var index = 0;
-    var first = true;
-    List<string> strings = null;
-    int delimLength = delimiter.Length;
-    while (true) {
-      int index2 = s.IndexOf(delimiter, index, StringComparison.Ordinal);
-      if (index2 < 0) {
-        if (first) {
- return new string[] { s};
-}
-        strings.Add(s.Substring(index));
-        break;
-      } else {
-        if (first) {
-          strings = new List<string>();
-          first = false;
-        }
-        string newstr = s.Substring(index, (index2)-index);
-        strings.Add(newstr);
-        index = index2 + delimLength;
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='delimiter'/> is null.</exception>
+    /// <exception cref='ArgumentException'>Delimiter is empty.</exception>
+      public static string[] splitAt(string str, string delimiter) {
+      if (delimiter == null) {
+        throw new ArgumentNullException(nameof(delimiter));
       }
+      if (delimiter.Length == 0) {
+        throw new ArgumentException("delimiter is empty.");
+      }
+      if (String.IsNullOrEmpty(str)) {
+        return new[] { String.Empty };
+      }
+      var index = 0;
+      var first = true;
+      List<string> strings = null;
+      int delimLength = delimiter.Length;
+      while (true) {
+        int index2 = str.IndexOf(delimiter, index, StringComparison.Ordinal);
+        if (index2 < 0) {
+          if (first) {
+            var strret = new string[1];
+            strret[0] = str;
+            return strret;
+          }
+          strings = strings ?? (new List<string>());
+          strings.Add(str.Substring(index));
+          break;
+        } else {
+          first = false;
+          string newstr = str.Substring(index, index2 - index);
+          strings = strings ?? (new List<string>());
+          strings.Add(newstr);
+          index = index2 + delimLength;
+        }
+      }
+      return (string[])strings.ToArray();
     }
-    return strings.ToArray();
-  }
 
-    /// <summary>* Splits a _string separated by space characters other
-    /// than form feed. This method acts as though it strips leading and
+    /// <summary>Splits a _string separated by space characters other than
+    /// form feed. This method acts as though it strips leading and
     /// trailing space characters from the _string before splitting it. The
     /// space characters used here are U + 0009, U + 000A, U + 000D, and U
     /// + 0020. @param s a _string. Can be null. @return an array of all
@@ -134,7 +136,7 @@ public sealed class StringUtility {
     return strings.ToArray();
   }
 
-    /// <summary>* Splits a _string separated by space characters. This
+    /// <summary>Splits a _string separated by space characters. This
     /// method acts as though it strips leading and trailing space
     /// characters from the _string before splitting it. The space
     /// characters are U + 0009, U + 000A, U + 000C, U + 000D, and U +
@@ -185,22 +187,5 @@ public sealed class StringUtility {
     }
     return strings.ToArray();
   }
-
-    /// <summary>Not documented yet.</summary>
-    /// <param name='str'>Not documented yet.</param>
-    /// <param name='prefix'>Not documented yet.</param>
-    /// <param name='index'>Not documented yet. (3).</param>
-    /// <returns>A Boolean object.</returns>
-  public static bool startsWith(string str, string prefix, int index) {
-    if (str == null || prefix == null || index < 0 || index >= str.Length) {
- throw new ArgumentException();
-}
-    int endpos = prefix.Length + index;
-    return (endpos > str.Length) ? false :
-      str.Substring(index, (endpos)-index).Equals(prefix);
-  }
-
-  private StringUtility() {
-}
 }
 }

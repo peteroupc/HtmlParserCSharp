@@ -75,7 +75,15 @@ public IDocument processResponse(string url, IReader
       return parseStream(DataIO.ToReader(bytes));
     }
 
-   public static IList<string[]> ParseTokens(string str, string state, string lst){
+    /// <summary>Not documented yet.</summary>
+    /// <param name='str'>Not documented yet.</param>
+    /// <param name='state'>Not documented yet.</param>
+    /// <param name='lst'>Not documented yet. (3).</param>
+    /// <returns>An IList(string[]) object.</returns>
+   public static IList<string[]> ParseTokens(
+  string str,
+  string state,
+  string lst) {
 byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
 
         // TODO: add lang (from Content-Language?)
@@ -84,7 +92,7 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
   "about:blank",
   "utf-8",
   null);
-  return parser.parseTokens(state,lst);
+  return parser.parseTokens(state, lst);
   }
 
     /// <summary>Not documented yet.</summary>
@@ -170,7 +178,7 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
     /// <param name='checkError'>Not documented yet.</param>
     /// <returns>An IDocument object.</returns>
   public static IDocument parseStream(IReader stream, bool checkError) {
-    return parseStream(stream, "about:blank", "text/html",null,checkError);
+    return parseStream(stream, "about:blank", "text/html", null, checkError);
   }
 
     /// <summary>Not documented yet.</summary>

@@ -24,14 +24,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-namespace com.upokecenter.net {
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using com.upokecenter.util;
-
+using com.upokecenter.util
+namespace com.upokecenter.net {
 public sealed class DownloadHelper {
   private sealed class CacheFilter {
     private string cacheFileName;

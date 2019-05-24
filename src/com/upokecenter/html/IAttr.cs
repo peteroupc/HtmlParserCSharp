@@ -1,14 +1,8 @@
-namespace com.upokecenter.html {
 using System;
 
-/*
- * Represents one of the attributes within an HTML element.
- *
- * @author Peter
- *
- */
-
-    /// <summary>Not documented yet.</summary>
+namespace com.upokecenter.html {
+    /// <summary>Represents one of the attributes within an HTML
+    /// element.</summary>
 public interface IAttr {
     /// <summary>Gets the attribute name's local name (the part after the
     /// colon, if it's bound to a _namespace).</summary>
