@@ -158,8 +158,7 @@ namespace com.upokecenter.html.data {
   this.context.ValueParentSubject = RDFTerm.fromIRI(this.context.ValueBaseURI);
       this.context.ValueParentObject = null;
       this.context.ValueIriMap = new Dictionary<string, string>();
-      this.context.ValueListMap = new
-        Dictionary<string, IList<RDFTerm>>();
+      this.context.ValueListMap = new Dictionary<string, IList<RDFTerm>>();
       this.context.ValueIncompleteTriples = new List<RDFa.IncompleteTriple>();
       this.context.ValueLanguage = null;
       this.outputGraph = new HashSet<RDFTriple>();

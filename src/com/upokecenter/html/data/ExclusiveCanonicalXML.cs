@@ -6,8 +6,8 @@ using com.upokecenter.html;
 using com.upokecenter.util;
 
 namespace com.upokecenter.html.data {
-    /// <summary>Implements Exclusive XML Canonicalization as specified at:
-    /// http://www.w3.org/TR/xml-exc-c14n/.</summary>
+    /// <include file='../../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.html.data.ExclusiveCanonicalXML"]/*'/>
 sealed class ExclusiveCanonicalXML {
   private sealed class AttrComparer : IComparer<IAttr> {
     public int Compare(IAttr arg0, IAttr arg1) {

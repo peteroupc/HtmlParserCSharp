@@ -24,7 +24,8 @@ public sealed class ConditionalBufferInputStream :
   private long marklimit = 0;
   private IReader stream = null;
 
-    /// <param name='input'>An IReader object.</param>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.io.ConditionalBufferInputStream.#ctor(PeterO.IReader)"]/*'/>
   public ConditionalBufferInputStream(IReader input) {
     this.stream = input;
     this.buffer = new byte[1024];
@@ -114,12 +115,8 @@ public sealed class ConditionalBufferInputStream :
     }
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='buffer'>This parameter is not documented yet.</param>
-    /// <param name='offset'>This parameter is not documented yet.</param>
-    /// <param name='byteCount'>This parameter is not documented yet.
-    /// (3).</param>
-    /// <returns>A 32-bit signed integer.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.io.ConditionalBufferInputStream.Read(System.Byte[],System.Int32,System.Int32)"]/*'/>
   public int Read(byte[] buffer, int offset, int byteCount) {
     return this.doRead(buffer, offset, byteCount);
   }

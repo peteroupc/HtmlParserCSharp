@@ -623,13 +623,21 @@ tokens.Add(token);
       IList<Attr> valueAttributes = valueToken.getAttributes();
       foreach (var attr in valueAttributes) {
         string valueName = attr.getName();
-        if (valueName.Equals("xlink:actuate") || valueName.Equals(
-        "xlink:arcrole") || valueName.Equals("xlink:href") || valueName.Equals(
-  "xlink:role") || valueName.Equals("xlink:show") || valueName.Equals(
-  "xlink:title") || valueName.Equals("xlink:type")) {
+        if (valueName.Equals("xlink:actuate") ||
+valueName.Equals(
+        "xlink:arcrole") ||
+valueName.Equals("xlink:href") ||
+valueName.Equals(
+  "xlink:role") ||
+valueName.Equals("xlink:show") ||
+valueName.Equals(
+  "xlink:title") ||
+valueName.Equals("xlink:type")) {
           attr.setNamespace(HtmlCommon.XLINK_NAMESPACE);
-        } else if (valueName.Equals("xml:base") || valueName.Equals(
-     "xml:lang") || valueName.Equals("xml:space")) {
+        } else if (valueName.Equals("xml:base") ||
+valueName.Equals(
+     "xml:lang") ||
+valueName.Equals("xml:space")) {
           attr.setNamespace(HtmlCommon.XML_NAMESPACE);
         } else if (valueName.Equals("xmlns") || valueName.Equals(
      "xmlns:xlink")) {
@@ -920,31 +928,51 @@ tokens.Add(token);
           specialStartTag = true;
           this.parseError();
         } else if (valueName.Equals("b") ||
-            valueName.Equals("big") || valueName.Equals("blockquote") ||
-              valueName.Equals("body") || valueName.Equals("br") ||
-    valueName.Equals("center") || valueName.Equals("code") ||
-              valueName.Equals(
-    "dd") || valueName.Equals("div") ||
-  valueName.Equals("dl") || valueName.Equals("dt") ||
-              valueName.Equals("em") || valueName.Equals("embed") ||
-  valueName.Equals("h1") || valueName.Equals("h2") ||
-              valueName.Equals("h3") || valueName.Equals("h4") ||
-valueName.Equals("h5") || valueName.Equals("h6") ||
-              valueName.Equals("head") || valueName.Equals("hr") ||
-  valueName.Equals("i") || valueName.Equals("img") ||
-              valueName.Equals("li") || valueName.Equals("listing") ||
-      valueName.Equals("meta") || valueName.Equals(
-    "nobr") || valueName.Equals("ol") ||
-valueName.Equals("p") || valueName.Equals("pre") ||
-              valueName.Equals("ruby") ||
-              valueName.Equals("s") || valueName.Equals("small") ||
-                valueName.Equals("span") ||
-              valueName.Equals("strong") || valueName.Equals("strike") ||
-        valueName.Equals("sub") || valueName.Equals("sup") ||
-              valueName.Equals(
-    "table") || valueName.Equals("tt") ||
-  valueName.Equals("u") || valueName.Equals("ul") ||
-              valueName.Equals("var")) {
+valueName.Equals("big") ||
+valueName.Equals("blockquote") ||
+valueName.Equals("body") ||
+valueName.Equals("br") ||
+valueName.Equals("center") ||
+valueName.Equals("code") ||
+valueName.Equals(
+    "dd") ||
+valueName.Equals("div") ||
+valueName.Equals("dl") ||
+valueName.Equals("dt") ||
+valueName.Equals("em") ||
+valueName.Equals("embed") ||
+valueName.Equals("h1") ||
+valueName.Equals("h2") ||
+valueName.Equals("h3") ||
+valueName.Equals("h4") ||
+valueName.Equals("h5") ||
+valueName.Equals("h6") ||
+valueName.Equals("head") ||
+valueName.Equals("hr") ||
+valueName.Equals("i") ||
+valueName.Equals("img") ||
+valueName.Equals("li") ||
+valueName.Equals("listing") ||
+valueName.Equals("meta") ||
+valueName.Equals(
+    "nobr") ||
+valueName.Equals("ol") ||
+valueName.Equals("p") ||
+valueName.Equals("pre") ||
+valueName.Equals("ruby") ||
+valueName.Equals("s") ||
+valueName.Equals("small") ||
+valueName.Equals("span") ||
+valueName.Equals("strong") ||
+valueName.Equals("strike") ||
+valueName.Equals("sub") ||
+valueName.Equals("sup") ||
+valueName.Equals(
+    "table") ||
+valueName.Equals("tt") ||
+valueName.Equals("u") ||
+valueName.Equals("ul") ||
+valueName.Equals("var")) {
           specialStartTag = true;
           this.parseError();
         }
@@ -1200,9 +1228,9 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                   doctypePublicLC =
                     DataUtilities.ToLowerCaseAscii(doctypePublic);
                   if ("html".Equals(doctypePublicLC) ||
-              "-//w3o//dtd w3 html strict 3.0//en//"
+"-//w3o//dtd w3 html strict 3.0//en//"
                     .Equals(doctypePublicLC) ||
-                    "-/w3c/dtd html 4.0 transitional/en".Equals(doctypePublicLC)
+"-/w3c/dtd html 4.0 transitional/en".Equals(doctypePublicLC)
 ) {
                     this.valueDocument.setMode(DocumentMode.QuirksMode);
                   } else if (doctypePublic.Length > 0) {
@@ -1293,8 +1321,10 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
               var tag = (TagToken)this.getToken(token);
               string valueName = tag.getName();
-              if (!"html".Equals(valueName) && !"br".Equals(valueName) &&
-                  !"head".Equals(valueName) && !"body".Equals(valueName)) {
+              if (!"html".Equals(valueName) &&
+!"br".Equals(valueName) &&
+!"head".Equals(valueName) &&
+!"body".Equals(valueName)) {
                 this.parseError();
                 return false;
               }
@@ -1336,8 +1366,10 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
               var tag = (TagToken)this.getToken(token);
               string valueName = tag.getName();
-              if ("head".Equals(valueName) || "br".Equals(valueName) ||
-                  "body".Equals(valueName) || "html".Equals(valueName)) {
+              if ("head".Equals(valueName) ||
+"br".Equals(valueName) ||
+"body".Equals(valueName) ||
+"html".Equals(valueName)) {
                 this.applyStartTag("head", insMode);
                 return this.applyInsertionMode(token, null);
               } else {
@@ -1370,8 +1402,9 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 this.applyInsertionMode(token, InsertionMode.InBody);
                 return true;
               } else if ("base".Equals(valueName) ||
-                  "bgsound".Equals(valueName) || "basefont".Equals(valueName) ||
-                  "link".Equals(valueName)) {
+"bgsound".Equals(valueName) ||
+"basefont".Equals(valueName) ||
+"link".Equals(valueName)) {
                 Element e = this.addHtmlElementNoPush(tag);
                 if (this.baseurl == null && "base".Equals(valueName)) {
                   // Get the valueDocument _base URL
@@ -1388,7 +1421,8 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                   if (charset != null) {
                     charset = Encodings.ResolveAlias(charset);
                     // if (TextEncoding.isAsciiCompatible(charset) ||
-                    // "utf-16be" .Equals(charset) || "utf-16le"
+// "utf-16be" .Equals(charset) ||
+"utf-16le"
                     // .Equals(charset)) {
                     this.changeEncoding(charset);
                     if (this.encoding.getConfidence() ==
@@ -1540,13 +1574,17 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 this.addHtmlElement(tag);
                 this.insertionMode = InsertionMode.InFrameset;
                 return true;
-              } else if ("base".Equals(valueName) || "bgsound"
+              } else if ("base".Equals(valueName) ||
+"bgsound"
                     .Equals(valueName) ||
-                    "basefont".Equals(valueName) || "link".Equals(valueName) ||
-                "noframes".Equals(valueName) || "script".Equals(valueName) ||
-                  "template".Equals(valueName) ||
-                    "style".Equals(valueName) || "title".Equals(valueName) ||
-                    "meta".Equals(valueName)) {
+"basefont".Equals(valueName) ||
+"link".Equals(valueName) ||
+"noframes".Equals(valueName) ||
+"script".Equals(valueName) ||
+"template".Equals(valueName) ||
+"style".Equals(valueName) ||
+"title".Equals(valueName) ||
+"meta".Equals(valueName)) {
                 this.parseError();
                 this.openElements.Add(this.headElement);
                 this.applyInsertionMode(token, InsertionMode.InHead);
@@ -1563,8 +1601,9 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
               var tag = (EndTagToken)this.getToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("body") || valueName.Equals("html") ||
-                  valueName.Equals("br")) {
+              if (valueName.Equals("body") ||
+valueName.Equals("html") ||
+valueName.Equals("br")) {
                 this.applyStartTag("body", insMode);
                 this.framesetOk = true;
                 return this.applyInsertionMode(token, null);
@@ -1639,19 +1678,25 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
               var tag = (StartTagToken)this.getToken(token);
               string valueName = tag.getName();
               if (valueName.Equals("base") ||
-              valueName.Equals("title") || valueName.Equals("template") ||
-              valueName.Equals("basefont") || valueName.Equals("bgsound") ||
-              valueName.Equals("meta") || valueName.Equals("link") ||
-              valueName.Equals("noframes") || valueName.Equals("style") ||
-              valueName.Equals("script")) {
+valueName.Equals("title") ||
+valueName.Equals("template") ||
+valueName.Equals("basefont") ||
+valueName.Equals("bgsound") ||
+valueName.Equals("meta") ||
+valueName.Equals("link") ||
+valueName.Equals("noframes") ||
+valueName.Equals("style") ||
+valueName.Equals("script")) {
                 return this.applyInsertionMode(
          token,
          InsertionMode.InHead);
               }
               InsertionMode newMode = InsertionMode.InBody;
-              if (valueName.Equals("caption") || valueName.Equals("tbody") ||
-              valueName.Equals("thead") || valueName.Equals("tfoot") ||
-              valueName.Equals("colgroup")) {
+              if (valueName.Equals("caption") ||
+valueName.Equals("tbody") ||
+valueName.Equals("thead") ||
+valueName.Equals("tfoot") ||
+valueName.Equals("colgroup")) {
                 newMode = InsertionMode.InTable;
               } else if (valueName.Equals("col")) {
                 newMode = InsertionMode.InColumnGroup;
@@ -1764,16 +1809,19 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
               } else {
                 foreach (var e in this.openElements) {
                   if (!HtmlCommon.isHtmlElement(e, "dd") &&
-        !HtmlCommon.isHtmlElement(e, "dt") && !HtmlCommon.isHtmlElement(e, "li"
-) && !HtmlCommon.isHtmlElement(e, "option") &&
-                    !HtmlCommon.isHtmlElement(e, "optgroup") &&
-      !HtmlCommon.isHtmlElement(e, "p") && !HtmlCommon.isHtmlElement(e, "tbody"
-) &&
-     !HtmlCommon.isHtmlElement(e, "td") && !HtmlCommon.isHtmlElement(e, "tfoot"
-) && !HtmlCommon.isHtmlElement(e, "th") && !HtmlCommon.isHtmlElement(e, "tr"
-) &&
-   !HtmlCommon.isHtmlElement(e, "thead") && !HtmlCommon.isHtmlElement(e, "body"
-) && !HtmlCommon.isHtmlElement(e, "html")) {
+!HtmlCommon.isHtmlElement(e, "dt") &&
+!HtmlCommon.isHtmlElement(e, "li") &&
+!HtmlCommon.isHtmlElement(e, "option") &&
+!HtmlCommon.isHtmlElement(e, "optgroup") &&
+!HtmlCommon.isHtmlElement(e, "p") &&
+!HtmlCommon.isHtmlElement(e, "tbody") &&
+!HtmlCommon.isHtmlElement(e, "td") &&
+!HtmlCommon.isHtmlElement(e, "tfoot") &&
+!HtmlCommon.isHtmlElement(e, "th") &&
+!HtmlCommon.isHtmlElement(e, "tr") &&
+!HtmlCommon.isHtmlElement(e, "thead") &&
+!HtmlCommon.isHtmlElement(e, "body") &&
+!HtmlCommon.isHtmlElement(e, "html")) {
                     this.parseError();
                   }
                 }
@@ -1792,11 +1840,15 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 ((Element)this.openElements[0]).mergeAttributes(tag);
                 return true;
               } else if ("base".Equals(valueName) ||
-                  "template".Equals(valueName) ||
-                  "bgsound".Equals(valueName) || "basefont".Equals(valueName) ||
-                  "link".Equals(valueName) || "noframes".Equals(valueName) ||
-                  "script".Equals(valueName) || "style".Equals(valueName) ||
-                  "title".Equals(valueName) || "meta".Equals(valueName)) {
+"template".Equals(valueName) ||
+"bgsound".Equals(valueName) ||
+"basefont".Equals(valueName) ||
+"link".Equals(valueName) ||
+"noframes".Equals(valueName) ||
+"script".Equals(valueName) ||
+"style".Equals(valueName) ||
+"title".Equals(valueName) ||
+"meta".Equals(valueName)) {
                 this.applyInsertionMode(token, InsertionMode.InHead);
                 return true;
               } else if ("body".Equals(valueName)) {
@@ -1829,32 +1881,48 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 this.insertionMode = InsertionMode.InFrameset;
                 return true;
               } else if ("address".Equals(valueName) ||
-                  "article".Equals(valueName) || "aside".Equals(valueName) ||
-                "blockquote".Equals(valueName) || "center"
+"article".Equals(valueName) ||
+"aside".Equals(valueName) ||
+"blockquote".Equals(valueName) ||
+"center"
                     .Equals(valueName) ||
-                  "details".Equals(valueName) || "dialog".Equals(valueName) ||
-                  "dir".Equals(valueName) || "div".Equals(valueName) ||
-                  "dl".Equals(valueName) || "fieldset".Equals(valueName) ||
-                "figcaption".Equals(valueName) || "figure"
+"details".Equals(valueName) ||
+"dialog".Equals(valueName) ||
+"dir".Equals(valueName) ||
+"div".Equals(valueName) ||
+"dl".Equals(valueName) ||
+"fieldset".Equals(valueName) ||
+"figcaption".Equals(valueName) ||
+"figure"
                     .Equals(valueName) ||
-                  "footer".Equals(valueName) || "header".Equals(valueName) ||
-                  "main".Equals(valueName) ||
-                  "nav".Equals(valueName) || "ol".Equals(valueName) ||
-                  "p".Equals(valueName) || "section".Equals(valueName) ||
-                  "summary".Equals(valueName) || "ul".Equals(valueName)
+"footer".Equals(valueName) ||
+"header".Equals(valueName) ||
+"main".Equals(valueName) ||
+"nav".Equals(valueName) ||
+"ol".Equals(valueName) ||
+"p".Equals(valueName) ||
+"section".Equals(valueName) ||
+"summary".Equals(valueName) ||
+"ul".Equals(valueName)
 ) {
                 this.closeParagraph();
                 this.addHtmlElement(tag);
                 return true;
-              } else if ("h1".Equals(valueName) || "h2".Equals(valueName) ||
-                  "h3".Equals(valueName) || "h4".Equals(valueName) ||
-                "h5".Equals(valueName) || "h6".Equals(valueName)) {
+              } else if ("h1".Equals(valueName) ||
+"h2".Equals(valueName) ||
+"h3".Equals(valueName) ||
+"h4".Equals(valueName) ||
+"h5".Equals(valueName) ||
+"h6".Equals(valueName)) {
                 this.closeParagraph();
                 IElement node = this.getCurrentNode();
                 string name1 = node.getLocalName();
-                if ("h1".Equals(name1) || "h2".Equals(name1) ||
-                    "h3".Equals(name1) || "h4".Equals(name1) ||
-                "h5".Equals(name1) || "h6".Equals(name1)) {
+                if ("h1".Equals(name1) ||
+"h2".Equals(name1) ||
+"h3".Equals(name1) ||
+"h4".Equals(name1) ||
+"h5".Equals(name1) ||
+"h6".Equals(name1)) {
                   this.parseError();
                   this.openElements.RemoveAt(this.openElements.Count - 1);
                 }
@@ -1890,9 +1958,11 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                     insMode);
                     break;
                   }
-                  if (this.isSpecialElement(node) && !"address"
+                  if (this.isSpecialElement(node) &&
+!"address"
                     .Equals(nodeName) &&
-                    !"div".Equals(nodeName) && !"p".Equals(nodeName)) {
+!"div".Equals(nodeName) &&
+!"p".Equals(nodeName)) {
                     break;
                   }
                 }
@@ -1910,8 +1980,9 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                     break;
                   }
                   if (this.isSpecialElement(node) &&
-                    !"address".Equals(nodeName) && !"div".Equals(nodeName) &&
-                    !"p".Equals(nodeName)) {
+!"address".Equals(nodeName) &&
+!"div".Equals(nodeName) &&
+!"p".Equals(nodeName)) {
                     break;
                   }
                 }
@@ -1958,12 +2029,17 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 this.reconstructFormatting();
                 this.pushFormattingElement(tag);
               } else if ("b".Equals(valueName) ||
-                  "big".Equals(valueName) || "code".Equals(valueName) ||
-                  "em".Equals(valueName) || "font".Equals(valueName) ||
-                  "i".Equals(valueName) || "s".Equals(valueName) ||
-                  "small".Equals(valueName) || "strike".Equals(valueName) ||
-                  "strong".Equals(valueName) || "tt".Equals(valueName) ||
-                  "u".Equals(valueName)) {
+"big".Equals(valueName) ||
+"code".Equals(valueName) ||
+"em".Equals(valueName) ||
+"font".Equals(valueName) ||
+"i".Equals(valueName) ||
+"s".Equals(valueName) ||
+"small".Equals(valueName) ||
+"strike".Equals(valueName) ||
+"strong".Equals(valueName) ||
+"tt".Equals(valueName) ||
+"u".Equals(valueName)) {
                 this.reconstructFormatting();
                 this.pushFormattingElement(tag);
               } else if ("nobr".Equals(valueName)) {
@@ -1982,9 +2058,12 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 this.framesetOk = false;
                 this.insertionMode = InsertionMode.InTable;
                 return true;
-              } else if ("area".Equals(valueName) || "br".Equals(valueName) ||
-                  "embed".Equals(valueName) || "img".Equals(valueName) ||
-                  "keygen".Equals(valueName) || "wbr".Equals(valueName)
+              } else if ("area".Equals(valueName) ||
+"br".Equals(valueName) ||
+"embed".Equals(valueName) ||
+"img".Equals(valueName) ||
+"keygen".Equals(valueName) ||
+"wbr".Equals(valueName)
 ) {
                 this.reconstructFormatting();
                 this.addHtmlElementNoPush(tag);
@@ -1999,8 +2078,10 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                     .Equals(DataUtilities.ToLowerCaseAscii(attr))) {
                   this.framesetOk = false;
                 }
-              } else if ("param".Equals(valueName) || "source"
-                    .Equals(valueName) || "track".Equals(valueName)
+              } else if ("param".Equals(valueName) ||
+"source"
+                    .Equals(valueName) ||
+"track".Equals(valueName)
 ) {
                 this.addHtmlElementNoPush(tag);
                 tag.ackSelfClosing();
@@ -2076,8 +2157,10 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                   }
                 }
                 this.addHtmlElement(tag);
-              } else if ("applet".Equals(valueName) || "marquee"
-                    .Equals(valueName) || "object".Equals(valueName)) {
+              } else if ("applet".Equals(valueName) ||
+"marquee"
+                    .Equals(valueName) ||
+"object".Equals(valueName)) {
                 this.reconstructFormatting();
                 Element e = this.addHtmlElement(tag);
                 this.insertFormattingMarker(tag, e);
@@ -2107,11 +2190,16 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                   // this.hasForeignContent = true;
                 }
               } else if ("caption".Equals(valueName) ||
-                  "col".Equals(valueName) || "colgroup".Equals(valueName) ||
-                  "frame".Equals(valueName) || "head".Equals(valueName) ||
-                  "tbody".Equals(valueName) || "td".Equals(valueName) ||
-                  "tfoot".Equals(valueName) || "th".Equals(valueName) ||
-                  "thead".Equals(valueName) || "tr".Equals(valueName)
+"col".Equals(valueName) ||
+"colgroup".Equals(valueName) ||
+"frame".Equals(valueName) ||
+"head".Equals(valueName) ||
+"tbody".Equals(valueName) ||
+"td".Equals(valueName) ||
+"tfoot".Equals(valueName) ||
+"th".Equals(valueName) ||
+"thead".Equals(valueName) ||
+"tr".Equals(valueName)
 ) {
                 this.parseError();
                 return false;
@@ -2137,27 +2225,41 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 }
                 foreach (var e in this.openElements) {
                   string name2 = e.getLocalName();
-                  if (!"dd".Equals(name2) && !"dt".Equals(name2) &&
-                    !"li".Equals(name2) && !"option".Equals(name2) &&
-                    !"optgroup".Equals(name2) && !"p".Equals(name2) &&
-                    !"rb".Equals(name2) && !"tbody".Equals(name2) &&
-                    !"td".Equals(name2) && !"tfoot".Equals(name2) &&
-                    !"th".Equals(name2) && !"tr".Equals(name2) &&
-                    !"thead".Equals(name2) && !"body".Equals(name2) &&
-                    !"html".Equals(name2)) {
+                  if (!"dd".Equals(name2) &&
+!"dt".Equals(name2) &&
+!"li".Equals(name2) &&
+!"option".Equals(name2) &&
+!"optgroup".Equals(name2) &&
+!"p".Equals(name2) &&
+!"rb".Equals(name2) &&
+!"tbody".Equals(name2) &&
+!"td".Equals(name2) &&
+!"tfoot".Equals(name2) &&
+!"th".Equals(name2) &&
+!"tr".Equals(name2) &&
+!"thead".Equals(name2) &&
+!"body".Equals(name2) &&
+!"html".Equals(name2)) {
                     this.parseError();
                     // token not ignored here
                   }
                 }
                 this.insertionMode = InsertionMode.AfterBody;
               } else if (valueName.Equals("a") ||
-                  valueName.Equals("b") || valueName.Equals("big") ||
-                  valueName.Equals("code") || valueName.Equals("em") ||
-                  valueName.Equals("b") || valueName.Equals("font") ||
-                  valueName.Equals("i") || valueName.Equals("nobr") ||
-                  valueName.Equals("s") || valueName.Equals("small") ||
-                  valueName.Equals("strike") || valueName.Equals("strong") ||
-                valueName.Equals("tt") || valueName.Equals("u")) {
+valueName.Equals("b") ||
+valueName.Equals("big") ||
+valueName.Equals("code") ||
+valueName.Equals("em") ||
+valueName.Equals("b") ||
+valueName.Equals("font") ||
+valueName.Equals("i") ||
+valueName.Equals("nobr") ||
+valueName.Equals("s") ||
+valueName.Equals("small") ||
+valueName.Equals("strike") ||
+valueName.Equals("strong") ||
+valueName.Equals("tt") ||
+valueName.Equals("u")) {
                 if (
     HtmlCommon.isHtmlElement(
   this.getCurrentNode(),
@@ -2325,10 +2427,10 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                   }
                   // DebugUtility.Log("lastNode: "+lastNode);
                   if (HtmlCommon.isHtmlElement(commonAncestor, "table") ||
-                    HtmlCommon.isHtmlElement(commonAncestor, "tr") ||
-                    HtmlCommon.isHtmlElement(commonAncestor, "tbody") ||
-                    HtmlCommon.isHtmlElement(commonAncestor, "thead") ||
-                    HtmlCommon.isHtmlElement(commonAncestor, "tfoot")
+HtmlCommon.isHtmlElement(commonAncestor, "tr") ||
+HtmlCommon.isHtmlElement(commonAncestor, "tbody") ||
+HtmlCommon.isHtmlElement(commonAncestor, "thead") ||
+HtmlCommon.isHtmlElement(commonAncestor, "tfoot")
 ) {
                     if (lastNode.getParentNode() != null) {
 ((Node)lastNode.getParentNode()).removeChild((Node)lastNode);
@@ -2373,7 +2475,8 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 // DebugUtility.Log("format after="
                 // +this.openElements[0].getOwnerDocument());
               } else if ("applet".Equals(valueName) ||
-                  "marquee".Equals(valueName) || "object".Equals(valueName)) {
+"marquee".Equals(valueName) ||
+"object".Equals(valueName)) {
                 if (!this.hasHtmlElementInScope(valueName)) {
                   this.parseError();
                   return false;
@@ -2389,21 +2492,31 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 return this.applyEndTag("body", insMode) ?
                   this.applyInsertionMode(token, null) : false;
               } else if ("address".Equals(valueName) ||
-                  "article".Equals(valueName) || "aside".Equals(valueName) ||
-                "blockquote".Equals(valueName) || "button"
+"article".Equals(valueName) ||
+"aside".Equals(valueName) ||
+"blockquote".Equals(valueName) ||
+"button"
                     .Equals(valueName) ||
-                  "center".Equals(valueName) || "details".Equals(valueName) ||
-                  "dialog".Equals(valueName) || "dir".Equals(valueName) ||
-                  "div".Equals(valueName) || "dl".Equals(valueName) ||
-              "fieldset".Equals(valueName) || "figcaption"
+"center".Equals(valueName) ||
+"details".Equals(valueName) ||
+"dialog".Equals(valueName) ||
+"dir".Equals(valueName) ||
+"div".Equals(valueName) ||
+"dl".Equals(valueName) ||
+"fieldset".Equals(valueName) ||
+"figcaption"
                     .Equals(valueName) ||
-                  "figure".Equals(valueName) || "footer".Equals(valueName) ||
-                  "header".Equals(valueName) ||
-                  "listing".Equals(valueName) || "main".Equals(valueName) ||
-                  "nav".Equals(valueName) ||
-                  "ol".Equals(valueName) || "pre".Equals(valueName) ||
-                  "section".Equals(valueName) || "summary".Equals(valueName) ||
-                  "ul".Equals(valueName)) {
+"figure".Equals(valueName) ||
+"footer".Equals(valueName) ||
+"header".Equals(valueName) ||
+"listing".Equals(valueName) ||
+"main".Equals(valueName) ||
+"nav".Equals(valueName) ||
+"ol".Equals(valueName) ||
+"pre".Equals(valueName) ||
+"section".Equals(valueName) ||
+"summary".Equals(valueName) ||
+"ul".Equals(valueName)) {
                 if (!this.hasHtmlElementInScope(valueName)) {
                   this.parseError();
                   return true;
@@ -2460,9 +2573,12 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                   this.parseError();
                 }
                 this.PopUntilHtmlElementPopped(valueName);
-              } else if (valueName.Equals("h1") || valueName.Equals("h2") ||
-                  valueName.Equals("h3") || valueName.Equals("h4") ||
-                  valueName.Equals("h5") || valueName.Equals("h6")) {
+              } else if (valueName.Equals("h1") ||
+valueName.Equals("h2") ||
+valueName.Equals("h3") ||
+valueName.Equals("h4") ||
+valueName.Equals("h5") ||
+valueName.Equals("h6")) {
                 if (!this.hasHtmlHeaderElementInScope()) {
                   this.parseError();
                   return false;
@@ -2474,11 +2590,11 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 while (true) {
                   IElement node = this.popCurrentNode();
                   if (HtmlCommon.isHtmlElement(node, "h1") ||
-  HtmlCommon.isHtmlElement(node, "h2") || HtmlCommon.isHtmlElement(node, "h3"
-) ||
-  HtmlCommon.isHtmlElement(node, "h4") || HtmlCommon.isHtmlElement(node, "h5"
-) ||
-                    HtmlCommon.isHtmlElement(node, "h6")) {
+HtmlCommon.isHtmlElement(node, "h2") ||
+HtmlCommon.isHtmlElement(node, "h3") ||
+HtmlCommon.isHtmlElement(node, "h4") ||
+HtmlCommon.isHtmlElement(node, "h5") ||
+HtmlCommon.isHtmlElement(node, "h6")) {
                     break;
                   }
                 }
@@ -2545,9 +2661,13 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 return this.applyInsertionMode(
          token,
          InsertionMode.InBody);
-              } else if (valueName.Equals("basefont") || valueName.Equals(
-          "bgsound") || valueName.Equals("link") || valueName.Equals("meta") ||
-                    valueName.Equals("noframes") || valueName.Equals("style")
+              } else if (valueName.Equals("basefont") ||
+valueName.Equals(
+          "bgsound") ||
+valueName.Equals("link") ||
+valueName.Equals("meta") ||
+valueName.Equals("noframes") ||
+valueName.Equals("style")
 ) {
                 return this.applyInsertionMode(
          token,
@@ -2593,10 +2713,10 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               IElement currentNode = this.getCurrentNode();
               if (HtmlCommon.isHtmlElement(currentNode, "table") ||
-                  HtmlCommon.isHtmlElement(currentNode, "tbody") ||
-                  HtmlCommon.isHtmlElement(currentNode, "tfoot") ||
-                  HtmlCommon.isHtmlElement(currentNode, "thead") ||
-                  HtmlCommon.isHtmlElement(currentNode, "tr")) {
+HtmlCommon.isHtmlElement(currentNode, "tbody") ||
+HtmlCommon.isHtmlElement(currentNode, "tfoot") ||
+HtmlCommon.isHtmlElement(currentNode, "thead") ||
+HtmlCommon.isHtmlElement(currentNode, "tr")) {
                 this.pendingTableCharacters.Remove(
              0,
              this.pendingTableCharacters.Length);
@@ -2653,8 +2773,10 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
               } else if (valueName.Equals("col")) {
                 this.applyStartTag("colgroup", insMode);
                 return this.applyInsertionMode(token, null);
-              } else if (valueName.Equals("tbody") || valueName.Equals(
-     "tfoot") || valueName.Equals("thead")) {
+              } else if (valueName.Equals("tbody") ||
+valueName.Equals(
+     "tfoot") ||
+valueName.Equals("thead")) {
                 while (true) {
                   IElement node = this.getCurrentNode();
                   if (node == null || HtmlCommon.isHtmlElement(node, "table") ||
@@ -2666,13 +2788,14 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 }
                 this.addHtmlElement(tag);
                 this.insertionMode = InsertionMode.InTableBody;
-              } else if (valueName.Equals("td") || valueName.Equals("th") ||
-                  valueName.Equals("tr")) {
+              } else if (valueName.Equals("td") ||
+valueName.Equals("th") ||
+valueName.Equals("tr")) {
                 this.applyStartTag("tbody", insMode);
                 return this.applyInsertionMode(token, null);
               } else if (valueName.Equals("style") ||
-                  valueName.Equals("script") ||
-                  valueName.Equals("template")) {
+valueName.Equals("script") ||
+valueName.Equals("template")) {
                 return this.applyInsertionMode(token, InsertionMode.InHead);
               } else if (valueName.Equals("input")) {
                 string attr = tag.getAttribute("type");
@@ -2712,12 +2835,18 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                   this.PopUntilHtmlElementPopped(valueName);
                   this.resetInsertionMode();
                 }
-              } else if (valueName.Equals("body") || valueName.Equals(
-      "caption") || valueName.Equals("col") || valueName.Equals("colgroup") ||
-                    valueName.Equals("html") || valueName.Equals("tbody") ||
-                    valueName.Equals("td") || valueName.Equals("tfoot") ||
-                    valueName.Equals("th") || valueName.Equals("thead") ||
-                    valueName.Equals("tr")) {
+              } else if (valueName.Equals("body") ||
+valueName.Equals(
+      "caption") ||
+valueName.Equals("col") ||
+valueName.Equals("colgroup") ||
+valueName.Equals("html") ||
+valueName.Equals("tbody") ||
+valueName.Equals("td") ||
+valueName.Equals("tfoot") ||
+valueName.Equals("th") ||
+valueName.Equals("thead") ||
+valueName.Equals("tr")) {
                 this.parseError();
                 return false;
               } else if (valueName.Equals("template")) {
@@ -2791,10 +2920,14 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
               var tag = (StartTagToken)this.getToken(token);
               string valueName = tag.getName();
               if (valueName.Equals("caption") ||
-                  valueName.Equals("col") || valueName.Equals("colgroup") ||
-                  valueName.Equals("tbody") || valueName.Equals("thead") ||
-                  valueName.Equals("td") || valueName.Equals("tfoot") ||
-                valueName.Equals("th") || valueName.Equals("tr")) {
+valueName.Equals("col") ||
+valueName.Equals("colgroup") ||
+valueName.Equals("tbody") ||
+valueName.Equals("thead") ||
+valueName.Equals("td") ||
+valueName.Equals("tfoot") ||
+valueName.Equals("th") ||
+valueName.Equals("tr")) {
                 if (!this.hasHtmlElementInTableScope("caption")) {
                   this.parseError();
                   return false;
@@ -2833,11 +2966,15 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                   return this.applyInsertionMode(token, null);
                 }
               } else if (valueName.Equals("body") ||
-                  valueName.Equals("col") || valueName.Equals("colgroup") ||
-                  valueName.Equals("tbody") || valueName.Equals("thead") ||
-                  valueName.Equals("td") || valueName.Equals("tfoot") ||
-                  valueName.Equals("th") || valueName.Equals("tr") ||
-                  valueName.Equals("html")) {
+valueName.Equals("col") ||
+valueName.Equals("colgroup") ||
+valueName.Equals("tbody") ||
+valueName.Equals("thead") ||
+valueName.Equals("td") ||
+valueName.Equals("tfoot") ||
+valueName.Equals("th") ||
+valueName.Equals("tr") ||
+valueName.Equals("html")) {
                 this.parseError();
               } else {
                 return this.applyInsertionMode(
@@ -2935,12 +3072,14 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 this.applyStartTag("tr", insMode);
                 return this.applyInsertionMode(token, null);
               } else if (valueName.Equals("caption") ||
-                  valueName.Equals("col") || valueName.Equals("colgroup") ||
-                  valueName.Equals("tbody") || valueName.Equals("tfoot") ||
-                  valueName.Equals("thead")) {
+valueName.Equals("col") ||
+valueName.Equals("colgroup") ||
+valueName.Equals("tbody") ||
+valueName.Equals("tfoot") ||
+valueName.Equals("thead")) {
                 if (!this.hasHtmlElementInTableScope("tbody") &&
-                    !this.hasHtmlElementInTableScope("thead") &&
-                    !this.hasHtmlElementInTableScope("tfoot")
+!this.hasHtmlElementInTableScope("thead") &&
+!this.hasHtmlElementInTableScope("tfoot")
 ) {
                   this.parseError();
                   return false;
@@ -2970,7 +3109,8 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
               var tag = (EndTagToken)this.getToken(token);
               string valueName = tag.getName();
               if (valueName.Equals("tbody") ||
-                  valueName.Equals("tfoot") || valueName.Equals("thead")) {
+valueName.Equals("tfoot") ||
+valueName.Equals("thead")) {
                 if (!this.hasHtmlElementInTableScope(valueName)) {
                   this.parseError();
                   return false;
@@ -2991,8 +3131,8 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 this.insertionMode = InsertionMode.InTable;
               } else if (valueName.Equals("table")) {
                 if (!this.hasHtmlElementInTableScope("tbody") &&
-                    !this.hasHtmlElementInTableScope("thead") &&
-                    !this.hasHtmlElementInTableScope("tfoot")
+!this.hasHtmlElementInTableScope("thead") &&
+!this.hasHtmlElementInTableScope("tfoot")
 ) {
                   this.parseError();
                   return false;
@@ -3014,10 +3154,13 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
              insMode);
                 return this.applyInsertionMode(token, null);
               } else if (valueName.Equals("body") ||
-                  valueName.Equals("caption") || valueName.Equals("col") ||
-                  valueName.Equals("colgroup") || valueName.Equals("html") ||
-                  valueName.Equals("td") || valueName.Equals("th") ||
-                  valueName.Equals("tr")) {
+valueName.Equals("caption") ||
+valueName.Equals("col") ||
+valueName.Equals("colgroup") ||
+valueName.Equals("html") ||
+valueName.Equals("td") ||
+valueName.Equals("th") ||
+valueName.Equals("tr")) {
                 this.parseError();
                 return false;
               } else {
@@ -3050,10 +3193,14 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 this.insertFormattingMarker(
         tag,
         this.addHtmlElement(tag));
-              } else if (valueName.Equals("caption") || valueName.Equals(
-     "col") || valueName.Equals("colgroup") || valueName.Equals("tbody") ||
-                    valueName.Equals("tfoot") || valueName.Equals("thead") ||
-                    valueName.Equals("tr")) {
+              } else if (valueName.Equals("caption") ||
+valueName.Equals(
+     "col") ||
+valueName.Equals("colgroup") ||
+valueName.Equals("tbody") ||
+valueName.Equals("tfoot") ||
+valueName.Equals("thead") ||
+valueName.Equals("tr")) {
                 if (this.applyEndTag("tr", insMode)) {
                   return this.applyInsertionMode(token, null);
                 }
@@ -3075,8 +3222,10 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 }
                 this.popCurrentNode();
                 this.insertionMode = InsertionMode.InTableBody;
-              } else if (valueName.Equals("tbody") || valueName.Equals(
-     "tfoot") || valueName.Equals("thead")) {
+              } else if (valueName.Equals("tbody") ||
+valueName.Equals(
+     "tfoot") ||
+valueName.Equals("thead")) {
                 if (!this.hasHtmlElementInTableScope(valueName)) {
                   this.parseError();
                   return false;
@@ -3084,9 +3233,12 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 this.applyEndTag("tr", insMode);
                 return this.applyInsertionMode(token, null);
               } else if (valueName.Equals("caption") ||
-                  valueName.Equals("col") || valueName.Equals("colgroup") ||
-                  valueName.Equals("html") || valueName.Equals("body") ||
-                  valueName.Equals("td") || valueName.Equals("th")) {
+valueName.Equals("col") ||
+valueName.Equals("colgroup") ||
+valueName.Equals("html") ||
+valueName.Equals("body") ||
+valueName.Equals("td") ||
+valueName.Equals("th")) {
                 this.parseError();
               } else {
                 this.applyInsertionMode(token, InsertionMode.InTable);
@@ -3107,10 +3259,14 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
               var tag = (StartTagToken)this.getToken(token);
               string valueName = tag.getName();
               if (valueName.Equals("caption") ||
-                  valueName.Equals("col") || valueName.Equals("colgroup") ||
-                  valueName.Equals("tbody") || valueName.Equals("td") ||
-                  valueName.Equals("tfoot") || valueName.Equals("th") ||
-                  valueName.Equals("thead") || valueName.Equals("tr")) {
+valueName.Equals("col") ||
+valueName.Equals("colgroup") ||
+valueName.Equals("tbody") ||
+valueName.Equals("td") ||
+valueName.Equals("tfoot") ||
+valueName.Equals("th") ||
+valueName.Equals("thead") ||
+valueName.Equals("tr")) {
                 if (!this.hasHtmlElementInTableScope("td") &&
                     !this.hasHtmlElementInTableScope("th")) {
                   this.parseError();
@@ -3138,14 +3294,19 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 this.PopUntilHtmlElementPopped(valueName);
                 this.clearFormattingToMarker();
                 this.insertionMode = InsertionMode.InRow;
-              } else if (valueName.Equals("caption") || valueName.Equals(
-     "col") || valueName.Equals("colgroup") || valueName.Equals("body") ||
-                    valueName.Equals("html")) {
+              } else if (valueName.Equals("caption") ||
+valueName.Equals(
+     "col") ||
+valueName.Equals("colgroup") ||
+valueName.Equals("body") ||
+valueName.Equals("html")) {
                 this.parseError();
                 return false;
               } else if (valueName.Equals("table") ||
-                  valueName.Equals("tbody") || valueName.Equals("tfoot") ||
-                  valueName.Equals("thead") || valueName.Equals("tr")) {
+valueName.Equals("tbody") ||
+valueName.Equals("tfoot") ||
+valueName.Equals("thead") ||
+valueName.Equals("tr")) {
                 if (!this.hasHtmlElementInTableScope(valueName)) {
                   this.parseError();
                   return false;
@@ -3199,8 +3360,10 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
               } else if (valueName.Equals("select")) {
                 this.parseError();
                 return this.applyEndTag("select", insMode);
-              } else if (valueName.Equals("input") || valueName.Equals(
-      "keygen") || valueName.Equals("textarea")) {
+              } else if (valueName.Equals("input") ||
+valueName.Equals(
+      "keygen") ||
+valueName.Equals("textarea")) {
                 this.parseError();
                 if (!this.hasHtmlElementInSelectScope("select")) {
                   return false;
@@ -3279,10 +3442,13 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
               var tag = (StartTagToken)this.getToken(token);
               string valueName = tag.getName();
               if (valueName.Equals("caption") ||
-                  valueName.Equals("table") || valueName.Equals("tbody") ||
-                  valueName.Equals("tfoot") || valueName.Equals("thead") ||
-                  valueName.Equals("tr") || valueName.Equals("td") ||
-                  valueName.Equals("th")) {
+valueName.Equals("table") ||
+valueName.Equals("tbody") ||
+valueName.Equals("tfoot") ||
+valueName.Equals("thead") ||
+valueName.Equals("tr") ||
+valueName.Equals("td") ||
+valueName.Equals("th")) {
                 this.parseError();
                 this.PopUntilHtmlElementPopped("select");
                 this.resetInsertionMode();
@@ -3295,10 +3461,13 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
               var tag = (EndTagToken)this.getToken(token);
               string valueName = tag.getName();
               if (valueName.Equals("caption") ||
-                  valueName.Equals("table") || valueName.Equals("tbody") ||
-                  valueName.Equals("tfoot") || valueName.Equals("thead") ||
-                  valueName.Equals("tr") || valueName.Equals("td") ||
-                  valueName.Equals("th")) {
+valueName.Equals("table") ||
+valueName.Equals("tbody") ||
+valueName.Equals("tfoot") ||
+valueName.Equals("thead") ||
+valueName.Equals("tr") ||
+valueName.Equals("td") ||
+valueName.Equals("th")) {
                 this.parseError();
                 if (!this.hasHtmlElementInTableScope(valueName)) {
                   return false;
@@ -3671,15 +3840,15 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
       while (true) {
         IElement node = this.getCurrentNode();
         if (HtmlCommon.isHtmlElement(node, "dd") ||
-          HtmlCommon.isHtmlElement(node, "dt") ||
-            HtmlCommon.isHtmlElement(node, "li") ||
-              HtmlCommon.isHtmlElement(node, "option") ||
-            HtmlCommon.isHtmlElement(node, "optgroup") ||
-              HtmlCommon.isHtmlElement(node, "p") ||
-HtmlCommon.isHtmlElement(node, "rp") || HtmlCommon.isHtmlElement(node, "rt"
-) ||
-            HtmlCommon.isHtmlElement(node, "rb") ||
-              HtmlCommon.isHtmlElement(node, "rtc")) {
+HtmlCommon.isHtmlElement(node, "dt") ||
+HtmlCommon.isHtmlElement(node, "li") ||
+HtmlCommon.isHtmlElement(node, "option") ||
+HtmlCommon.isHtmlElement(node, "optgroup") ||
+HtmlCommon.isHtmlElement(node, "p") ||
+HtmlCommon.isHtmlElement(node, "rp") ||
+HtmlCommon.isHtmlElement(node, "rt") ||
+HtmlCommon.isHtmlElement(node, "rb") ||
+HtmlCommon.isHtmlElement(node, "rtc")) {
           this.popCurrentNode();
         } else {
           break;
@@ -3691,24 +3860,24 @@ HtmlCommon.isHtmlElement(node, "rp") || HtmlCommon.isHtmlElement(node, "rt"
       while (true) {
         IElement node = this.getCurrentNode();
         if (HtmlCommon.isHtmlElement(node, "dd") ||
-            HtmlCommon.isHtmlElement(node, "dd") ||
-            HtmlCommon.isHtmlElement(node, "dt") ||
-            HtmlCommon.isHtmlElement(node, "li") ||
-              HtmlCommon.isHtmlElement(node, "option") ||
-            HtmlCommon.isHtmlElement(node, "optgroup") ||
-              HtmlCommon.isHtmlElement(node, "p") ||
-            HtmlCommon.isHtmlElement(node, "rp") ||
-            HtmlCommon.isHtmlElement(node, "caption") ||
-            HtmlCommon.isHtmlElement(node, "colgroup") ||
-            HtmlCommon.isHtmlElement(node, "tbody") ||
-            HtmlCommon.isHtmlElement(node, "tfoot") ||
-            HtmlCommon.isHtmlElement(node, "thead") ||
-            HtmlCommon.isHtmlElement(node, "td") ||
-            HtmlCommon.isHtmlElement(node, "th") ||
-            HtmlCommon.isHtmlElement(node, "tr") ||
+HtmlCommon.isHtmlElement(node, "dd") ||
+HtmlCommon.isHtmlElement(node, "dt") ||
+HtmlCommon.isHtmlElement(node, "li") ||
+HtmlCommon.isHtmlElement(node, "option") ||
+HtmlCommon.isHtmlElement(node, "optgroup") ||
+HtmlCommon.isHtmlElement(node, "p") ||
+HtmlCommon.isHtmlElement(node, "rp") ||
+HtmlCommon.isHtmlElement(node, "caption") ||
+HtmlCommon.isHtmlElement(node, "colgroup") ||
+HtmlCommon.isHtmlElement(node, "tbody") ||
+HtmlCommon.isHtmlElement(node, "tfoot") ||
+HtmlCommon.isHtmlElement(node, "thead") ||
+HtmlCommon.isHtmlElement(node, "td") ||
+HtmlCommon.isHtmlElement(node, "th") ||
+HtmlCommon.isHtmlElement(node, "tr") ||
 HtmlCommon.isHtmlElement(node, "rt") ||
-            HtmlCommon.isHtmlElement(node, "rb") ||
-              HtmlCommon.isHtmlElement(node, "rtc")) {
+HtmlCommon.isHtmlElement(node, "rb") ||
+HtmlCommon.isHtmlElement(node, "rtc")) {
           this.popCurrentNode();
         } else {
           break;
@@ -3723,17 +3892,19 @@ HtmlCommon.isHtmlElement(node, "rt") ||
           break;
         }
         if (HtmlCommon.isHtmlElement(node, "dd") ||
-HtmlCommon.isHtmlElement(node, "dt") || HtmlCommon.isHtmlElement(node, "li"
-) ||
-            HtmlCommon.isHtmlElement(node, "rb") ||
-              HtmlCommon.isHtmlElement(node, "rtc") ||
-            HtmlCommon.isHtmlElement(node, "option") ||
-              HtmlCommon.isHtmlElement(node, "optgroup") ||
-   HtmlCommon.isHtmlElement(
+HtmlCommon.isHtmlElement(node, "dt") ||
+HtmlCommon.isHtmlElement(node, "li") ||
+HtmlCommon.isHtmlElement(node, "rb") ||
+HtmlCommon.isHtmlElement(node, "rtc") ||
+HtmlCommon.isHtmlElement(node, "option") ||
+HtmlCommon.isHtmlElement(node, "optgroup") ||
+HtmlCommon.isHtmlElement(
   node,
-  "p") || HtmlCommon.isHtmlElement(
+  "p") ||
+HtmlCommon.isHtmlElement(
   node,
-  "rp") || HtmlCommon.isHtmlElement(node, "rt")) {
+  "rp") ||
+HtmlCommon.isHtmlElement(node, "rt")) {
           this.popCurrentNode();
         } else {
           break;
@@ -3828,9 +3999,11 @@ HtmlCommon.isHtmlElement(node, "dt") || HtmlCommon.isHtmlElement(node, "li"
     private Text getTextNodeToInsert(INode node) {
       if (this.doFosterParent && node.Equals(this.getCurrentNode())) {
         string valueName = ((IElement)node).getLocalName();
-        if ("table".Equals(valueName) || "tbody".Equals(valueName) ||
-            "tfoot".Equals(valueName) || "thead".Equals(valueName) ||
-            "tr".Equals(valueName)) {
+        if ("table".Equals(valueName) ||
+"tbody".Equals(valueName) ||
+"tfoot".Equals(valueName) ||
+"thead".Equals(valueName) ||
+"tr".Equals(valueName)) {
           return this.getFosterParentedTextNode();
         }
       }
@@ -3873,26 +4046,33 @@ HtmlCommon.isHtmlElement(node, "dt") || HtmlCommon.isHtmlElement(node, "li"
           if (thisName.Equals(valueName)) {
             return true;
           }
-          if (thisName.Equals("applet") || thisName.Equals("caption") ||
-              thisName.Equals("html") || thisName.Equals("table") ||
-              thisName.Equals("td") || thisName.Equals("th") ||
-              thisName.Equals("marquee") || thisName.Equals("object") ||
-              thisName.Equals("button")) {
+          if (thisName.Equals("applet") ||
+thisName.Equals("caption") ||
+thisName.Equals("html") ||
+thisName.Equals("table") ||
+thisName.Equals("td") ||
+thisName.Equals("th") ||
+thisName.Equals("marquee") ||
+thisName.Equals("object") ||
+thisName.Equals("button")) {
             // DebugUtility.Log("not in scope: %s",thisName);
             return false;
           }
         }
         if (HtmlCommon.MATHML_NAMESPACE.Equals(_namespace)) {
           if (thisName.Equals("mi") ||
-              thisName.Equals("mo") || thisName.Equals("mn") ||
-              thisName.Equals("ms") || thisName.Equals("mtext") ||
-              thisName.Equals("annotation-xml")) {
+thisName.Equals("mo") ||
+thisName.Equals("mn") ||
+thisName.Equals("ms") ||
+thisName.Equals("mtext") ||
+thisName.Equals("annotation-xml")) {
             return false;
           }
         }
         if (HtmlCommon.SVG_NAMESPACE.Equals(_namespace)) {
-          if (thisName.Equals("foreignObject") || thisName.Equals("desc") ||
-              thisName.Equals("title")) {
+          if (thisName.Equals("foreignObject") ||
+thisName.Equals("desc") ||
+thisName.Equals("title")) {
             return false;
           }
         }
@@ -3907,23 +4087,26 @@ HtmlCommon.isHtmlElement(node, "dt") || HtmlCommon.isHtmlElement(node, "li"
           return true;
         }
         if (HtmlCommon.isHtmlElement(e, "applet") ||
-            HtmlCommon.isHtmlElement(e, "caption") ||
-              HtmlCommon.isHtmlElement(e, "html") ||
-   HtmlCommon.isHtmlElement(e, "table") || HtmlCommon.isHtmlElement(e, "td"
-) || HtmlCommon.isHtmlElement(e, "th") || HtmlCommon.isHtmlElement(e, "ol"
-) ||
-  HtmlCommon.isHtmlElement(e, "ul") || HtmlCommon.isHtmlElement(e, "marquee"
-) ||
-  HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
-) ||
-  HtmlCommon.isMathMLElement(e, "mo") || HtmlCommon.isMathMLElement(e, "mn"
-) || HtmlCommon.isMathMLElement(e, "ms") ||
-              HtmlCommon.isMathMLElement(e, "mtext") ||
-            HtmlCommon.isMathMLElement(e, "annotation-xml") ||
-            HtmlCommon.isSvgElement(e, "foreignObject") ||
-      HtmlCommon.isSvgElement(
+HtmlCommon.isHtmlElement(e, "caption") ||
+HtmlCommon.isHtmlElement(e, "html") ||
+HtmlCommon.isHtmlElement(e, "table") ||
+HtmlCommon.isHtmlElement(e, "td") ||
+HtmlCommon.isHtmlElement(e, "th") ||
+HtmlCommon.isHtmlElement(e, "ol") ||
+HtmlCommon.isHtmlElement(e, "ul") ||
+HtmlCommon.isHtmlElement(e, "marquee") ||
+HtmlCommon.isHtmlElement(e, "object") ||
+HtmlCommon.isMathMLElement(e, "mi") ||
+HtmlCommon.isMathMLElement(e, "mo") ||
+HtmlCommon.isMathMLElement(e, "mn") ||
+HtmlCommon.isMathMLElement(e, "ms") ||
+HtmlCommon.isMathMLElement(e, "mtext") ||
+HtmlCommon.isMathMLElement(e, "annotation-xml") ||
+HtmlCommon.isSvgElement(e, "foreignObject") ||
+HtmlCommon.isSvgElement(
   e,
-  "desc") || HtmlCommon.isSvgElement(
+  "desc") ||
+HtmlCommon.isSvgElement(
   e,
   "title")
 ) {
@@ -3940,22 +4123,24 @@ HtmlCommon.isHtmlElement(node, "dt") || HtmlCommon.isHtmlElement(node, "li"
           return true;
         }
         if (HtmlCommon.isHtmlElement(e, "applet") ||
-            HtmlCommon.isHtmlElement(e, "caption") ||
-              HtmlCommon.isHtmlElement(e, "html") ||
-   HtmlCommon.isHtmlElement(e, "table") || HtmlCommon.isHtmlElement(e, "td"
-) ||
-  HtmlCommon.isHtmlElement(e, "th") || HtmlCommon.isHtmlElement(e, "marquee"
-) ||
-  HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
-) ||
-  HtmlCommon.isMathMLElement(e, "mo") || HtmlCommon.isMathMLElement(e, "mn"
-) || HtmlCommon.isMathMLElement(e, "ms") ||
-              HtmlCommon.isMathMLElement(e, "mtext") ||
-            HtmlCommon.isMathMLElement(e, "annotation-xml") ||
-            HtmlCommon.isSvgElement(e, "foreignObject") ||
-      HtmlCommon.isSvgElement(
+HtmlCommon.isHtmlElement(e, "caption") ||
+HtmlCommon.isHtmlElement(e, "html") ||
+HtmlCommon.isHtmlElement(e, "table") ||
+HtmlCommon.isHtmlElement(e, "td") ||
+HtmlCommon.isHtmlElement(e, "th") ||
+HtmlCommon.isHtmlElement(e, "marquee") ||
+HtmlCommon.isHtmlElement(e, "object") ||
+HtmlCommon.isMathMLElement(e, "mi") ||
+HtmlCommon.isMathMLElement(e, "mo") ||
+HtmlCommon.isMathMLElement(e, "mn") ||
+HtmlCommon.isMathMLElement(e, "ms") ||
+HtmlCommon.isMathMLElement(e, "mtext") ||
+HtmlCommon.isMathMLElement(e, "annotation-xml") ||
+HtmlCommon.isSvgElement(e, "foreignObject") ||
+HtmlCommon.isSvgElement(
   e,
-  "desc") || HtmlCommon.isSvgElement(
+  "desc") ||
+HtmlCommon.isSvgElement(
   e,
   "title")
 ) {
@@ -3972,22 +4157,24 @@ HtmlCommon.isHtmlElement(node, "dt") || HtmlCommon.isHtmlElement(node, "li"
           return true;
         }
         if (HtmlCommon.isHtmlElement(e, "applet") ||
-            HtmlCommon.isHtmlElement(e, "caption") ||
-              HtmlCommon.isHtmlElement(e, "html") ||
-   HtmlCommon.isHtmlElement(e, "table") || HtmlCommon.isHtmlElement(e, "td"
-) ||
-  HtmlCommon.isHtmlElement(e, "th") || HtmlCommon.isHtmlElement(e, "marquee"
-) ||
-  HtmlCommon.isHtmlElement(e, "object") || HtmlCommon.isMathMLElement(e, "mi"
-) ||
-  HtmlCommon.isMathMLElement(e, "mo") || HtmlCommon.isMathMLElement(e, "mn"
-) || HtmlCommon.isMathMLElement(e, "ms") ||
-              HtmlCommon.isMathMLElement(e, "mtext") ||
-            HtmlCommon.isMathMLElement(e, "annotation-xml") ||
-            HtmlCommon.isSvgElement(e, "foreignObject") ||
-      HtmlCommon.isSvgElement(
+HtmlCommon.isHtmlElement(e, "caption") ||
+HtmlCommon.isHtmlElement(e, "html") ||
+HtmlCommon.isHtmlElement(e, "table") ||
+HtmlCommon.isHtmlElement(e, "td") ||
+HtmlCommon.isHtmlElement(e, "th") ||
+HtmlCommon.isHtmlElement(e, "marquee") ||
+HtmlCommon.isHtmlElement(e, "object") ||
+HtmlCommon.isMathMLElement(e, "mi") ||
+HtmlCommon.isMathMLElement(e, "mo") ||
+HtmlCommon.isMathMLElement(e, "mn") ||
+HtmlCommon.isMathMLElement(e, "ms") ||
+HtmlCommon.isMathMLElement(e, "mtext") ||
+HtmlCommon.isMathMLElement(e, "annotation-xml") ||
+HtmlCommon.isSvgElement(e, "foreignObject") ||
+HtmlCommon.isSvgElement(
   e,
-  "desc") || HtmlCommon.isSvgElement(
+  "desc") ||
+HtmlCommon.isSvgElement(
   e,
   "title")
 ) {
@@ -4029,25 +4216,30 @@ HtmlCommon.isHtmlElement(node, "dt") || HtmlCommon.isHtmlElement(node, "li"
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
         if (HtmlCommon.isHtmlElement(e, "h1") ||
-      HtmlCommon.isHtmlElement(e, "h2") || HtmlCommon.isHtmlElement(e, "h3"
-) || HtmlCommon.isHtmlElement(e, "h4") || HtmlCommon.isHtmlElement(e, "h5"
-) || HtmlCommon.isHtmlElement(e, "h6")) {
+HtmlCommon.isHtmlElement(e, "h2") ||
+HtmlCommon.isHtmlElement(e, "h3") ||
+HtmlCommon.isHtmlElement(e, "h4") ||
+HtmlCommon.isHtmlElement(e, "h5") ||
+HtmlCommon.isHtmlElement(e, "h6")) {
           return true;
         }
         if (HtmlCommon.isHtmlElement(e, "applet") ||
-          HtmlCommon.isHtmlElement(e, "caption") ||
-  HtmlCommon.isHtmlElement(e, "html") || HtmlCommon.isHtmlElement(e, "table"
-) || HtmlCommon.isHtmlElement(e, "td") || HtmlCommon.isHtmlElement(e, "th"
-) || HtmlCommon.isHtmlElement(e, "marquee") ||
-              HtmlCommon.isHtmlElement(e, "object") ||
-  HtmlCommon.isMathMLElement(e, "mi") || HtmlCommon.isMathMLElement(e, "mo"
-) ||
-  HtmlCommon.isMathMLElement(e, "mn") || HtmlCommon.isMathMLElement(e, "ms"
-) || HtmlCommon.isMathMLElement(e, "mtext") ||
-              HtmlCommon.isMathMLElement(e, "annotation-xml") ||
-            HtmlCommon.isSvgElement(e, "foreignObject") ||
-              HtmlCommon.isSvgElement(e, "desc") ||
-            HtmlCommon.isSvgElement(e, "title")) {
+HtmlCommon.isHtmlElement(e, "caption") ||
+HtmlCommon.isHtmlElement(e, "html") ||
+HtmlCommon.isHtmlElement(e, "table") ||
+HtmlCommon.isHtmlElement(e, "td") ||
+HtmlCommon.isHtmlElement(e, "th") ||
+HtmlCommon.isHtmlElement(e, "marquee") ||
+HtmlCommon.isHtmlElement(e, "object") ||
+HtmlCommon.isMathMLElement(e, "mi") ||
+HtmlCommon.isMathMLElement(e, "mo") ||
+HtmlCommon.isMathMLElement(e, "mn") ||
+HtmlCommon.isMathMLElement(e, "ms") ||
+HtmlCommon.isMathMLElement(e, "mtext") ||
+HtmlCommon.isMathMLElement(e, "annotation-xml") ||
+HtmlCommon.isSvgElement(e, "foreignObject") ||
+HtmlCommon.isSvgElement(e, "desc") ||
+HtmlCommon.isSvgElement(e, "title")) {
           return false;
         }
       }
@@ -4141,9 +4333,11 @@ HtmlCommon.isHtmlElement(node, "dt") || HtmlCommon.isHtmlElement(node, "li"
       IElement node = this.getCurrentNode();
       if (this.doFosterParent) {
         string valueName = node.getLocalName();
-        if ("table".Equals(valueName) || "tbody".Equals(valueName) ||
-            "tfoot".Equals(valueName) || "thead".Equals(valueName) ||
-            "tr".Equals(valueName)) {
+        if ("table".Equals(valueName) ||
+"tbody".Equals(valueName) ||
+"tfoot".Equals(valueName) ||
+"thead".Equals(valueName) ||
+"tr".Equals(valueName)) {
           this.fosterParent(valueElement);
         } else {
           node.appendChild(valueElement);
@@ -4248,90 +4442,92 @@ return HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI()) && (
 
     private bool isSpecialElement(IElement node) {
       if (HtmlCommon.isHtmlElement(node, "address") ||
-        HtmlCommon.isHtmlElement(node, "applet") ||
-        HtmlCommon.isHtmlElement(node, "area") ||
-          HtmlCommon.isHtmlElement(node, "article") ||
-        HtmlCommon.isHtmlElement(node, "aside") ||
-          HtmlCommon.isHtmlElement(node, "base") ||
-        HtmlCommon.isHtmlElement(node, "basefont") ||
-          HtmlCommon.isHtmlElement(node, "bgsound") ||
-        HtmlCommon.isHtmlElement(node, "blockquote") ||
-          HtmlCommon.isHtmlElement(node, "body") ||
-        HtmlCommon.isHtmlElement(node, "br") ||
-          HtmlCommon.isHtmlElement(node, "button") ||
-        HtmlCommon.isHtmlElement(node, "caption") ||
-          HtmlCommon.isHtmlElement(node, "center") ||
-        HtmlCommon.isHtmlElement(node, "col") ||
-          HtmlCommon.isHtmlElement(node, "colgroup") ||
-        HtmlCommon.isHtmlElement(node, "dd") ||
-          HtmlCommon.isHtmlElement(node, "details") ||
-        HtmlCommon.isHtmlElement(node, "dir") ||
-          HtmlCommon.isHtmlElement(node, "div") ||
-  HtmlCommon.isHtmlElement(node, "dl") || HtmlCommon.isHtmlElement(node, "dt"
-) || HtmlCommon.isHtmlElement(node, "embed") ||
-          HtmlCommon.isHtmlElement(node, "fieldset") ||
-        HtmlCommon.isHtmlElement(node, "figcaption") ||
-          HtmlCommon.isHtmlElement(node, "figure") ||
-          HtmlCommon.isHtmlElement(node, "footer") ||
-            HtmlCommon.isHtmlElement(node, "form") ||
-            HtmlCommon.isHtmlElement(node, "frame") ||
-              HtmlCommon.isHtmlElement(node, "frameset") ||
-  HtmlCommon.isHtmlElement(node, "h1") || HtmlCommon.isHtmlElement(node, "h2"
-) ||
-  HtmlCommon.isHtmlElement(node, "h3") || HtmlCommon.isHtmlElement(node, "h4"
-) ||
-  HtmlCommon.isHtmlElement(node, "h5") || HtmlCommon.isHtmlElement(node, "h6"
-) || HtmlCommon.isHtmlElement(node, "head") ||
-              HtmlCommon.isHtmlElement(node, "header") ||
-              HtmlCommon.isHtmlElement(node, "hr") ||
-            HtmlCommon.isHtmlElement(node, "html") ||
-              HtmlCommon.isHtmlElement(node, "iframe") ||
-            HtmlCommon.isHtmlElement(node, "img") ||
-              HtmlCommon.isHtmlElement(node, "input") ||
-            HtmlCommon.isHtmlElement(node, "isindex") ||
-              HtmlCommon.isHtmlElement(node, "li") ||
-            HtmlCommon.isHtmlElement(node, "link") ||
-          HtmlCommon.isHtmlElement(node, "listing") ||
-            HtmlCommon.isHtmlElement(node, "main") ||
-            HtmlCommon.isHtmlElement(node, "marquee") ||
-              HtmlCommon.isHtmlElement(node, "meta") ||
-            HtmlCommon.isHtmlElement(node, "nav") ||
-              HtmlCommon.isHtmlElement(node, "noembed") ||
-            HtmlCommon.isHtmlElement(node, "noframes") ||
-              HtmlCommon.isHtmlElement(node, "noscript") ||
-            HtmlCommon.isHtmlElement(node, "object") ||
-              HtmlCommon.isHtmlElement(node, "ol") ||
-            HtmlCommon.isHtmlElement(node, "p") ||
-              HtmlCommon.isHtmlElement(node, "param") ||
-            HtmlCommon.isHtmlElement(node, "plaintext") ||
-              HtmlCommon.isHtmlElement(node, "pre") ||
-            HtmlCommon.isHtmlElement(node, "script") ||
-              HtmlCommon.isHtmlElement(node, "section") ||
-          HtmlCommon.isHtmlElement(node, "select") ||
-            HtmlCommon.isHtmlElement(node, "source") ||
-            HtmlCommon.isHtmlElement(node, "style") ||
-              HtmlCommon.isHtmlElement(node, "summary") ||
-            HtmlCommon.isHtmlElement(node, "table") ||
-              HtmlCommon.isHtmlElement(node, "tbody") ||
-            HtmlCommon.isHtmlElement(node, "td") ||
-              HtmlCommon.isHtmlElement(node, "textarea") ||
-            HtmlCommon.isHtmlElement(node, "tfoot") ||
-              HtmlCommon.isHtmlElement(node, "th") ||
-            HtmlCommon.isHtmlElement(node, "thead") ||
-              HtmlCommon.isHtmlElement(node, "title") ||
-            HtmlCommon.isHtmlElement(node, "tr") ||
-              HtmlCommon.isHtmlElement(node, "track") ||
-            HtmlCommon.isHtmlElement(node, "ul") ||
-              HtmlCommon.isHtmlElement(node, "wbr") ||
-            HtmlCommon.isHtmlElement(node, "xmp")) {
+HtmlCommon.isHtmlElement(node, "applet") ||
+HtmlCommon.isHtmlElement(node, "area") ||
+HtmlCommon.isHtmlElement(node, "article") ||
+HtmlCommon.isHtmlElement(node, "aside") ||
+HtmlCommon.isHtmlElement(node, "base") ||
+HtmlCommon.isHtmlElement(node, "basefont") ||
+HtmlCommon.isHtmlElement(node, "bgsound") ||
+HtmlCommon.isHtmlElement(node, "blockquote") ||
+HtmlCommon.isHtmlElement(node, "body") ||
+HtmlCommon.isHtmlElement(node, "br") ||
+HtmlCommon.isHtmlElement(node, "button") ||
+HtmlCommon.isHtmlElement(node, "caption") ||
+HtmlCommon.isHtmlElement(node, "center") ||
+HtmlCommon.isHtmlElement(node, "col") ||
+HtmlCommon.isHtmlElement(node, "colgroup") ||
+HtmlCommon.isHtmlElement(node, "dd") ||
+HtmlCommon.isHtmlElement(node, "details") ||
+HtmlCommon.isHtmlElement(node, "dir") ||
+HtmlCommon.isHtmlElement(node, "div") ||
+HtmlCommon.isHtmlElement(node, "dl") ||
+HtmlCommon.isHtmlElement(node, "dt") ||
+HtmlCommon.isHtmlElement(node, "embed") ||
+HtmlCommon.isHtmlElement(node, "fieldset") ||
+HtmlCommon.isHtmlElement(node, "figcaption") ||
+HtmlCommon.isHtmlElement(node, "figure") ||
+HtmlCommon.isHtmlElement(node, "footer") ||
+HtmlCommon.isHtmlElement(node, "form") ||
+HtmlCommon.isHtmlElement(node, "frame") ||
+HtmlCommon.isHtmlElement(node, "frameset") ||
+HtmlCommon.isHtmlElement(node, "h1") ||
+HtmlCommon.isHtmlElement(node, "h2") ||
+HtmlCommon.isHtmlElement(node, "h3") ||
+HtmlCommon.isHtmlElement(node, "h4") ||
+HtmlCommon.isHtmlElement(node, "h5") ||
+HtmlCommon.isHtmlElement(node, "h6") ||
+HtmlCommon.isHtmlElement(node, "head") ||
+HtmlCommon.isHtmlElement(node, "header") ||
+HtmlCommon.isHtmlElement(node, "hr") ||
+HtmlCommon.isHtmlElement(node, "html") ||
+HtmlCommon.isHtmlElement(node, "iframe") ||
+HtmlCommon.isHtmlElement(node, "img") ||
+HtmlCommon.isHtmlElement(node, "input") ||
+HtmlCommon.isHtmlElement(node, "isindex") ||
+HtmlCommon.isHtmlElement(node, "li") ||
+HtmlCommon.isHtmlElement(node, "link") ||
+HtmlCommon.isHtmlElement(node, "listing") ||
+HtmlCommon.isHtmlElement(node, "main") ||
+HtmlCommon.isHtmlElement(node, "marquee") ||
+HtmlCommon.isHtmlElement(node, "meta") ||
+HtmlCommon.isHtmlElement(node, "nav") ||
+HtmlCommon.isHtmlElement(node, "noembed") ||
+HtmlCommon.isHtmlElement(node, "noframes") ||
+HtmlCommon.isHtmlElement(node, "noscript") ||
+HtmlCommon.isHtmlElement(node, "object") ||
+HtmlCommon.isHtmlElement(node, "ol") ||
+HtmlCommon.isHtmlElement(node, "p") ||
+HtmlCommon.isHtmlElement(node, "param") ||
+HtmlCommon.isHtmlElement(node, "plaintext") ||
+HtmlCommon.isHtmlElement(node, "pre") ||
+HtmlCommon.isHtmlElement(node, "script") ||
+HtmlCommon.isHtmlElement(node, "section") ||
+HtmlCommon.isHtmlElement(node, "select") ||
+HtmlCommon.isHtmlElement(node, "source") ||
+HtmlCommon.isHtmlElement(node, "style") ||
+HtmlCommon.isHtmlElement(node, "summary") ||
+HtmlCommon.isHtmlElement(node, "table") ||
+HtmlCommon.isHtmlElement(node, "tbody") ||
+HtmlCommon.isHtmlElement(node, "td") ||
+HtmlCommon.isHtmlElement(node, "textarea") ||
+HtmlCommon.isHtmlElement(node, "tfoot") ||
+HtmlCommon.isHtmlElement(node, "th") ||
+HtmlCommon.isHtmlElement(node, "thead") ||
+HtmlCommon.isHtmlElement(node, "title") ||
+HtmlCommon.isHtmlElement(node, "tr") ||
+HtmlCommon.isHtmlElement(node, "track") ||
+HtmlCommon.isHtmlElement(node, "ul") ||
+HtmlCommon.isHtmlElement(node, "wbr") ||
+HtmlCommon.isHtmlElement(node, "xmp")) {
         return true;
       }
       if (HtmlCommon.isMathMLElement(node, "mi") ||
-        HtmlCommon.isMathMLElement(node, "mo") ||
-        HtmlCommon.isMathMLElement(node, "mn") ||
-          HtmlCommon.isMathMLElement(node, "ms") ||
-  HtmlCommon.isMathMLElement(node, "mtext") ||
-       HtmlCommon.isMathMLElement(
+HtmlCommon.isMathMLElement(node, "mo") ||
+HtmlCommon.isMathMLElement(node, "mn") ||
+HtmlCommon.isMathMLElement(node, "ms") ||
+HtmlCommon.isMathMLElement(node, "mtext") ||
+HtmlCommon.isMathMLElement(
   node,
   "annotation-xml")) {
         return true;
@@ -4659,10 +4855,10 @@ return HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI()) && (
         HtmlCommon.isHtmlElement(context, "textarea")) {
         this.state = TokenizerState.RcData;
       } else if (HtmlCommon.isHtmlElement(context, "style") ||
-        HtmlCommon.isHtmlElement(context, "xmp") ||
-          HtmlCommon.isHtmlElement(context, "iframe") ||
-            HtmlCommon.isHtmlElement(context, "noembed") ||
-          HtmlCommon.isHtmlElement(context, "noframes")) {
+HtmlCommon.isHtmlElement(context, "xmp") ||
+HtmlCommon.isHtmlElement(context, "iframe") ||
+HtmlCommon.isHtmlElement(context, "noembed") ||
+HtmlCommon.isHtmlElement(context, "noframes")) {
         this.state = TokenizerState.RawText;
       } else if (HtmlCommon.isHtmlElement(context, "script")) {
         this.state = TokenizerState.ScriptData;
@@ -6543,8 +6739,8 @@ return HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI()) && (
           break;
         }
         if (HtmlCommon.isHtmlElement(e, "thead") ||
-          HtmlCommon.isHtmlElement(e, "tbody") ||
-              HtmlCommon.isHtmlElement(e, "tfoot")) {
+HtmlCommon.isHtmlElement(e, "tbody") ||
+HtmlCommon.isHtmlElement(e, "tfoot")) {
           this.insertionMode = InsertionMode.InTableBody;
           break;
         }

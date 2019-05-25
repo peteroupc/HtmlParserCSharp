@@ -30,16 +30,22 @@ public IDocument processResponse(string url, IReader
   public static string getHref(IElement node) {
     string name = node.getTagName();
     string href="";
-    if ("A".Equals(name) || "LINK".Equals(name) || "AREA".Equals(name) ||
-        "BASE".Equals(name)) {
+    if ("A".Equals(name) ||
+"LINK".Equals(name) ||
+"AREA".Equals(name) ||
+"BASE".Equals(name)) {
       href=node.getAttribute("href");
     } else if ("OBJECT".Equals(name)) {
       href=node.getAttribute("data");
-    } else if ("IMG".Equals(name) || "SCRIPT".Equals(name) ||
-        "FRAME".Equals(name) || "SOURCE".Equals(name) ||
-        "TRACK".Equals(name) || "IFRAME".Equals(name) ||
-        "AUDIO".Equals(name) || "VIDEO".Equals(name) ||
-        "EMBED".Equals(name)) {
+    } else if ("IMG".Equals(name) ||
+"SCRIPT".Equals(name) ||
+"FRAME".Equals(name) ||
+"SOURCE".Equals(name) ||
+"TRACK".Equals(name) ||
+"IFRAME".Equals(name) ||
+"AUDIO".Equals(name) ||
+"VIDEO".Equals(name) ||
+"EMBED".Equals(name)) {
       href=node.getAttribute("src");
     } else {
  return "";
@@ -117,10 +123,9 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
             return valueElement;
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='nodes'>The parameter <paramref name='nodes'/> is not
-    /// documented yet.</param>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.ToDebugString(System.Collections.Generic.IList
+    /// {com.upokecenter.html.INode})"]/*'/>
     public static string ToDebugString(IList<INode> nodes) {
 return Document.toDebugString(nodes);
   }
@@ -216,9 +221,9 @@ return parseStream(stream, address, contentType, contentLang, false);
       IDocument docret = parser.checkError(checkError).parse();
       return docret;
     } else if (mediatype.Equals("application/xhtml+xml") ||
-        mediatype.Equals("application/xml") ||
-        mediatype.Equals("image/svg+xml") ||
-        mediatype.Equals("text/xml")) {
+mediatype.Equals("application/xml") ||
+mediatype.Equals("image/svg+xml") ||
+mediatype.Equals("text/xml")) {
         throw new NotSupportedException();
 // var parser = new XhtmlParser(stream, address, charset, contentLang);
  // return parser.parse();

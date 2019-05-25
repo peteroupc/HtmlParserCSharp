@@ -376,8 +376,9 @@ private static readonly string[] TimePatterns = new string[] { "%H:%m:%s",
       } else if (elname.Equals("abbr")) {
         string s = valueElement.getAttribute("title");
         text = (s == null) ? getTrimmedTextContent(valueElement) : s;
-      } else if (elname.Equals("del") || elname.Equals("ins") ||
-        elname.Equals("time")) {
+      } else if (elname.Equals("del") ||
+elname.Equals("ins") ||
+elname.Equals("time")) {
         string s = valueElement.getAttribute("datetime");
         if (StringUtility.isNullOrSpaces(s)) {
           s = valueElement.getAttribute("title");
@@ -405,14 +406,19 @@ private static readonly string[] TimePatterns = new string[] { "%H:%m:%s",
     private static string getHref(IElement node) {
       string name = DataUtilities.ToLowerCaseAscii(node.getLocalName());
       string href = String.Empty;
-      if ("a".Equals(name) || "link".Equals(name) || "area".Equals(name)) {
+      if ("a".Equals(name) ||
+"link".Equals(name) ||
+"area".Equals(name)) {
         href = node.getAttribute("href");
       } else if ("object".Equals(name)) {
         href = node.getAttribute("data");
-      } else if ("img".Equals(name) || "source".Equals(name) ||
-          "track".Equals(name) || "iframe".Equals(name) ||
-          "audio".Equals(name) || "video".Equals(name) ||
-          "embed".Equals(name)) {
+      } else if ("img".Equals(name) ||
+"source".Equals(name) ||
+"track".Equals(name) ||
+"iframe".Equals(name) ||
+"audio".Equals(name) ||
+"video".Equals(name) ||
+"embed".Equals(name)) {
         href = node.getAttribute("src");
       } else {
         return null;
@@ -630,11 +636,8 @@ private static readonly string[] TimePatterns = new string[] { "%H:%m:%s",
       return TrimAndCollapseSpaces(element.getTextContent());
     }
 
-    /// <summary>Gets a Microformats "u-*" value from an HTML element. It
-    /// tries to find the URL from the element's attributes, if possible;
-    /// otherwise from the element's text.</summary>
-    /// <param name='e'>An HTML element.</param>
-    /// <returns>A URL, or the empty _string if none was found.</returns>
+    /// <include file='../../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.data.Microformats.getUValue(com.upokecenter.html.IElement)"]/*'/>
     private static string getUValue(IElement e) {
       string url = getHref(e);
       if (String.IsNullOrEmpty(url)) {
@@ -673,9 +676,9 @@ private static readonly string[] TimePatterns = new string[] { "%H:%m:%s",
       // Not a value; check if this is a property
       foreach (var c in cls) {
         if (c.StartsWith("p-", StringComparison.Ordinal) ||
-            c.StartsWith("e-", StringComparison.Ordinal) ||
-            c.StartsWith("dt-", StringComparison.Ordinal) ||
-            c.StartsWith("u-", StringComparison.Ordinal)) {
+c.StartsWith("e-", StringComparison.Ordinal) ||
+c.StartsWith("dt-", StringComparison.Ordinal) ||
+c.StartsWith("u-", StringComparison.Ordinal)) {
           // don't traverse
           return;
         }

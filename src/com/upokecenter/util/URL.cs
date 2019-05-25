@@ -14,8 +14,8 @@ using PeterO;
 using PeterO.Text;
 
 namespace com.upokecenter.util {
-    /// <summary>A URL _object under the WHATWG's URL specification. See
-    /// http://url.spec.whatwg.org/.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.util.URL"]/*'/>
   public sealed class URL {
     private enum ParseState {
       SchemeStart,
@@ -354,10 +354,13 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
             } else if (c == ':') {
               url.scheme = buffer.ToString();
               buffer.Remove(0, buffer.Length);
-              if (url.scheme.Equals("http") || url.scheme.Equals("https") ||
-                  url.scheme.Equals("ftp") || url.scheme.Equals("gopher") ||
-                  url.scheme.Equals("ws") || url.scheme.Equals("wss") ||
-                  url.scheme.Equals("file")) {
+              if (url.scheme.Equals("http") ||
+url.scheme.Equals("https") ||
+url.scheme.Equals("ftp") ||
+url.scheme.Equals("gopher") ||
+url.scheme.Equals("ws") ||
+url.scheme.Equals("wss") ||
+url.scheme.Equals("file")) {
                 relative = true;
               }
               if (url.scheme.Equals("file")) {
@@ -1079,14 +1082,9 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
       return writer.ToArray();
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='pairs'>The parameter <paramref name='pairs'/> is not
-    /// documented yet.</param>
-    /// <param name='delimiter'>The parameter <paramref name='delimiter'/>
-    /// is not documented yet.</param>
-    /// <param name='encoding'>The parameter <paramref name='encoding'/> is
-    /// not documented yet.</param>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.toQueryString(System.Collections.Generic.IList
+    /// {System.String[]},System.String,System.String)"]/*'/>
     public static string toQueryString(
   IList<string[]> pairs,
   string delimiter,
@@ -1371,10 +1369,13 @@ if (this.fragment != null) {
       var builder = new StringBuilder();
       builder.Append(this.scheme);
       builder.Append(':');
-      if (this.scheme.Equals("file") || this.scheme.Equals("http") ||
-          this.scheme.Equals("https") || this.scheme.Equals("ftp") ||
-          this.scheme.Equals("gopher") || this.scheme.Equals("ws") ||
-          this.scheme.Equals("wss")) {
+      if (this.scheme.Equals("file") ||
+this.scheme.Equals("http") ||
+this.scheme.Equals("https") ||
+this.scheme.Equals("ftp") ||
+this.scheme.Equals("gopher") ||
+this.scheme.Equals("ws") ||
+this.scheme.Equals("wss")) {
         // NOTE: We check relative schemes here
         // rather than have a relative flag,
         // as specified in the URL Standard

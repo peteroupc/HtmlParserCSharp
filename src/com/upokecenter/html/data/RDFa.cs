@@ -360,7 +360,8 @@ using com.upokecenter.util;
     private IDictionary<string, RDFTerm> bnodeLabels = new
       Dictionary<string, RDFTerm>();
 
-    /// <param name='document'>An IDocument object.</param>
+    /// <include file='../../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.data.RDFa.#ctor(com.upokecenter.html.IDocument)"]/*'/>
     public RDFa(IDocument document) {
       this.document = document;
       this.parser = null;
@@ -376,8 +377,7 @@ using com.upokecenter.util;
       this.context.ValueNamespaces = new
            Dictionary<string, string>();
       this.context.ValueIriMap = new Dictionary<string, string>();
-      this.context.ValueListMap = new
-        Dictionary<string, IList<RDFTerm>>();
+      this.context.ValueListMap = new Dictionary<string, IList<RDFTerm>>();
       this.context.ValueTermMap = new Dictionary<string, string>();
       this.context.ValueIncompleteTriples = new List<IncompleteTriple>();
       this.context.ValueLanguage = null;
