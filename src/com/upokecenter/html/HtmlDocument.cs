@@ -27,6 +27,7 @@ public IDocument processResponse(string url, IReader
     /// <param name='node'>The parameter <paramref name='node'/> is not
     /// documented yet.</param>
     /// <returns>A string object.</returns>
+  ///
   public static string getHref(IElement node) {
     string name = node.getTagName();
     string href="";
@@ -64,6 +65,7 @@ public IDocument processResponse(string url, IReader
     /// <param name='href'>The parameter <paramref name='href'/> is not
     /// documented yet.</param>
     /// <returns>A string object.</returns>
+  ///
   public static string getHref(INode node, string href) {
     return (href==null || href.Length==0) ? ("") :
 
