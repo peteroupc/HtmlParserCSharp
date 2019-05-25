@@ -8,7 +8,8 @@ using com.upokecenter.html;
 using com.upokecenter.util;
 
 namespace com.upokecenter.html.data {
-    /// <summary>Not documented yet.</summary>
+    /// <include file='../../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.html.data.Microformats"]/*'/>
   public sealed class Microformats {
     private static IDictionary<string, string[]> complexLegacyMap = new
       Dictionary<string, string[]>();
@@ -16,7 +17,7 @@ namespace com.upokecenter.html.data {
     static Microformats() {
 string[] strarr;
       complexLegacyMap.Add("adr", new string[] { "p-adr", "h-adr" });
-strarr=
+strarr =
  new string[] { "p-affiliation",
   "h-card" };
       complexLegacyMap.Add(
@@ -24,13 +25,13 @@ strarr=
   strarr);
       complexLegacyMap.Add("author", new string[] { "p-author", "h-card" });
       complexLegacyMap.Add("contact", new string[] { "p-contact", "h-card" });
-strarr=
+strarr =
      new string[] { "p-education",
         "h-event" };
       complexLegacyMap.Add(
       "education",
       strarr);
-strarr=
+strarr =
        new string[] { "p-experience",
         "h-event" };
       complexLegacyMap.Add(
@@ -38,14 +39,14 @@ strarr=
         strarr);
       complexLegacyMap.Add("fn", new string[] { "p-item", "h-item", "p-name" });
       complexLegacyMap.Add("geo", new string[] { "p-geo", "h-geo" });
-strarr=
+strarr =
  new string[] { "p-location",
  "h-card",
   "h-adr" };
       complexLegacyMap.Add(
   "location",
   strarr);
-strarr=
+strarr =
       new string[] { "p-item",
  "h-item",
         "u-photo" };
@@ -233,9 +234,10 @@ string[] ret = StringUtility.SplitAtSpTabCrLfFf(element.getAttribute(
        return retList.ToArray();
     }
 
-private static readonly string[] DatePatterns=new string[] { "%Y-%M-%d",
+private static readonly string[] DatePatterns = new string[] { "%Y-%M-%d",
   "%Y-%D" };
-private static readonly string[] TimePatterns= new string[] { "%H:%m:%s",
+
+private static readonly string[] TimePatterns = new string[] { "%H:%m:%s",
   "%H:%m",
           "%H:%m:%s%Z:%z",
           "%H:%m:%s%Z%z", "%H:%m:%s%G",
@@ -464,16 +466,8 @@ private static readonly string[] TimePatterns= new string[] { "%H:%m:%s",
       return null;
     }
 
-    /// <summary>* Scans an HTML document for Microformats.org metadata.
-    /// The resulting _object will contain an "items" property, an array of
-    /// all Microformats items. Each item will have a "type" and
-    /// "properties" properties. @param root the document to scan. @return
-    /// a JSON _object containing Microformats metadata.</summary>
-    /// <param name='root'>The parameter <paramref name='root'/> is not
-    /// documented yet.</param>
-    /// <returns>A CBORObject object.</returns>
-    /// <exception cref='ArgumentNullException'>The parameter <paramref
-    /// name='root'/> is null.</exception>
+    /// <include file='../../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.data.Microformats.getMicroformatsJSON(com.upokecenter.html.IDocument)"]/*'/>
     public static CBORObject getMicroformatsJSON(IDocument root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
@@ -481,16 +475,8 @@ private static readonly string[] TimePatterns= new string[] { "%H:%m:%s",
       return getMicroformatsJSON(root.getDocumentElement());
     }
 
-    /// <summary>* Scans an HTML element for Microformats.org metadata. The
-    /// resulting _object will contain an "items" property, an array of all
-    /// Microformats items. Each item will have a "type" and "properties"
-    /// properties. @param root the element to scan. @return a JSON _object
-    /// containing Microformats metadata.</summary>
-    /// <param name='root'>The parameter <paramref name='root'/> is not
-    /// documented yet.</param>
-    /// <returns>A CBORObject object.</returns>
-    /// <exception cref='ArgumentNullException'>The parameter <paramref
-    /// name='root'/> is null.</exception>
+    /// <include file='../../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.data.Microformats.getMicroformatsJSON(com.upokecenter.html.IElement)"]/*'/>
     public static CBORObject getMicroformatsJSON(IElement root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
@@ -553,12 +539,8 @@ private static readonly string[] TimePatterns= new string[] { "%H:%m:%s",
                root.getAttribute("alt") : getValueContent(root, false);
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='root'>The parameter <paramref name='root'/> is not
-    /// documented yet.</param>
-    /// <returns>A CBORObject object.</returns>
-    /// <exception cref='ArgumentNullException'>The parameter <paramref
-    /// name='root'/> is null.</exception>
+    /// <include file='../../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.data.Microformats.getRelJSON(com.upokecenter.html.IDocument)"]/*'/>
     public static CBORObject getRelJSON(IDocument root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
@@ -566,12 +548,8 @@ private static readonly string[] TimePatterns= new string[] { "%H:%m:%s",
       return getRelJSON(root.getDocumentElement());
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='root'>The parameter <paramref name='root'/> is not
-    /// documented yet.</param>
-    /// <returns>A CBORObject object.</returns>
-    /// <exception cref='ArgumentNullException'>The parameter <paramref
-    /// name='root'/> is null.</exception>
+    /// <include file='../../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.data.Microformats.getRelJSON(com.upokecenter.html.IElement)"]/*'/>
     public static CBORObject getRelJSON(IElement root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
@@ -654,11 +632,9 @@ private static readonly string[] TimePatterns= new string[] { "%H:%m:%s",
 
     /// <summary>Gets a Microformats "u-*" value from an HTML element. It
     /// tries to find the URL from the element's attributes, if possible;
-    /// otherwise from the element's text. @param e an HTML element.
-    /// @return a URL, or the empty _string if none was found.</summary>
-    /// <param name='e'>The parameter <paramref name='e'/> is not
-    /// documented yet.</param>
-    /// <returns>A string object.</returns>
+    /// otherwise from the element's text.</summary>
+    /// <param name='e'>An HTML element.</param>
+    /// <returns>A URL, or the empty _string if none was found.</returns>
     private static string getUValue(IElement e) {
       string url = getHref(e);
       if (String.IsNullOrEmpty(url)) {

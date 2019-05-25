@@ -9,10 +9,11 @@ at: http://peteroupc.github.io/
 using System;
 
 namespace com.upokecenter.util {
-    /// <summary>Not documented yet.</summary>
-    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.util.IBoundAction`1"]/*'/>
 public interface IBoundAction<T> {
-    /// <summary>Not documented yet.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.IBoundAction`1.action(System.Object,`0[])"]/*'/>
    void action(Object thisObject, params T[] parameters);
 }
 }

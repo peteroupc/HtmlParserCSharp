@@ -1,30 +1,27 @@
 using System;
 
 namespace com.upokecenter.html {
-    /// <summary>Represents one of the attributes within an HTML
-    /// element.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.html.IAttr"]/*'/>
 public interface IAttr {
-    /// <summary>Gets the attribute name's local name (the part after the
-    /// colon, if it's bound to a _namespace).</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IAttr.getLocalName"]/*'/>
    string getLocalName();
 
-    /// <summary>Gets the attribute's qualified name.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IAttr.getName"]/*'/>
    string getName();
 
-    /// <summary>Gets the attribute's _namespace URI, if it's bound to a
-    /// _namespace.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IAttr.getNamespaceURI"]/*'/>
    string getNamespaceURI();
 
-    /// <summary>Gets the attribute name's prefix (the part before the
-    /// colon, if it's bound to a _namespace).</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IAttr.getPrefix"]/*'/>
    string getPrefix();
 
-    /// <summary>Gets the attribute's value.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IAttr.getValue"]/*'/>
    string getValue();
 }
 }

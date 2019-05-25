@@ -11,15 +11,13 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace com.upokecenter.util {
-    /// <summary>Contains utility methods for working with strings. @author
-    /// Peter.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.util.StringUtility"]/*'/>
 public static class StringUtility {
   private static readonly string[] ValueEmptyStringArray = new string[0];
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='s'>The parameter <paramref name='s'/> is not
-    /// documented yet.</param>
-    /// <returns>A Boolean object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.StringUtility.isNullOrSpaces(System.String)"]/*'/>
   public static bool isNullOrSpaces(string s) {
     if (s == null) {
  return true;
@@ -36,18 +34,8 @@ public static class StringUtility {
     return true;
   }
 
-    /// <summary>Splits a _string by a delimiter. If the _string ends with
-    /// the delimiter, the result will end with an empty _string. If the
-    /// _string begins with the delimiter, the result will start with an
-    /// empty _string. If the delimiter is null or empty, exception. @param
-    /// s a _string to split. @param delimiter a _string to signal where
-    /// each substring begins and ends. @return An array containing strings
-    /// that are split by the delimiter. If s is null or empty, returns an
-    /// array whose sole element is the empty _string.</summary>
-    /// <returns>A string[] object.</returns>
-    /// <exception cref='ArgumentNullException'>The parameter <paramref
-    /// name='delimiter'/> is null.</exception>
-    /// <exception cref='ArgumentException'>Delimiter is empty.</exception>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.StringUtility.splitAt(System.String,System.String)"]/*'/>
       public static string[] splitAt(string str, string delimiter) {
       if (delimiter == null) {
         throw new ArgumentNullException(nameof(delimiter));
@@ -84,16 +72,8 @@ public static class StringUtility {
       return (string[])strings.ToArray();
     }
 
-    /// <summary>Splits a _string separated by space characters other than
-    /// form feed. This method acts as though it strips leading and
-    /// trailing space characters from the _string before splitting it. The
-    /// space characters used here are U + 0009, U + 000A, U + 000D, and U
-    /// + 0020. @param s a _string. Can be null. @return an array of all
-    /// items separated by spaces. If _string is null or empty, returns an
-    /// empty array.</summary>
-    /// <param name='s'>The parameter <paramref name='s'/> is not
-    /// documented yet.</param>
-    /// <returns>A string[] object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.StringUtility.SplitAtSpTabCrLf(System.String)"]/*'/>
   public static string[] SplitAtSpTabCrLf(string s) {
     if (s == null || s.Length == 0) {
  return ValueEmptyStringArray;
@@ -136,16 +116,8 @@ public static class StringUtility {
     return strings.ToArray();
   }
 
-    /// <summary>Splits a _string separated by space characters. This
-    /// method acts as though it strips leading and trailing space
-    /// characters from the _string before splitting it. The space
-    /// characters are U + 0009, U + 000A, U + 000C, U + 000D, and U +
-    /// 0020. @param s a _string. Can be null. @return an array of all
-    /// items separated by spaces. If _string is null or empty, returns an
-    /// empty array.</summary>
-    /// <param name='s'>The parameter <paramref name='s'/> is not
-    /// documented yet.</param>
-    /// <returns>A string[] object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.StringUtility.SplitAtSpTabCrLfFf(System.String)"]/*'/>
   public static string[] SplitAtSpTabCrLfFf(string s) {
     if (s == null || s.Length == 0) {
  return ValueEmptyStringArray;

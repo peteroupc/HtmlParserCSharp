@@ -30,8 +30,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 namespace com.upokecenter.net {
-    /// <summary>* Contains methods useful for parsing header
-    /// fields.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.net.HeaderParser"]/*'/>
   public sealed class HeaderParser {
     internal enum QuotedStringRule {
       Http,

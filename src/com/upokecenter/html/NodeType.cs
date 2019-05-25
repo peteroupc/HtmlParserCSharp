@@ -28,25 +28,31 @@ THE SOFTWARE.
 using System;
 
 namespace com.upokecenter.html {
-    /// <summary>* Contains constants for node types. @author
-    /// Peter.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.html.NodeType"]/*'/>
 public sealed class NodeType {
-    /// <summary>A document node.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="F:com.upokecenter.html.NodeType.DOCUMENT_NODE"]/*'/>
   public const int DOCUMENT_NODE = 9;
 
-    /// <summary>A comment node.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="F:com.upokecenter.html.NodeType.COMMENT_NODE"]/*'/>
   public const int COMMENT_NODE = 8;
 
-    /// <summary>An HTML element node.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="F:com.upokecenter.html.NodeType.ELEMENT_NODE"]/*'/>
   public const int ELEMENT_NODE = 1;
 
-    /// <summary>A node containing text.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="F:com.upokecenter.html.NodeType.TEXT_NODE"]/*'/>
   public const int TEXT_NODE = 3;
 
-    /// <summary>A DOCTYPE node.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="F:com.upokecenter.html.NodeType.DOCUMENT_TYPE_NODE"]/*'/>
   public const int DOCUMENT_TYPE_NODE = 10;
 
-    /// <summary>Not documented yet.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="F:com.upokecenter.html.NodeType.PROCESSING_INSTRUCTION_NODE"]/*'/>
   public const int PROCESSING_INSTRUCTION_NODE = 7;
 
   private NodeType() {

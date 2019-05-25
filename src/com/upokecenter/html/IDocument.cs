@@ -31,35 +31,28 @@ THE SOFTWARE.
 namespace com.upokecenter.html {
 /// <summary>* Represents an HTML document.</summary>
 public interface IDocument : INode {
-    /// <summary>* Gets the character encoding used in this document.
-    /// @return A character encoding name.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IDocument.getCharset"]/*'/>
   string getCharset();
 
-    /// <summary>* Gets the document type of this document, if
-    /// any.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IDocument.getDoctype"]/*'/>
    IDocumentType getDoctype();
 
-    /// <summary>* Gets the root element of this document.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IDocument.getDocumentElement"]/*'/>
    IElement getDocumentElement();
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='id'>Not documented yet.</param>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IDocument.getElementById(System.String)"]/*'/>
   IElement getElementById(string id);
 
-    /// <summary>* Gets all descendents, both direct and indirect, that
-    /// have the specified tag name, using ASCII case-insensitive matching.
-    /// @param _string A tag name.</summary>
-    /// <param name='_string'>Not documented yet.</param>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IDocument.getElementsByTagName(System.String)"]/*'/>
   IList<IElement> getElementsByTagName(string _string);
 
-    /// <summary>Gets the document's address @return An absolute
-    /// URL.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IDocument.getURL"]/*'/>
   string getURL();
 }
 }

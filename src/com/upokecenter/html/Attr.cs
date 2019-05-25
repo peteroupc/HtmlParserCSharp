@@ -155,9 +155,8 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
     }
   }
 
-    /// <summary>NOTE: Set after setNamespace, or it may be overwritten
-    /// @param attrprefix.</summary>
-    /// <param name='attrprefix'>A string object.</param>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.Attr.setPrefix(System.String)"]/*'/>
   public void setPrefix(string attrprefix) {
     this.valuePrefix = attrprefix;
   }

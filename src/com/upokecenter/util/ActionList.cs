@@ -10,27 +10,22 @@ using System;
 using System.Collections.Generic;
 
 namespace com.upokecenter.util {
-    /// <summary>A class for holding tasks that can be referred to by
-    /// integer index.</summary>
-    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.util.ActionList`1"]/*'/>
 public sealed class ActionList<T> {
   private IList<IBoundAction<T>> actions;
   private IList<Object> boundObjects;
   private IList<T[]> postponeCall;
   private Object syncRoot = new Object();
 
-    /// <summary>Initializes a new instance of the ActionList
-    /// class.</summary>
   public ActionList() {
     this.actions = new List<IBoundAction<T>>();
     this.boundObjects = new List<Object>();
     this.postponeCall = new List<T[]>();
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='actionID'>Not documented yet.</param>
-    /// <param name='boundObject'>Not documented yet.</param>
-    /// <returns>A Boolean object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.ActionList`1.rebindAction(System.Int32,System.Object)"]/*'/>
   public bool rebindAction(int actionID, Object boundObject) {
     // DebugUtility.Log("Rebinding action %d",actionID);
     IBoundAction<T> action = null;
@@ -61,10 +56,8 @@ public sealed class ActionList<T> {
     return true;
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='boundObject'>Not documented yet.</param>
-    /// <param name='action'>Not documented yet.</param>
-    /// <returns>A 32-bit signed integer.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.ActionList`1.registerAction(System.Object,com.upokecenter.util.IBoundAction{`0})"]/*'/>
   public int registerAction(Object boundObject, IBoundAction<T> action) {
     lock (this.syncRoot) {
       for (int i = 0; i < this.actions.Count; ++i) {
@@ -85,9 +78,8 @@ public sealed class ActionList<T> {
     }
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='actionID'>Not documented yet.</param>
-    /// <returns>A Boolean object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.ActionList`1.removeAction(System.Int32)"]/*'/>
   public bool removeAction(int actionID) {
     // DebugUtility.Log("Removing action %d",actionID);
     if (actionID < 0) {
@@ -104,10 +96,8 @@ public sealed class ActionList<T> {
     return true;
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='actionID'>Not documented yet.</param>
-    /// <param name='parameters'>Not documented yet.</param>
-    /// <returns>A Boolean object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.ActionList`1.triggerActionOnce(System.Int32,`0[])"]/*'/>
   public bool triggerActionOnce(int actionID, params T[] parameters) {
     // DebugUtility.Log("Triggering action %d",actionID);
     IBoundAction<T> action = null;
@@ -137,9 +127,8 @@ public sealed class ActionList<T> {
     return true;
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='actionID'>Not documented yet.</param>
-    /// <returns>A Boolean object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.ActionList`1.unbindAction(System.Int32)"]/*'/>
   public bool unbindAction(int actionID) {
     // DebugUtility.Log("Unbinding action %d",actionID);
     IBoundAction<T> action = null;

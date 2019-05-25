@@ -14,8 +14,8 @@ using PeterO;
 using PeterO.Text;
 
 namespace com.upokecenter.util {
-    /// <summary>* A URL _object under the WHATWG's URL specification. See
-    /// http://url.spec.whatwg.org/ @author Peter.</summary>
+    /// <summary>A URL _object under the WHATWG's URL specification. See
+    /// http://url.spec.whatwg.org/.</summary>
   public sealed class URL {
     private enum ParseState {
       SchemeStart,
@@ -214,43 +214,26 @@ namespace com.upokecenter.util {
          true : false;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='s'>The parameter <paramref name='s'/> is not
-    /// documented yet.</param>
-    /// <returns>An URL object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.parse(System.String)"]/*'/>
     public static URL parse(string s) {
       return parse(s, null, null, false);
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='s'>The parameter <paramref name='s'/> is not
-    /// documented yet.</param>
-    /// <param name='baseurl'>The parameter <paramref name='baseurl'/> is
-    /// not documented yet.</param>
-    /// <returns>An URL object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.parse(System.String,com.upokecenter.util.URL)"]/*'/>
     public static URL parse(string s, URL baseurl) {
       return parse(s, baseurl, null, false);
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='s'>The parameter <paramref name='s'/> is not
-    /// documented yet.</param>
-    /// <param name='baseurl'>The parameter <paramref name='baseurl'/> is
-    /// not documented yet.</param>
-    /// <param name='encoding'>Not documented yet. (3).</param>
-    /// <returns>An URL object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.parse(System.String,com.upokecenter.util.URL,System.String)"]/*'/>
     public static URL parse(string s, URL baseurl, string encoding) {
       return parse(s, baseurl, encoding, false);
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='s'>The parameter <paramref name='s'/> is not
-    /// documented yet.</param>
-    /// <param name='baseurl'>The parameter <paramref name='baseurl'/> is
-    /// not documented yet.</param>
-    /// <param name='encoding'>Not documented yet. (3).</param>
-    /// <param name='strict'>Not documented yet. (4).</param>
-    /// <returns>An URL object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.parse(System.String,com.upokecenter.util.URL,System.String,System.Boolean)"]/*'/>
  public static URL parse(
   string s,
   URL baseurl,
@@ -908,15 +891,8 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
       return url;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='input'>The parameter <paramref name='input'/> is not
-    /// documented yet.</param>
-    /// <param name='delimiter'>The parameter <paramref name='delimiter'/>
-    /// is not documented yet.</param>
-    /// <param name='encoding'>Not documented yet. (3).</param>
-    /// <param name='useCharset'>Not documented yet. (4).</param>
-    /// <param name='isindex'>Not documented yet. (5).</param>
-    /// <returns>An IList(string[]) object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.parseQueryString(System.String,System.String,System.String,System.Boolean,System.Boolean)"]/*'/>
     public static IList<string[]> parseQueryString(
         string input,
         string delimiter,
@@ -969,10 +945,8 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
       return pairs;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='s'>The parameter <paramref name='s'/> is not
-    /// documented yet.</param>
-    /// <returns>An IList(string) object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.pathList(System.String)"]/*'/>
     public static IList<string> pathList(string s) {
       IList<string> str = new List<string>();
       if (s == null || s.Length == 0) {
@@ -1067,16 +1041,8 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
       }
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='input'>The parameter <paramref name='input'/> is not
-    /// documented yet.</param>
-    /// <param name='encoder'>The parameter <paramref name='encoder'/> is
-    /// not documented yet.</param>
-    /// <returns>A byte array.</returns>
-    /// <exception cref='ArgumentNullException'>The parameter <paramref
-    /// name='encoder'/> or <paramref name='input'/> is null.</exception>
-    /// <exception cref='ArgumentException'>Code point out of
-    /// range.</exception>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.EncodeToBytesHtml(PeterO.Text.ICharacterInput,PeterO.Text.ICharacterEncoder)"]/*'/>
     public static byte[] EncodeToBytesHtml(
   PeterO.Text.ICharacterInput input,
   ICharacterEncoder encoder) {
@@ -1118,7 +1084,8 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
     /// documented yet.</param>
     /// <param name='delimiter'>The parameter <paramref name='delimiter'/>
     /// is not documented yet.</param>
-    /// <param name='encoding'>Not documented yet. (3).</param>
+    /// <param name='encoding'>The parameter <paramref name='encoding'/> is
+    /// not documented yet.</param>
     /// <returns>A string object.</returns>
     public static string toQueryString(
   IList<string[]> pairs,
@@ -1175,10 +1142,8 @@ appendOutputBytes(objectTemp, objectTemp2);
 
     private string port = String.Empty;
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='obj'>The parameter <paramref name='obj'/> is not
-    /// documented yet.</param>
-    /// <returns>A Boolean object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.Equals(System.Object)"]/*'/>
     public override bool Equals(object obj) {
       if (this == obj) {
         return true;
@@ -1256,46 +1221,46 @@ appendOutputBytes(objectTemp, objectTemp2);
       return true;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getFragment"]/*'/>
     public string getFragment() {
       return this.fragment ?? String.Empty;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getHash"]/*'/>
     public string getHash() {
       return String.IsNullOrEmpty(this.fragment) ? String.Empty : "#" +
         this.fragment;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getHost"]/*'/>
     public string getHost() {
       return (this.port.Length == 0) ? hostSerialize(this.host) :
         (hostSerialize(this.host) + ":" + this.port);
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getHostname"]/*'/>
     public string getHostname() {
       return hostSerialize(this.host);
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getPassword"]/*'/>
     public string getPassword() {
       return this.password == null ? String.Empty : this.password;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getPath"]/*'/>
     public string getPath() {
       return this.path;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getPathname"]/*'/>
     public string getPathname() {
       if (this.schemeData.Length > 0) {
         return this.schemeData;
@@ -1304,51 +1269,51 @@ appendOutputBytes(objectTemp, objectTemp2);
       }
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getPort"]/*'/>
     public string getPort() {
       return this.port;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getProtocol"]/*'/>
     public string getProtocol() {
       return this.scheme + ":";
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getQueryString"]/*'/>
     public string getQueryString() {
       return this.query == null ? String.Empty : this.query;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getScheme"]/*'/>
     public string getScheme() {
       return this.scheme;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getSchemeData"]/*'/>
     public string getSchemeData() {
       return this.schemeData;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getSearch"]/*'/>
     public string getSearch() {
       return (this.query == null || this.query.Length == 0) ? String.Empty :
         "?" + this.query;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>A string object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getUsername"]/*'/>
     public string getUsername() {
       return this.username == null ? String.Empty : this.username;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.GetHashCode"]/*'/>
     public override sealed int GetHashCode() {
       var prime = 31;
       var result = 17;
@@ -1400,8 +1365,8 @@ if (this.fragment != null) {
             return result;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.ToString"]/*'/>
     public override sealed string ToString() {
       var builder = new StringBuilder();
       builder.Append(this.scheme);

@@ -1,14 +1,15 @@
 using System;
 
 namespace com.upokecenter.html {
-    /// <summary>Not documented yet.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.html.IProcessingInstruction"]/*'/>
 public interface IProcessingInstruction : INode {
-    /// <summary>Not documented yet.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IProcessingInstruction.getData"]/*'/>
    string getData();
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IProcessingInstruction.getTarget"]/*'/>
    string getTarget();
 }
 }

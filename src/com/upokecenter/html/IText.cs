@@ -28,11 +28,11 @@ THE SOFTWARE.
 using System;
 
 namespace com.upokecenter.html {
-    /// <summary>* Represents text within an HTML document. @author
-    /// Peter.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.html.IText"]/*'/>
 public interface IText : INode {
-    /// <summary>* Gets this node's text.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IText.getData"]/*'/>
    string getData();
 }
 }

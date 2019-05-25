@@ -6,7 +6,8 @@ using com.upokecenter.net;
 using com.upokecenter.util;
 
 namespace com.upokecenter.html {
-    /// <summary>Not documented yet.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.html.HtmlDocument"]/*'/>
 public static class HtmlDocument {
     /*
   private sealed class ParseURLListener : IResponseListener<IDocument> {
@@ -67,19 +68,15 @@ public IDocument processResponse(string url, IReader
   }
     */
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='str'>Not documented yet.</param>
-    /// <returns>An IDocument object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.FromString(System.String)"]/*'/>
     public static IDocument FromString(string str) {
       byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
       return parseStream(DataIO.ToReader(bytes));
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='str'>Not documented yet.</param>
-    /// <param name='state'>Not documented yet.</param>
-    /// <param name='lst'>Not documented yet. (3).</param>
-    /// <returns>An IList(string[]) object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.ParseTokens(System.String,System.String,System.String)"]/*'/>
    public static IList<string[]> ParseTokens(
   string str,
   string state,
@@ -95,18 +92,15 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
   return parser.parseTokens(state, lst);
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='str'>Not documented yet.</param>
-    /// <param name='checkError'>A Boolean object.</param>
-    /// <returns>An IDocument object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.FromString(System.String,System.Boolean)"]/*'/>
     public static IDocument FromString(string str, bool checkError) {
       byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
       return parseStream(DataIO.ToReader(bytes), checkError);
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='name'>Not documented yet.</param>
-    /// <returns>An IElement object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.CreateHtmlElement(System.String)"]/*'/>
   public static IElement CreateHtmlElement(string name) {
        var valueElement = new Element();
             valueElement.setLocalName(name);
@@ -114,10 +108,8 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
             return valueElement;
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='name'>Not documented yet.</param>
-    /// <param name='namespaceName'>Not documented yet.</param>
-    /// <returns>An IElement object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.CreateElement(System.String,System.String)"]/*'/>
   public static IElement CreateElement(string name, string namespaceName) {
        var valueElement = new Element();
             valueElement.setLocalName(name);
@@ -126,27 +118,23 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
   }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='nodes'>Not documented yet.</param>
+    /// <param name='nodes'>The parameter <paramref name='nodes'/> is not
+    /// documented yet.</param>
     /// <returns>A string object.</returns>
     public static string ToDebugString(IList<INode> nodes) {
 return Document.toDebugString(nodes);
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='str'>Not documented yet.</param>
-    /// <param name='context'>Not documented yet.</param>
-    /// <returns>An IList(INode) object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.FragmentFromString(System.String,com.upokecenter.html.IElement)"]/*'/>
   public static IList<INode> FragmentFromString(
   string str,
   IElement context) {
 return FragmentFromString(str, context, false);
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='str'>Not documented yet.</param>
-    /// <param name='context'>Not documented yet.</param>
-    /// <param name='checkError'>Not documented yet. (3).</param>
-    /// <returns>An IList(INode) object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.FragmentFromString(System.String,com.upokecenter.html.IElement,System.Boolean)"]/*'/>
     public static IList<INode> FragmentFromString(
   string str,
   IElement context,
@@ -163,39 +151,28 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
       return ret;
     }
 
-    /// <summary>Parses an HTML document from an input stream, using
-    /// "about:blank" as its address. @param stream an input stream @ if an
-    /// I/O error occurs.</summary>
-    /// <param name='stream'>The parameter <paramref name='stream'/> is not
-    /// documented yet.</param>
-    /// <returns>An IDocument object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader)"]/*'/>
   public static IDocument parseStream(IReader stream) {
     return parseStream(stream, "about:blank");
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='stream'>Not documented yet.</param>
-    /// <param name='checkError'>Not documented yet.</param>
-    /// <returns>An IDocument object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.Boolean)"]/*'/>
   public static IDocument parseStream(IReader stream, bool checkError) {
     return parseStream(stream, "about:blank", "text/html", null, checkError);
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='stream'>Not documented yet.</param>
-    /// <param name='address'>Not documented yet.</param>
-    /// <returns>An IDocument object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String)"]/*'/>
   public static IDocument parseStream(
       IReader stream,
       string address) {
     return parseStream(stream, address, "text/html");
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='stream'>Not documented yet.</param>
-    /// <param name='address'>Not documented yet.</param>
-    /// <param name='contentType'>Not documented yet. (3).</param>
-    /// <returns>An IDocument object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String)"]/*'/>
   public static IDocument parseStream(
       IReader stream,
       string address,
@@ -203,12 +180,8 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
     return parseStream(stream, address, contentType, null);
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='stream'>Not documented yet.</param>
-    /// <param name='address'>Not documented yet.</param>
-    /// <param name='contentType'>Not documented yet. (3).</param>
-    /// <param name='contentLang'>Not documented yet. (4).</param>
-    /// <returns>An IDocument object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String,System.String)"]/*'/>
   public static IDocument parseStream(
       IReader stream,
       string address,
@@ -217,28 +190,8 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
 return parseStream(stream, address, contentType, contentLang, false);
   }
 
-    /// <summary>* Parses an HTML document from an input stream, using the
-    /// given URL as its address. @param stream an input stream
-    /// representing an HTML document. @param address an absolute URL
-    /// representing an address. @param contentType Desired MIME media type
-    /// of the document, including the charset parameter, if any. Examples:
-    /// "text/html" or "application/xhtml+xml; charset=utf-8". @param
-    /// contentLang Language tag from the Content-Language header @return
-    /// an IDocument representing the HTML document. @ if an I/O error
-    /// occurs @ if the given address is not an absolute URL.</summary>
-    /// <param name='stream'>The parameter <paramref name='stream'/> is not
-    /// documented yet.</param>
-    /// <param name='address'>The parameter <paramref name='address'/> is
-    /// not documented yet.</param>
-    /// <param name='contentType'>The parameter <paramref
-    /// name='contentType'/> is not documented yet.</param>
-    /// <param name='contentLang'>The parameter <paramref
-    /// name='contentLang'/> is not documented yet.</param>
-    /// <param name='checkError'>A Boolean object.</param>
-    /// <returns>An IDocument object.</returns>
-    /// <exception cref='ArgumentNullException'>The parameter <paramref
-    /// name='stream'/> or <paramref name='address'/> or <paramref
-    /// name='contentType'/> is null.</exception>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String,System.String,System.Boolean)"]/*'/>
   public static IDocument parseStream(
       IReader stream,
       string address,

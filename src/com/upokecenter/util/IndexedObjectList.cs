@@ -10,8 +10,8 @@ using System;
 using System.Collections.Generic;
 
 namespace com.upokecenter.util {
-    /// <summary>Not documented yet.</summary>
-    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.util.IndexedObjectList`1"]/*'/>
 public sealed class IndexedObjectList<T> {
   private IList<T> strongrefs = new List<T>();
   private IList<WeakReference> weakrefs = new List<WeakReference>();
@@ -21,9 +21,8 @@ public sealed class IndexedObjectList<T> {
   // reference; the index becomes no good when the
   // _object is garbage collected
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='index'>Not documented yet.</param>
-    /// <returns>A T object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.IndexedObjectList`1.receiveObject(System.Int32)"]/*'/>
   public T receiveObject(int index) {
     if (index < 0) {
  return default(T);
@@ -44,9 +43,8 @@ public sealed class IndexedObjectList<T> {
 
   // Keep a strong reference and a weak reference
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='value'>Not documented yet.</param>
-    /// <returns>A 32-bit signed integer.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.IndexedObjectList`1.sendObject(`0)"]/*'/>
   public int sendObject(T value) {
     if (value == null) {
  return -1;  // Special case for null

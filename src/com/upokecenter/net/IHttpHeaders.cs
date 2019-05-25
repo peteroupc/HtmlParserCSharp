@@ -28,41 +28,39 @@ using System;
 using System.Collections.Generic;
 
 namespace com.upokecenter.net {
-    /// <summary>Not documented yet.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.net.IHttpHeaders"]/*'/>
 public interface IHttpHeaders {
-    /// <summary>Not documented yet.</summary>
-    /// <param name='name'>Not documented yet.</param>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.net.IHttpHeaders.getHeaderField(System.Int32)"]/*'/>
    string getHeaderField(int name);
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='name'>Not documented yet.</param>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.net.IHttpHeaders.getHeaderField(System.String)"]/*'/>
    string getHeaderField(string name);
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.net.IHttpHeaders.getHeaderFieldDate(System.String,System.Int64)"]/*'/>
    long getHeaderFieldDate(string field, long defaultValue);
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='name'>Not documented yet.</param>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.net.IHttpHeaders.getHeaderFieldKey(System.Int32)"]/*'/>
    string getHeaderFieldKey(int name);
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.net.IHttpHeaders.getHeaderFields"]/*'/>
    IDictionary<string, IList<string>> getHeaderFields();
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.net.IHttpHeaders.getRequestMethod"]/*'/>
    string getRequestMethod();
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.net.IHttpHeaders.getResponseCode"]/*'/>
    int getResponseCode();
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.net.IHttpHeaders.getUrl"]/*'/>
    string getUrl();
 }
 }

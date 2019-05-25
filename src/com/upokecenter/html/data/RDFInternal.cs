@@ -5,15 +5,8 @@ using PeterO.Rdf;
 
 namespace com.upokecenter.html.data {
 sealed class RDFInternal {
-    /// <summary>Replaces certain blank nodes with blank nodes whose names
-    /// meet the N-Triples requirements @param triples A set of RDF triples
-    /// @param bnodeLabels A mapping of blank node names already allocated.
-    /// This method will modify this _object as needed to allocate new
-    /// blank nodes.</summary>
-    /// <param name='triples'>The parameter <paramref name='triples'/> is
-    /// not documented yet.</param>
-    /// <param name='bnodeLabels'>The parameter <paramref
-    /// name='bnodeLabels'/> is not documented yet.</param>
+    /// <include file='../../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.data.RDFInternal.replaceBlankNodes(System.Collections.Generic.ISet{PeterO.Rdf.RDFTriple},System.Collections.Generic.IDictionary{System.String,PeterO.Rdf.RDFTerm})"]/*'/>
   internal static void replaceBlankNodes(
   ISet<RDFTriple> triples,
       IDictionary<string, RDFTerm> bnodeLabels) {

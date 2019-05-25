@@ -9,11 +9,11 @@ at: http://peteroupc.github.io/
 using System;
 
 namespace com.upokecenter.util {
-    /// <summary>Not documented yet.</summary>
-    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.util.IAction`1"]/*'/>
 public interface IAction<T> {
-    /// <summary>Does an arbitrary action. @param parameters An array of
-    /// parameters that the action accepts.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.IAction`1.action(`0[])"]/*'/>
    void action(params T[] parameters);
 }
 }

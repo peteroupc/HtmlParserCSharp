@@ -157,8 +157,7 @@ namespace com.upokecenter.html.data {
       }
   this.context.ValueParentSubject = RDFTerm.fromIRI(this.context.ValueBaseURI);
       this.context.ValueParentObject = null;
-      this.context.ValueIriMap = new Dictionary<string,
-          string>();
+      this.context.ValueIriMap = new Dictionary<string, string>();
       this.context.ValueListMap = new
         Dictionary<string, IList<RDFTerm>>();
       this.context.ValueIncompleteTriples = new List<RDFa.IncompleteTriple>();
@@ -434,11 +433,9 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
       var skipElement = false;
       RDFTerm currentObject = null;
       IDictionary<string, string> namespacesLocal =
-        new Dictionary<string,
-            string>(this.context.ValueNamespaces);
+        new Dictionary<string, string>(this.context.ValueNamespaces);
       IDictionary<string, string> iriMapLocal =
-       new Dictionary<string,
-            string>(this.context.ValueIriMap);
+       new Dictionary<string, string>(this.context.ValueIriMap);
       string attr = null;
       if (!this.xhtml) {
         attr = node.getAttribute("xml:base");

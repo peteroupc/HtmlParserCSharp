@@ -10,7 +10,8 @@ using System;
 using System.Globalization;
 using System.Text;
 namespace com.upokecenter.util {
-    /// <summary>Represents a list of integers or Unicode characters.</summary>
+    /// <summary>Represents a list of integers or Unicode
+    /// characters.</summary>
 public sealed class IntList {
   int[] buffer;
   int ptr;

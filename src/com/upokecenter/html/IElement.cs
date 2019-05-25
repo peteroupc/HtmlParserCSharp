@@ -29,74 +29,51 @@ using System;
 using System.Collections.Generic;
 
 namespace com.upokecenter.html {
-    /// <summary>Represents an HTML element.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.html.IElement"]/*'/>
 public interface IElement : INode {
-    /// <summary>* Gets an attribute declared on this element. @param name
-    /// an attribute name. @return the attribute's value, or null if the
-    /// attribute doesn't exist.</summary>
-    /// <param name='name'>Not documented yet.</param>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IElement.getAttribute(System.String)"]/*'/>
   string getAttribute(string name);
 
-    /// <summary>* Gets an attribute of this element, with the given
-    /// _namespace name and local name. @param _namespace the attribute's
-    /// _namespace name. @param name the attribute's local name. @return
-    /// the attribute's value, or null if the attribute doesn't
-    /// exist.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IElement.getAttributeNS(System.String,System.String)"]/*'/>
   string getAttributeNS(string _namespace, string name);
 
-    /// <summary>Gets a list of all attributes declared on this
-    /// element.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IElement.getAttributes"]/*'/>
   IList<IAttr> getAttributes();
 
-    /// <summary>Gets all descendents, both direct and indirect, that have
-    /// the specified id, using case-sensitive matching. @param
-    /// id.</summary>
-    /// <param name='id'>Not documented yet.</param>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IElement.getElementById(System.String)"]/*'/>
   IElement getElementById(string id);
 
-    /// <summary>* Gets all descendents, both direct and indirect, that
-    /// have the specified tag name, using ASCII case-insensitive matching.
-    /// @param tagName A tag name.</summary>
-    /// <param name='tagName'>Not documented yet.</param>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IElement.getElementsByTagName(System.String)"]/*'/>
   IList<IElement> getElementsByTagName(string tagName);
 
-    /// <summary>Gets the value of the id attribute on this element.
-    /// @return the value of the id attribute, or null if it doesn't
-    /// exist.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IElement.getId"]/*'/>
   string getId();
 
-    /// <summary>Gets a serialized form of this HTML element. @return a
-    /// _string consisting of the serialized form of this element's
-    /// children, in HTML.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IElement.getInnerHTML"]/*'/>
   string getInnerHTML();
 
-    /// <summary>* Gets the element's local name. For elements with no
-    /// _namespace, this will equal the element's tag name. @return the
-    /// element's local name. This method doesn't convert it to uppercase
-    /// even for HTML elements, unlike getTagName.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IElement.getLocalName"]/*'/>
   string getLocalName();
 
-    /// <summary>* Gets the _namespace name of this element. For HTML
-    /// elements, it will equal "http://www.w3.org/1999/xhtml".</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IElement.getNamespaceURI"]/*'/>
   string getNamespaceURI();
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IElement.getPrefix"]/*'/>
   string getPrefix();
 
-    /// <summary>* Gets the name of the element as used on its HTML tags.
-    /// @return the element's tag name. For HTML elements, an uppercase
-    /// version of the name will be returned.</summary>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.IElement.getTagName"]/*'/>
   string getTagName();
 }
 }

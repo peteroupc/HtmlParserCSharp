@@ -6,8 +6,8 @@ using com.upokecenter.html;
 using com.upokecenter.util;
 
 namespace com.upokecenter.html.data {
-    /// <summary>* Implements Exclusive XML Canonicalization as specified
-    /// at: http://www.w3.org/TR/xml-exc-c14n/ @author Peter.</summary>
+    /// <summary>Implements Exclusive XML Canonicalization as specified at:
+    /// http://www.w3.org/TR/xml-exc-c14n/.</summary>
 sealed class ExclusiveCanonicalXML {
   private sealed class AttrComparer : IComparer<IAttr> {
     public int Compare(IAttr arg0, IAttr arg1) {
@@ -100,8 +100,7 @@ sealed class ExclusiveCanonicalXML {
     var builder = new StringBuilder();
 IList<IDictionary<string, string>> stack = new
       List<IDictionary<string, string>>();
-    prefixList = prefixList ?? (new Dictionary<string,
-      string>());
+    prefixList = prefixList ?? (new Dictionary<string, string>());
       foreach (var valuePrefix in prefixList.Keys) {
         string nsvalue = prefixList[valuePrefix];
         checkNamespacePrefix(valuePrefix, nsvalue);

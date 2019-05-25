@@ -43,11 +43,9 @@ using com.upokecenter.util;
         ec.ValueIncompleteTriples = new
           List<IncompleteTriple>(this.ValueIncompleteTriples);
         ec.ValueListMap = (this.ValueListMap == null) ? null : new
-   Dictionary<string,
-            IList<RDFTerm>>(this.ValueListMap);
+   Dictionary<string, IList<RDFTerm>>(this.ValueListMap);
         ec.ValueNamespaces = (this.ValueNamespaces == null) ? null : new
-        Dictionary<string,
-            string>(this.ValueNamespaces);
+        Dictionary<string, string>(this.ValueNamespaces);
         ec.ValueTermMap = (this.ValueTermMap == null) ? null : new
           Dictionary<string, string>(this.ValueTermMap);
         return ec;
@@ -362,7 +360,6 @@ using com.upokecenter.util;
     private IDictionary<string, RDFTerm> bnodeLabels = new
       Dictionary<string, RDFTerm>();
 
-    /// <summary>Initializes a new instance of the RDFa class.</summary>
     /// <param name='document'>An IDocument object.</param>
     public RDFa(IDocument document) {
       this.document = document;
@@ -378,12 +375,10 @@ using com.upokecenter.util;
       this.context.ValueParentObject = null;
       this.context.ValueNamespaces = new
            Dictionary<string, string>();
-      this.context.ValueIriMap = new Dictionary<string,
-          string>();
+      this.context.ValueIriMap = new Dictionary<string, string>();
       this.context.ValueListMap = new
         Dictionary<string, IList<RDFTerm>>();
-      this.context.ValueTermMap = new Dictionary<string,
-           string>();
+      this.context.ValueTermMap = new Dictionary<string, string>();
       this.context.ValueIncompleteTriples = new List<IncompleteTriple>();
       this.context.ValueLanguage = null;
       this.outputGraph = new HashSet<RDFTriple>();
@@ -670,8 +665,8 @@ using com.upokecenter.util;
       return curie;
     }
 
-    /// <summary>Not documented yet.</summary>
-    /// <returns>An ISet(RDFTriple) object.</returns>
+    /// <include file='../../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.data.RDFa.Parse"]/*'/>
     public ISet<RDFTriple> Parse() {
       if (this.parser != null) {
         return this.parser.Parse();
@@ -692,16 +687,13 @@ using com.upokecenter.util;
       RDFTerm currentObject = null;
       RDFTerm typedResource = null;
       IDictionary<string, string> iriMapLocal =
-new Dictionary<string,
-            string>(this.context.ValueIriMap);
+new Dictionary<string, string>(this.context.ValueIriMap);
       IDictionary<string, string> namespacesLocal =
-        new Dictionary<string,
-            string>(this.context.ValueNamespaces);
+        new Dictionary<string, string>(this.context.ValueNamespaces);
       IDictionary<string, IList<RDFTerm>> listMapLocal =
             this.context.ValueListMap;
       IDictionary<string, string> termMapLocal =
-          new Dictionary<string,
-            string>(this.context.ValueTermMap);
+          new Dictionary<string, string>(this.context.ValueTermMap);
       string localDefaultVocab = this.context.valueDefaultVocab;
       string attr = null;
       // DebugUtility.Log("cur parobj[%s]=%s"

@@ -6,21 +6,26 @@ released to the public domain by Paul Schlyter, December 1992
 */
 // Converted to Java and C# by Peter O., 2013.
 namespace com.upokecenter.util {
-    /// <summary>Contains utility methods for calculating sunrise and
-    /// sunset.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.util.SunriseSunset"]/*'/>
   public sealed class SunriseSunset {
-    /// <summary>A rough time of day.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.util.SunriseSunset.DayState"]/*'/>
     public enum DayState {
-    /// <summary>Day light.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="F:com.upokecenter.util.SunriseSunset.DayState.Day"]/*'/>
       Day,
 
-    /// <summary>Approaching nighttime.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="F:com.upokecenter.util.SunriseSunset.DayState.DayToNight"]/*'/>
       DayToNight,
 
-    /// <summary>The time of day is nighttime.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="F:com.upokecenter.util.SunriseSunset.DayState.Night"]/*'/>
       Night,
 
-    /// <summary>Approaching daytime.</summary>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="F:com.upokecenter.util.SunriseSunset.DayState.NightToDay"]/*'/>
       NightToDay
     }
 
@@ -92,8 +97,8 @@ namespace com.upokecenter.util {
       // the specified altitude altit:
       {
         double cost;
-        cost = (Math.Sin(valueDEGRAD * altit) - (Math.Sin(valueDEGRAD * lat) *
-          sin_sdecl) / (Math.Cos(valueDEGRAD * lat) * cos_sdecl));
+        cost = Math.Sin(valueDEGRAD * altit) - (Math.Sin(valueDEGRAD * lat)
+          * sin_sdecl) / (Math.Cos(valueDEGRAD * lat) * cos_sdecl);
         if (cost >= 1.0) {
           t = 0.0;  // Sun always below altit
         } else if (cost <= -1.0) {
@@ -182,9 +187,9 @@ namespace com.upokecenter.util {
       // the specified altitude altit:
       {
         double cost;
-        cost = (Math.Sin(valueDEGRAD * altit) - (Math.Sin(valueDEGRAD * lat) *
-          Math.Sin(valueDEGRAD * sdec)) / (Math.Cos(valueDEGRAD * lat) *
-            Math.Cos(valueDEGRAD * sdec)));
+        cost = Math.Sin(valueDEGRAD * altit) - (Math.Sin(valueDEGRAD * lat)
+          * Math.Sin(valueDEGRAD * sdec)) / (Math.Cos(valueDEGRAD * lat) *
+          Math.Cos(valueDEGRAD * sdec));
         if (cost >= 1.0) {
             rc = -1;
           t = 0.0;  // Sun always below altit
@@ -211,15 +216,8 @@ namespace com.upokecenter.util {
 
     // The "workhorse" function
 
-    /// <summary>Gets a value indicating whether it's currently day or
-    /// night at the given geographic location. @param lat @param lon a
-    /// geographic longitude, in degrees. West coordinates are negative.
-    /// @return A day state value.</summary>
-    /// <param name='lat'>A geographic latitude, in degrees. South
-    /// coordinates are negative.</param>
-    /// <param name='lon'>The parameter <paramref name='lon'/> is not
-    /// documented yet.</param>
-    /// <returns>A DayState object.</returns>
+    /// <include file='../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.util.SunriseSunset.getCurrentDayState(System.Double,System.Double)"]/*'/>
     public static DayState getCurrentDayState(double lat, double lon) {
       int[] components = DateTimeUtility.getCurrentGmtDateComponents();
       var trise = new double[1];

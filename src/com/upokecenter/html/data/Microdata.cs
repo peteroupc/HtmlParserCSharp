@@ -6,7 +6,8 @@ using com.upokecenter.html;
 using com.upokecenter.util;
 
 namespace com.upokecenter.html.data {
-    /// <summary>Not documented yet.</summary>
+    /// <include file='../../../../../docs.xml'
+    /// path='docs/doc[@name="T:com.upokecenter.html.data.Microdata"]/*'/>
 public sealed class Microdata {
   private class ElementAndIndex {
       internal int Index { get; set; }
@@ -69,9 +70,8 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
     return (href == null || href.Length == 0) ? String.Empty : href;
   }
 
-    /// <summary>Not documented yet.</summary>
-    /// <param name='document'>Not documented yet.</param>
-    /// <returns>Not documented yet.</returns>
+    /// <include file='../../../../../docs.xml'
+    /// path='docs/doc[@name="M:com.upokecenter.html.data.Microdata.getMicrodataJSON(com.upokecenter.html.IDocument)"]/*'/>
   public static PeterO.Cbor.CBORObject getMicrodataJSON(IDocument document) {
     if (document == null) {
  throw new ArgumentNullException(nameof(document));
