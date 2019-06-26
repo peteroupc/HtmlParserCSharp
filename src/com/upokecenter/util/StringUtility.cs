@@ -11,32 +11,32 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace com.upokecenter.util {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.util.StringUtility"]/*'/>
-public static class StringUtility {
-  private static readonly string[] ValueEmptyStringArray = new string[0];
+  /// <include file='../../../../docs.xml'
+  /// path='docs/doc[@name="T:com.upokecenter.util.StringUtility"]/*'/>
+  public static class StringUtility {
+    private static readonly string[] ValueEmptyStringArray = new string[0];
 
     /// <include file='../../../../docs.xml'
     /// path='docs/doc[@name="M:com.upokecenter.util.StringUtility.isNullOrSpaces(System.String)"]/*'/>
-  public static bool isNullOrSpaces(string s) {
-    if (s == null) {
- return true;
-}
-    int len = s.Length;
-    var index = 0;
-    while (index < len) {
-      char c = s[index];
-      if (c != 0x09 && c != 0x0a && c != 0x0c && c != 0x0d && c != 0x20) {
- return false;
-}
-      ++index;
+    public static bool isNullOrSpaces(string s) {
+      if (s == null) {
+        return true;
+      }
+      int len = s.Length;
+      var index = 0;
+      while (index < len) {
+        char c = s[index];
+        if (c != 0x09 && c != 0x0a && c != 0x0c && c != 0x0d && c != 0x20) {
+          return false;
+        }
+        ++index;
+      }
+      return true;
     }
-    return true;
-  }
 
     /// <include file='../../../../docs.xml'
     /// path='docs/doc[@name="M:com.upokecenter.util.StringUtility.splitAt(System.String,System.String)"]/*'/>
-      public static string[] splitAt(string str, string delimiter) {
+    public static string[] splitAt(string str, string delimiter) {
       if (delimiter == null) {
         throw new ArgumentNullException(nameof(delimiter));
       }
@@ -74,90 +74,90 @@ public static class StringUtility {
 
     /// <include file='../../../../docs.xml'
     /// path='docs/doc[@name="M:com.upokecenter.util.StringUtility.SplitAtSpTabCrLf(System.String)"]/*'/>
-  public static string[] SplitAtSpTabCrLf(string s) {
-    if (s == null || s.Length == 0) {
- return ValueEmptyStringArray;
-}
-    var index = 0;
-    int valueSLength = s.Length;
-    while (index < valueSLength) {
-      char c = s[index];
-      if (c != 0x09 && c != 0x0a && c != 0x0d && c != 0x20) {
-        break;
+    public static string[] SplitAtSpTabCrLf(string s) {
+      if (s == null || s.Length == 0) {
+        return ValueEmptyStringArray;
       }
-      ++index;
-    }
-    if (index == s.Length) {
- return ValueEmptyStringArray;
-}
-    List<string> strings = null;
-    int lastIndex = index;
-    while (index < valueSLength) {
-      char c = s[index];
-      if (c == 0x09 || c == 0x0a || c == 0x0d || c == 0x20) {
-        if (lastIndex >= 0) {
-          strings = strings ?? (new List<string>());
-          strings.Add(s.Substring(lastIndex, (index)-lastIndex));
-          lastIndex = -1;
+      var index = 0;
+      int valueSLength = s.Length;
+      while (index < valueSLength) {
+        char c = s[index];
+        if (c != 0x09 && c != 0x0a && c != 0x0d && c != 0x20) {
+          break;
         }
-      } else {
-        if (lastIndex < 0) {
-          lastIndex = index;
-        }
+        ++index;
       }
-      ++index;
+      if (index == s.Length) {
+        return ValueEmptyStringArray;
+      }
+      List<string> strings = null;
+      int lastIndex = index;
+      while (index < valueSLength) {
+        char c = s[index];
+        if (c == 0x09 || c == 0x0a || c == 0x0d || c == 0x20) {
+          if (lastIndex >= 0) {
+            strings = strings ?? (new List<string>());
+            strings.Add(s.Substring(lastIndex, (index) - lastIndex));
+            lastIndex = -1;
+          }
+        } else {
+          if (lastIndex < 0) {
+            lastIndex = index;
+          }
+        }
+        ++index;
+      }
+      if (lastIndex >= 0) {
+        if (strings == null) {
+          return new string[] { s.Substring(lastIndex, (index) - lastIndex) };
+        }
+        strings.Add(s.Substring(lastIndex, (index) - lastIndex));
+      }
+      return strings.ToArray();
     }
-    if (lastIndex >= 0) {
-      if (strings == null) {
- return new string[] { s.Substring(lastIndex, (index)-lastIndex)};
-}
-      strings.Add(s.Substring(lastIndex, (index)-lastIndex));
-    }
-    return strings.ToArray();
-  }
 
     /// <include file='../../../../docs.xml'
     /// path='docs/doc[@name="M:com.upokecenter.util.StringUtility.SplitAtSpTabCrLfFf(System.String)"]/*'/>
-  public static string[] SplitAtSpTabCrLfFf(string s) {
-    if (s == null || s.Length == 0) {
- return ValueEmptyStringArray;
-}
-    var index = 0;
-    int valueSLength = s.Length;
-    while (index < valueSLength) {
-      char c = s[index];
-      if (c != 0x09 && c != 0x0a && c != 0x0c && c != 0x0d && c != 0x20) {
-        break;
+    public static string[] SplitAtSpTabCrLfFf(string s) {
+      if (s == null || s.Length == 0) {
+        return ValueEmptyStringArray;
       }
-      ++index;
-    }
-    if (index == s.Length) {
- return ValueEmptyStringArray;
-}
-    List<string> strings = null;
-    int lastIndex = index;
-    while (index < valueSLength) {
-      char c = s[index];
-      if (c == 0x09 || c == 0x0a || c == 0x0c || c == 0x0d || c == 0x20) {
-        if (lastIndex >= 0) {
-          strings = strings ?? (new List<string>());
-          strings.Add(s.Substring(lastIndex, (index)-lastIndex));
-          lastIndex = -1;
+      var index = 0;
+      int valueSLength = s.Length;
+      while (index < valueSLength) {
+        char c = s[index];
+        if (c != 0x09 && c != 0x0a && c != 0x0c && c != 0x0d && c != 0x20) {
+          break;
         }
-      } else {
-        if (lastIndex < 0) {
-          lastIndex = index;
-        }
+        ++index;
       }
-      ++index;
+      if (index == s.Length) {
+        return ValueEmptyStringArray;
+      }
+      List<string> strings = null;
+      int lastIndex = index;
+      while (index < valueSLength) {
+        char c = s[index];
+        if (c == 0x09 || c == 0x0a || c == 0x0c || c == 0x0d || c == 0x20) {
+          if (lastIndex >= 0) {
+            strings = strings ?? (new List<string>());
+            strings.Add(s.Substring(lastIndex, (index) - lastIndex));
+            lastIndex = -1;
+          }
+        } else {
+          if (lastIndex < 0) {
+            lastIndex = index;
+          }
+        }
+        ++index;
+      }
+      if (lastIndex >= 0) {
+        if (strings == null) {
+          return new string[] { s.Substring(lastIndex, (index) - lastIndex) };
+        }
+        strings.Add(s.Substring(lastIndex, (index) - lastIndex));
+      }
+      return strings.ToArray();
     }
-    if (lastIndex >= 0) {
-      if (strings == null) {
- return new string[] { s.Substring(lastIndex, (index)-lastIndex)};
-}
-      strings.Add(s.Substring(lastIndex, (index)-lastIndex));
-    }
-    return strings.ToArray();
   }
-}
 }

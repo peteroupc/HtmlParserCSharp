@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using PeterO;
@@ -40,6 +40,7 @@ namespace com.upokecenter.html.data {
 
     private static IList<string> relterms = (new string[] { "alternate",
       "appendix" ,"cite", "bookmark", "chapter", "contents", "copyright",
+
  "first", "glossary", "help", "icon", "index", "last",
       "license", "meta", "next", "prev",
       "role", "section", "start",
@@ -124,7 +125,7 @@ namespace com.upokecenter.html.data {
         return true;
       }
       int[]
-    indexes = URIUtility.splitIRI(
+    indexes = URIUtility.SplitIRI(
     s,
     offset,
     length,
@@ -152,7 +153,7 @@ namespace com.upokecenter.html.data {
       this.context = new RDFa.EvalContext();
       this.context.ValueBaseURI = document.getBaseURI();
       this.context.ValueNamespaces = new Dictionary<string, string>();
-      if (!URIUtility.hasScheme(this.context.ValueBaseURI)) {
+      if (!URIUtility.HasScheme(this.context.ValueBaseURI)) {
         throw new ArgumentException("baseURI: " + this.context.ValueBaseURI);
       }
   this.context.ValueParentSubject = RDFTerm.fromIRI(this.context.ValueBaseURI);
@@ -439,7 +440,7 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
       if (!this.xhtml) {
         attr = node.getAttribute("xml:base");
         if (attr != null) {
-          this.context.ValueBaseURI = URIUtility.relativeResolve(
+          this.context.ValueBaseURI = URIUtility.RelativeResolve(
            attr,
            this.context.ValueBaseURI);
         }
@@ -748,9 +749,9 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
       if (iri == null) {
         return null;
       }
-      return (URIUtility.splitIRI(iri) == null) ? null :
+      return (URIUtility.SplitIRI(iri) == null) ? null :
    RDFTerm.fromIRI(
-  URIUtility.relativeResolve(
+  URIUtility.RelativeResolve(
   iri,
   this.context.ValueBaseURI));
     }

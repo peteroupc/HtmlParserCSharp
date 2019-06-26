@@ -461,12 +461,14 @@ namespace com.upokecenter.html {
       // TODO: Use MediaType.Parse here
       if (mediaType != null) {
         string type = mediaType;
-        if (type.Equals("text/xml") || type.Equals("application/xml") ||
-            type.EndsWith("+xml", StringComparison.Ordinal)) {
+        if (type.Equals("text/xml") ||
+type.Equals("application/xml") ||
+type.EndsWith("+xml", StringComparison.Ordinal)) {
           return mediaType;
         }
-        if (type.Equals("*" + "/*") || type.Equals("unknown/unknown") ||
-            type.Equals("application/unknown")) {
+        if (type.Equals("*" + "/*") ||
+type.Equals("unknown/unknown") ||
+type.Equals("application/unknown")) {
           return sniffUnknownContentType(input, true);
         }
         if (type.Equals("text/html")) {
@@ -886,14 +888,20 @@ namespace com.upokecenter.html {
       if (lang.Equals("ar") || lang.Equals("fa")) {
         return new EncodingConfidence("windows-1256");
       }
-      if (lang.Equals("bg") || lang.Equals("ru") || lang.Equals("uk") ||
-        lang.Equals("sr")) {
+      if (lang.Equals("bg") ||
+lang.Equals("ru") ||
+lang.Equals("uk") ||
+lang.Equals("sr")) {
         return new EncodingConfidence("windows-1251");
       }
-      if (lang.Equals("cs") || lang.Equals("hr") || lang.Equals("sk")) {
+      if (lang.Equals("cs") ||
+lang.Equals("hr") ||
+lang.Equals("sk")) {
         return new EncodingConfidence("windows-1250");
       }
-      if (lang.Equals("hu") || lang.Equals("pl") || lang.Equals("sl")) {
+      if (lang.Equals("hu") ||
+lang.Equals("pl") ||
+lang.Equals("sl")) {
         return new EncodingConfidence("iso-8859-2");
       }
       if (lang.Equals("ja")) {
@@ -914,7 +922,9 @@ namespace com.upokecenter.html {
       if (lang.Equals("ku") || lang.Equals("tr")) {
         return new EncodingConfidence("windows-1254");
       }
-      if (lang.Equals("lt") || lang.Equals("et") || lang.Equals("lv")) {
+      if (lang.Equals("lt") ||
+lang.Equals("et") ||
+lang.Equals("lv")) {
         return new EncodingConfidence("windows-1257");
       }
       if (lang.Equals("vi")) {
@@ -1194,15 +1204,21 @@ namespace com.upokecenter.html {
       }
       if (
     matchesPattern(
-  new byte[] { (byte)'F' , (byte)'O' ,(byte)'R',
-  (byte)'M' }, header, 0, count) && matchesPattern(
-    new byte[] { (byte)'A' , (byte)'I' ,(byte)'F',
-  (byte)'F' }, header, 8, count - 8)) {
+  new byte[] { (byte)0x46, (byte)0x4f, (byte)0x52,
+  (byte)0x4d },
+ header,
+ 0,
+ count) && matchesPattern(
+    new byte[] { (byte)0x41, (byte)0x49, (byte)0x46,
+  (byte)0x46 },
+ header,
+ 8,
+ count - 8)) {
         return "audio/aiff";
       }
       if (
     matchesPattern(
-  new byte[] { (byte)'I', (byte)'D', (byte)'3' },
+  new byte[] { (byte)0x49, (byte)0x44, (byte)0x33 },
         header,
  0,
    count)) {
@@ -1210,30 +1226,42 @@ namespace com.upokecenter.html {
       }
       if (
     matchesPattern(
-  new byte[] { (byte)'O' , (byte)'g' ,(byte)'g',
-  (byte)'S' , 0 }, header, 0, count)) {
+  new byte[] { (byte)0x4f, (byte)0x67, (byte)0x67,
+  (byte)0x53, 0 },
+ header,
+ 0,
+ count)) {
         return "application/ogg";
       }
       if (
     matchesPattern(
-  new byte[] { (byte)'M' , (byte)'T' ,(byte)'h',
-  (byte)'d' , 0,0,0,6 }, header, 0, count)) {
+  new byte[] { (byte)0x4d, (byte)0x54, (byte)0x68,
+  (byte)0x64, 0, 0, 0, 6 },
+ header,
+ 0,
+ count)) {
         return "audio/midi";
       }
       if (
     matchesPattern(
-  new byte[] { (byte)'R' , (byte)'I' ,(byte)'F',
-  (byte)'F' }, header, 0, count)) {
+  new byte[] { (byte)0x52, (byte)0x49, (byte)0x46,
+  (byte)0x46 },
+ header,
+ 0,
+ count)) {
         if (
     matchesPattern(
-  new byte[] { (byte)'A' , (byte)'V' ,(byte)'I',
+  new byte[] { (byte)0x41, (byte)0x56, (byte)0x49,
   (byte)' ' }, header, 8, count - 8)) {
           return "video/avi";
         }
         if (
     matchesPattern(
-  new byte[] { (byte)'W' , (byte)'A' ,(byte)'V',
-  (byte)'E' }, header, 8, count - 8)) {
+  new byte[] { (byte)0x57, (byte)0x41, (byte)0x56,
+  (byte)0x45 },
+ header,
+ 8,
+ count - 8)) {
           return "audio/wave";
         }
       }
@@ -1243,10 +1271,10 @@ namespace com.upokecenter.html {
         boxSize |= (header[2] & 0xff) << 8;
         boxSize |= header[3] & 0xff;
         if ((boxSize & 3) == 0 && boxSize >= 0 && count >= boxSize &&
-            header[4] == (byte)'f' && header[5] == (byte)'t' &&
-            header[6] == (byte)'y' && header[7] == (byte)'p') {
-          if (header[8] == (byte)'m' && header[9] == (byte)'p' &&
-              header[10] == (byte)'4') {
+            header[4] == (byte)0x66 && header[5] == (byte)0x74 &&
+            header[6] == (byte)0x79 && header[7] == (byte)0x70) {
+          if (header[8] == (byte)0x6d && header[9] == (byte)0x70 &&
+              header[10] == (byte)0x34) {
             return "video/mp4";
           }
           var index = 16;
@@ -1271,14 +1299,15 @@ namespace com.upokecenter.html {
       }
       if (
   matchesPattern(
-  new byte[] { (byte)'P', (byte)'K', 3, 4 }, header,
+  new byte[] { (byte)0x50, (byte)0x4b, 3, 4 },
+ header,
         0,
  count)) {
         return "application/zip";
       }
       if (
     matchesPattern(
-  new byte[] { (byte)'R' , (byte)'a' ,(byte)'r',
+  new byte[] { (byte)0x52, (byte)0x61, (byte)0x72,
   (byte)' ' , 0x1a,7,0 }, header, 0, count)) {
         return "application/x-rar-compressed";
       }

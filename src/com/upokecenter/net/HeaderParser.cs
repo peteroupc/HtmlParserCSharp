@@ -33,11 +33,6 @@ namespace com.upokecenter.net {
     /// <include file='../../../../docs.xml'
     /// path='docs/doc[@name="T:com.upokecenter.net.HeaderParser"]/*'/>
   public sealed class HeaderParser {
-    internal enum QuotedStringRule {
-      Http,
-      Rfc5322,
-      Smtp  // RFC5321
-    }
 
     private static string[] emptyStringArray = new string[0];
 

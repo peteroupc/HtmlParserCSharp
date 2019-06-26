@@ -20,14 +20,35 @@ public IDocument processResponse(string url, IReader
     }
   }
 
-    /// <summary>* Gets the absolute URL from an HTML element. @param node
+    /// <xmlbegin id="2"/><summary>* Gets the absolute URL from an HTML element. @param node
     /// A HTML element containing a URL @return an absolute URL of the
     /// element's SRC, DATA, or HREF, or an empty _string if none
     /// exists.</summary>
     /// <param name='node'>The parameter <paramref name='node'/> is not
     /// documented yet.</param>
     /// <returns>A string object.</returns>
-  ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
   public static string getHref(IElement node) {
     string name = node.getTagName();
     string href="";
@@ -55,7 +76,7 @@ public IDocument processResponse(string url, IReader
       (HtmlDocument.resolveURL(node, href, null));
   }
 
-    /// <summary>Utility method for converting a relative URL to an
+    /// <xmlbegin id="3"/><summary>Utility method for converting a relative URL to an
     /// absolute one, using the _base URI and the encoding of the given
     /// node. @param node An HTML node, usually an IDocument or IElement
     /// @param href A relative or absolute URL. @return An absolute
@@ -65,7 +86,28 @@ public IDocument processResponse(string url, IReader
     /// <param name='href'>The parameter <paramref name='href'/> is not
     /// documented yet.</param>
     /// <returns>A string object.</returns>
-  ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
   public static string getHref(INode node, string href) {
     return (href==null || href.Length==0) ? ("") :
 
@@ -126,8 +168,7 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
   }
 
     /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.ToDebugString(System.Collections.Generic.IList
-    /// {com.upokecenter.html.INode})"]/*'/>
+    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.ToDebugString(System.Collections.Generic.IList{com.upokecenter.html.INode})"]/*'/>
     public static string ToDebugString(IList<INode> nodes) {
 return Document.toDebugString(nodes);
   }

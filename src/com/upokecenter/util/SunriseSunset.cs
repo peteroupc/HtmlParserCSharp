@@ -12,20 +12,24 @@ namespace com.upokecenter.util {
     /// <include file='../../../../docs.xml'
     /// path='docs/doc[@name="T:com.upokecenter.util.SunriseSunset.DayState"]/*'/>
     public enum DayState {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="F:com.upokecenter.util.SunriseSunset.DayState.Day"]/*'/>
+    ///
+    /// <summary>Day light.</summary>
+    ///
       Day,
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="F:com.upokecenter.util.SunriseSunset.DayState.DayToNight"]/*'/>
+    ///
+    /// <summary>Approaching nighttime.</summary>
+    ///
       DayToNight,
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="F:com.upokecenter.util.SunriseSunset.DayState.Night"]/*'/>
+    ///
+    /// <summary>The time of day is nighttime.</summary>
+    ///
       Night,
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="F:com.upokecenter.util.SunriseSunset.DayState.NightToDay"]/*'/>
+    ///
+    /// <summary>Approaching daytime.</summary>
+    ///
       NightToDay
     }
 

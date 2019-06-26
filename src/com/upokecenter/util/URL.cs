@@ -1083,8 +1083,7 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
     }
 
     /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.toQueryString(System.Collections.Generic.IList
-    /// {System.String[]},System.String,System.String)"]/*'/>
+    /// path='docs/doc[@name="M:com.upokecenter.util.URL.toQueryString(System.Collections.Generic.IList{System.String[]},System.String,System.String)"]/*'/>
     public static string toQueryString(
   IList<string[]> pairs,
   string delimiter,

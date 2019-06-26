@@ -10,9 +10,30 @@ using System;
 using System.Globalization;
 using System.Text;
 namespace com.upokecenter.util {
-    /// <summary>Represents a list of integers or Unicode
+    /// <xmlbegin id="9"/><summary>Represents a list of integers or Unicode
     /// characters.</summary>
-  ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
 public sealed class IntList {
   int[] buffer;
   int ptr;
@@ -91,14 +112,35 @@ public int get(int index) {
     return buffer[index];
   }
 
-    /// <summary>Sets the integer at a specified position to a new value.
+    /// <xmlbegin id="10"/><summary>Sets the integer at a specified position to a new value.
     /// @param index an index into the list. @param value the integer's new
     /// value.</summary>
     /// <param name='index'>The parameter <paramref name='index'/> is not
     /// documented yet.</param>
     /// <param name='value'>The parameter <paramref name='value'/> is not
     /// documented yet.</param>
-  ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
   public void set(int index, int value) {
     buffer[index]=value;
   }

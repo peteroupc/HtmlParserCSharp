@@ -196,7 +196,7 @@ using com.upokecenter.util;
     string s,
     int offset,
     int length) {
-      return URIUtility.isValidCurieReference(s, offset, length);
+      return URIUtility.IsValidCurieReference(s, offset, length);
     }
 
     private static bool isValidTerm(string s) {
@@ -360,15 +360,18 @@ using com.upokecenter.util;
     private IDictionary<string, RDFTerm> bnodeLabels = new
       Dictionary<string, RDFTerm>();
 
-    /// <include file='../../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.data.RDFa.#ctor(com.upokecenter.html.IDocument)"]/*'/>
+    /// <param name='document'>
+    /// The parameter
+    /// <paramref name='document'/>
+    /// is an IDocument object.
+    /// </param>
     public RDFa(IDocument document) {
       this.document = document;
       this.parser = null;
       this.context = new EvalContext();
       this.context.valueDefaultVocab = null;
       this.context.ValueBaseURI = document.getBaseURI();
-      if (!URIUtility.hasScheme(this.context.ValueBaseURI)) {
+      if (!URIUtility.HasScheme(this.context.ValueBaseURI)) {
         throw new ArgumentException("ValueBaseURI: " +
              this.context.ValueBaseURI);
       }
@@ -656,7 +659,7 @@ using com.upokecenter.util;
   prefixMapping);
       if (curie == null) {
         // evaluate as IRI if it's absolute
-        if (URIUtility.hasScheme(attribute)) {
+        if (URIUtility.HasScheme(attribute)) {
           // DebugUtility.Log("has scheme: %s",attribute)
           return this.relativeResolve(attribute).getValue();
         }
@@ -701,7 +704,7 @@ new Dictionary<string, string>(this.context.ValueIriMap);
       // DebugUtility.Log("_base=%s",context.ValueBaseURI);
       attr = node.getAttribute("xml:base");
       if (attr != null) {
-        this.context.ValueBaseURI = URIUtility.relativeResolve(
+        this.context.ValueBaseURI = URIUtility.RelativeResolve(
   attr,
   this.context.ValueBaseURI);
       }
@@ -1224,9 +1227,9 @@ new Dictionary<string, string>(this.context.ValueIriMap);
       if (iri == null) {
         return null;
       }
-      return (URIUtility.splitIRI(iri) == null) ? null :
+      return (URIUtility.SplitIRI(iri) == null) ? null :
    RDFTerm.fromIRI(
-  URIUtility.relativeResolve(
+  URIUtility.RelativeResolve(
   iri,
   this.context.ValueBaseURI));
     }

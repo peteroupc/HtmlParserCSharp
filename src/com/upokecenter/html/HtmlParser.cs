@@ -49,10 +49,10 @@ namespace com.upokecenter.html {
 
       public void appendChar(int ch) {
         if (ch <= 0xffff) {
-            this.CommentValue.Append((char)ch);
+          this.CommentValue.Append((char)ch);
         } else if (ch <= 0x10ffff) {
-   this.CommentValue.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
-            0xd800));
+          this.CommentValue.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
+                   0xd800));
           this.CommentValue.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
         }
       }
@@ -70,7 +70,7 @@ namespace com.upokecenter.html {
       public StringBuilder ValueSystemID { get; }
 
       public DocTypeToken() : this(String.Empty, String.Empty, String.Empty) {
-}
+      }
 
       public DocTypeToken(string name, string pid, string sid) {
         this.Name = new StringBuilder().Append(name);
@@ -429,12 +429,12 @@ namespace com.upokecenter.html {
     private const int TOKEN_CHARACTER = 0x00000000;
     private const int TOKEN_INDEX_MASK = 0x0fffffff;
 
-private void addToken(IToken token) {
-if (this.tokens.Count > TOKEN_INDEX_MASK) {
- throw new InvalidOperationException();
-}
-tokens.Add(token);
-}
+    private void addToken(IToken token) {
+      if (this.tokens.Count > TOKEN_INDEX_MASK) {
+        throw new InvalidOperationException();
+      }
+      tokens.Add(token);
+    }
 
     private static string[] quirksModePublicIdPrefixes = new string[] {
     "+//silmaril//dtd html pro v0r11 19970101//",
@@ -1158,7 +1158,7 @@ valueName.Equals("var")) {
       return b.ToString();
     }
 
- private const string Xhtml11 = "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
+    private const string Xhtml11 = "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
 
     private bool applyInsertionMode(int token, InsertionMode? insMode) {
       /*DebugUtility.Log("[[" + String.Format("{0:X8}" , token) + " " +
@@ -1167,7 +1167,8 @@ valueName.Equals("var")) {
          this.noforeign + ")");
        if (this.openElements.Count > 0) {
       // DebugUtility.Log(Implode(this.openElements));
-       }*/ if (!this.noforeign && this.isForeignContext(token)) {
+       }*/
+      if (!this.noforeign && this.isForeignContext(token)) {
         return this.applyForeignContext(token);
       }
       this.noforeign = false;
@@ -1193,22 +1194,22 @@ valueName.Equals("var")) {
               (doctypeSystem != null && !"about:legacy-compat"
                     .Equals(doctypeSystem))) {
                 string h4public = "-//W3C//DTD HTML 4.0//EN";
-                string html401public = "-//W3C//DTD HTML 4.01//EN";;
+                string html401public = "-//W3C//DTD HTML 4.01//EN"; ;
                 string xhtmlstrictpublic = "-//W3C//DTD XHTML 1.0 Strict//EN";
-string html4system = "http://www.w3.org/TR/REC-html40/strict.dtd";
-string html401system = "http://www.w3.org/TR/html4/strict.dtd";
+                string html4system = "http://www.w3.org/TR/REC-html40/strict.dtd";
+                string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                 bool html4 = matchesHtml && h4public.Equals(doctypePublic) &&
                 (doctypeSystem == null || html4system.Equals(doctypeSystem));
                 bool html401 = matchesHtml &&
                   html401public.Equals(doctypePublic) && (doctypeSystem ==
                   null || html401system.Equals(doctypeSystem));
-        bool xhtml = matchesHtml && xhtmlstrictpublic.Equals(doctypePublic) &&
-          XhtmlStrict.Equals(doctypeSystem);
-            string xhtmlPublic = "-//W3C//DTD XHTML 1.1//EN";
-            bool xhtml11 = matchesHtml && xhtmlPublic.Equals(doctypePublic) &&
-              Xhtml11.Equals(doctypeSystem);
-              if (!html4 && !html401 &&
-              !xhtml && !xhtml11) {
+                bool xhtml = matchesHtml && xhtmlstrictpublic.Equals(doctypePublic) &&
+                  XhtmlStrict.Equals(doctypeSystem);
+                string xhtmlPublic = "-//W3C//DTD XHTML 1.1//EN";
+                bool xhtml11 = matchesHtml && xhtmlPublic.Equals(doctypePublic) &&
+                  Xhtml11.Equals(doctypeSystem);
+                if (!html4 && !html401 &&
+                !xhtml && !xhtml11) {
                   this.parseError();
                 }
               }
@@ -1235,13 +1236,13 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                     this.valueDocument.setMode(DocumentMode.QuirksMode);
                   } else if (doctypePublic.Length > 0) {
                     foreach (var id in quirksModePublicIdPrefixes) {
-                    if (
-              doctypePublicLC.StartsWith(
-              id,
-              StringComparison.Ordinal)) {
-                    this.valueDocument.setMode(DocumentMode.QuirksMode);
-                    break;
-                    }
+                      if (
+                doctypePublicLC.StartsWith(
+                id,
+                StringComparison.Ordinal)) {
+                        this.valueDocument.setMode(DocumentMode.QuirksMode);
+                        break;
+                      }
                     }
                   }
                 }
@@ -1420,14 +1421,13 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                   string charset = valueElement.getAttribute("charset");
                   if (charset != null) {
                     charset = Encodings.ResolveAlias(charset);
-                    // if (TextEncoding.isAsciiCompatible(charset) ||
-// "utf-16be" .Equals(charset) ||
-"utf-16le"
-                    // .Equals(charset)) {
+                    /* if (TextEncoding.isAsciiCompatible(charset) ||
+"utf-16be".Equals(charset) ||
+"utf-16le".Equals(charset)) {*/
                     this.changeEncoding(charset);
                     if (this.encoding.getConfidence() ==
                     EncodingConfidence.Certain) {
-                    this.inputStream.disableBuffer();
+                      this.inputStream.disableBuffer();
                     }
                     return true;
                     // }
@@ -1437,17 +1437,17 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                   if ("content-type".Equals(value)) {
                     value = valueElement.getAttribute("content");
                     if (value != null) {
-                    value = DataUtilities.ToLowerCaseAscii(value);
-                    charset = CharsetSniffer.extractCharsetFromMeta(value);
-                    if (true) {
-                    // TODO
-                    this.changeEncoding(charset);
-                    if (this.encoding.getConfidence() ==
-                    EncodingConfidence.Certain) {
-                    this.inputStream.disableBuffer();
-                    }
-                    return true;
-                    }
+                      value = DataUtilities.ToLowerCaseAscii(value);
+                      charset = CharsetSniffer.extractCharsetFromMeta(value);
+                      if (true) {
+                        // TODO
+                        this.changeEncoding(charset);
+                        if (this.encoding.getConfidence() ==
+                        EncodingConfidence.Certain) {
+                          this.inputStream.disableBuffer();
+                        }
+                        return true;
+                      }
                     }
                   } else if ("content-language".Equals(value)) {
                     // HTML5 requires us to use this algorithm
@@ -1457,16 +1457,16 @@ string html401system = "http://www.w3.org/TR/html4/strict.dtd";
                     value = valueElement.getAttribute("content");
                     if (!String.IsNullOrEmpty(value) && value.IndexOf(',') <
                     0) {
-                    string[] data = StringUtility.SplitAtSpTabCrLfFf(value);
-                    string deflang = (data.Length == 0) ? String.Empty :
-                    data[0];
-                    if (!String.IsNullOrEmpty(deflang)) {
-                    this.valueDocument.DefaultLanguage = deflang;
-                    }
+                      string[] data = StringUtility.SplitAtSpTabCrLfFf(value);
+                      string deflang = (data.Length == 0) ? String.Empty :
+                      data[0];
+                      if (!String.IsNullOrEmpty(deflang)) {
+                        this.valueDocument.DefaultLanguage = deflang;
+                      }
                     }
                   }
                 }
-             if (this.encoding.getConfidence() == EncodingConfidence.Certain) {
+                if (this.encoding.getConfidence() == EncodingConfidence.Certain) {
                   this.inputStream.disableBuffer();
                 }
                 return true;
@@ -1639,7 +1639,7 @@ valueName.Equals("br")) {
                   StringBuilder sb = textNode.ValueText;
                   if (ch <= 0xffff) {
                     {
-                    sb.Append((char)ch);
+                      sb.Append((char)ch);
                     }
                   } else if (ch <= 0x10ffff) {
                     sb.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
@@ -1776,7 +1776,7 @@ valueName.Equals("colgroup")) {
                   StringBuilder sb = textNode.ValueText;
                   if (ch <= 0xffff) {
                     {
-                    sb.Append((char)ch);
+                      sb.Append((char)ch);
                     }
                   } else if (ch <= 0x10ffff) {
                     sb.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) +
@@ -2010,11 +2010,11 @@ valueName.Equals("colgroup")) {
                   for (int i = this.formattingElements.Count - 1; i >= 0; --i) {
                     FormattingElement fe = this.formattingElements[i];
                     if (fe.isMarker()) {
-                    break;
+                      break;
                     }
                     if (fe.Element.getLocalName().Equals("a")) {
-                    node = fe.Element;
-                    break;
+                      node = fe.Element;
+                      break;
                     }
                   }
                   if (node != null) {
@@ -2124,12 +2124,12 @@ valueName.Equals("colgroup")) {
                 this.reconstructFormatting();
                 this.addHtmlElement(tag);
                 this.framesetOk = false;
-           this.insertionMode = (this.insertionMode == InsertionMode.InTable ||
-                this.insertionMode == InsertionMode.InCaption ||
-                    this.insertionMode == InsertionMode.InTableBody ||
-                    this.insertionMode == InsertionMode.InRow ||
-                    this.insertionMode == InsertionMode.InCell) ?
-                    InsertionMode.InSelectInTable : InsertionMode.InSelect;
+                this.insertionMode = (this.insertionMode == InsertionMode.InTable ||
+                     this.insertionMode == InsertionMode.InCaption ||
+                         this.insertionMode == InsertionMode.InTableBody ||
+                         this.insertionMode == InsertionMode.InRow ||
+                         this.insertionMode == InsertionMode.InCell) ?
+                         InsertionMode.InSelectInTable : InsertionMode.InSelect;
               } else if ("option".Equals(valueName) || "optgroup"
                     .Equals(valueName)) {
                 if (this.getCurrentNode().getLocalName().Equals(
@@ -2268,7 +2268,7 @@ valueName.Equals("u")) {
                   for (int j = this.formattingElements.Count - 1; j >= 0; --j) {
                     FormattingElement fe = this.formattingElements[j];
                     if (this.getCurrentNode().Equals(fe.Element)) {
-                    found = true;
+                      found = true;
                     }
                   }
                   if (!found) {
@@ -2284,11 +2284,11 @@ valueName.Equals("u")) {
                   for (int j = this.formattingElements.Count - 1; j >= 0; --j) {
                     FormattingElement fe = this.formattingElements[j];
                     if (fe.isMarker()) {
-                    break;
+                      break;
                     }
                     if (fe.Element.getLocalName().Equals(valueName)) {
-                    formatting = fe;
-                    break;
+                      formatting = fe;
+                      break;
                     }
                   }
                   if (formatting == null) {
@@ -2296,23 +2296,23 @@ valueName.Equals("u")) {
                     // DebugUtility.Log("no such formatting element");
                     for (int k = this.openElements.Count - 1;
                     k >= 0; --k) {
-                    IElement node = this.openElements[k];
-                    if (HtmlCommon.isHtmlElement(node, valueName)) {
-                    this.generateImpliedEndTagsExcept(valueName);
-                    if (!node.Equals(this.getCurrentNode())) {
-                    this.parseError();
-                    }
-                    while (true) {
-                    IElement node2 = this.popCurrentNode();
-                    if (node2.Equals(node)) {
-                    break;
-                    }
-                    }
-                    break;
-                    } else if (this.isSpecialElement(node)) {
-                    this.parseError();
-                    return false;
-                    }
+                      IElement node = this.openElements[k];
+                      if (HtmlCommon.isHtmlElement(node, valueName)) {
+                        this.generateImpliedEndTagsExcept(valueName);
+                        if (!node.Equals(this.getCurrentNode())) {
+                          this.parseError();
+                        }
+                        while (true) {
+                          IElement node2 = this.popCurrentNode();
+                          if (node2.Equals(node)) {
+                            break;
+                          }
+                        }
+                        break;
+                      } else if (this.isSpecialElement(node)) {
+                        this.parseError();
+                        return false;
+                      }
                     }
                     return true;
                   }
@@ -2347,9 +2347,9 @@ valueName.Equals("u")) {
                     // DebugUtility.Log("is special:  // " + (// e) + "// " +
                     // (this.isSpecialElement(e)));
                     if (this.isSpecialElement(e)) {
-                    furthestBlock = e;
-                    furthestBlockPos = j;
-                    break;
+                      furthestBlock = e;
+                      furthestBlockPos = j;
+                      break;
                     }
                   }
                   // DebugUtility.Log("furthest block:  // " + furthestBlock);
@@ -2357,7 +2357,7 @@ valueName.Equals("u")) {
                     // Pop up to and including the
                     // formatting element
                     while (this.openElements.Count > formattingElementPos) {
-                    this.popCurrentNode();
+                      this.popCurrentNode();
                     }
                     this.formattingElements.Remove(formatting);
                     // DebugUtility.Log("Open elements now [" + i + "]:");
@@ -2366,8 +2366,8 @@ valueName.Equals("u")) {
                     // DebugUtility.Log(Implode(formattingElements));
                     break;
                   }
-             IElement commonAncestor = this.openElements[formattingElementPos -
-                    1];
+                  IElement commonAncestor = this.openElements[formattingElementPos -
+                         1];
                   int bookmark = this.formattingElements.IndexOf(formatting);
                   // DebugUtility.Log("formel: {0}"
                   // , this.openElements[formattingElementPos]);
@@ -2385,24 +2385,24 @@ valueName.Equals("u")) {
                     // DebugUtility.Log("j="+j);
                     // DebugUtility.Log("nodeFE="+nodeFE);
                     if (nodeFE == null) {
-                    // DebugUtility.Log("node not a formatting element");
-           superiorNode = this.openElements[this.openElements.IndexOf(myNode) -
-                    1];
-                    this.openElements.Remove(myNode);
-                    continue;
+                      // DebugUtility.Log("node not a formatting element");
+                      superiorNode = this.openElements[this.openElements.IndexOf(myNode) -
+                               1];
+                      this.openElements.Remove(myNode);
+                      continue;
                     } else if (myNode.Equals(formatting.Element)) {
-                    // DebugUtility.Log("node is the formatting element");
-                    break;
+                      // DebugUtility.Log("node is the formatting element");
+                      break;
                     } else if (j >= 3) {
-                    int nodeFEIndex = this.formattingElements.IndexOf(nodeFE);
-                    this.formattingElements.Remove(nodeFE);
-                    if (nodeFEIndex >= 0 && nodeFEIndex <= bookmark) {
-                    --bookmark;
-                    }
-           superiorNode = this.openElements[this.openElements.IndexOf(myNode) -
-                    1];
-                    this.openElements.Remove(myNode);
-                    continue;
+                      int nodeFEIndex = this.formattingElements.IndexOf(nodeFE);
+                      this.formattingElements.Remove(nodeFE);
+                      if (nodeFEIndex >= 0 && nodeFEIndex <= bookmark) {
+                        --bookmark;
+                      }
+                      superiorNode = this.openElements[this.openElements.IndexOf(myNode) -
+                               1];
+                      this.openElements.Remove(myNode);
+                      continue;
                     }
                     IElement e = Element.fromToken(nodeFE.Token);
                     nodeFE.Element = e;
@@ -2411,15 +2411,15 @@ valueName.Equals("u")) {
                     this.openElements[io] = e;
                     myNode = e;
                     if (lastNode.Equals(furthestBlock)) {
-                    bookmark = this.formattingElements.IndexOf(nodeFE) + 1;
-                    // DebugUtility.Log("Moving bookmark to {0} [len={1}]"
-                    // , bookmark, this.formattingElements.Count);
+                      bookmark = this.formattingElements.IndexOf(nodeFE) + 1;
+                      // DebugUtility.Log("Moving bookmark to {0} [len={1}]"
+                      // , bookmark, this.formattingElements.Count);
                     }
                     // NOTE: Because 'node' can only be a formatting
                     // element, the foster parenting rule doesn't
                     // apply here
                     if (lastNode.getParentNode() != null) {
-((Node)lastNode.getParentNode()).removeChild((Node)lastNode);
+                      ((Node)lastNode.getParentNode()).removeChild((Node)lastNode);
                     }
                     myNode.appendChild(lastNode);
                     // DebugUtility.Log("lastNode now: "+myNode);
@@ -2433,12 +2433,12 @@ HtmlCommon.isHtmlElement(commonAncestor, "thead") ||
 HtmlCommon.isHtmlElement(commonAncestor, "tfoot")
 ) {
                     if (lastNode.getParentNode() != null) {
-((Node)lastNode.getParentNode()).removeChild((Node)lastNode);
+                      ((Node)lastNode.getParentNode()).removeChild((Node)lastNode);
                     }
                     this.fosterParent(lastNode);
                   } else {
                     if (lastNode.getParentNode() != null) {
-((Node)lastNode.getParentNode()).removeChild((Node)lastNode);
+                      ((Node)lastNode.getParentNode()).removeChild((Node)lastNode);
                     }
                     commonAncestor.appendChild(lastNode);
                   }
@@ -2462,7 +2462,7 @@ HtmlCommon.isHtmlElement(commonAncestor, "tfoot")
                   newFE.Element = e2;
                   newFE.Token = formatting.Token;
 
-  // DebugUtility.Log("Adding formatting element at {0} [len={1}]"
+                  // DebugUtility.Log("Adding formatting element at {0} [len={1}]"
                   // , bookmark, this.formattingElements.Count);
                   this.formattingElements.Insert(bookmark, newFE);
                   this.formattingElements.Remove(formatting);
@@ -2620,13 +2620,13 @@ HtmlCommon.isHtmlElement(node, "h6")) {
                     this.generateImpliedEndTagsExcept(valueName);
                     if
      (!node.Equals(this.getCurrentNode())) {
-                    this.parseError();
+                      this.parseError();
                     }
                     while (true) {
-                    IElement node2 = this.popCurrentNode();
-                    if (node2.Equals(node)) {
-                    break;
-                    }
+                      IElement node2 = this.popCurrentNode();
+                      if (node2.Equals(node)) {
+                        break;
+                      }
                     }
                     break;
                   } else if (this.isSpecialElement(node)) {
@@ -2874,8 +2874,8 @@ valueName.Equals("tr")) {
                 if (token <= 0xffff) {
                   this.pendingTableCharacters.Append((char)token);
                 } else if (token <= 0x10ffff) {
-               this.pendingTableCharacters.Append((char)((((token - 0x10000) >>
-                10) & 0x3ff) + 0xd800));
+                  this.pendingTableCharacters.Append((char)((((token - 0x10000) >>
+                   10) & 0x3ff) + 0xd800));
                   this.pendingTableCharacters.Append((char)(((token -
                     0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -4427,17 +4427,17 @@ HtmlCommon.isSvgElement(e, "title")) {
         return true;
       }
       string valueName = valueElement.getLocalName();
-return HtmlCommon.SVG_NAMESPACE.Equals(valueElement.getNamespaceURI()) && (
-                    valueName.Equals("foreignObject") || valueName.Equals(
-                    "desc") || valueName.Equals("title"));
+      return HtmlCommon.SVG_NAMESPACE.Equals(valueElement.getNamespaceURI()) && (
+                          valueName.Equals("foreignObject") || valueName.Equals(
+                          "desc") || valueName.Equals("title"));
     }
 
     private bool isMathMLTextIntegrationPoint(IElement valueElement) {
       string valueName = valueElement.getLocalName();
-return HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI()) && (
-                    valueName.Equals("mi") || valueName.Equals("mo") ||
-                    valueName.Equals("mn") || valueName.Equals("ms") ||
-                    valueName.Equals("mtext"));
+      return HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI()) && (
+                          valueName.Equals("mi") || valueName.Equals("mo") ||
+                          valueName.Equals("mn") || valueName.Equals("ms") ||
+                          valueName.Equals("mtext"));
     }
 
     private bool isSpecialElement(IElement node) {
@@ -4537,8 +4537,10 @@ HtmlCommon.isMathMLElement(
   node,
   "desc") || HtmlCommon.isSvgElement(
   node,
-  "title")) ? true : false; } internal string nodesToDebugString(IList<Node>
-   nodes) {
+  "title")) ? true : false;
+    }
+    internal string nodesToDebugString(IList<Node>
+nodes) {
       var builder = new StringBuilder();
       foreach (var node in nodes) {
         string str = node.toDebugString();
@@ -4724,8 +4726,8 @@ HtmlCommon.isMathMLElement(
           }
           this.charInput.setMarkPosition(markStart + 1);
         } else if (c1 == 'a') {
-    if (this.charInput.ReadChar() == 'm' && this.charInput.ReadChar() == 'p' &&
-            this.charInput.ReadChar() == ';') {
+          if (this.charInput.ReadChar() == 'm' && this.charInput.ReadChar() == 'p' &&
+                  this.charInput.ReadChar() == ';') {
             return '&';
           }
           this.charInput.setMarkPosition(markStart + 1);
@@ -4933,10 +4935,10 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
               characters.Append((char)valueToken);
             }
           } else if (valueToken <= 0x10ffff) {
-  characters.Append((char)((((valueToken - 0x10000) >> 10) & 0x3ff) +
-              0xd800));
-          characters.Append((char)(((valueToken - 0x10000) & 0x3ff) +
-              0xdc00));
+            characters.Append((char)((((valueToken - 0x10000) >> 10) & 0x3ff) +
+                        0xd800));
+            characters.Append((char)(((valueToken - 0x10000) & 0x3ff) +
+                0xdc00));
           }
           continue;
         }
@@ -5128,9 +5130,9 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
                 }
                 this.currentTag = valueToken;
                 this.currentEndTag = valueToken;
-             this.state = (this.state == TokenizerState.ScriptDataEndTagOpen) ?
-                    TokenizerState.ScriptDataEndTagName :
-                    TokenizerState.ScriptDataEscapedEndTagName;
+                this.state = (this.state == TokenizerState.ScriptDataEndTagOpen) ?
+                       TokenizerState.ScriptDataEndTagName :
+                       TokenizerState.ScriptDataEscapedEndTagName;
               } else if (ch >= 'a' && ch <= 'z') {
                 var valueToken = new EndTagToken((char)ch);
                 if (ch <= 0xffff) {
@@ -5143,9 +5145,9 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
                 }
                 this.currentTag = valueToken;
                 this.currentEndTag = valueToken;
-             this.state = (this.state == TokenizerState.ScriptDataEndTagOpen) ?
-                    TokenizerState.ScriptDataEndTagName :
-                    TokenizerState.ScriptDataEscapedEndTagName;
+                this.state = (this.state == TokenizerState.ScriptDataEndTagOpen) ?
+                       TokenizerState.ScriptDataEndTagName :
+                       TokenizerState.ScriptDataEscapedEndTagName;
               } else {
                 this.state = (this.state ==
                     TokenizerState.ScriptDataEndTagOpen) ?
@@ -5633,7 +5635,7 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
                 this.state = TokenizerState.AttributeName;
               } else if (ch == 0) {
                 this.parseError();
-            this.currentAttribute = this.currentTag.addAttribute((char)0xfffd);
+                this.currentAttribute = this.currentTag.addAttribute((char)0xfffd);
                 this.state = TokenizerState.AttributeName;
               } else if (ch < 0) {
                 this.parseError();
@@ -5707,7 +5709,7 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
                 this.state = TokenizerState.AttributeName;
               } else if (ch == 0) {
                 this.parseError();
-            this.currentAttribute = this.currentTag.addAttribute((char)0xfffd);
+                this.currentAttribute = this.currentTag.addAttribute((char)0xfffd);
                 this.state = TokenizerState.AttributeName;
               } else if (ch < 0) {
                 this.parseError();
@@ -5910,13 +5912,13 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
                   break;
                 }
               } else if (ch == '[' && true) {
-              if (this.charInput.ReadChar() == 'C' && this.charInput.ReadChar()
-                == 'D' && this.charInput.ReadChar() == 'A' &&
-                this.charInput.ReadChar() == 'T' &&
-        this.charInput.ReadChar() == 'A' && this.charInput.ReadChar() == '[' &&
-            this.getCurrentNode() != null &&
-                    !HtmlCommon.HTML_NAMESPACE.Equals(this.getCurrentNode()
-                    .getNamespaceURI())) {
+                if (this.charInput.ReadChar() == 'C' && this.charInput.ReadChar()
+                  == 'D' && this.charInput.ReadChar() == 'A' &&
+                  this.charInput.ReadChar() == 'T' &&
+          this.charInput.ReadChar() == 'A' && this.charInput.ReadChar() == '[' &&
+              this.getCurrentNode() != null &&
+                      !HtmlCommon.HTML_NAMESPACE.Equals(this.getCurrentNode()
+                      .getNamespaceURI())) {
                   this.state = TokenizerState.CData;
                   break;
                 }
@@ -6080,8 +6082,8 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
               if (ch < 0) {
                 // more than one character in this reference
                 int index = Math.Abs(ch + 1);
-  this.currentAttribute.appendToValue(HtmlEntities.EntityDoubles[index *
-                    2]);
+                this.currentAttribute.appendToValue(HtmlEntities.EntityDoubles[index *
+                                  2]);
                 this.currentAttribute.appendToValue(
                     HtmlEntities.EntityDoubles[(index * 2) + 1]);
               } else {
@@ -6132,7 +6134,7 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
               if (this.bogusCommentCharacter >= 0) {
                 var bogusChar = this.bogusCommentCharacter == 0 ? 0xfffd :
                   this.bogusCommentCharacter;
-                    comment.appendChar(bogusChar);
+                comment.appendChar(bogusChar);
               }
               while (true) {
                 int ch = this.charInput.ReadChar();
@@ -6179,8 +6181,8 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
                   this.docTypeToken.Name.Append((char)(ch +
   0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-                this.docTypeToken.Name.Append((char)((((ch + 0x20 - 0x10000) >>
-                10) & 0x3ff) + 0xd800));
+                  this.docTypeToken.Name.Append((char)((((ch + 0x20 - 0x10000) >>
+                  10) & 0x3ff) + 0xd800));
                   this.docTypeToken.Name.Append((char)(((ch + 0x20 -
                     0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -6226,8 +6228,8 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
                   this.docTypeToken.Name.Append((char)(ch +
   0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
-                this.docTypeToken.Name.Append((char)((((ch + 0x20 - 0x10000) >>
-                10) & 0x3ff) + 0xd800));
+                  this.docTypeToken.Name.Append((char)((((ch + 0x20 - 0x10000) >>
+                  10) & 0x3ff) + 0xd800));
                   this.docTypeToken.Name.Append((char)(((ch + 0x20 -
                     0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -6392,8 +6394,8 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
                 if (ch <= 0xffff) {
                   this.docTypeToken.ValuePublicID.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.docTypeToken.ValuePublicID.Append((char)((((ch - 0x10000) >>
-                10) & 0x3ff) + 0xd800));
+                  this.docTypeToken.ValuePublicID.Append((char)((((ch - 0x10000) >>
+                    10) & 0x3ff) + 0xd800));
                   this.docTypeToken.ValuePublicID.Append((char)(((ch -
                   0x10000) & 0x3ff) + 0xdc00));
                 }
@@ -6421,8 +6423,8 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
                 if (ch <= 0xffff) {
                   this.docTypeToken.ValueSystemID.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
-              this.docTypeToken.ValueSystemID.Append((char)((((ch - 0x10000) >>
-                10) & 0x3ff) + 0xd800));
+                  this.docTypeToken.ValueSystemID.Append((char)((((ch - 0x10000) >>
+                    10) & 0x3ff) + 0xd800));
                   this.docTypeToken.ValueSystemID.Append((char)(((ch -
                   0x10000) & 0x3ff) + 0xdc00));
                 }

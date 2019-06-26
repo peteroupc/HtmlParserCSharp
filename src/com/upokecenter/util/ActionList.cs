@@ -18,6 +18,9 @@ public sealed class ActionList<T> {
   private IList<T[]> postponeCall;
   private Object syncRoot = new Object();
 
+    ///
+    /// <summary>Initializes a new instance of the <see cref='ActionList'/> class.</summary>
+    ///
   public ActionList() {
     this.actions = new List<IBoundAction<T>>();
     this.boundObjects = new List<Object>();

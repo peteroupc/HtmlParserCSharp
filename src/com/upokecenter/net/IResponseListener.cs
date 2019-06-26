@@ -35,7 +35,7 @@ public interface IResponseListener<T> {
     /// path='docs/doc[@name="M:com.upokecenter.net.IResponseListener`1.processResponse(System.String,PeterO.Support.InputStream,com.upokecenter.net.IHttpHeaders)"]/*'/>
    T processResponse(
   string url,
-  PeterO.Support.InputStream stream,
+  Stream stream,
   IHttpHeaders headers);
 }
 }

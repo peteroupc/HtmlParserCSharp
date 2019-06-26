@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using PeterO;
@@ -342,7 +342,7 @@ IList<IDictionary<string, string>> stack = new
    ArgumentException("'valuePrefix' bound to xmlns namespace valueName");
 }
     if (!String.IsNullOrEmpty(nsvalue)) {
-      if (!URIUtility.hasSchemeForURI(nsvalue)) {
+      if (!URIUtility.HasSchemeForURI(nsvalue)) {
  throw new ArgumentException(nsvalue + " is not a valid namespace URI.");
 }
     } else if (!String.Empty.Equals(valuePrefix)) {

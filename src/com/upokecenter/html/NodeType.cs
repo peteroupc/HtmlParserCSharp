@@ -31,28 +31,34 @@ namespace com.upokecenter.html {
     /// <include file='../../../../docs.xml'
     /// path='docs/doc[@name="T:com.upokecenter.html.NodeType"]/*'/>
 public sealed class NodeType {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="F:com.upokecenter.html.NodeType.DOCUMENT_NODE"]/*'/>
+    ///
+    /// <summary>A document node.</summary>
+    ///
   public const int DOCUMENT_NODE = 9;
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="F:com.upokecenter.html.NodeType.COMMENT_NODE"]/*'/>
+    ///
+    /// <summary>A comment node.</summary>
+    ///
   public const int COMMENT_NODE = 8;
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="F:com.upokecenter.html.NodeType.ELEMENT_NODE"]/*'/>
+    ///
+    /// <summary>An HTML element node.</summary>
+    ///
   public const int ELEMENT_NODE = 1;
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="F:com.upokecenter.html.NodeType.TEXT_NODE"]/*'/>
+    ///
+    /// <summary>A node containing text.</summary>
+    ///
   public const int TEXT_NODE = 3;
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="F:com.upokecenter.html.NodeType.DOCUMENT_TYPE_NODE"]/*'/>
+    ///
+    /// <summary>A DOCTYPE node.</summary>
+    ///
   public const int DOCUMENT_TYPE_NODE = 10;
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="F:com.upokecenter.html.NodeType.PROCESSING_INSTRUCTION_NODE"]/*'/>
+    ///
+    /// <summary>Not documented yet.</summary>
+    ///
   public const int PROCESSING_INSTRUCTION_NODE = 7;
 
   private NodeType() {

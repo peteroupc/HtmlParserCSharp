@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="../packages/NUnit.3.12.0/build/NUnit.props" Condition="Exists('../packages/NUnit.3.12.0/build/NUnit.props')" />
+  <Import Condition="Exists('../packages/NUnit.3.12.0/build/NUnit.props')" Project="../packages/NUnit.3.12.0/build/NUnit.props" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,7 +9,7 @@
     <RootNamespace>Test</RootNamespace>
     <AssemblyName>HtmlParserCSharpTest</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-  </PropertyGroup>
+  <CodeAnalysisRuleSet>rules.ruleset</CodeAnalysisRuleSet></PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -19,23 +19,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ExternalConsole>true</ExternalConsole>
-  </PropertyGroup>
+  <CodeAnalysisRuleSet>rules.ruleset</CodeAnalysisRuleSet></PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ExternalConsole>true</ExternalConsole>
-  </PropertyGroup>
+  <CodeAnalysisRuleSet>rules.ruleset</CodeAnalysisRuleSet></PropertyGroup>
   <ItemGroup>
-    <Reference Include="CBOR, Version=3.4.0.0, Culture=neutral, PublicKeyToken=9cd62db60ea5554c">
-      <HintPath>../packages/PeterO.Cbor.3.4.0/lib/net40/CBOR.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Numbers, Version=1.2.2.0, Culture=neutral, PublicKeyToken=9cd62db60ea5554c">
-      <HintPath>../packages/PeterO.Numbers.1.2.2/lib/net40/Numbers.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
       <HintPath>../packages/NUnit.3.12.0/lib/net45/nunit.framework.dll</HintPath>
       <Private>True</Private>
@@ -46,6 +38,12 @@
     </Reference>
     <Reference Include="TurtleParser">
       <HintPath>..\packages\PeterO.TurtleParser.0.1.0\lib\netstandard1.0\TurtleParser.dll</HintPath>
+    </Reference>
+    <Reference Include="Numbers">
+      <HintPath>..\packages\PeterO.Numbers.1.4.1\lib\net40\Numbers.dll</HintPath>
+    </Reference>
+    <Reference Include="CBOR">
+      <HintPath>..\packages\PeterO.Cbor.3.5.0\lib\net40\CBOR.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -64,10 +62,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+  <Target BeforeTargets="PrepareForBuild" Name="EnsureNuGetPackageBuildImports">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
-    </PropertyGroup>
+    <CodeAnalysisRuleSet>rules.ruleset</CodeAnalysisRuleSet></PropertyGroup>
     <Error Condition="!Exists('../packages/NUnit.3.12.0/build/NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '../packages/NUnit.3.12.0/build/NUnit.props'))" />
   </Target>
 </Project>

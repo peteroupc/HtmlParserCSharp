@@ -51,7 +51,7 @@ public sealed class DownloadHelper {
     public PeterO.Support.File trueCacheInfoFile = null;
   }
 
-    /// <summary>* Connects to a URL to download data from that URL. @param
+    /// <xmlbegin id="0"/><summary>* Connects to a URL to download data from that URL. @param
     /// urlString a URL _string. All schemes (protocols) supported by
     /// Java's URLConnection are supported. Data URLs are also supported.
     /// @param callback an _object to call back on, particularly when the
@@ -66,14 +66,35 @@ public sealed class DownloadHelper {
     /// <param name='callback'>The parameter <paramref name='callback'/> is
     /// not documented yet.</param>
     /// <returns>A T object.</returns>
-  ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
   public static T downloadUrl<T>(
       string urlString,
       IResponseListener<T> callback) {
     return downloadUrl(urlString, callback, false);
   }
 
-    /// <summary>* Connects to a URL to download data from that URL. @param
+    /// <xmlbegin id="1"/><summary>* Connects to a URL to download data from that URL. @param
     /// urlString a URL _string. All schemes (protocols) supported by
     /// Java's URLConnection are supported. Data URLs are also supported.
     /// @param callback an _object to call back on, particularly when the
@@ -97,7 +118,28 @@ public sealed class DownloadHelper {
     /// <param name='handleErrorResponses'>The parameter <paramref
     /// name='handleErrorResponses'/> is not documented yet.</param>
     /// <returns>A T object.</returns>
-  ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
   public static T downloadUrl<T>(
       string urlString,
       IResponseListener<T> callback,

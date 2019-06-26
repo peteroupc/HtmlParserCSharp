@@ -51,14 +51,19 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
   private static string getHref(IElement node) {
     string name = DataUtilities.ToLowerCaseAscii(node.getLocalName());
     string href = String.Empty;
-    if ("a".Equals(name) || "link".Equals(name) || "area".Equals(name)) {
+    if ("a".Equals(name) ||
+"link".Equals(name) ||
+"area".Equals(name)) {
       href = node.getAttribute("href");
     } else if ("object".Equals(name)) {
       href = node.getAttribute("data");
-    } else if ("img".Equals(name) || "source".Equals(name) ||
-        "track".Equals(name) || "iframe".Equals(name) ||
-        "audio".Equals(name) || "video".Equals(name) ||
-        "embed".Equals(name)) {
+    } else if ("img".Equals(name) ||
+"source".Equals(name) ||
+"track".Equals(name) ||
+"iframe".Equals(name) ||
+"audio".Equals(name) ||
+"video".Equals(name) ||
+"embed".Equals(name)) {
       href = node.getAttribute("src");
     } else {
  return null;

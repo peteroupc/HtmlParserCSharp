@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -642,7 +642,7 @@ elname.Equals("time")) {
       string url = getHref(e);
       if (String.IsNullOrEmpty(url)) {
         url = getTrimmedTextContent(e);
-        if (URIUtility.isValidIRI(url)) {
+        if (URIUtility.IsValidIRI(url)) {
           return url;
         } else {
           return String.Empty;

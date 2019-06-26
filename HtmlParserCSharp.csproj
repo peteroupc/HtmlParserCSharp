@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version='1.0' encoding='UTF-8'?>
+<Project DefaultTargets='Build' ToolsVersion='4.0' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Configuration Condition=' &apos;$(Configuration)&apos; == &apos;&apos; '>Debug</Configuration>
+    <Platform Condition=' &apos;$(Platform)&apos; == &apos;&apos; '>AnyCPU</Platform>
     <ProjectGuid>{C1046EBC-7CAE-457E-A677-421CD1E2A289}</ProjectGuid>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
@@ -10,8 +10,8 @@
 <RootNamespace>HtmlParserCSharp</RootNamespace>
     <AssemblyName>HtmlParserCSharp</AssemblyName>
     <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <CodeAnalysisRuleSet>rules.ruleset</CodeAnalysisRuleSet></PropertyGroup>
+  <PropertyGroup Condition=' &apos;$(Configuration)|$(Platform)&apos; == &apos;Debug|AnyCPU&apos; '>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -20,74 +20,74 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\HtmlParserCSharp.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <CodeAnalysisRuleSet>rules.ruleset</CodeAnalysisRuleSet></PropertyGroup>
+  <PropertyGroup Condition=' &apos;$(Configuration)|$(Platform)&apos; == &apos;Release|AnyCPU&apos; '>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\HtmlParserCSharp.xml</DocumentationFile>
-  </PropertyGroup>
+  <CodeAnalysisRuleSet>rules.ruleset</CodeAnalysisRuleSet></PropertyGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\com\upokecenter\html\Attr.cs" />
-    <Compile Include="src\com\upokecenter\html\CharsetSniffer.cs" />
-    <Compile Include="src\com\upokecenter\html\Comment.cs" />
-    <Compile Include="src\com\upokecenter\html\Document.cs" />
-    <Compile Include="src\com\upokecenter\html\DocumentMode.cs" />
-    <Compile Include="src\com\upokecenter\html\DocumentType.cs" />
-    <Compile Include="src\com\upokecenter\html\EncodingConfidence.cs" />
-    <Compile Include="src\com\upokecenter\html\HtmlEntities.cs" />
-    <Compile Include="src\com\upokecenter\html\IAttr.cs" />
-    <Compile Include="src\com\upokecenter\html\IComment.cs" />
-    <Compile Include="src\com\upokecenter\html\IDocument.cs" />
-    <Compile Include="src\com\upokecenter\html\IDocumentType.cs" />
-    <Compile Include="src\com\upokecenter\html\IElement.cs" />
-    <Compile Include="src\com\upokecenter\html\INode.cs" />
-    <Compile Include="src\com\upokecenter\html\IProcessingInstruction.cs" />
-    <Compile Include="src\com\upokecenter\html\IText.cs" />
-    <Compile Include="src\com\upokecenter\html\Node.cs" />
-    <Compile Include="src\com\upokecenter\html\NodeType.cs" />
-    <Compile Include="src\com\upokecenter\html\Text.cs" />
-    <Compile Include="src\com\upokecenter\html\data\ExclusiveCanonicalXML.cs" />
-    <Compile Include="src\com\upokecenter\html\data\Microdata.cs" />
-    <Compile Include="src\com\upokecenter\html\data\Microformats.cs" />
-    <Compile Include="src\com\upokecenter\html\data\RDFInternal.cs" />
-    <Compile Include="src\com\upokecenter\io\ConditionalBufferInputStream.cs" />
-    <Compile Include="src\com\upokecenter\net\IDownloadEventListener.cs" />
-    <Compile Include="src\com\upokecenter\net\IHttpHeaders.cs" />
-    <Compile Include="src\com\upokecenter\net\IOnFinishedListener.cs" />
-    <Compile Include="src\com\upokecenter\net\IResponseListener.cs" />
-    <Compile Include="src\com\upokecenter\net\NoConnectionException.cs" />
-    <Compile Include="src\com\upokecenter\util\ActionList.cs" />
-    <Compile Include="src\com\upokecenter\util\IAction.cs" />
-    <Compile Include="src\com\upokecenter\util\IBoundAction.cs" />
-    <Compile Include="src\com\upokecenter\util\IndexedObjectList.cs" />
-    <Compile Include="src\com\upokecenter\util\StringUtility.cs" />
-    <Compile Include="src\com\upokecenter\util\SunriseSunset.cs" />
-    <Compile Include="src\com\upokecenter\util\URIUtility.cs" />
-    <Compile Include="src\com\upokecenter\util\URL.cs" />
-    <Compile Include="DateTimeUtility.cs" />
-    <Compile Include="Support.cs" />
-    <Compile Include="src\com\upokecenter\html\HtmlCommon.cs" />
-    <Compile Include="src\com\upokecenter\html\Element.cs" />
-    <Compile Include="src\com\upokecenter\html\data\RDFa1.cs" />
-    <Compile Include="src\com\upokecenter\html\data\RDFa.cs" />
-    <Compile Include="src\com\upokecenter\html\Html5Decoder.cs" />
-    <Compile Include="src\com\upokecenter\net\HeaderParser.cs" />
-    <Compile Include="src\com\upokecenter\html\INameAndAttributes.cs" />
-    <Compile Include="src\com\upokecenter\html\HtmlParser.cs" />
-    <Compile Include="src\com\upokecenter\html\HtmlDocument.cs" />
-    <Compile Include="..\CBOR\CBOR\PeterO\DebugUtility.cs">
+    <Compile Include='Properties\AssemblyInfo.cs'/>
+    <Compile Include='src\com\upokecenter\html\Attr.cs'/>
+    <Compile Include='src\com\upokecenter\html\CharsetSniffer.cs'/>
+    <Compile Include='src\com\upokecenter\html\Comment.cs'/>
+    <Compile Include='src\com\upokecenter\html\Document.cs'/>
+    <Compile Include='src\com\upokecenter\html\DocumentMode.cs'/>
+    <Compile Include='src\com\upokecenter\html\DocumentType.cs'/>
+    <Compile Include='src\com\upokecenter\html\EncodingConfidence.cs'/>
+    <Compile Include='src\com\upokecenter\html\HtmlEntities.cs'/>
+    <Compile Include='src\com\upokecenter\html\IAttr.cs'/>
+    <Compile Include='src\com\upokecenter\html\IComment.cs'/>
+    <Compile Include='src\com\upokecenter\html\IDocument.cs'/>
+    <Compile Include='src\com\upokecenter\html\IDocumentType.cs'/>
+    <Compile Include='src\com\upokecenter\html\IElement.cs'/>
+    <Compile Include='src\com\upokecenter\html\INode.cs'/>
+    <Compile Include='src\com\upokecenter\html\IProcessingInstruction.cs'/>
+    <Compile Include='src\com\upokecenter\html\IText.cs'/>
+    <Compile Include='src\com\upokecenter\html\Node.cs'/>
+    <Compile Include='src\com\upokecenter\html\NodeType.cs'/>
+    <Compile Include='src\com\upokecenter\html\Text.cs'/>
+    <Compile Include='src\com\upokecenter\html\data\ExclusiveCanonicalXML.cs'/>
+    <Compile Include='src\com\upokecenter\html\data\Microdata.cs'/>
+    <Compile Include='src\com\upokecenter\html\data\Microformats.cs'/>
+    <Compile Include='src\com\upokecenter\html\data\RDFInternal.cs'/>
+    <Compile Include='src\com\upokecenter\io\ConditionalBufferInputStream.cs'/>
+    <Compile Include='src\com\upokecenter\net\IDownloadEventListener.cs'/>
+    <Compile Include='src\com\upokecenter\net\IHttpHeaders.cs'/>
+    <Compile Include='src\com\upokecenter\net\IOnFinishedListener.cs'/>
+    <Compile Include='src\com\upokecenter\net\IResponseListener.cs'/>
+    <Compile Include='src\com\upokecenter\net\NoConnectionException.cs'/>
+    <Compile Include='src\com\upokecenter\util\ActionList.cs'/>
+    <Compile Include='src\com\upokecenter\util\IAction.cs'/>
+    <Compile Include='src\com\upokecenter\util\IBoundAction.cs'/>
+    <Compile Include='src\com\upokecenter\util\IndexedObjectList.cs'/>
+    <Compile Include='src\com\upokecenter\util\StringUtility.cs'/>
+    <Compile Include='src\com\upokecenter\util\SunriseSunset.cs'/>
+    <Compile Include='src\com\upokecenter\util\URIUtility.cs'/>
+    <Compile Include='src\com\upokecenter\util\URL.cs'/>
+    <Compile Include='DateTimeUtility.cs'/>
+    <Compile Include='Support.cs'/>
+    <Compile Include='src\com\upokecenter\html\HtmlCommon.cs'/>
+    <Compile Include='src\com\upokecenter\html\Element.cs'/>
+    <Compile Include='src\com\upokecenter\html\data\RDFa1.cs'/>
+    <Compile Include='src\com\upokecenter\html\data\RDFa.cs'/>
+    <Compile Include='src\com\upokecenter\html\Html5Decoder.cs'/>
+    <Compile Include='src\com\upokecenter\net\HeaderParser.cs'/>
+    <Compile Include='src\com\upokecenter\html\INameAndAttributes.cs'/>
+    <Compile Include='src\com\upokecenter\html\HtmlParser.cs'/>
+    <Compile Include='src\com\upokecenter\html\HtmlDocument.cs'/>
+    <Compile Include='..\CBOR\CBOR\PeterO\DebugUtility.cs'>
       <Link>DebugUtility.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="project.json" />
-    <None Include="src\com\upokecenter\html\XhtmlParser.cs" />
-    <None Include="src\com\upokecenter\net\CacheControl.cs" />
-    <None Include="src\com\upokecenter\net\DownloadHelper.cs" />
-    <None Include="DownloadHelperImpl.cs" />
+    <None Include='project.json'/>
+    <None Include='src\com\upokecenter\html\XhtmlParser.cs'/>
+    <None Include='src\com\upokecenter\net\CacheControl.cs'/>
+    <None Include='src\com\upokecenter\net\DownloadHelper.cs'/>
+    <None Include='DownloadHelperImpl.cs'/>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project='$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets'/>
 </Project>
