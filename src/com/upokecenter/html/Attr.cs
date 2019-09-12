@@ -39,8 +39,8 @@ internal class Attr : IAttr {
   { this.valueName.Append((char)ch);
 }
   } else if (ch <= 0x10ffff) {
-valueName.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) + 0xd800));
-valueName.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
+    valueName.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) | 0xd800));
+valueName.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
 }
   }
 
@@ -51,34 +51,34 @@ valueName.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
 
   internal void appendToName(int ch) {
     if (this.valueNameString != null) {
- throw new InvalidOperationException();
-}
+      throw new InvalidOperationException();
+    }
     if (ch <= 0xffff) {
   { this.valueName.Append((char)ch);
 }
   } else if (ch <= 0x10ffff) {
-valueName.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) + 0xd800));
-valueName.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
+    valueName.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) | 0xd800));
+valueName.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
 }
   }
 
   internal void appendToValue(int ch) {
     if (this.valueString != null) {
- throw new InvalidOperationException();
-}
+      throw new InvalidOperationException();
+    }
     if (ch <= 0xffff) {
   { this.value.Append((char)ch);
 }
   } else if (ch <= 0x10ffff) {
-value.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) + 0xd800));
-value.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
+    value.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) | 0xd800));
+value.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
 }
   }
 
   internal void commitValue() {
     if (this.value == null) {
- throw new InvalidOperationException();
-}
+      throw new InvalidOperationException();
+    }
     this.valueString = this.value.ToString();
     this.value = null;
   }
@@ -124,8 +124,8 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
     string thisname = this.getLocalName();
   bool match = attrName == null ? thisname == null : attrName.Equals(thisname);
     if (!match) {
- return false;
-}
+      return false;
+    }
     match = value_namespace == null ? this.value_namespace == null :
       value_namespace.Equals(this.value_namespace);
     return match;
@@ -133,16 +133,16 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
 
   internal void setName(string value2) {
     if (value2 == null) {
- throw new ArgumentException();
-}
+      throw new ArgumentException();
+    }
     this.valueNameString = value2;
     this.valueName = null;
   }
 
   internal void setNamespace(string value) {
     if (value == null) {
- throw new ArgumentException();
-}
+      throw new ArgumentException();
+    }
     this.value_namespace = value;
     this.valueNameString = this.getName();
     int io = this.valueNameString.IndexOf(':');
@@ -155,16 +155,18 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) + 0xdc00));
     }
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.Attr.setPrefix(System.String)"]/*'/>
+    /// <summary>NOTE: Set after setNamespace, or it may be overwritten
+    /// @param attrprefix.</summary>
+    /// <param name='attrprefix'>The parameter <paramref
+    /// name='attrprefix'/> is a text string.</param>
   public void setPrefix(string attrprefix) {
     this.valuePrefix = attrprefix;
   }
 
   internal void setValue(string value2) {
     if (value2 == null) {
- throw new ArgumentException();
-}
+      throw new ArgumentException();
+    }
     this.valueString = value2;
     this.value = null;
   }

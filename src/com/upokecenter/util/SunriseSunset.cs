@@ -6,30 +6,21 @@ released to the public domain by Paul Schlyter, December 1992
 */
 // Converted to Java and C# by Peter O., 2013.
 namespace com.upokecenter.util {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.util.SunriseSunset"]/*'/>
+    /// <summary>Contains utility methods for calculating sunrise and
+    /// sunset.</summary>
   public sealed class SunriseSunset {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.util.SunriseSunset.DayState"]/*'/>
+    /// <summary>A rough time of day.</summary>
     public enum DayState {
-    ///
     /// <summary>Day light.</summary>
-    ///
       Day,
 
-    ///
     /// <summary>Approaching nighttime.</summary>
-    ///
       DayToNight,
 
-    ///
     /// <summary>The time of day is nighttime.</summary>
-    ///
       Night,
 
-    ///
     /// <summary>Approaching daytime.</summary>
-    ///
       NightToDay
     }
 
@@ -43,13 +34,13 @@ namespace com.upokecenter.util {
     private static double valueINV360 = 1.0 / 360.0;
 
     private static double __daylen__(
-    int year,
-    int month,
-    int day,
-    double lon,
-    double lat,
-    double altit,
-    bool upper_limb)
+      int year,
+      int month,
+      int day,
+      double lon,
+      double lat,
+      double altit,
+      bool upper_limb)
     // **
     // Note: year, month, date = calendar date, 1801-2099 only.
     // Eastern longitude positive, Western longitude negative
@@ -66,14 +57,14 @@ namespace com.upokecenter.util {
     // and to zero when computing day + twilight length.
     // **
     {
-      double d,  // Days since 2000 Jan 0.0 (negative before)
-      obl_ecl,  // Obliquity (inclination) of Earth's axis
-      sr,  // Solar distance, astronomical units
-      slon,  // True solar longitude
-      sin_sdecl,  // Sine of Sun's declination
-      cos_sdecl,  // Cosine of Sun's declination
-      sradius,  // Sun's apparent radius
-      t;  // Diurnal arc
+      double d, // Days since 2000 Jan 0.0 (negative before)
+      obl_ecl, // Obliquity (inclination) of Earth's axis
+      sr, // Solar distance, astronomical units
+      slon, // True solar longitude
+      sin_sdecl, // Sine of Sun's declination
+      cos_sdecl, // Cosine of Sun's declination
+      sradius, // Sun's apparent radius
+      t; // Diurnal arc
 
       // Compute d of 12h local mean solar time
       d = days_since_2000_Jan_0(year, month, day) + 0.5 - (lon / 360.0);
@@ -104,27 +95,27 @@ namespace com.upokecenter.util {
         cost = Math.Sin(valueDEGRAD * altit) - (Math.Sin(valueDEGRAD * lat)
           * sin_sdecl) / (Math.Cos(valueDEGRAD * lat) * cos_sdecl);
         if (cost >= 1.0) {
-          t = 0.0;  // Sun always below altit
+          t = 0.0; // Sun always below altit
         } else if (cost <= -1.0) {
-          t = 24.0;  // Sun always above altit
+          t = 24.0; // Sun always above altit
         } else {
           // The diurnal arc, hours
           t = (2.0 / 15.0) * valueRADEG * Math.Acos(cost);
         }
       }
-      return t;  // __daylen__
+      return t; // __daylen__
     }
 
     private static int __sunriset__(
-    int year,
-    int month,
-    int day,
-    double lon,
-    double lat,
-    double altit,
-    bool upper_limb,
-    double[] trise,
-    double[] tset) {
+      int year,
+      int month,
+      int day,
+      double lon,
+      double lat,
+      double altit,
+      bool upper_limb,
+      double[] trise,
+      double[] tset) {
       // **
       // Note: year, month, date = calendar date, 1801-2099 only.
       // Eastern longitude positive, Western longitude negative
@@ -154,16 +145,16 @@ namespace com.upokecenter.util {
       // both set to the time when the sun is at south.
       //
       // **
-      double d,  // Days since 2000 Jan 0.0 (negative before)
-      sr,  // Solar distance, astronomical units
-      sRA,  // Sun's Right Ascension
-      sdec,  // Sun's declination
-      sradius,  // Sun's apparent radius
-      t,  // Diurnal arc
-      tsouth,  // Time when Sun is at south
-      sidtime;  // Local sidereal time
+      double d, // Days since 2000 Jan 0.0 (negative before)
+      sr, // Solar distance, astronomical units
+      sRA, // Sun's Right Ascension
+      sdec, // Sun's declination
+      sradius, // Sun's apparent radius
+      t, // Diurnal arc
+      tsouth, // Time when Sun is at south
+      sidtime; // Local sidereal time
 
-      var rc = 0;  // Return cde from function - usually 0
+      var rc = 0; // Return cde from function - usually 0
 
       // Compute d of 12h local mean solar time
       d = days_since_2000_Jan_0(year, month, day) + 0.5 - (lon / 360.0);
@@ -196,12 +187,12 @@ namespace com.upokecenter.util {
           Math.Cos(valueDEGRAD * sdec));
         if (cost >= 1.0) {
             rc = -1;
-          t = 0.0;  // Sun always below altit
+          t = 0.0; // Sun always below altit
         } else if (cost <= -1.0) {
-            rc = +1;
+          rc = +1;
           t = 12.0;
         } /* Sun always above altit */ else {
-          t = valueRADEG * Math.Acos(cost) / 15.0;  // The diurnal arc, hours
+          t = valueRADEG * Math.Acos(cost) / 15.0; // The diurnal arc, hours
         }
       }
 
@@ -209,7 +200,7 @@ namespace com.upokecenter.util {
       trise[0] = tsouth - t;
       tset[0] = tsouth + t;
 
-      return rc;  // __sunriset__
+      return rc; // __sunriset__
     }
 
     // The "workhorse" function for sun rise/set times
@@ -220,27 +211,34 @@ namespace com.upokecenter.util {
 
     // The "workhorse" function
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.SunriseSunset.getCurrentDayState(System.Double,System.Double)"]/*'/>
+    /// <summary>Gets a value indicating whether it's currently day or
+    /// night at the given geographic location. @param lat @param lon a
+    /// geographic longitude, in degrees. West coordinates are negative.
+    /// @return A day state value.</summary>
+    /// <param name='lat'>A geographic latitude, in degrees. South
+    /// coordinates are negative.</param>
+    /// <param name='lon'>The parameter <paramref name='lon'/> is a Double
+    /// object.</param>
+    /// <returns>A DayState object.</returns>
     public static DayState getCurrentDayState(double lat, double lon) {
       int[] components = DateTimeUtility.getCurrentGmtDateComponents();
       var trise = new double[1];
       var tset = new double[1];
-      double hours = components[3];  // hour
-      hours += components[4] / 60.0;  // minute
-      hours += components[5] / 3600.0;  // second
-      hours += components[6] / 3600000.0;  // millisecond
+      double hours = components[3]; // hour
+      hours += components[4] / 60.0; // minute
+      hours += components[5] / 3600.0; // second
+      hours += components[6] / 3600000.0; // millisecond
                     // Get sunrise times
       int t = __sunriset__(
-    components[0],  // year
-    components[1],  // month
-    components[2],  // day
-    lon,
-    lat,
-    -35.0 / 60.0,
-    true,
-    trise,
-    tset);
+        components[0], // year
+        components[1], // month
+        components[2], // day
+        lon,
+        lat,
+        -35.0 / 60.0,
+        true,
+        trise,
+        tset);
       if (t > 0) {
         return DayState.Day;
       }
@@ -248,15 +246,15 @@ namespace com.upokecenter.util {
       var twiset = new double[1];
       // Get civil twilight times
       int twi = __sunriset__(
-    components[0],  // year
-    components[1],  // month
-    components[2],  // day
-    lon,
-    lat,
-    -6,
-    false,
-    twirise,
-    twiset);
+        components[0], // year
+        components[1], // month
+        components[2], // day
+        lon,
+        lat,
+        -6,
+        false,
+        twirise,
+        twiset);
       if (twi < 0) {
         return DayState.Night;
       }
@@ -301,7 +299,7 @@ namespace com.upokecenter.util {
       // L = valueM + w, as defined in sunpos().
       sidtim0 = revolution((180.0 + 356.0470 + 282.9404) +
           (0.9856002585 + 4.70935E-5) * d);
-      return sidtim0;  // GMST0
+      return sidtim0; // GMST0
     }
 
     internal static double rev180(double x)
@@ -309,7 +307,7 @@ namespace com.upokecenter.util {
     // Reduce angle to within + 180..+180 degrees
     // **
     {
-      return x - (360.0 * Math.Floor((x * valueINV360) + 0.5));  // revolution
+      return x - (360.0 * Math.Floor((x * valueINV360) + 0.5)); // revolution
     }
 
     internal static double revolution(double x)
@@ -317,7 +315,7 @@ namespace com.upokecenter.util {
     // Reduce angle to within 0..360 degrees
     // **
     {
-      return x - (360.0 * Math.Floor(x * valueINV360));  // revolution
+      return x - (360.0 * Math.Floor(x * valueINV360)); // revolution
     }
 
     internal static double[] sun_RA_dec(double d) {
@@ -341,7 +339,7 @@ namespace com.upokecenter.util {
       // Convert to spherical coordinates
       double valueRA = valueRADEG * Math.Atan2(y, x);
       double dec = valueRADEG * Math.Atan2(z, Math.Sqrt(x * x + y * y));
-      return new double[] { valueRA, dec, lon_r[1] };  // sun_RA_dec
+      return new double[] { valueRA, dec, lon_r[1] }; // sun_RA_dec
     }
 
     internal static double[] sunpos(double d) {
@@ -349,13 +347,13 @@ namespace com.upokecenter.util {
       // at an instant given in d, number of days since
       // 2000 Jan 0.0. The Sun's ecliptic latitude is not
       // computed, since it's always very near 0.
-      double valueM,  // Mean anomaly of the Sun
-      w,  // Mean longitude of perihelion
+      double valueM, // Mean anomaly of the Sun
+      w, // Mean longitude of perihelion
           // Note: Sun's mean longitude = valueM + w
-      e,  // Eccentricity of Earth's orbit
-      valueE,  // Eccentric anomaly
-      x, y,  // x, y coordinates in orbit
-      v;  // True anomaly
+      e, // Eccentricity of Earth's orbit
+      valueE, // Eccentric anomaly
+      x, y, // x, y coordinates in orbit
+      v; // True anomaly
 
       // Compute mean elements
       valueM = revolution(356.0470 + (0.9856002585 * d));
@@ -367,11 +365,11 @@ namespace com.upokecenter.util {
         e * Math.Cos(valueDEGRAD * valueM));
       x = Math.Cos(valueDEGRAD * valueE) - e;
       y = Math.Sqrt(1.0 - (e * e)) * Math.Sin(valueDEGRAD * valueE);
-      double r = Math.Sqrt(x * x + y * y);  // Solar distance
-      v = valueRADEG * Math.Atan2(y, x);  // True anomaly
-      double lon = v + w;  // True solar longitude
+      double r = Math.Sqrt(x * x + y * y); // Solar distance
+      v = valueRADEG * Math.Atan2(y, x); // True anomaly
+      double lon = v + w; // True solar longitude
       if (lon >= 360.0) {
-        lon -= 360.0;  // Make it 0..360 degrees
+        lon -= 360.0; // Make it 0..360 degrees
       }
       return new double[] { lon, r };
     }

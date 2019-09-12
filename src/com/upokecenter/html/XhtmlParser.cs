@@ -119,23 +119,23 @@ internal class XhtmlParser {
   { builder.Append((char)(twoChars[0]));
 }
   } else if (twoChars[0] <= 0x10ffff) {
-builder.Append((char)((((twoChars[0] - 0x10000) >> 10) & 0x3ff) + 0xd800));
-builder.Append((char)(((twoChars[0] - 0x10000) & 0x3ff) + 0xdc00));
+builder.Append((char)((((twoChars[0] - 0x10000) >> 10) & 0x3ff) | 0xd800));
+builder.Append((char)(((twoChars[0] - 0x10000) & 0x3ff) | 0xdc00));
 }
             if (twoChars[1] <= 0xffff) {
   { builder.Append((char)(twoChars[1]));
 }
   } else if (twoChars[1] <= 0x10ffff) {
-builder.Append((char)((((twoChars[1] - 0x10000) >> 10) & 0x3ff) + 0xd800));
-builder.Append((char)(((twoChars[1] - 0x10000) & 0x3ff) + 0xdc00));
+builder.Append((char)((((twoChars[1] - 0x10000) >> 10) & 0x3ff) | 0xd800));
+builder.Append((char)(((twoChars[1] - 0x10000) & 0x3ff) | 0xdc00));
 }
         } else if (entity<0x110000) {
             if (entity <= 0xffff) {
   { builder.Append((char)(entity));
 }
   } else if (entity <= 0x10ffff) {
-builder.Append((char)((((entity - 0x10000) >> 10) & 0x3ff) + 0xd800));
-builder.Append((char)(((entity - 0x10000) & 0x3ff) + 0xdc00));
+builder.Append((char)((((entity - 0x10000) >> 10) & 0x3ff) | 0xd800));
+builder.Append((char)(((entity - 0x10000) & 0x3ff) | 0xdc00));
 }
         }
       }
@@ -149,14 +149,15 @@ builder.Append((char)(((entity - 0x10000) & 0x3ff) + 0xdc00));
       doctype.systemId = sysid;
       document.appendChild(doctype);
       if ("-//W3C//DTD XHTML 1.0 Transitional//EN".Equals(pubid) ||
-          "-//W3C//DTD XHTML 1.1//EN".Equals(pubid) ||
-          "-//W3C//DTD XHTML 1.0 Strict//EN".Equals(pubid) ||
-          "-//W3C//DTD XHTML 1.0 Frameset//EN".Equals(pubid) ||
-          "-//W3C//DTD XHTML Basic 1.0//EN".Equals(pubid) ||
-          "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN".Equals(pubid) ||
-      "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
-            .Equals(pubid) || "-//W3C//DTD MathML 2.0//EN".Equals(pubid) ||
-          "-//WAPFORUM//DTD XHTML Mobile 1.0//EN".Equals(pubid)) {
+"-//W3C//DTD XHTML 1.1//EN".Equals(pubid) ||
+"-//W3C//DTD XHTML 1.0 Strict//EN".Equals(pubid) ||
+"-//W3C//DTD XHTML 1.0 Frameset//EN".Equals(pubid) ||
+"-//W3C//DTD XHTML Basic 1.0//EN".Equals(pubid) ||
+"-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN".Equals(pubid) ||
+"-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
+            .Equals(pubid) ||
+"-//W3C//DTD MathML 2.0//EN".Equals(pubid) ||
+"-//WAPFORUM//DTD XHTML Mobile 1.0//EN".Equals(pubid)) {
         useEntities = true;
       }
     }
@@ -176,7 +177,7 @@ builder.Append((char)(((entity - 0x10000) & 0x3ff) + 0xdc00));
       for (int i = 0;i<arg3.Length; ++i) {
         string _namespace = arg3.GetUri(i);
         var attr = new Attr();
-        attr.setName(arg3.GetQName(i));  // Sets prefix and local name
+        attr.setName(arg3.GetQName(i)); // Sets prefix and local name
         attr.setNamespace(_namespace);
         attr.setValue(arg3.GetValue(i));
         element.addAttribute(attr);
@@ -244,7 +245,7 @@ builder.Append((char)(((entity - 0x10000) & 0x3ff) + 0xdc00));
  return "utf-16le";
 }
     if (count >= 4 && data[0]==0x3c && data[1]==0x3f &&
-        data[2]==0x78 && data[3]==0x6d) {  // <?xm
+        data[2]==0x78 && data[3]==0x6d) { // <?xm
       data = new byte[128];
       s.mark(data.Length + 2);
       try {
@@ -257,7 +258,7 @@ builder.Append((char)(((entity - 0x10000) & 0x3ff) + 0xdc00));
  return "utf-8";
 }
       if (data[i++]!='l') {
- return "utf-8";  // l in <?xml
+ return "utf-8"; // l in <?xml
 }
       var space = false;
       while (i<count) {
@@ -375,8 +376,8 @@ builder.Append((char)(((entity - 0x10000) & 0x3ff) + 0xdc00));
   private string encoding;
 
   private string[] contentLang;
-  public XhtmlParser(PeterO.Support.InputStream s, string _string) :
-    this(s, _string, null, null) {
+  public XhtmlParser(PeterO.Support.InputStream s, string _string)
+    : this(s, _string, null, null) {
   }
   public XhtmlParser(PeterO.Support.InputStream s, string _string, string
     charset) : this(s, _string, charset, null) {

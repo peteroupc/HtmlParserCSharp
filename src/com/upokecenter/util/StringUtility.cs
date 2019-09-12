@@ -11,13 +11,15 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace com.upokecenter.util {
-  /// <include file='../../../../docs.xml'
-  /// path='docs/doc[@name="T:com.upokecenter.util.StringUtility"]/*'/>
+    /// <summary>Contains utility methods for working with
+    /// strings.</summary>
   public static class StringUtility {
     private static readonly string[] ValueEmptyStringArray = new string[0];
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.StringUtility.isNullOrSpaces(System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='s'>The parameter <paramref name='s'/> is a text
+    /// string.</param>
+    /// <returns>Either <c>true</c> or <c>false</c>.</returns>
     public static bool isNullOrSpaces(string s) {
       if (s == null) {
         return true;
@@ -34,8 +36,22 @@ namespace com.upokecenter.util {
       return true;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.StringUtility.splitAt(System.String,System.String)"]/*'/>
+    /// <summary>Splits a _string by a delimiter. If the _string ends with
+    /// the delimiter, the result will end with an empty _string. If the
+    /// _string begins with the delimiter, the result will start with an
+    /// empty _string. If the delimiter is null or empty, exception. @param
+    /// s a _string to split. @param delimiter a _string to signal where
+    /// each substring begins and ends. @return An array containing strings
+    /// that are split by the delimiter. If s is null or empty, returns an
+    /// array whose sole element is the empty _string.</summary>
+    /// <param name='str'>The parameter <paramref name='str'/> is a text
+    /// string.</param>
+    /// <param name='delimiter'>The parameter <paramref name='delimiter'/>
+    /// is a text string.</param>
+    /// <returns>A string[] object.</returns>
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='delimiter'/> is null.</exception>
+    /// <exception cref='ArgumentException'>Delimiter is empty.</exception>
     public static string[] splitAt(string str, string delimiter) {
       if (delimiter == null) {
         throw new ArgumentNullException(nameof(delimiter));
@@ -72,8 +88,16 @@ namespace com.upokecenter.util {
       return (string[])strings.ToArray();
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.StringUtility.SplitAtSpTabCrLf(System.String)"]/*'/>
+    /// <summary>Splits a _string separated by space characters other than
+    /// form feed. This method acts as though it strips leading and
+    /// trailing space characters from the _string before splitting it. The
+    /// space characters used here are U+0009, U+000A, U+000D, and U+0020.
+    /// @param s a _string. Can be null. @return an array of all items
+    /// separated by spaces. If _string is null or empty, returns an empty
+    /// array.</summary>
+    /// <param name='s'>The parameter <paramref name='s'/> is a text
+    /// string.</param>
+    /// <returns>A string[] object.</returns>
     public static string[] SplitAtSpTabCrLf(string s) {
       if (s == null || s.Length == 0) {
         return ValueEmptyStringArray;
@@ -116,8 +140,16 @@ namespace com.upokecenter.util {
       return strings.ToArray();
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.StringUtility.SplitAtSpTabCrLfFf(System.String)"]/*'/>
+    /// <summary>Splits a _string separated by space characters. This
+    /// method acts as though it strips leading and trailing space
+    /// characters from the _string before splitting it. The space
+    /// characters are U+0009, U+000A, U+000C, U+000D, and U+0020. @param s
+    /// a _string. Can be null. @return an array of all items separated by
+    /// spaces. If _string is null or empty, returns an empty
+    /// array.</summary>
+    /// <param name='s'>The parameter <paramref name='s'/> is a text
+    /// string.</param>
+    /// <returns>A string[] object.</returns>
     public static string[] SplitAtSpTabCrLfFf(string s) {
       if (s == null || s.Length == 0) {
         return ValueEmptyStringArray;

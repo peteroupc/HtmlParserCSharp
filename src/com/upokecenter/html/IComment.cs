@@ -28,11 +28,10 @@ THE SOFTWARE.
 using System;
 
 namespace com.upokecenter.html {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.html.IComment"]/*'/>
+    /// <summary>Represents a comment on an HTML document.</summary>
 public interface IComment : INode {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IComment.getData"]/*'/>
+    /// <summary>Gets the comment's text.</summary>
+    /// <returns>The return value is not documented yet.</returns>
    string getData();
 }
 }

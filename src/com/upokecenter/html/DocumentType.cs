@@ -29,8 +29,8 @@ THE SOFTWARE.
 
 namespace com.upokecenter.html {
 internal sealed class DocumentType : Node, IDocumentType {
-    public DocumentType(string name, string pub, string sys) :
-    base(NodeType.DOCUMENT_TYPE_NODE) {
+    public DocumentType(string name, string pub, string sys)
+    : base(NodeType.DOCUMENT_TYPE_NODE) {
       this.Name = name;
       this.PublicId = pub;
       this.SystemId = sys;

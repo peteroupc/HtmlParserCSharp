@@ -6,8 +6,7 @@ using com.upokecenter.html;
 using com.upokecenter.util;
 
 namespace com.upokecenter.html.data {
-    /// <include file='../../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.html.data.Microdata"]/*'/>
+    /// <summary>Not documented yet.</summary>
 public sealed class Microdata {
   private class ElementAndIndex {
       internal int Index { get; set; }
@@ -22,27 +21,27 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
   }
 
   private static int getElementIndex(
-      INode root,
-      IElement e,
-      int startIndex) {
+    INode root,
+    IElement e,
+    int startIndex) {
     var runningIndex = new int[] { startIndex };
     return getElementIndex(root, e, runningIndex);
   }
 
   private static int getElementIndex(
-      INode root,
-      IElement e,
-      int[] runningIndex) {
+    INode root,
+    IElement e,
+    int[] runningIndex) {
     int valueIndex = runningIndex[0];
     if (root.Equals(e)) {
- return valueIndex;
-}
+      return valueIndex;
+    }
     ++valueIndex;
     foreach (var child in root.getChildNodes()) {
       int idx = getElementIndex(child, e, runningIndex);
       if (idx >= 0) {
- return idx;
-}
+        return idx;
+      }
     }
     runningIndex[0] = valueIndex;
     return -1;
@@ -69,18 +68,20 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
  return null;
 }
     if (href == null || href.Length == 0) {
- return String.Empty;
+  return String.Empty;
 }
     href = HtmlCommon.resolveURL(node, href, null);
     return (href == null || href.Length == 0) ? String.Empty : href;
   }
 
-    /// <include file='../../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.data.Microdata.getMicrodataJSON(com.upokecenter.html.IDocument)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='document'>The parameter <paramref name='document'/> is
+    /// a.upokecenter.html.IDocument object.</param>
+    /// <returns>The return value is not documented yet.</returns>
   public static PeterO.Cbor.CBORObject getMicrodataJSON(IDocument document) {
     if (document == null) {
- throw new ArgumentNullException(nameof(document));
-}
+      throw new ArgumentNullException(nameof(document));
+    }
     PeterO.Cbor.CBORObject result = PeterO.Cbor.CBORObject.NewMap();
     var items = CBORObject.NewArray();
     foreach (var node in document.getElementsByTagName("*")) {
@@ -189,8 +190,8 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
       }
       string href = getHref(e);
       if (href != null) {
- return href;
-}
+        return href;
+      }
       if (isHtmlElement(e, "data")) {
         string attr = e.getAttribute("value");
         return (attr == null) ? String.Empty : attr;
@@ -198,8 +199,8 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
       if (isHtmlElement(e, "time")) {
         string attr = e.getAttribute("datetime");
         if (attr != null) {
- return attr;
-}
+          return attr;
+        }
       }
     }
     return e.getTextContent();
@@ -218,8 +219,8 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
       IList<IElement> elements,
       INode root) {
     if (elements == null || elements.Count < 2) {
- return elements;
-}
+      return elements;
+    }
     var elems = new List<ElementAndIndex>();
     foreach (var valueElement in elements) {
       var el = new ElementAndIndex();

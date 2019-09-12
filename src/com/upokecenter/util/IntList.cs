@@ -10,30 +10,8 @@ using System;
 using System.Globalization;
 using System.Text;
 namespace com.upokecenter.util {
-    /// <xmlbegin id="9"/><summary>Represents a list of integers or Unicode
+    /// <summary>Represents a list of integers or Unicode
     /// characters.</summary>
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
 public sealed class IntList {
   int[] buffer;
   int ptr;
@@ -55,8 +33,8 @@ public sealed class IntList {
 
   public void appendInts(int[] array, int offset, int length) {
     if ((array) == null) {
- throw new ArgumentNullException(nameof(array));
-}
+      throw new ArgumentNullException(nameof(array));
+    }
     if (offset < 0) {
  throw new ArgumentException("offset less than " +"0 ("
    +Convert.ToString(offset,CultureInfo.InvariantCulture)+")");
@@ -92,7 +70,7 @@ public sealed class IntList {
       } else if ((c & 0xf800) == 0xd800) {
  // illegal surrogate
         throw new ArgumentException();
- } else {
+      } else {
         appendInt(c);
       }
     }
@@ -112,35 +90,13 @@ public int get(int index) {
     return buffer[index];
   }
 
-    /// <xmlbegin id="10"/><summary>Sets the integer at a specified position to a new value.
+    /// <summary>Sets the integer at a specified position to a new value.
     /// @param index an index into the list. @param value the integer's new
     /// value.</summary>
     /// <param name='index'>The parameter <paramref name='index'/> is not
     /// documented yet.</param>
     /// <param name='value'>The parameter <paramref name='value'/> is not
     /// documented yet.</param>
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
   public void set(int index, int value) {
     buffer[index]=value;
   }

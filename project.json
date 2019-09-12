@@ -1,11 +1,11 @@
-﻿{
+{
   "dependencies": {
-    "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
-    "NETStandard.Library": "2.0.3",
     "PeterO.Cbor": "3.5.0",
     "PeterO.Encoding": "0.5.1",
     "PeterO.Numbers": "1.4.1",
-    "PeterO.TurtleParser": "0.1.0"
+    "PeterO.TurtleParser": "0.1.0",
+    "NETStandard.Library": "1.6.0",
+    "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
   },
   "frameworks": {
     "netstandard1.0": {}

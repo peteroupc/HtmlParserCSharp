@@ -29,47 +29,58 @@ using System;
 using System.Collections.Generic;
 
 namespace com.upokecenter.html {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.html.INode"]/*'/>
+    /// <summary>Represents a node in the document _object model (DOM). All
+    /// DOM objects implement this interface.</summary>
 public interface INode {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.INode.getBaseURI"]/*'/>
+    /// <summary>Returns the _base URL of this node. URLs on this node are
+    /// resolved relative to this URL.</summary>
+    /// <returns>The return value is not documented yet.</returns>
   string getBaseURI();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.INode.getChildNodes"]/*'/>
+    /// <summary>Gets the direct children of this node. @return A list of
+    /// the direct children of this node.</summary>
+    /// <returns>The return value is not documented yet.</returns>
   IList<INode> getChildNodes();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.INode.getLanguage"]/*'/>
+    /// <summary>Gets the language of this node. Not defined in the DOM
+    /// specification.</summary>
+    /// <returns>The return value is not documented yet.</returns>
   string getLanguage();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.INode.getNodeName"]/*'/>
+    /// <summary>Gets the name of this node. For HTML elements, this will
+    /// be the same as the tag name.</summary>
+    /// <returns>The return value is not documented yet.</returns>
   string getNodeName();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.INode.getNodeType"]/*'/>
+    /// <summary>Returns the type of node represented by this _object.
+    /// @return A node type integer; see NodeType.</summary>
+    /// <returns>The return value is not documented yet.</returns>
   int getNodeType();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.INode.getOwnerDocument"]/*'/>
+    /// <summary>Gets the document that owns this node. @return the owner
+    /// document, or null if this is a document _object.</summary>
+    /// <returns>The return value is not documented yet.</returns>
   IDocument getOwnerDocument();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.INode.getParentNode"]/*'/>
+    /// <summary>Gets the parent node of this node. @return the parent
+    /// node, or null if this is the root node.</summary>
+    /// <returns>The return value is not documented yet.</returns>
   INode getParentNode();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.INode.getTextContent"]/*'/>
+    /// <summary>Gets all the text found within this element. @return All
+    /// the concatenated text, except comments, for Element nodes; or the
+    /// text of Comment nodes; or null otherwise.</summary>
+    /// <returns>The return value is not documented yet.</returns>
   string getTextContent();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.INode.appendChild(com.upokecenter.html.INode)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='node'>The parameter <paramref name='node'/> is
+    /// a.upokecenter.html.INode object.</param>
     void appendChild(INode node);
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.INode.removeChild(com.upokecenter.html.INode)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='node'>The parameter <paramref name='node'/> is
+    /// a.upokecenter.html.INode object.</param>
     void removeChild(INode node);
 }
 }

@@ -55,8 +55,8 @@ internal class Node : INode {
   }
 
   private void fragmentSerializeInner(
-      INode current,
-      StringBuilder builder) {
+    INode current,
+    StringBuilder builder) {
     if (current.getNodeType() == NodeType.ELEMENT_NODE) {
       var e = (IElement)current;
       string tagname = e.getTagName();
@@ -108,19 +108,29 @@ internal class Node : INode {
       if (HtmlCommon.HTML_NAMESPACE.Equals(namespaceURI)) {
         string localName = e.getLocalName();
         if ("area".Equals(localName) ||
-            "base".Equals(localName) || "basefont".Equals(localName) ||
-            "bgsound".Equals(localName) || "br".Equals(localName) ||
-            "col".Equals(localName) || "embed".Equals(localName) ||
-            "frame".Equals(localName) || "hr".Equals(localName) ||
-            "img".Equals(localName) || "input".Equals(localName) ||
-            "keygen".Equals(localName) || "link".Equals(localName) ||
-            "menuitem".Equals(localName) || "meta".Equals(localName) ||
-            "param".Equals(localName) || "source".Equals(localName) ||
-            "track".Equals(localName) || "wbr".Equals(localName)) {
+"base".Equals(localName) ||
+"basefont".Equals(localName) ||
+"bgsound".Equals(localName) ||
+"br".Equals(localName) ||
+"col".Equals(localName) ||
+"embed".Equals(localName) ||
+"frame".Equals(localName) ||
+"hr".Equals(localName) ||
+"img".Equals(localName) ||
+"input".Equals(localName) ||
+"keygen".Equals(localName) ||
+"link".Equals(localName) ||
+"menuitem".Equals(localName) ||
+"meta".Equals(localName) ||
+"param".Equals(localName) ||
+"source".Equals(localName) ||
+"track".Equals(localName) ||
+"wbr".Equals(localName)) {
  return;
 }
         if ("pre".Equals(localName) ||
-            "textarea".Equals(localName) || "listing".Equals(localName)) {
+"textarea".Equals(localName) ||
+"listing".Equals(localName)) {
           foreach (var node in e.getChildNodes()) {
             if (node.getNodeType() == NodeType.TEXT_NODE &&
                 ((IText)node).getData().Length > 0 &&
@@ -142,10 +152,14 @@ internal class Node : INode {
       if (parent is IElement &&
 HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
         string localName = ((IElement)parent).getLocalName();
-        if ("script".Equals(localName) || "style".Equals(localName) ||
-            "script".Equals(localName) || "xmp".Equals(localName) ||
-            "iframe".Equals(localName) || "noembed".Equals(localName) ||
-            "noframes".Equals(localName) || "plaintext".Equals(localName)) {
+        if ("script".Equals(localName) ||
+"style".Equals(localName) ||
+"script".Equals(localName) ||
+"xmp".Equals(localName) ||
+"iframe".Equals(localName) ||
+"noembed".Equals(localName) ||
+"noframes".Equals(localName) ||
+"plaintext".Equals(localName)) {
           builder.Append(((IText)current).getData());
         } else {
           string value = ((IText)current).getData();
@@ -178,7 +192,7 @@ HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
       builder.Append(((IProcessingInstruction)current).getTarget());
       builder.Append(' ');
       builder.Append(((IProcessingInstruction)current).getData());
-      builder.Append(">");  // NOTE: may be erroneous
+      builder.Append(">"); // NOTE: may be erroneous
     }
   }
 

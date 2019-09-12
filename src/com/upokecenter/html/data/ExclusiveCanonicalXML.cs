@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using PeterO;
@@ -6,8 +6,8 @@ using com.upokecenter.html;
 using com.upokecenter.util;
 
 namespace com.upokecenter.html.data {
-    /// <include file='../../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.html.data.ExclusiveCanonicalXML"]/*'/>
+    /// <summary>Implements Exclusive XML Canonicalization as specified at:
+    /// http://www.w3.org/TR/xml-exc-c14n/.</summary>
 sealed class ExclusiveCanonicalXML {
   private sealed class AttrComparer : IComparer<IAttr> {
     public int Compare(IAttr arg0, IAttr arg1) {
@@ -84,8 +84,7 @@ sealed class ExclusiveCanonicalXML {
   public static string canonicalize(
       INode node,
       bool includeRoot,
-      IDictionary<string, string> prefixList
-) {
+      IDictionary<string, string> prefixList) {
     return canonicalize(node, includeRoot, prefixList, false);
   }
 
@@ -95,8 +94,8 @@ sealed class ExclusiveCanonicalXML {
       IDictionary<string, string> prefixList,
       bool withComments) {
     if (node == null) {
- throw new ArgumentNullException(nameof(node));
-}
+      throw new ArgumentNullException(nameof(node));
+    }
     var builder = new StringBuilder();
 IList<IDictionary<string, string>> stack = new
       List<IDictionary<string, string>>();
@@ -113,7 +112,7 @@ IList<IDictionary<string, string>> stack = new
         if (child is IElement) {
           beforeElement = false;
           canonicalize(child, builder, stack, prefixList, true, withComments);
-     } else if (withComments || child.getNodeType() !=
+        } else if (withComments || child.getNodeType() !=
           NodeType.COMMENT_NODE) {
           canonicalizeOutsideElement(child, builder, beforeElement);
         }
@@ -171,18 +170,18 @@ IList<IDictionary<string, string>> stack = new
         string valueName = attr.getName();
         string nsvalue = null;
         if ("xmlns".Equals(valueName)) {
-          attrs.Add(attr);  // add default namespace
+          attrs.Add(attr); // add default namespace
             if (declaredNames != null) {
-            declaredNames.Add(String.Empty);
-          }
+              declaredNames.Add(String.Empty);
+            }
           nsvalue = attr.getValue();
           checkNamespacePrefix(String.Empty, nsvalue);
-} else if (valueName.StartsWith("xmlns:", StringComparison.Ordinal) &&
+        } else if (valueName.StartsWith("xmlns:", StringComparison.Ordinal) &&
           valueName.Length > 6) {
-          attrs.Add(attr);  // add valuePrefix namespace
+          attrs.Add(attr); // add valuePrefix namespace
             if (declaredNames != null) {
-            declaredNames.Add(attr.getLocalName());
-          }
+              declaredNames.Add(attr.getLocalName());
+            }
           nsvalue = attr.getValue();
           checkNamespacePrefix(attr.getLocalName(), nsvalue);
         }
@@ -221,7 +220,7 @@ IList<IDictionary<string, string>> stack = new
           renderNamespace = (isVisiblyUtilized(e, String.Empty) ||
               prefixList.ContainsKey(String.Empty)) &&
                 valueNsRendered.ContainsKey(String.Empty);
-        } else {
+              } else {
           string renderedValue = valueNsRendered[valuePrefix];
        renderNamespace = renderedValue == null || !renderedValue.Equals(value);
           // added condition for Exclusive XML Canonicalization
@@ -230,10 +229,10 @@ IList<IDictionary<string, string>> stack = new
         }
         if (renderNamespace) {
           renderAttribute(
-  builder,
-  isEmpty ? null : "xmlns",
-  isEmpty ? "xmlns" : valuePrefix,
-  value);
+            builder,
+            isEmpty ? null : "xmlns",
+            isEmpty ? "xmlns" : valuePrefix,
+            value);
           if (!copied) {
             copied = true;
     valueNsRendered = new Dictionary<string, string>(valueNsRendered);
@@ -263,7 +262,8 @@ IList<IDictionary<string, string>> stack = new
       }
       builder.Append('>');
       foreach (var child in node.getChildNodes()) {
-  canonicalize(child, builder, namespaceStack, prefixList, false, withComments);
+        canonicalize(child, builder, namespaceStack, prefixList, false,
+  withComments);
       }
       namespaceStack.RemoveAt(namespaceStack.Count - 1);
       builder.Append("</");
@@ -293,9 +293,9 @@ IList<IDictionary<string, string>> stack = new
   }
 
   private static void canonicalizeOutsideElement(
-      INode node,
-      StringBuilder builder,
-      bool beforeDocument) {
+    INode node,
+    StringBuilder builder,
+    bool beforeDocument) {
     int nodeType = node.getNodeType();
     if (nodeType == NodeType.COMMENT_NODE) {
       if (!beforeDocument) {
@@ -354,8 +354,8 @@ IList<IDictionary<string, string>> stack = new
     string valuePrefix = element.getPrefix();
     valuePrefix = valuePrefix ?? String.Empty;
     if (s.Equals(valuePrefix)) {
- return true;
-}
+      return true;
+    }
     if (s.Length > 0) {
       foreach (var attr in element.getAttributes()) {
         valuePrefix = attr.getPrefix();
@@ -363,18 +363,18 @@ IList<IDictionary<string, string>> stack = new
           continue;
         }
         if (s.Equals(valuePrefix)) {
- return true;
-}
+          return true;
+        }
       }
     }
     return false;
   }
 
   private static void renderAttribute(
-  StringBuilder builder,
-  string valuePrefix,
-  string valueName,
-  string value) {
+    StringBuilder builder,
+    string valuePrefix,
+    string valueName,
+    string value) {
     builder.Append(' ');
     if (!String.IsNullOrEmpty(valuePrefix)) {
       builder.Append(valuePrefix);

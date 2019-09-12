@@ -39,8 +39,7 @@ namespace com.upokecenter.net {
     public HttpHeadersFromMap(
   string valueUrlString,
   string valueRequestMethod,
-  IDictionary<string,
-  IList<string >> valueMap) {
+  IDictionary<string, IList<string>> valueMap) {
       this.valueMap = valueMap;
       this.valueUrlString = valueUrlString;
       this.valueRequestMethod = valueRequestMethod;

@@ -28,11 +28,14 @@ using System;
 using System.IO;
 
 namespace com.upokecenter.net {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.net.IOnFinishedListener`1"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public interface IOnFinishedListener<T> {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.net.IOnFinishedListener`1.onFinished(System.String,`0,System.IO.IOException)"]/*'/>
+    /// <summary>Processes the data on the UI thread after it's downloaded.
+    /// @param url URL of the data. @param value Data processed by
+    /// 'processResponse'. @param exception If this value is non-null, an
+    /// error has occurred and this exception contains further information
+    /// on the error, and 'value' will be null.</summary>
    void onFinished(string url, T value, IOException exception);
 }
 }

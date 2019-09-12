@@ -68,7 +68,7 @@ namespace com.upokecenter.util{
  }
       }
       if (!percent) {
- return str;  // return early if there are no percent decodings
+ return str; // return early if there are no percent decodings
 }
       var cp = 0;
       var bytesSeen = 0;
@@ -84,7 +84,7 @@ namespace com.upokecenter.util{
             int a = ToHexNumber(str[i + 1]);
             int b = ToHexNumber(str[i + 2]);
             if (a >= 0 && b >= 0) {
-              b=(byte) (a*16 + b);
+              b=(byte) ((a * 16) + b);
               i+=2;
               // b now contains the byte read
               if (bytesNeeded == 0) {
@@ -122,7 +122,7 @@ namespace com.upokecenter.util{
                   cp = bytesNeeded = bytesSeen = 0;
                   lower = 0x80;
                   upper = 0xbf;
-                  i = markedPos;  // reset to the last marked position
+                  i = markedPos; // reset to the last marked position
                   retString.Append('\uFFFD');
                   continue;
                 }
@@ -205,7 +205,7 @@ namespace com.upokecenter.util{
         // split on key
         int index=str.IndexOf('=');
         string name = str;
-        string value="";  // value is empty if there is no key
+        string value=""; // value is empty if there is no key
         if (index >= 0) {
           name = str.Substring(0, (index)-(0));
           value = str.Substring(index + 1);
@@ -225,25 +225,25 @@ namespace com.upokecenter.util{
 
     private static string[] GetKeyPath(string s) {
       int index=s.IndexOf('[');
-      if (index< 0) {  // start bracket not found
+      if (index< 0) { // start bracket not found
         return new string[] { s};
       }
       var path = new List<string>();
       path.Add(s.Substring(0, (index)-(0)));
-      ++index;  // move to after the bracket
+      ++index; // move to after the bracket
       while (true) {
         int endBracket=s.IndexOf(']',index);
-        if (endBracket< 0) {  // end bracket not found
+        if (endBracket< 0) { // end bracket not found
           path.Add(s.Substring(index));
           break;
         }
         path.Add(s.Substring(index, (endBracket)-(index)));
-        index = endBracket + 1;  // move to after the end bracket
+        index = endBracket + 1; // move to after the end bracket
         index=s.IndexOf('[',index);
-        if (index< 0) {  // start bracket not found
+        if (index< 0) { // start bracket not found
           break;
         }
-        ++index;  // move to after the start bracket
+        ++index; // move to after the start bracket
       }
       return path.ToArray();
     }
@@ -334,8 +334,7 @@ namespace com.upokecenter.util{
         for (int i = 0;i<path.Length-1; ++i) {
           if (!leaf.ContainsKey(path[i])) {
             // node doesn't exist so add it
-        IDictionary<string, Object> newLeaf = new Dictionary<string,
-              Object>();
+        IDictionary<string, Object> newLeaf = new Dictionary<string, Object>();
             leaf.Add(path[i], newLeaf);
             leaf = newLeaf;
           } else {

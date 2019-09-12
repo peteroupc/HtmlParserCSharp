@@ -10,40 +10,44 @@ using System;
 using System.Collections.Generic;
 
 namespace com.upokecenter.util {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.util.ActionList`1"]/*'/>
+    /// <summary>A class for holding tasks that can be referred to by
+    /// integer index.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public sealed class ActionList<T> {
   private IList<IBoundAction<T>> actions;
   private IList<Object> boundObjects;
   private IList<T[]> postponeCall;
   private Object syncRoot = new Object();
 
-    ///
-    /// <summary>Initializes a new instance of the <see cref='ActionList'/> class.</summary>
-    ///
+    /// <summary>Initializes a new instance of the
+    /// <see cref='ActionList'/> class.</summary>
   public ActionList() {
     this.actions = new List<IBoundAction<T>>();
     this.boundObjects = new List<Object>();
     this.postponeCall = new List<T[]>();
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.ActionList`1.rebindAction(System.Int32,System.Object)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='actionID'>The parameter <paramref name='actionID'/> is
+    /// a 32-bit signed integer.</param>
+    /// <param name='boundObject'>The parameter <paramref
+    /// name='boundObject'/> is a Object object.</param>
+    /// <returns>Either <c>true</c> or <c>false</c>.</returns>
   public bool rebindAction(int actionID, Object boundObject) {
     // DebugUtility.Log("Rebinding action %d",actionID);
     IBoundAction<T> action = null;
     if (actionID < 0 || boundObject == null) {
- return false;
-}
+      return false;
+    }
     T[] postponed = null;
     lock (this.syncRoot) {
       if (actionID >= this.actions.Count) {
- return false;
-}
+        return false;
+      }
       action = this.actions[actionID];
       if (action == null) {
- return false;
-}
+        return false;
+      }
       this.boundObjects[actionID] = boundObject;
       postponed = this.postponeCall[actionID];
       if (postponed != null) {
@@ -59,8 +63,12 @@ public sealed class ActionList<T> {
     return true;
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.ActionList`1.registerAction(System.Object,com.upokecenter.util.IBoundAction{`0})"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='boundObject'>The parameter <paramref
+    /// name='boundObject'/> is a Object object.</param>
+    /// <param name='action'>The parameter <paramref name='action'/> is
+    /// a.upokecenter.util.IBoundAction{`0} object.</param>
+    /// <returns>A 32-bit signed integer.</returns>
   public int registerAction(Object boundObject, IBoundAction<T> action) {
     lock (this.syncRoot) {
       for (int i = 0; i < this.actions.Count; ++i) {
@@ -81,17 +89,19 @@ public sealed class ActionList<T> {
     }
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.ActionList`1.removeAction(System.Int32)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='actionID'>The parameter <paramref name='actionID'/> is
+    /// a 32-bit signed integer.</param>
+    /// <returns>Either <c>true</c> or <c>false</c>.</returns>
   public bool removeAction(int actionID) {
     // DebugUtility.Log("Removing action %d",actionID);
     if (actionID < 0) {
- return false;
-}
+      return false;
+    }
     lock (this.syncRoot) {
       if (actionID >= this.actions.Count) {
- return false;
-}
+        return false;
+      }
       this.actions[actionID] = null;
       this.boundObjects[actionID] = null;
       this.postponeCall[actionID] = null;
@@ -99,19 +109,23 @@ public sealed class ActionList<T> {
     return true;
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.ActionList`1.triggerActionOnce(System.Int32,`0[])"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='actionID'>The parameter <paramref name='actionID'/> is
+    /// a 32-bit signed integer.</param>
+    /// <param name='parameters'>The parameter <paramref
+    /// name='parameters'/> is a `0[] object.</param>
+    /// <returns>Either <c>true</c> or <c>false</c>.</returns>
   public bool triggerActionOnce(int actionID, params T[] parameters) {
     // DebugUtility.Log("Triggering action %d",actionID);
     IBoundAction<T> action = null;
     if (actionID < 0) {
- return false;
-}
+      return false;
+    }
     Object boundObject = null;
     lock (this.syncRoot) {
       if (actionID >= this.actions.Count) {
- return false;
-}
+        return false;
+      }
       boundObject = this.boundObjects[actionID];
       if (boundObject == null) {
         // DebugUtility.Log("Postponing action %d",actionID);
@@ -124,28 +138,30 @@ public sealed class ActionList<T> {
       this.postponeCall[actionID] = null;
     }
     if (action == null) {
- return false;
-}
+      return false;
+    }
     action.action(boundObject, parameters);
     return true;
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.ActionList`1.unbindAction(System.Int32)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='actionID'>The parameter <paramref name='actionID'/> is
+    /// a 32-bit signed integer.</param>
+    /// <returns>Either <c>true</c> or <c>false</c>.</returns>
   public bool unbindAction(int actionID) {
     // DebugUtility.Log("Unbinding action %d",actionID);
     IBoundAction<T> action = null;
     if (actionID < 0) {
- return false;
-}
+      return false;
+    }
     lock (this.syncRoot) {
       if (actionID >= this.actions.Count) {
- return false;
-}
+        return false;
+      }
       action = this.actions[actionID];
       if (action == null) {
- return false;
-}
+        return false;
+      }
       this.boundObjects[actionID] = null;
     }
     return true;

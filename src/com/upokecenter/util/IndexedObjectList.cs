@@ -10,8 +10,8 @@ using System;
 using System.Collections.Generic;
 
 namespace com.upokecenter.util {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.util.IndexedObjectList`1"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public sealed class IndexedObjectList<T> {
   private IList<T> strongrefs = new List<T>();
   private IList<WeakReference> weakrefs = new List<WeakReference>();
@@ -21,21 +21,23 @@ public sealed class IndexedObjectList<T> {
   // reference; the index becomes no good when the
   // _object is garbage collected
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.IndexedObjectList`1.receiveObject(System.Int32)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='index'>The parameter <paramref name='index'/> is a
+    /// 32-bit signed integer.</param>
+    /// <returns>A T object.</returns>
   public T receiveObject(int index) {
     if (index < 0) {
- return default(T);
-}
+      return default(T);
+    }
     T ret = default(T);
     lock (this.syncRoot) {
       if (index >= this.strongrefs.Count) {
- return default(T);
-}
+        return default(T);
+      }
       ret = this.strongrefs[index];
       if (ret == null) {
- throw new InvalidOperationException();
-}
+        throw new InvalidOperationException();
+      }
       this.strongrefs[index] = default(T);
     }
     return ret;
@@ -43,11 +45,13 @@ public sealed class IndexedObjectList<T> {
 
   // Keep a strong reference and a weak reference
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.IndexedObjectList`1.sendObject(`0)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='value'>The parameter <paramref name='value'/> is a `0
+    /// object.</param>
+    /// <returns>A 32-bit signed integer.</returns>
   public int sendObject(T value) {
     if (value == null) {
- return -1;  // Special case for null
+ return -1; // Special case for null
 }
     lock (this.syncRoot) {
       for (int i = 0; i < this.strongrefs.Count; ++i) {

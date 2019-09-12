@@ -28,8 +28,7 @@ using System;
 using System.IO;
 
 namespace com.upokecenter.net {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.net.NoConnectionException"]/*'/>
+    /// <summary>Not documented yet.</summary>
 public class NoConnectionException : IOException {
 }
 }

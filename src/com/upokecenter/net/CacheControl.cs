@@ -50,7 +50,7 @@ internal class CacheControl {
         list.Add(cc.headers[i]);
         list.Add(cc.headers[i + 1]);
       }
-      this.age = age/1000;  // convert age to seconds
+      this.age = age/1000; // convert age to seconds
       list.Add("age");
       list.Add(Convert.ToString(this.age, CultureInfo.InvariantCulture));
       list.Add("content-length");
@@ -146,11 +146,15 @@ internal class CacheControl {
             string str = jsonarr[i].AsString();
           if (str != null && (i%2) != 0) {
             str = DataUtilities.ToLowerCaseAscii(str);
-            if ("age".Equals(str) || "connection".Equals(str) ||
-                "keep-alive".Equals(str) || "proxy-authenticate".Equals(str) ||
-                "proxy-authorization".Equals(str) || "te".Equals(str) ||
-                "trailers".Equals(str) || "transfer-encoding".Equals(str) ||
-                "upgrade".Equals(str)) {
+            if ("age".Equals(str) ||
+"connection".Equals(str) ||
+"keep-alive".Equals(str) ||
+"proxy-authenticate".Equals(str) ||
+"proxy-authorization".Equals(str) ||
+"te".Equals(str) ||
+"trailers".Equals(str) ||
+"transfer-encoding".Equals(str) ||
+"upgrade".Equals(str)) {
               // Skip "age" header field and
               // hop-by-hop header fields
               ++i;
@@ -226,50 +230,50 @@ internal class CacheControl {
  true)) != current) {
           noCache = true;
           //DebugUtility.Log("returning early because it saw no-cache");
-          return null;  // return immediately, this is not cacheable
+          return null; // return immediately, this is not cacheable
         } else if ((index = HeaderParser.parseToken(
-            cacheControl,
-            current,
-            "no-store",
-            false)) != current) {
+          cacheControl,
+          current,
+          "no-store",
+          false)) != current) {
           cc.noStore = true;
           //DebugUtility.Log("returning early because it saw no-store");
-          return null;  // return immediately, this is not cacheable or storable
+          return null; // return immediately, this is not cacheable or storable
         } else if ((index = HeaderParser.parseToken(
-            cacheControl,
-            current,
-            "public",
-            false)) != current) {
+          cacheControl,
+          current,
+          "public",
+          false)) != current) {
           publicCache = true;
         } else if ((index = HeaderParser.parseToken(
-            cacheControl,
-            current,
-            "no-transform",
-            false)) != current) {
+          cacheControl,
+          current,
+          "no-transform",
+          false)) != current) {
           cc.noTransform = true;
         } else if ((index = HeaderParser.parseToken(
-            cacheControl,
-            current,
-            "must-revalidate",
-            false)) != current) {
+          cacheControl,
+          current,
+          "must-revalidate",
+          false)) != current) {
           cc.mustRevalidate = true;
         } else if ((index = HeaderParser.parseToken(
-            cacheControl,
-            current,
-            "proxy-revalidate",
-            false)) != current) {
+          cacheControl,
+          current,
+          "proxy-revalidate",
+          false)) != current) {
           proxyRevalidate = true;
         } else if ((index = HeaderParser.parseTokenWithDelta(
-            cacheControl,
-            current,
-            "max-age",
-            intval)) != current) {
+          cacheControl,
+          current,
+          "max-age",
+          intval)) != current) {
           cc.maxAge = intval[0];
         } else if ((index = HeaderParser.parseTokenWithDelta(
-            cacheControl,
-            current,
-            "s-maxage",
-            intval)) != current) {
+          cacheControl,
+          current,
+          "s-maxage",
+          intval)) != current) {
           sMaxAge = intval[0];
         } else {
           index = HeaderParser.skipDirective(cacheControl, current);
@@ -333,14 +337,14 @@ internal class CacheControl {
       }
     }
     if (cc.maxAge>0 || sMaxAge>0) {
-      long maxAge = cc.maxAge;  // max age in seconds
+      long maxAge = cc.maxAge; // max age in seconds
       if (maxAge == 0) {
         maxAge = sMaxAge;
       }
       if (cc.maxAge>0 && sMaxAge>0) {
         maxAge = Math.Max(cc.maxAge, sMaxAge);
       }
-      cc.maxAge = maxAge*1000L;  // max-age and s-maxage are in seconds
+      cc.maxAge = maxAge*1000L; // max-age and s-maxage are in seconds
       hasExpires = false;
     } else if (hasExpires && !noCache) {
       long maxAge = expires-cc.date;
@@ -377,11 +381,16 @@ internal class CacheControl {
       key = DataUtilities.ToLowerCaseAscii(key);
       // to simplify matters, don't include Age header fields;
       // so-called hop-by-hop headers are also not included
-      if (!"age".Equals(key) && !"connection".Equals(key) &&
-          !"keep-alive".Equals(key) && !"proxy-authenticate".Equals(key) &&
-          !"proxy-authorization".Equals(key) && !"te".Equals(key) &&
-          !"trailer".Equals(key) &&  // NOTE: NOT Trailers
-          !"transfer-encoding".Equals(key) && !"upgrade".Equals(key)) {
+      if (!"age".Equals(key) &&
+!"connection".Equals(key) &&
+!"keep-alive".Equals(key) &&
+!"proxy-authenticate".Equals(key) &&
+!"proxy-authorization".Equals(key) &&
+!"te".Equals(key) &&
+!"trailer".Equals(key) &&
+// NOTE: NOT Trailers
+          !"transfer-encoding".Equals(key) &&
+!"upgrade".Equals(key)) {
         cc.headers.Add(key);
         cc.headers.Add(newValue);
       }

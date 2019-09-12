@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using PeterO;
@@ -38,15 +38,15 @@ namespace com.upokecenter.html.data {
     private static readonly string
       RDF_NAMESPACE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
-    private static IList<string> relterms = (new string[] { "alternate",
+    private static IList<string> relterms = (new string[] {
+      "alternate",
       "appendix" ,"cite", "bookmark", "chapter", "contents", "copyright",
-
- "first", "glossary", "help", "icon", "index", "last",
+      "first", "glossary", "help", "icon", "index", "last",
       "license", "meta", "next", "prev",
       "role", "section", "start",
       "stylesheet", "subsection", "top",
       "up", "p3pv1"
-  });
+    });
 
     private static int getCuriePrefixLength(string s, int offset, int length) {
       if (s == null || length == 0) {
@@ -66,7 +66,7 @@ namespace com.upokecenter.html.data {
         if ((c & 0xfc00) == 0xd800 && index + 1 < valueSLength &&
             (s[index + 1] & 0xfc00) == 0xdc00) {
           // Get the Unicode code point for the surrogate pair
-          c = 0x10000 + ((c - 0xd800) << 10) + (s[index + 1] - 0xdc00);
+          c = 0x10000 + ((c & 0x3ff) << 10) + (s[index + 1] & 0x3ff);
           ++index;
         } else if ((c & 0xf800) == 0xd800) {
           // error
@@ -115,9 +115,9 @@ namespace com.upokecenter.html.data {
     }
 
     private static bool isValidCurieReference(
-    string s,
-    int offset,
-    int length) {
+      string s,
+      int offset,
+      int length) {
       if (s == null) {
         return false;
       }
@@ -126,10 +126,10 @@ namespace com.upokecenter.html.data {
       }
       int[]
     indexes = URIUtility.SplitIRI(
-    s,
-    offset,
-    length,
-    URIUtility.ParseMode.IRIStrict);
+      s,
+      offset,
+      length,
+      URIUtility.ParseMode.IRIStrict);
       if (indexes == null) {
         return false;
       }
@@ -177,8 +177,8 @@ namespace com.upokecenter.html.data {
       // conflict with those stated explicitly
       string blankNodeString = "b:" +
    Convert.ToString(
-  this.blankNode,
-  System.Globalization.CultureInfo.InvariantCulture);
+     this.blankNode,
+     System.Globalization.CultureInfo.InvariantCulture);
       ++this.blankNode;
       RDFTerm term = RDFTerm.fromBlankNode(blankNodeString);
       this.bnodeLabels.Add(blankNodeString, term);
@@ -315,7 +315,8 @@ namespace com.upokecenter.html.data {
     }
 
     private RDFTerm getSafeCurieOrCurieOrIri(
-        string attribute, IDictionary<string, string> prefixMapping) {
+        string attribute,
+        IDictionary<string, string> prefixMapping) {
       if (attribute == null) {
         return null;
       }
@@ -323,17 +324,17 @@ namespace com.upokecenter.html.data {
       if (attribute.Length >= 2 && attribute[0] == '[' && attribute[lastIndex]
           == ']') {
         RDFTerm curie = this.getCurieOrBnode(
-    attribute,
-    1,
-    attribute.Length - 2,
-    prefixMapping);
+          attribute,
+          1,
+          attribute.Length - 2,
+          prefixMapping);
         return curie;
       } else {
         RDFTerm curie = this.getCurieOrBnode(
-    attribute,
-    0,
-    attribute.Length,
-    prefixMapping);
+          attribute,
+          0,
+          attribute.Length,
+          prefixMapping);
         if (curie == null) {
           // evaluate as IRI
           return this.relativeResolve(attribute);
@@ -349,9 +350,9 @@ namespace com.upokecenter.html.data {
     // Processes a subset of RDF/XML metadata
     // Doesn't implement RDF/XML completely
     private void miniRdfXml(
-    IElement node,
-    RDFa.EvalContext evalContext,
-    RDFTerm subject) {
+      IElement node,
+      RDFa.EvalContext evalContext,
+      RDFTerm subject) {
       string language = evalContext.ValueLanguage;
       foreach (var child in node.getChildNodes()) {
         IElement childElement = (child is IElement) ?
@@ -441,8 +442,8 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
         attr = node.getAttribute("xml:base");
         if (attr != null) {
           this.context.ValueBaseURI = URIUtility.RelativeResolve(
-           attr,
-           this.context.ValueBaseURI);
+            attr,
+            this.context.ValueBaseURI);
         }
       }
       // Support XML namespaces
@@ -568,8 +569,8 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
         string[] types = StringUtility.SplitAtSpTabCrLf(rel);
         foreach (var type in types) {
           string iri = this.getRelTermOrCurie(
-    type,
-    iriMapLocal);
+            type,
+            iriMapLocal);
 #if DEBUG
           if (!(newSubject != null)) {
             throw new
@@ -586,8 +587,8 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
         types = StringUtility.SplitAtSpTabCrLf(rev);
         foreach (var type in types) {
           string iri = this.getRelTermOrCurie(
-    type,
-    iriMapLocal);
+            type,
+            iriMapLocal);
           if (iri != null) {
             this.outputGraph.Add(new RDFTriple(
                 currentObject,
@@ -602,8 +603,8 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
         // Defines predicates
         foreach (var type in types) {
           string iri = this.getRelTermOrCurie(
-    type,
-    iriMapLocal);
+            type,
+            iriMapLocal);
           if (iri != null) {
             if (!hasPredicates) {
               hasPredicates = true;
@@ -618,8 +619,8 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
         types = StringUtility.SplitAtSpTabCrLf(rev);
         foreach (var type in types) {
           string iri = this.getRelTermOrCurie(
-    type,
-    iriMapLocal);
+            type,
+            iriMapLocal);
           if (iri != null) {
             if (!hasPredicates) {
               hasPredicates = true;
@@ -635,8 +636,8 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
       // Step 9
       string[] preds = StringUtility.SplitAtSpTabCrLf(property);
       string datatypeValue = this.getCurie(
-    datatype,
-    iriMapLocal);
+        datatype,
+        iriMapLocal);
       if (datatype != null && datatypeValue == null) {
         datatypeValue = String.Empty;
       }
@@ -646,8 +647,8 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
       RDFTerm currentProperty = null;
       foreach (var pred in preds) {
         string iri = this.getCurie(
-    pred,
-    iriMapLocal);
+          pred,
+          iriMapLocal);
         if (iri != null) {
           // DebugUtility.Log("iri=[%s]",iri);
           currentProperty = null;
@@ -671,9 +672,9 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
             datatypeValue = datatypeValue ?? RDF_XMLLITERAL;
             try {
               string literal = ExclusiveCanonicalXML.canonicalize(
-    node,
-    false,
-    namespacesLocal);
+                node,
+                false,
+                namespacesLocal);
               currentProperty = RDFTerm.fromTypedString(literal, datatypeValue);
             } catch (ArgumentException) {
               // failure to canonicalize
@@ -696,14 +697,14 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
         foreach (var triple in this.context.ValueIncompleteTriples) {
           if (triple.ValueDirection == RDFa.ChainingDirection.Forward) {
             this.outputGraph.Add(new RDFTriple(
-                this.context.ValueParentSubject,
-                triple.ValuePredicate,
-                newSubject));
+              this.context.ValueParentSubject,
+              triple.ValuePredicate,
+              newSubject));
           } else {
             this.outputGraph.Add(new RDFTriple(
-                newSubject,
-                triple.ValuePredicate,
-                this.context.ValueParentSubject));
+              newSubject,
+              triple.ValuePredicate,
+              this.context.ValueParentSubject));
           }
         }
       }
@@ -752,8 +753,8 @@ this.relativeResolve(childElement.getAttributeNS(RDF_NAMESPACE, "about"
       return (URIUtility.SplitIRI(iri) == null) ? null :
    RDFTerm.fromIRI(
   URIUtility.RelativeResolve(
-  iri,
-  this.context.ValueBaseURI));
+    iri,
+    this.context.ValueBaseURI));
     }
   }
 }

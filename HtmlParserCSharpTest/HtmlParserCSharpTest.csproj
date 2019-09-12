@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Condition="Exists('../packages/NUnit.3.12.0/build/NUnit.props')" Project="../packages/NUnit.3.12.0/build/NUnit.props" />
+<?xml version='1.0' encoding='UTF-8'?>
+<Project DefaultTargets='Build' ToolsVersion='4.0' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Import Condition='Exists(&apos;../packages/NUnit.3.12.0/build/NUnit.props&apos;)' Project='../packages/NUnit.3.12.0/build/NUnit.props'/>
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Configuration Condition=' &apos;$(Configuration)&apos; == &apos;&apos; '>Debug</Configuration>
+    <Platform Condition=' &apos;$(Platform)&apos; == &apos;&apos; '>AnyCPU</Platform>
     <ProjectGuid>{0F77DB67-2F04-4C92-8E9E-49155A4E3338}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Test</RootNamespace>
     <AssemblyName>HtmlParserCSharpTest</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   <CodeAnalysisRuleSet>rules.ruleset</CodeAnalysisRuleSet></PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=' &apos;$(Configuration)|$(Platform)&apos; == &apos;Debug|AnyCPU&apos; '>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -20,7 +20,7 @@
     <WarningLevel>4</WarningLevel>
     <ExternalConsole>true</ExternalConsole>
   <CodeAnalysisRuleSet>rules.ruleset</CodeAnalysisRuleSet></PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=' &apos;$(Configuration)|$(Platform)&apos; == &apos;Release|AnyCPU&apos; '>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
@@ -28,44 +28,41 @@
     <ExternalConsole>true</ExternalConsole>
   <CodeAnalysisRuleSet>rules.ruleset</CodeAnalysisRuleSet></PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
-      <HintPath>../packages/NUnit.3.12.0/lib/net45/nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="Encoding">
+
+    <Reference Include='System'/>
+    <Reference Include='Encoding'>
       <HintPath>..\packages\PeterO.Encoding.0.5.1\lib\net40\Encoding.dll</HintPath>
     </Reference>
-    <Reference Include="TurtleParser">
+    <Reference Include='TurtleParser'>
       <HintPath>..\packages\PeterO.TurtleParser.0.1.0\lib\netstandard1.0\TurtleParser.dll</HintPath>
     </Reference>
-    <Reference Include="Numbers">
+    <Reference Include='Numbers'>
       <HintPath>..\packages\PeterO.Numbers.1.4.1\lib\net40\Numbers.dll</HintPath>
     </Reference>
-    <Reference Include="CBOR">
+    <Reference Include='CBOR'>
       <HintPath>..\packages\PeterO.Cbor.3.5.0\lib\net40\CBOR.dll</HintPath>
     </Reference>
+  <AdditionalFiles Include='stylecop.json'/><AdditionalFiles Include='rules.ruleset'/><PackageReference Include='NUnit'><Version>3.12.0</Version></PackageReference><PackageReference Include='StyleCop.Analyzers'><Version>1.1.118</Version></PackageReference><PackageReference Include='Microsoft.CodeAnalysis.FxCopAnalyzers'><Version>2.9.4</Version></PackageReference></ItemGroup>
+  <ItemGroup>
+    <Compile Include='Program.cs'/>
+    <Compile Include='Properties\AssemblyInfo.cs'/>
+    <Compile Include='HtmlParserTest.cs'/>
+    <Compile Include='HtmlParserTokenizer.cs'/>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="HtmlParserTest.cs" />
-    <Compile Include="HtmlParserTokenizer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HtmlParserCSharp.csproj">
+    <ProjectReference Include='..\HtmlParserCSharp.csproj'>
       <Project>{C1046EBC-7CAE-457E-A677-421CD1E2A289}</Project>
-      <Name>HtmlParserCSharp</Name>
+      <Name>HtmlParserCSharpTest</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target BeforeTargets="PrepareForBuild" Name="EnsureNuGetPackageBuildImports">
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets'/>
+  <Target BeforeTargets='PrepareForBuild' Name='EnsureNuGetPackageBuildImports'>
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
     <CodeAnalysisRuleSet>rules.ruleset</CodeAnalysisRuleSet></PropertyGroup>
-    <Error Condition="!Exists('../packages/NUnit.3.12.0/build/NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '../packages/NUnit.3.12.0/build/NUnit.props'))" />
+    <Error Condition='!Exists(&apos;../packages/NUnit.3.12.0/build/NUnit.props&apos;)' Text='$([System.String]::Format(&apos;$(ErrorText)&apos;, &apos;../packages/NUnit.3.12.0/build/NUnit.props&apos;))'/>
   </Target>
-</Project>
+   </Project>

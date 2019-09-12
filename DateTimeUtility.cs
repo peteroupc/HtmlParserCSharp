@@ -17,7 +17,7 @@ namespace com.upokecenter.util {
       ret[4] = dt.Minute;
       ret[5] = dt.Second;
       ret[6] = dt.Millisecond;
-      ret[8] = 0;  // time zone offset is 0 for GMT
+      ret[8] = 0; // time zone offset is 0 for GMT
       DayOfWeek dow = dt.DayOfWeek;
       if (dow == DayOfWeek.Sunday) {
         ret[7] = 1;

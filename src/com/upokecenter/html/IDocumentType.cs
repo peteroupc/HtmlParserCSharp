@@ -28,19 +28,20 @@ THE SOFTWARE.
 using System;
 
 namespace com.upokecenter.html {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.html.IDocumentType"]/*'/>
+    /// <summary>Represents the HTML "!DOCTYPE" tag.</summary>
 public interface IDocumentType : INode {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IDocumentType.getName"]/*'/>
+    /// <summary>Gets the name of this document type. For HTML documents,
+    /// this should be "html".</summary>
+    /// <returns>The return value is not documented yet.</returns>
    string getName();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IDocumentType.getPublicId"]/*'/>
+    /// <summary>Gets the identifier of this document type.</summary>
+    /// <returns>The return value is not documented yet.</returns>
    string getPublicId();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IDocumentType.getSystemId"]/*'/>
+    /// <summary>Gets the system identifier of this document
+    /// type.</summary>
+    /// <returns>The return value is not documented yet.</returns>
    string getSystemId();
 }
 }

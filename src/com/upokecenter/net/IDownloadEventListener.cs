@@ -27,15 +27,17 @@ THE SOFTWARE.
 using System;
 
 namespace com.upokecenter.net {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.net.IDownloadEventListener`1"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
 public interface IDownloadEventListener<T> : IResponseListener<T> {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.net.IDownloadEventListener`1.onConnected(System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='url'>The parameter <paramref name='url'/> is a text
+    /// string.</param>
    void onConnected(string url);
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.net.IDownloadEventListener`1.onConnecting(System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='url'>The parameter <paramref name='url'/> is a text
+    /// string.</param>
    void onConnecting(string url);
 }
 }

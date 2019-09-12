@@ -30,10 +30,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 namespace com.upokecenter.net {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.net.HeaderParser"]/*'/>
+    /// <summary>Contains methods useful for parsing header
+    /// fields.</summary>
   public sealed class HeaderParser {
-
     private static string[] emptyStringArray = new string[0];
 
     private static int getPositiveNumber(string v, int index) {
@@ -42,7 +41,7 @@ namespace com.upokecenter.net {
       var haveNumber = false;
       int startIndex = index;
       string number = null;
-      while (index < length) {  // skip whitespace
+      while (index < length) { // skip whitespace
         c = v[index];
         if (c < '0' || c > '9') {
           if (!haveNumber) {
@@ -52,9 +51,9 @@ namespace com.upokecenter.net {
             number = v.Substring(startIndex, index - startIndex);
             return
     Int32.Parse(
-    number,
-    NumberStyles.AllowLeadingSign,
-    CultureInfo.InvariantCulture);
+      number,
+      NumberStyles.AllowLeadingSign,
+      CultureInfo.InvariantCulture);
           } catch (FormatException) {
             return Int32.MaxValue;
           }
@@ -67,9 +66,9 @@ namespace com.upokecenter.net {
         number = v.Substring(startIndex, length - startIndex);
         return
     Int32.Parse(
-    number,
-    NumberStyles.AllowLeadingSign,
-    CultureInfo.InvariantCulture);
+      number,
+      NumberStyles.AllowLeadingSign,
+      CultureInfo.InvariantCulture);
       } catch (FormatException) {
         return Int32.MaxValue;
       }
@@ -98,8 +97,8 @@ namespace com.upokecenter.net {
     private static int SkipOws(byte[] bytes, int index, int endIndex) {
    while (index < endIndex && (bytes[index] == 0x09 || bytes[index] ==
         0x20)) {
-        ++index;
-      }
+     ++index;
+   }
       return index;
     }
 
@@ -129,15 +128,15 @@ namespace com.upokecenter.net {
     }
 
     private static int[] valueIllegalHttpTokenChars = {
-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1
-};
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+      1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1
+    };
 
     private static bool IsTokenText(byte b) {
       return (b & 0x7f) != 0 || valueIllegalHttpTokenChars[b] == 0;
@@ -153,9 +152,9 @@ namespace com.upokecenter.net {
     }
 
   private static int ParseCacheControl(
-  byte[] bytes,
-  int index,
-  int endIndex) {
+    byte[] bytes,
+    int index,
+    int endIndex) {
       var emptyItems = 0;
       int startIndex = index;
       // NOTE: Assumes lines were already unfolded (each obs-fold is
@@ -165,8 +164,8 @@ namespace com.upokecenter.net {
         if (bytes[index] == ',') {
           ++emptyItems;
           if (emptyItems > 2) {
- return startIndex;
-}
+            return startIndex;
+          }
           ++index;
           index = SkipOws(bytes, index, endIndex);
         } else {
@@ -176,13 +175,13 @@ namespace com.upokecenter.net {
                  (bytes[index] != '=' && bytes[index] != ',' &&
                   (((int)bytes[index]) & 0xff) > 0x20)) {
             if (!IsTokenText(bytes[index])) {
- return startIndex;
-}
+              return startIndex;
+            }
             ++index;
           }
           if (si == index) {
- return startIndex;
-}
+            return startIndex;
+          }
           if (index < endIndex && bytes[index] == '=') {
             ++index;
             if (index < endIndex && bytes[index] == '"') {
@@ -190,41 +189,41 @@ namespace com.upokecenter.net {
               while (index < endIndex && (bytes[index] != '"')) {
                 if (bytes[index] == '\\' && index + 1 < endIndex) {
                   if (!IsQpText(bytes[index])) {
- return startIndex;
-}
+                    return startIndex;
+                  }
                   index += 2;
                 } else {
                   if (!IsQdText(bytes[index])) {
- return startIndex;
-}
+                    return startIndex;
+                  }
                   ++index;
                 }
               }
               if (index == endIndex) {
- return startIndex;
-}
+                return startIndex;
+              }
               ++index;
             } else {
               si = index;
               while (index < endIndex && (bytes[index] != ',' &&
                     (((int)bytes[index]) & 0xff) > 0x20)) {
                 if (!IsTokenText(bytes[index])) {
- return startIndex;
-}
+                  return startIndex;
+                }
                 ++index;
               }
               if (si == index) {
- return startIndex;
-}
+                return startIndex;
+              }
             }
           }
           if (index == endIndex) {
- return endIndex;
-}
+            return endIndex;
+          }
           si = SkipOwsCommaOws(bytes, index, endIndex);
           if (si != index) {
- return startIndex;
-}
+            return startIndex;
+          }
         }
       }
       return (emptyItems >= 2) ? startIndex : endIndex;

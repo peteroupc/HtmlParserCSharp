@@ -11,8 +11,11 @@ using System.IO;
 using PeterO;
 
 namespace com.upokecenter.io {
-  /// <include file='../../../../docs.xml'
-  /// path='docs/doc[@name="T:com.upokecenter.io.ConditionalBufferInputStream"]/*'/>
+    /// <summary>An input stream that stores the first bytes of the stream
+    /// in a buffer and supports rewinding to the beginning of the stream.
+    /// However, when the buffer is disabled, no further bytes are put into
+    /// the buffer, but any remaining bytes in the buffer will still be
+    /// used until it's exhausted.</summary>
   public sealed class ConditionalBufferInputStream :
     IReader, com.upokecenter.html.HtmlParser.IInputStream {
     private byte[] buffer = null;
@@ -24,18 +27,17 @@ namespace com.upokecenter.io {
     private long marklimit = 0;
     private IReader stream = null;
 
-    /// <param name='input'>
-    /// The parameter
-    /// <paramref name='input'/>
-    /// is an IReader object.
-    /// </param>
+    /// <param name='input'>The parameter <paramref name='input'/> is an
+    /// IReader object.</param>
     public ConditionalBufferInputStream(IReader input) {
       this.stream = input;
       this.buffer = new byte[1024];
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.io.ConditionalBufferInputStream.disableBuffer"]/*'/>
+    /// <summary>Disables buffering of future bytes read from the
+    /// underlying stream. However, any bytes already buffered can still be
+    /// read until the buffer is exhausted. After the buffer is exhausted,
+    /// this stream will fully delegate to the underlying stream.</summary>
     public void disableBuffer() {
       this.disabled = true;
       if (this.buffer != null && this.isDisabled()) {
@@ -71,8 +73,9 @@ namespace com.upokecenter.io {
         false;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.io.ConditionalBufferInputStream.mark(System.Int32)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='limit'>The parameter <paramref name='limit'/> is a
+    /// 32-bit signed integer.</param>
     public void mark(int limit) {
       // DebugUtility.Log("mark %d: %s",limit,isDisabled());
       if (this.isDisabled()) {
@@ -88,14 +91,14 @@ namespace com.upokecenter.io {
       this.marklimit = limit;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.io.ConditionalBufferInputStream.markSupported"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>Either <c>true</c> or <c>false</c>.</returns>
     public bool markSupported() {
       return true;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.io.ConditionalBufferInputStream.ReadByte"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A 32-bit signed integer.</returns>
     public int ReadByte() {
       if (this.markpos < 0) {
         return this.readInternal();
@@ -118,8 +121,14 @@ namespace com.upokecenter.io {
       }
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.io.ConditionalBufferInputStream.Read(System.Byte[],System.Int32,System.Int32)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='buffer'>The parameter <paramref name='buffer'/> is
+    /// a.Byte[] object.</param>
+    /// <param name='offset'>The parameter <paramref name='offset'/> is a
+    /// 32-bit signed integer.</param>
+    /// <param name='byteCount'>The parameter <paramref name='byteCount'/>
+    /// is a 32-bit signed integer.</param>
+    /// <returns>A 32-bit signed integer.</returns>
     public int Read(byte[] buffer, int offset, int byteCount) {
       return this.doRead(buffer, offset, byteCount);
     }
@@ -140,9 +149,9 @@ namespace com.upokecenter.io {
       // entire buffer if possible
       if (this.endpos < this.buffer.Length) {
         int count = this.stream.Read(
-    this.buffer,
-    this.endpos,
-    this.buffer.Length - this.endpos);
+          this.buffer,
+          this.endpos,
+          this.buffer.Length - this.endpos);
         if (count > 0) {
           this.endpos += count;
         }
@@ -185,7 +194,8 @@ namespace com.upokecenter.io {
         return unitCount;
       }
       // if (buffer != null) {
-      // DebugUtility.Log("buffer(3arg) %s end=%s len=%s",pos,endpos,buffer.Length);
+      // DebugUtility.Log("buffer(3arg) %s end=%s len=%s"
+      // , pos, endpos, buffer.Length);
       // }
       if (this.disabled) {
         // Buffering disabled, read as much as possible from the buffer
@@ -210,9 +220,9 @@ namespace com.upokecenter.io {
       // entire buffer if possible
       if (this.endpos < this.buffer.Length) {
         count = this.stream.Read(
-    this.buffer,
-    this.endpos,
-    this.buffer.Length - this.endpos);
+          this.buffer,
+          this.endpos,
+          this.buffer.Length - this.endpos);
         // DebugUtility.Log("%s",this);
         if (count > 0) {
           this.endpos += count;
@@ -250,8 +260,7 @@ namespace com.upokecenter.io {
       return (total == 0) ? -1 : total;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.io.ConditionalBufferInputStream.reset"]/*'/>
+    /// <summary>Not documented yet.</summary>
     public void reset() {
       // DebugUtility.Log("reset: %s",isDisabled());
       if (this.isDisabled()) {
@@ -265,8 +274,9 @@ namespace com.upokecenter.io {
       this.pos = this.posAtMark;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.io.ConditionalBufferInputStream.rewind"]/*'/>
+    /// <summary>Resets the stream to the beginning of the input. This will
+    /// invalidate the mark placed on the stream, if any. @ if
+    /// disableBuffer() was already called.</summary>
     public void rewind() {
       if (this.disabled) {
         throw new IOException();
@@ -275,8 +285,10 @@ namespace com.upokecenter.io {
       this.markpos = -1;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.io.ConditionalBufferInputStream.skip(System.Int64)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='byteCount'>The parameter <paramref name='byteCount'/>
+    /// is a 64-bit signed integer.</param>
+    /// <returns>A 64-bit signed integer.</returns>
     public long skip(long byteCount) {
       if (this.isDisabled()) {
         throw new NotSupportedException();

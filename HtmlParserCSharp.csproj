@@ -4,12 +4,11 @@
     <Configuration Condition=' &apos;$(Configuration)&apos; == &apos;&apos; '>Debug</Configuration>
     <Platform Condition=' &apos;$(Platform)&apos; == &apos;&apos; '>AnyCPU</Platform>
     <ProjectGuid>{C1046EBC-7CAE-457E-A677-421CD1E2A289}</ProjectGuid>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
 <RootNamespace>HtmlParserCSharp</RootNamespace>
     <AssemblyName>HtmlParserCSharp</AssemblyName>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   <CodeAnalysisRuleSet>rules.ruleset</CodeAnalysisRuleSet></PropertyGroup>
   <PropertyGroup Condition=' &apos;$(Configuration)|$(Platform)&apos; == &apos;Debug|AnyCPU&apos; '>
     <DebugSymbols>true</DebugSymbols>
@@ -81,7 +80,10 @@
     <Compile Include='..\CBOR\CBOR\PeterO\DebugUtility.cs'>
       <Link>DebugUtility.cs</Link>
     </Compile>
-  </ItemGroup>
+  <AdditionalFiles Include='stylecop.json'/><AdditionalFiles Include='rules.ruleset'/><PackageReference Include='StyleCop.Analyzers'><Version>1.1.118</Version></PackageReference><PackageReference Include='Microsoft.CodeAnalysis.FxCopAnalyzers'><Version>2.9.4</Version></PackageReference><PackageReference Include='PeterO.DataUtilities'>
+  <Version>1.0.0</Version>
+</PackageReference>
+</ItemGroup>
   <ItemGroup>
     <None Include='project.json'/>
     <None Include='src\com\upokecenter\html\XhtmlParser.cs'/>
@@ -89,5 +91,5 @@
     <None Include='src\com\upokecenter\net\DownloadHelper.cs'/>
     <None Include='DownloadHelperImpl.cs'/>
   </ItemGroup>
-  <Import Project='$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets'/>
-</Project>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets'/>
+   </Project>

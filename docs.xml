@@ -1,10 +1,10 @@
 <docs>
-  <doc name='T:PeterO.Support.Collections'>
-    <summary>Description of Support.
+<doc name="T:PeterO.Support.Collections">
+<summary>Description of Support.
     </summary>
-  </doc>
-  <doc name='M:PeterO.Support.Collections.ToArray``1(System.Collections.Generic.IEnumerable{``0})'>
-    <summary>Not documented yet.
+</doc>
+<doc name="M:PeterO.Support.Collections.ToArray``1(System.Collections.Generic.IEnumerable{``0})">
+<summary>Not documented yet.
     </summary>
     <param name='enu'>The parameter
       <paramref name='enu'/>
@@ -14,91 +14,91 @@
     </typeparam>
     <returns>A T[] object.
     </returns>
-  </doc>
-  <doc name='T:PeterO.Support.InputStream'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='P:PeterO.Support.InputStream.CanRead'>
-    <summary>Not documented yet.
-    </summary>
-    <value>Value not documented yet.
-    </value>
-  </doc>
-  <doc name='P:PeterO.Support.InputStream.CanSeek'>
-    <summary>Not documented yet.
+</doc>
+<doc name="T:PeterO.Support.InputStream">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="P:PeterO.Support.InputStream.CanRead">
+<summary>Not documented yet.
     </summary>
     <value>Value not documented yet.
     </value>
-  </doc>
-  <doc name='P:PeterO.Support.InputStream.CanWrite'>
-    <summary>Not documented yet.
+</doc>
+<doc name="P:PeterO.Support.InputStream.CanSeek">
+<summary>Not documented yet.
     </summary>
     <value>Value not documented yet.
     </value>
-  </doc>
-  <doc name='M:PeterO.Support.InputStream.Flush'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='P:PeterO.Support.InputStream.Length'>
-    <summary>Not documented yet.
+</doc>
+<doc name="P:PeterO.Support.InputStream.CanWrite">
+<summary>Not documented yet.
     </summary>
     <value>Value not documented yet.
     </value>
-  </doc>
-  <doc name='P:PeterO.Support.InputStream.Position'>
-    <summary>Not documented yet.
+</doc>
+<doc name="M:PeterO.Support.InputStream.Flush">
+<summary>Not documented yet.
+    </summary>
+</doc>
+<doc name="P:PeterO.Support.InputStream.Length">
+<summary>Not documented yet.
     </summary>
     <value>Value not documented yet.
     </value>
-  </doc>
-  <doc name='M:PeterO.Support.InputStream.Seek(System.Int64,System.IO.SeekOrigin)'>
-    <summary>Not documented yet.
+</doc>
+<doc name="P:PeterO.Support.InputStream.Position">
+<summary>Not documented yet.
+    </summary>
+    <value>Value not documented yet.
+    </value>
+</doc>
+<doc name="M:PeterO.Support.InputStream.Seek(System.Int64,System.IO.SeekOrigin)">
+<summary>Not documented yet.
     </summary>
     <returns>The return value is not documented yet.
     </returns>
-  </doc>
-  <doc name='M:PeterO.Support.InputStream.SetLength(System.Int64)'>
-    <summary>Not documented yet.
+</doc>
+<doc name="M:PeterO.Support.InputStream.SetLength(System.Int64)">
+<summary>Not documented yet.
     </summary>
     <param name='value'>The parameter
       <paramref name='value'/>
        is not documented yet.
     </param>
-  </doc>
-  <doc name='M:PeterO.Support.InputStream.Write(System.Byte[],System.Int32,System.Int32)'>
-    <summary>Not documented yet.
+</doc>
+<doc name="M:PeterO.Support.InputStream.Write(System.Byte[],System.Int32,System.Int32)">
+<summary>Not documented yet.
     </summary>
-  </doc>
-  <doc name='M:PeterO.Support.InputStream.available'>
-    <summary>Not documented yet.
+</doc>
+<doc name="M:PeterO.Support.InputStream.available">
+<summary>Not documented yet.
     </summary>
     <returns>A 32-bit signed integer.
     </returns>
-  </doc>
-  <doc name='M:PeterO.Support.InputStream.mark(System.Int32)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='limit'>The parameter
-      <paramref name='limit'/>
-       is not documented yet.
-    </param>
-  </doc>
-  <doc name='M:PeterO.Support.InputStream.markSupported'>
-    <summary>Not documented yet.
+</doc>
+<doc name="M:PeterO.Support.InputStream.mark(System.Int32)">
+
+            <summary>Not documented yet.</summary>
+            <param name='limit'>The parameter <paramref name='limit'/> is a 32-bit signed integer.</param>
+
+</doc>
+<doc name="M:PeterO.Support.InputStream.markSupported">
+<summary>Not documented yet.
     </summary>
     <returns>Either
       <c>true</c> or
       <c>false</c> .
     </returns>
-  </doc>
-  <doc name='M:PeterO.Support.InputStream.reset'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='M:PeterO.Support.InputStream.skip(System.Int64)'>
-    <summary>Not documented yet.
+</doc>
+<doc name="M:PeterO.Support.InputStream.reset">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="M:PeterO.Support.InputStream.skip(System.Int64)">
+<summary>Not documented yet.
     </summary>
     <param name='count'>The parameter
       <paramref name='count'/>
@@ -106,730 +106,679 @@
     </param>
     <returns>A 64-bit signed integer.
     </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.Attr.setPrefix(System.String)'>
-    <summary>NOTE: Set after setNamespace, or it may be overwritten @param attrprefix.
+</doc>
+<doc name="M:com.upokecenter.html.Attr.setPrefix(System.String)">
+
+            <summary>NOTE: Set after setNamespace, or it may be overwritten
+            @param attrprefix.</summary>
+            <param name='attrprefix'>The parameter <paramref name='attrprefix'/> is a text string.</param>
+
+</doc>
+<doc name="T:com.upokecenter.html.HtmlDocument">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.CreateElement(System.String,System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='name'>The parameter <paramref name='name'/> is a text
+            string.</param>
+            <param name='namespaceName'>The parameter <paramref name='namespaceName'/> is a text string.</param>
+            <returns>An IElement object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.CreateHtmlElement(System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='name'>The parameter <paramref name='name'/> is a text
+            string.</param>
+            <returns>An IElement object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.FragmentFromString(System.String,com.upokecenter.html.IElement)">
+
+            <summary>Not documented yet.</summary>
+            <param name='str'>The parameter <paramref name='str'/> is a text
+            string.</param>
+            <param name='context'>The parameter <paramref name='context'/> is
+            a.upokecenter.html.IElement object.</param>
+            <returns>An IList(INode) object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.FragmentFromString(System.String,com.upokecenter.html.IElement,System.Boolean)">
+
+            <summary>Not documented yet.</summary>
+            <param name='str'>The parameter <paramref name='str'/> is a text
+            string.</param>
+            <param name='context'>The parameter <paramref name='context'/> is
+            a.upokecenter.html.IElement object.</param>
+            <param name='checkError'>The parameter <paramref name='checkError'/> is either <c>true</c> or <c>false</c>.</param>
+            <returns>An IList(INode) object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.FromString(System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='str'>The parameter <paramref name='str'/> is a text
+            string.</param>
+            <returns>An IDocument object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.FromString(System.String,System.Boolean)">
+
+            <summary>Not documented yet.</summary>
+            <param name='str'>The parameter <paramref name='str'/> is a text
+            string.</param>
+            <param name='checkError'>Either <c>true</c> or <c>false</c>.</param>
+            <returns>An IDocument object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.ParseTokens(System.String,System.String,System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='str'>The parameter <paramref name='str'/> is a text
+            string.</param>
+            <param name='state'>The parameter <paramref name='state'/> is a
+            text string.</param>
+            <param name='lst'>The parameter <paramref name='lst'/> is a text
+            string.</param>
+            <returns>An IList(string[]) object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.ToDebugString(System.Collections.Generic.IList{com.upokecenter.html.INode})">
+<summary>Not documented yet.
     </summary>
-    <param name='attrprefix'>The parameter
-      <paramref name='attrprefix'/>
-       is a text string.
-    </param>
-  </doc>
-  <doc name='T:com.upokecenter.html.HtmlDocument'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.CreateElement(System.String,System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='name'>The parameter
-      <paramref name='name'/>
-       is not documented yet.
-    </param>
-    <param name='namespaceName'>The parameter
-      <paramref name='namespaceName'/>
-       is not documented yet.
-    </param>
-    <returns>An IElement object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.CreateHtmlElement(System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='name'>The parameter
-      <paramref name='name'/>
-       is not documented yet.
-    </param>
-    <returns>An IElement object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.FragmentFromString(System.String,com.upokecenter.html.IElement)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='str'>The parameter
-      <paramref name='str'/>
-       is not documented yet.
-    </param>
-    <param name='context'>The parameter
-      <paramref name='context'/>
-       is not documented yet.
-    </param>
-    <returns>An IList(INode) object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.FragmentFromString(System.String,com.upokecenter.html.IElement,System.Boolean)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='str'>The parameter
-      <paramref name='str'/>
-       is not documented yet.
-    </param>
-    <param name='context'>The parameter
-      <paramref name='context'/>
-       is not documented yet.
-    </param>
-    <param name='checkError'>The parameter
-      <paramref name='checkError'/>
-       is not documented yet.
-    </param>
-    <returns>An IList(INode) object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.FromString(System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='str'>The parameter
-      <paramref name='str'/>
-       is not documented yet.
-    </param>
-    <returns>An IDocument object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.FromString(System.String,System.Boolean)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='str'>The parameter
-      <paramref name='str'/>
-       is not documented yet.
-    </param>
-    <param name='checkError'>Either
-      <c>true</c> or
-      <c>false</c> .
-    </param>
-    <returns>An IDocument object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.ParseTokens(System.String,System.String,System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='str'>The parameter
-      <paramref name='str'/>
-       is not documented yet.
-    </param>
-    <param name='state'>The parameter
-      <paramref name='state'/>
-       is not documented yet.
-    </param>
-    <param name='lst'>The parameter
-      <paramref name='lst'/>
-       is not documented yet.
-    </param>
-    <returns>An IList(string[]) object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.ToDebugString(System.Collections.Generic.IList{com.upokecenter.html.INode})'>
     <param name='nodes'>The parameter
       <paramref name='nodes'/>
        is not documented yet.
     </param>
     <returns>A text string.
     </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader)'>
-    <summary>Parses an HTML document from an input stream, using "about:blank" as its
-      address. @param stream an input stream @ if an I/O error occurs.
-    </summary>
-    <param name='stream'>The parameter
-      <paramref name='stream'/>
-       is not documented yet.
-    </param>
-    <returns>An IDocument object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.Boolean)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='stream'>The parameter
-      <paramref name='stream'/>
-       is not documented yet.
-    </param>
-    <param name='checkError'>The parameter
-      <paramref name='checkError'/>
-       is not documented yet.
-    </param>
-    <returns>An IDocument object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='stream'>The parameter
-      <paramref name='stream'/>
-       is not documented yet.
-    </param>
-    <param name='address'>The parameter
-      <paramref name='address'/>
-       is not documented yet.
-    </param>
-    <returns>An IDocument object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='stream'>The parameter
-      <paramref name='stream'/>
-       is not documented yet.
-    </param>
-    <param name='address'>The parameter
-      <paramref name='address'/>
-       is not documented yet.
-    </param>
-    <param name='contentType'>The parameter
-      <paramref name='contentType'/>
-       is not documented yet.
-    </param>
-    <returns>An IDocument object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String,System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='stream'>The parameter
-      <paramref name='stream'/>
-       is not documented yet.
-    </param>
-    <param name='address'>The parameter
-      <paramref name='address'/>
-       is not documented yet.
-    </param>
-    <param name='contentType'>The parameter
-      <paramref name='contentType'/>
-       is not documented yet.
-    </param>
-    <param name='contentLang'>The parameter
-      <paramref name='contentLang'/>
-       is not documented yet.
-    </param>
-    <returns>An IDocument object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String,System.String,System.Boolean)'>
-    <summary>* Parses an HTML document from an input stream, using the given URL as its
-      address. @param stream an input stream representing an HTML document.
-      @param address an absolute URL representing an address. @param contentType
-      Desired MIME media type of the document, including the charset parameter,
-      if any. Examples: "text/html" or "application/xhtml+xml; charset=utf-8".
-      @param contentLang Language tag from the Content-Language header @return
-      an IDocument representing the HTML document. @ if an I/O error occurs @ if
-      the given address is not an absolute URL.
-    </summary>
-    <param name='stream'>The parameter
-      <paramref name='stream'/>
-       is not documented yet.
-    </param>
-    <param name='address'>The parameter
-      <paramref name='address'/>
-       is not documented yet.
-    </param>
-    <param name='contentType'>The parameter
-      <paramref name='contentType'/>
-       is not documented yet.
-    </param>
-    <param name='contentLang'>The parameter
-      <paramref name='contentLang'/>
-       is not documented yet.
-    </param>
-    <param name='checkError'>Either
-      <c>true</c> or
-      <c>false</c> .
-    </param>
-    <returns>An IDocument object.
-    </returns>
-    <exception cref='T:System.ArgumentNullException'>The parameter
-      <paramref name='stream'/>
-       or
-      <paramref name='address'/>
-       or
-      <paramref name='contentType'/>
-       is null.
-    </exception>
-  </doc>
-  <doc name='T:com.upokecenter.html.IAttr'>
-    <summary>Represents one of the attributes within an HTML element.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.html.IAttr.getLocalName'>
-    <summary>Gets the attribute name's local name (the part after the colon, if it's
-      bound to a _namespace).
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IAttr.getName'>
-    <summary>Gets the attribute's qualified name.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IAttr.getNamespaceURI'>
-    <summary>Gets the attribute's _namespace URI, if it's bound to a _namespace.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IAttr.getPrefix'>
-    <summary>Gets the attribute name's prefix (the part before the colon, if it's bound
-      to a _namespace).
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IAttr.getValue'>
-    <summary>Gets the attribute's value.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.html.IComment'>
-    <summary>Represents a comment on an HTML document.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.html.IComment.getData'>
-    <summary>Gets the comment's text.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.html.IDocument'>
-    <summary>Represents an HTML document.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.html.IDocument.getCharset'>
-    <summary>Gets the character encoding used in this document. @return A character
-      encoding name.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IDocument.getDoctype'>
-    <summary>Gets the document type of this document, if any.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IDocument.getDocumentElement'>
-    <summary>Gets the root element of this document.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IDocument.getElementById(System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='id'>The parameter
-      <paramref name='id'/>
-       is not documented yet.
-    </param>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IDocument.getElementsByTagName(System.String)'>
-    <summary>Gets all descendents, both direct and indirect, that have the specified
-      tag name, using ASCII case-insensitive matching. @param _string A tag
-      name.
-    </summary>
-    <param name='_string'>The parameter
-      <paramref name='_string'/>
-       is not documented yet.
-    </param>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IDocument.getURL'>
-    <summary>Gets the document's address @return An absolute URL.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.html.IDocumentType'>
-    <summary>Represents the HTML "!DOCTYPE" tag.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.html.IDocumentType.getName'>
-    <summary>Gets the name of this document type. For HTML documents, this should be
-      "html".
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IDocumentType.getPublicId'>
-    <summary>Gets the identifier of this document type.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IDocumentType.getSystemId'>
-    <summary>Gets the system identifier of this document type.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.html.IElement'>
-    <summary>Represents an HTML element.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.html.IElement.getAttribute(System.String)'>
-    <summary>Gets an attribute declared on this element. @param name an attribute name.
-      @return the attribute's value, or null if the attribute doesn't exist.
-    </summary>
-    <param name='name'>The parameter
-      <paramref name='name'/>
-       is not documented yet.
-    </param>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IElement.getAttributeNS(System.String,System.String)'>
-    <summary>Gets an attribute of this element, with the given _namespace name and
-      local name. @param _namespace the attribute's _namespace name. @param name
-      the attribute's local name. @return the attribute's value, or null if the
-      attribute doesn't exist.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IElement.getAttributes'>
-    <summary>Gets a list of all attributes declared on this element.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IElement.getElementById(System.String)'>
-    <summary>Gets all descendents, both direct and indirect, that have the specified
-      id, using case-sensitive matching. @param id.
-    </summary>
-    <param name='id'>The parameter
-      <paramref name='id'/>
-       is not documented yet.
-    </param>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IElement.getElementsByTagName(System.String)'>
-    <summary>Gets all descendents, both direct and indirect, that have the specified
-      tag name, using ASCII case-insensitive matching. @param tagName A tag
-      name.
-    </summary>
-    <param name='tagName'>The parameter
-      <paramref name='tagName'/>
-       is not documented yet.
-    </param>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IElement.getId'>
-    <summary>Gets the value of the id attribute on this element. @return the value of
-      the id attribute, or null if it doesn't exist.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IElement.getInnerHTML'>
-    <summary>Gets a serialized form of this HTML element. @return a _string consisting
-      of the serialized form of this element's children, in HTML.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IElement.getLocalName'>
-    <summary>Gets the element's local name. For elements with no _namespace, this will
-      equal the element's tag name. @return the element's local name. This
-      method doesn't convert it to uppercase even for HTML elements, unlike
-      getTagName.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IElement.getNamespaceURI'>
-    <summary>Gets the _namespace name of this element. For HTML elements, it will equal
-      "http://www.w3.org/1999/xhtml".
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IElement.getPrefix'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IElement.getTagName'>
-    <summary>Gets the name of the element as used on its HTML tags. @return the
-      element's tag name. For HTML elements, an uppercase version of the name
-      will be returned.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.html.INode'>
-    <summary>Represents a node in the document _object model (DOM). All DOM objects
-      implement this interface.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.html.INode.appendChild(com.upokecenter.html.INode)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='node'>The parameter
-      <paramref name='node'/>
-       is not documented yet.
-    </param>
-  </doc>
-  <doc name='M:com.upokecenter.html.INode.getBaseURI'>
-    <summary>Returns the _base URL of this node. URLs on this node are resolved
-      relative to this URL.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.INode.getChildNodes'>
-    <summary>Gets the direct children of this node. @return A list of the direct
-      children of this node.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.INode.getLanguage'>
-    <summary>Gets the language of this node. Not defined in the DOM specification.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.INode.getNodeName'>
-    <summary>Gets the name of this node. For HTML elements, this will be the same as
-      the tag name.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.INode.getNodeType'>
-    <summary>Returns the type of node represented by this _object. @return A node type
-      integer; see NodeType.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.INode.getOwnerDocument'>
-    <summary>Gets the document that owns this node. @return the owner document, or null
-      if this is a document _object.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.INode.getParentNode'>
-    <summary>Gets the parent node of this node. @return the parent node, or null if
-      this is the root node.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.INode.getTextContent'>
-    <summary>Gets all the text found within this element. @return All the concatenated
-      text, except comments, for Element nodes; or the text of Comment nodes; or
-      null otherwise.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.INode.removeChild(com.upokecenter.html.INode)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='node'>The parameter
-      <paramref name='node'/>
-       is not documented yet.
-    </param>
-  </doc>
-  <doc name='T:com.upokecenter.html.IProcessingInstruction'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.html.IProcessingInstruction.getData'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.IProcessingInstruction.getTarget'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.html.IText'>
-    <summary>Represents text within an HTML document.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.html.IText.getData'>
-    <summary>Gets this node's text.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.html.NodeType'>
-    <summary>Contains constants for node types.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.html.NodeType.COMMENT_NODE'>
-    <summary>A comment node.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.html.NodeType.DOCUMENT_NODE'>
-    <summary>A document node.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.html.NodeType.DOCUMENT_TYPE_NODE'>
-    <summary>A DOCTYPE node.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.html.NodeType.ELEMENT_NODE'>
-    <summary>An HTML element node.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.html.NodeType.PROCESSING_INSTRUCTION_NODE'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.html.NodeType.TEXT_NODE'>
-    <summary>A node containing text.
-    </summary>
-  </doc>
-  <doc name='T:com.upokecenter.html.data.ExclusiveCanonicalXML'>
-    <summary>Implements Exclusive XML Canonicalization as specified at:
-      http://www.w3.org/TR/xml-exc-c14n/.
-    </summary>
-  </doc>
-  <doc name='T:com.upokecenter.html.data.Microdata'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.html.data.Microdata.getMicrodataJSON(com.upokecenter.html.IDocument)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='document'>The parameter
-      <paramref name='document'/>
-       is not documented yet.
-    </param>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.html.data.Microformats'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.html.data.Microformats.getMicroformatsJSON(com.upokecenter.html.IDocument)'>
-    <summary>Scans an HTML document for Microformats.org metadata. The resulting
-      _object will contain an "items" property, an array of all Microformats
-      items. Each item will have a "type" and "properties" properties. @param
-      root the document to scan. @return a JSON _object containing Microformats
-      metadata.
-    </summary>
-    <param name='root'>The parameter
-      <paramref name='root'/>
-       is not documented yet.
-    </param>
-    <returns>A CBORObject object.
-    </returns>
-    <exception cref='T:System.ArgumentNullException'>The parameter
-      <paramref name='root'/>
-       is null.
-    </exception>
-  </doc>
-  <doc name='M:com.upokecenter.html.data.Microformats.getMicroformatsJSON(com.upokecenter.html.IElement)'>
-    <summary>Scans an HTML element for Microformats.org metadata. The resulting _object
-      will contain an "items" property, an array of all Microformats items. Each
-      item will have a "type" and "properties" properties. @param root the
-      element to scan. @return a JSON _object containing Microformats metadata.
-    </summary>
-    <param name='root'>The parameter
-      <paramref name='root'/>
-       is not documented yet.
-    </param>
-    <returns>A CBORObject object.
-    </returns>
-    <exception cref='T:System.ArgumentNullException'>The parameter
-      <paramref name='root'/>
-       is null.
-    </exception>
-  </doc>
-  <doc name='M:com.upokecenter.html.data.Microformats.getRelJSON(com.upokecenter.html.IDocument)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='root'>The parameter
-      <paramref name='root'/>
-       is not documented yet.
-    </param>
-    <returns>A CBORObject object.
-    </returns>
-    <exception cref='T:System.ArgumentNullException'>The parameter
-      <paramref name='root'/>
-       is null.
-    </exception>
-  </doc>
-  <doc name='M:com.upokecenter.html.data.Microformats.getRelJSON(com.upokecenter.html.IElement)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='root'>The parameter
-      <paramref name='root'/>
-       is not documented yet.
-    </param>
-    <returns>A CBORObject object.
-    </returns>
-    <exception cref='T:System.ArgumentNullException'>The parameter
-      <paramref name='root'/>
-       is null.
-    </exception>
-  </doc>
-  <doc name='M:com.upokecenter.html.data.Microformats.getUValue(com.upokecenter.html.IElement)'>
-    <summary>Gets a Microformats "u-*" value from an HTML element. It tries to find the
-      URL from the element's attributes, if possible; otherwise from the
-      element's text.
-    </summary>
-    <param name='e'>An HTML element.
-    </param>
-    <returns>A URL, or the empty _string if none was found.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.html.data.RDFInternal.replaceBlankNodes(System.Collections.Generic.ISet{PeterO.Rdf.RDFTriple},System.Collections.Generic.IDictionary{System.String,PeterO.Rdf.RDFTerm})'>
-    <summary>Replaces certain blank nodes with blank nodes whose names meet the
-      N-Triples requirements.
-    </summary>
-    <param name='triples'>A set of RDF triples.
-    </param>
-    <param name='bnodeLabels'>A mapping of blank node names already allocated. This method will modify
-      this object as needed to allocate new blank nodes.
-    </param>
-  </doc>
-  <doc name='T:com.upokecenter.html.data.RDFa'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.html.data.RDFa.#ctor(com.upokecenter.html.IDocument)'>
-    <param name='document'>The parameter
-      <paramref name='document'/>
-       is an IDocument object.
-    </param>
-  </doc>
-  <doc name='M:com.upokecenter.html.data.RDFa.Parse'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>An ISet(RDFTriple) object.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.io.ConditionalBufferInputStream'>
-    <summary>An input stream that stores the first bytes of the stream in a buffer and
-      supports rewinding to the beginning of the stream. However, when the
-      buffer is disabled, no further bytes are put into the buffer, but any
-      remaining bytes in the buffer will still be used until it's exhausted.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.io.ConditionalBufferInputStream.#ctor(PeterO.IReader)'>
-    <param name='input'>The parameter
-      <paramref name='input'/>
-       is an IReader object.
-    </param>
-  </doc>
-  <doc name='M:com.upokecenter.io.ConditionalBufferInputStream.Read(System.Byte[],System.Int32,System.Int32)'>
-    <summary>Not documented yet.
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader)">
+
+            <summary>Parses an HTML document from an input stream, using
+            "about:blank" as its address. @param stream an input stream @ if an
+            I/O error occurs.</summary>
+            <param name='stream'>The parameter <paramref name='stream'/> is a
+            IReader object.</param>
+            <returns>An IDocument object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.Boolean)">
+
+            <summary>Not documented yet.</summary>
+            <param name='stream'>The parameter <paramref name='stream'/> is a
+            IReader object.</param>
+            <param name='checkError'>The parameter <paramref name='checkError'/> is either <c>true</c> or <c>false</c>.</param>
+            <returns>An IDocument object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='stream'>The parameter <paramref name='stream'/> is a
+            IReader object.</param>
+            <param name='address'>The parameter <paramref name='address'/> is a
+            text string.</param>
+            <returns>An IDocument object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='stream'>The parameter <paramref name='stream'/> is a
+            IReader object.</param>
+            <param name='address'>The parameter <paramref name='address'/> is a
+            text string.</param>
+            <param name='contentType'>The parameter <paramref name='contentType'/> is a text string.</param>
+            <returns>An IDocument object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String,System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='stream'>The parameter <paramref name='stream'/> is a
+            IReader object.</param>
+            <param name='address'>The parameter <paramref name='address'/> is a
+            text string.</param>
+            <param name='contentType'>The parameter <paramref name='contentType'/> is a text string.</param>
+            <param name='contentLang'>The parameter <paramref name='contentLang'/> is a text string.</param>
+            <returns>An IDocument object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String,System.String,System.Boolean)">
+
+            <summary>* Parses an HTML document from an input stream, using the
+            given URL as its address. @param stream an input stream
+            representing an HTML document. @param address an absolute URL
+            representing an address. @param contentType Desired MIME media type
+            of the document, including the charset parameter, if any. Examples:
+            "text/html" or "application/xhtml+xml; charset=utf-8". @param
+            contentLang Language tag from the Content-Language header @return
+            an IDocument representing the HTML document. @ if an I/O error
+            occurs @ if the given address is not an absolute URL.</summary>
+            <param name='stream'>The parameter <paramref name='stream'/> is a
+            IReader object.</param>
+            <param name='address'>The parameter <paramref name='address'/> is a
+            text string.</param>
+            <param name='contentType'>The parameter <paramref name='contentType'/> is a text string.</param>
+            <param name='contentLang'>The parameter <paramref name='contentLang'/> is a text string.</param>
+            <param name='checkError'>Either <c>true</c> or <c>false</c>.</param>
+            <returns>An IDocument object.</returns>
+            <exception cref='ArgumentNullException'>The parameter <paramref name='stream'/> or <paramref name='address'/> or <paramref name='contentType'/> is null.</exception>
+
+</doc>
+<doc name="T:com.upokecenter.html.IAttr">
+
+            <summary>Represents one of the attributes within an HTML
+            element.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.html.IAttr.getLocalName">
+
+            <summary>Gets the attribute name's local name (the part after the
+            colon, if it's bound to a _namespace).</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IAttr.getName">
+
+            <summary>Gets the attribute's qualified name.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IAttr.getNamespaceURI">
+
+            <summary>Gets the attribute's _namespace URI, if it's bound to a
+            _namespace.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IAttr.getPrefix">
+
+            <summary>Gets the attribute name's prefix (the part before the
+            colon, if it's bound to a _namespace).</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IAttr.getValue">
+
+            <summary>Gets the attribute's value.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.html.IComment">
+
+            <summary>Represents a comment on an HTML document.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.html.IComment.getData">
+
+            <summary>Gets the comment's text.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.html.IDocument">
+
+            <summary>* Represents an HTML document.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.html.IDocument.getCharset">
+
+            <summary>Gets the character encoding used in this document. @return
+            A character encoding name.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IDocument.getDoctype">
+
+            <summary>Gets the document type of this document, if any.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IDocument.getDocumentElement">
+
+            <summary>Gets the root element of this document.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IDocument.getElementById(System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='id'>The parameter <paramref name='id'/> is a text
+            string.</param>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IDocument.getElementsByTagName(System.String)">
+
+            <summary>Gets all descendents, both direct and indirect, that have
+            the specified tag name, using ASCII case-insensitive matching.
+            @param _string A tag name.</summary>
+            <param name='_string'>The parameter <paramref name='_string'/> is a
+            text string.</param>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IDocument.getURL">
+
+            <summary>Gets the document's address @return An absolute
+            URL.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.html.IDocumentType">
+
+            <summary>Represents the HTML "!DOCTYPE" tag.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.html.IDocumentType.getName">
+
+            <summary>Gets the name of this document type. For HTML documents,
+            this should be "html".</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IDocumentType.getPublicId">
+
+            <summary>Gets the identifier of this document type.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IDocumentType.getSystemId">
+
+            <summary>Gets the system identifier of this document
+            type.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.html.IElement">
+
+            <summary>Represents an HTML element.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.html.IElement.getAttribute(System.String)">
+
+            <summary>Gets an attribute declared on this element. @param name an
+            attribute name. @return the attribute's value, or null if the
+            attribute doesn't exist.</summary>
+            <param name='name'>The parameter <paramref name='name'/> is a text
+            string.</param>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IElement.getAttributeNS(System.String,System.String)">
+
+            <summary>Gets an attribute of this element, with the given
+            _namespace name and local name. @param _namespace the attribute's
+            _namespace name. @param name the attribute's local name. @return
+            the attribute's value, or null if the attribute doesn't
+            exist.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IElement.getAttributes">
+
+            <summary>Gets a list of all attributes declared on this
+            element.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IElement.getElementById(System.String)">
+
+            <summary>Gets all descendents, both direct and indirect, that have
+            the specified id, using case-sensitive matching. @param
+            id.</summary>
+            <param name='id'>The parameter <paramref name='id'/> is a text
+            string.</param>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IElement.getElementsByTagName(System.String)">
+
+            <summary>Gets all descendents, both direct and indirect, that have
+            the specified tag name, using ASCII case-insensitive matching.
+            @param tagName A tag name.</summary>
+            <param name='tagName'>The parameter <paramref name='tagName'/> is a
+            text string.</param>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IElement.getId">
+
+            <summary>Gets the value of the id attribute on this element.
+            @return the value of the id attribute, or null if it doesn't
+            exist.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IElement.getInnerHTML">
+
+            <summary>Gets a serialized form of this HTML element. @return a
+            _string consisting of the serialized form of this element's
+            children, in HTML.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IElement.getLocalName">
+
+            <summary>Gets the element's local name. For elements with no
+            _namespace, this will equal the element's tag name. @return the
+            element's local name. This method doesn't convert it to uppercase
+            even for HTML elements, unlike getTagName.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IElement.getNamespaceURI">
+
+            <summary>Gets the _namespace name of this element. For HTML
+            elements, it will equal "http://www.w3.org/1999/xhtml".</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IElement.getPrefix">
+
+            <summary>Not documented yet.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IElement.getTagName">
+
+            <summary>Gets the name of the element as used on its HTML tags.
+            @return the element's tag name. For HTML elements, an uppercase
+            version of the name will be returned.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.html.INode">
+
+            <summary>Represents a node in the document _object model (DOM). All
+            DOM objects implement this interface.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.html.INode.appendChild(com.upokecenter.html.INode)">
+
+            <summary>Not documented yet.</summary>
+            <param name='node'>The parameter <paramref name='node'/> is
+            a.upokecenter.html.INode object.</param>
+
+</doc>
+<doc name="M:com.upokecenter.html.INode.getBaseURI">
+
+            <summary>Returns the _base URL of this node. URLs on this node are
+            resolved relative to this URL.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.INode.getChildNodes">
+
+            <summary>Gets the direct children of this node. @return A list of
+            the direct children of this node.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.INode.getLanguage">
+
+            <summary>Gets the language of this node. Not defined in the DOM
+            specification.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.INode.getNodeName">
+
+            <summary>Gets the name of this node. For HTML elements, this will
+            be the same as the tag name.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.INode.getNodeType">
+
+            <summary>Returns the type of node represented by this _object.
+            @return A node type integer; see NodeType.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.INode.getOwnerDocument">
+
+            <summary>Gets the document that owns this node. @return the owner
+            document, or null if this is a document _object.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.INode.getParentNode">
+
+            <summary>Gets the parent node of this node. @return the parent
+            node, or null if this is the root node.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.INode.getTextContent">
+
+            <summary>Gets all the text found within this element. @return All
+            the concatenated text, except comments, for Element nodes; or the
+            text of Comment nodes; or null otherwise.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.INode.removeChild(com.upokecenter.html.INode)">
+
+            <summary>Not documented yet.</summary>
+            <param name='node'>The parameter <paramref name='node'/> is
+            a.upokecenter.html.INode object.</param>
+
+</doc>
+<doc name="T:com.upokecenter.html.IProcessingInstruction">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.html.IProcessingInstruction.getData">
+
+            <summary>Not documented yet.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.IProcessingInstruction.getTarget">
+
+            <summary>Not documented yet.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.html.IText">
+
+            <summary>Represents text within an HTML document.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.html.IText.getData">
+
+            <summary>Gets this node's text.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.html.NodeType">
+
+            <summary>Contains constants for node types.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.html.NodeType.COMMENT_NODE">
+
+            <summary>A comment node.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.html.NodeType.DOCUMENT_NODE">
+
+            <summary>A document node.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.html.NodeType.DOCUMENT_TYPE_NODE">
+
+            <summary>A DOCTYPE node.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.html.NodeType.ELEMENT_NODE">
+
+            <summary>An HTML element node.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.html.NodeType.PROCESSING_INSTRUCTION_NODE">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.html.NodeType.TEXT_NODE">
+
+            <summary>A node containing text.</summary>
+
+</doc>
+<doc name="T:com.upokecenter.html.data.ExclusiveCanonicalXML">
+
+            <summary>Implements Exclusive XML Canonicalization as specified at:
+            http://www.w3.org/TR/xml-exc-c14n/.</summary>
+
+</doc>
+<doc name="T:com.upokecenter.html.data.Microdata">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.html.data.Microdata.getMicrodataJSON(com.upokecenter.html.IDocument)">
+
+            <summary>Not documented yet.</summary>
+            <param name='document'>The parameter <paramref name='document'/> is
+            a.upokecenter.html.IDocument object.</param>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.html.data.Microformats">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.html.data.Microformats.getMicroformatsJSON(com.upokecenter.html.IDocument)">
+
+            <summary>Scans an HTML document for Microformats.org metadata. The
+            resulting _object will contain an "items" property, an array of all
+            Microformats items. Each item will have a "type" and "properties"
+            properties. @param root the document to scan. @return a JSON
+            _object containing Microformats metadata.</summary>
+            <param name='root'>The parameter <paramref name='root'/> is
+            a.upokecenter.html.IDocument object.</param>
+            <returns>A CBORObject object.</returns>
+            <exception cref='ArgumentNullException'>The parameter <paramref name='root'/> is null.</exception>
+
+</doc>
+<doc name="M:com.upokecenter.html.data.Microformats.getMicroformatsJSON(com.upokecenter.html.IElement)">
+
+            <summary>Scans an HTML element for Microformats.org metadata. The
+            resulting _object will contain an "items" property, an array of all
+            Microformats items. Each item will have a "type" and "properties"
+            properties. @param root the element to scan. @return a JSON _object
+            containing Microformats metadata.</summary>
+            <param name='root'>The parameter <paramref name='root'/> is
+            a.upokecenter.html.IElement object.</param>
+            <returns>A CBORObject object.</returns>
+            <exception cref='ArgumentNullException'>The parameter <paramref name='root'/> is null.</exception>
+
+</doc>
+<doc name="M:com.upokecenter.html.data.Microformats.getRelJSON(com.upokecenter.html.IDocument)">
+
+            <summary>Not documented yet.</summary>
+            <param name='root'>The parameter <paramref name='root'/> is
+            a.upokecenter.html.IDocument object.</param>
+            <returns>A CBORObject object.</returns>
+            <exception cref='ArgumentNullException'>The parameter <paramref name='root'/> is null.</exception>
+
+</doc>
+<doc name="M:com.upokecenter.html.data.Microformats.getRelJSON(com.upokecenter.html.IElement)">
+
+            <summary>Not documented yet.</summary>
+            <param name='root'>The parameter <paramref name='root'/> is
+            a.upokecenter.html.IElement object.</param>
+            <returns>A CBORObject object.</returns>
+            <exception cref='ArgumentNullException'>The parameter <paramref name='root'/> is null.</exception>
+
+</doc>
+<doc name="M:com.upokecenter.html.data.Microformats.getUValue(com.upokecenter.html.IElement)">
+
+            <summary>Gets a Microformats "u-*" value from an HTML element. It
+            tries to find the URL from the element's attributes, if possible;
+            otherwise from the element's text.</summary>
+            <param name='e'>An HTML element.</param>
+            <returns>A URL, or the empty _string if none was found.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.html.data.RDFInternal.replaceBlankNodes(System.Collections.Generic.ISet{PeterO.Rdf.RDFTriple},System.Collections.Generic.IDictionary{System.String,PeterO.Rdf.RDFTerm})">
+
+            <summary>Replaces certain blank nodes with blank nodes whose names
+            meet the N-Triples requirements.</summary>
+            <param name='triples'>A set of RDF triples.</param>
+            <param name='bnodeLabels'>A mapping of blank node names already
+            allocated. This method will modify this object as needed to
+            allocate new blank nodes.</param>
+
+</doc>
+<doc name="T:com.upokecenter.html.data.RDFa">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.html.data.RDFa.#ctor(com.upokecenter.html.IDocument)">
+
+            <param name='document'>The parameter <paramref name='document'/> is
+            an IDocument object.</param>
+
+</doc>
+<doc name="M:com.upokecenter.html.data.RDFa.Parse">
+
+            <summary>Not documented yet.</summary>
+            <returns>An ISet(RDFTriple) object.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.io.ConditionalBufferInputStream">
+
+            <summary>An input stream that stores the first bytes of the stream
+            in a buffer and supports rewinding to the beginning of the stream.
+            However, when the buffer is disabled, no further bytes are put into
+            the buffer, but any remaining bytes in the buffer will still be
+            used until it's exhausted.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.io.ConditionalBufferInputStream.#ctor(PeterO.IReader)">
+
+            <param name='input'>The parameter <paramref name='input'/> is an
+            IReader object.</param>
+
+</doc>
+<doc name="M:com.upokecenter.io.ConditionalBufferInputStream.Read(System.Byte[],System.Int32,System.Int32)">
+
+            <summary>Not documented yet.</summary>
+            <param name='buffer'>The parameter <paramref name='buffer'/> is
+            a.Byte[] object.</param>
+            <param name='offset'>The parameter <paramref name='offset'/> is a
+            32-bit signed integer.</param>
+            <param name='byteCount'>The parameter <paramref name='byteCount'/>
+            is a 32-bit signed integer.</param>
+            <returns>A 32-bit signed integer.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.io.ConditionalBufferInputStream.ReadByte">
+
+            <summary>Not documented yet.</summary>
+            <returns>A 32-bit signed integer.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.io.ConditionalBufferInputStream.disableBuffer">
+
+            <summary>Disables buffering of future bytes read from the
+            underlying stream. However, any bytes already buffered can still be
+            read until the buffer is exhausted. After the buffer is exhausted,
+            this stream will fully delegate to the underlying stream.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.io.ConditionalBufferInputStream.doRead(System.Byte[],System.Int32,System.Int32)">
+<summary>Not documented yet.
     </summary>
     <param name='buffer'>The parameter
       <paramref name='buffer'/>
@@ -845,80 +794,48 @@
     </param>
     <returns>A 32-bit signed integer.
     </returns>
-  </doc>
-  <doc name='M:com.upokecenter.io.ConditionalBufferInputStream.ReadByte'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A 32-bit signed integer.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.io.ConditionalBufferInputStream.disableBuffer'>
-    <summary>Disables buffering of future bytes read from the underlying stream.
-      However, any bytes already buffered can still be read until the buffer is
-      exhausted. After the buffer is exhausted, this stream will fully delegate
-      to the underlying stream.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.io.ConditionalBufferInputStream.doRead(System.Byte[],System.Int32,System.Int32)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='buffer'>The parameter
-      <paramref name='buffer'/>
-       is not documented yet.
-    </param>
-    <param name='offset'>The parameter
-      <paramref name='offset'/>
-       is not documented yet.
-    </param>
-    <param name='byteCount'>The parameter
-      <paramref name='byteCount'/>
-       is not documented yet.
-    </param>
-    <returns>A 32-bit signed integer.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.io.ConditionalBufferInputStream.mark(System.Int32)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='limit'>The parameter
-      <paramref name='limit'/>
-       is not documented yet.
-    </param>
-  </doc>
-  <doc name='M:com.upokecenter.io.ConditionalBufferInputStream.markSupported'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>Either
-      <c>true</c> or
-      <c>false</c> .
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.io.ConditionalBufferInputStream.reset'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.io.ConditionalBufferInputStream.rewind'>
-    <summary>Resets the stream to the beginning of the input. This will invalidate the
-      mark placed on the stream, if any. @ if disableBuffer() was already
-      called.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.io.ConditionalBufferInputStream.skip(System.Int64)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='byteCount'>The parameter
-      <paramref name='byteCount'/>
-       is not documented yet.
-    </param>
-    <returns>A 64-bit signed integer.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.net.HeaderParser'>
-    <summary>Contains methods useful for parsing header fields.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.net.HeaderParser.parseHttpDate(System.String,System.DateTime)'>
-    <summary>Parses a date _string in one of the three formats allowed by RFC2616
+</doc>
+<doc name="M:com.upokecenter.io.ConditionalBufferInputStream.mark(System.Int32)">
+
+            <summary>Not documented yet.</summary>
+            <param name='limit'>The parameter <paramref name='limit'/> is a
+            32-bit signed integer.</param>
+
+</doc>
+<doc name="M:com.upokecenter.io.ConditionalBufferInputStream.markSupported">
+
+            <summary>Not documented yet.</summary>
+            <returns>Either <c>true</c> or <c>false</c>.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.io.ConditionalBufferInputStream.reset">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.io.ConditionalBufferInputStream.rewind">
+
+            <summary>Resets the stream to the beginning of the input. This will
+            invalidate the mark placed on the stream, if any. @ if
+            disableBuffer() was already called.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.io.ConditionalBufferInputStream.skip(System.Int64)">
+
+            <summary>Not documented yet.</summary>
+            <param name='byteCount'>The parameter <paramref name='byteCount'/>
+            is a 64-bit signed integer.</param>
+            <returns>A 64-bit signed integer.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.net.HeaderParser">
+
+            <summary>Contains methods useful for parsing header
+            fields.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.net.HeaderParser.parseHttpDate(System.String,System.DateTime)">
+<summary>Parses a date _string in one of the three formats allowed by RFC2616
       (HTTP/1.1). @param v a _string to parse. @param defaultValue a value to
       return if the _string isn't a valid date. @return number of milliseconds
       since midnight, January 1, 1970.
@@ -933,115 +850,109 @@
     </param>
     <returns>A 64-bit signed integer.
     </returns>
-  </doc>
-  <doc name='T:com.upokecenter.net.IDownloadEventListener`1'>
-    <summary>Not documented yet.
-    </summary>
-    <typeparam name='T'>Type parameter not documented yet.
-    </typeparam>
-  </doc>
-  <doc name='M:com.upokecenter.net.IDownloadEventListener`1.onConnected(System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='url'>The parameter
-      <paramref name='url'/>
-       is not documented yet.
-    </param>
-  </doc>
-  <doc name='M:com.upokecenter.net.IDownloadEventListener`1.onConnecting(System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='url'>The parameter
-      <paramref name='url'/>
-       is not documented yet.
-    </param>
-  </doc>
-  <doc name='T:com.upokecenter.net.IHttpHeaders'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.net.IHttpHeaders.getHeaderField(System.Int32)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='name'>The parameter
-      <paramref name='name'/>
-       is not documented yet.
-    </param>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.net.IHttpHeaders.getHeaderField(System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='name'>The parameter
-      <paramref name='name'/>
-       is not documented yet.
-    </param>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.net.IHttpHeaders.getHeaderFieldDate(System.String,System.Int64)'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.net.IHttpHeaders.getHeaderFieldKey(System.Int32)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='name'>The parameter
-      <paramref name='name'/>
-       is not documented yet.
-    </param>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.net.IHttpHeaders.getHeaderFields'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.net.IHttpHeaders.getRequestMethod'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.net.IHttpHeaders.getResponseCode'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.net.IHttpHeaders.getUrl'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.net.IOnFinishedListener`1'>
-    <summary>Not documented yet.
-    </summary>
-    <typeparam name='T'>Type parameter not documented yet.
-    </typeparam>
-  </doc>
-  <doc name='M:com.upokecenter.net.IOnFinishedListener`1.onFinished(System.String,`0,System.IO.IOException)'>
-    <summary>Processes the data on the UI thread after it's downloaded. @param url URL
-      of the data. @param value Data processed by 'processResponse'. @param
-      exception If this value is non-null, an error has occurred and this
-      exception contains further information on the error, and 'value' will be
-      null.
-    </summary>
-  </doc>
-  <doc name='T:com.upokecenter.net.IResponseListener`1'>
-    <summary>Not documented yet.
-    </summary>
-    <typeparam name='T'>Type parameter not documented yet.
-    </typeparam>
-  </doc>
-  <doc name='M:com.upokecenter.net.IResponseListener`1.processResponse(System.String,PeterO.Support.InputStream,com.upokecenter.net.IHttpHeaders)'>
-    <summary>Processes the Web response on a background thread. Please note: For the
+</doc>
+<doc name="T:com.upokecenter.net.IDownloadEventListener`1">
+
+            <summary>Not documented yet.</summary>
+            <typeparam name='T'>Type parameter not documented yet.</typeparam>
+
+</doc>
+<doc name="M:com.upokecenter.net.IDownloadEventListener`1.onConnected(System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='url'>The parameter <paramref name='url'/> is a text
+            string.</param>
+
+</doc>
+<doc name="M:com.upokecenter.net.IDownloadEventListener`1.onConnecting(System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='url'>The parameter <paramref name='url'/> is a text
+            string.</param>
+
+</doc>
+<doc name="T:com.upokecenter.net.IHttpHeaders">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.net.IHttpHeaders.getHeaderField(System.Int32)">
+
+            <summary>Not documented yet.</summary>
+            <param name='name'>The parameter <paramref name='name'/> is a
+            32-bit signed integer.</param>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.net.IHttpHeaders.getHeaderField(System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='name'>The parameter <paramref name='name'/> is a text
+            string.</param>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.net.IHttpHeaders.getHeaderFieldDate(System.String,System.Int64)">
+
+            <summary>Not documented yet.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.net.IHttpHeaders.getHeaderFieldKey(System.Int32)">
+
+            <summary>Not documented yet.</summary>
+            <param name='name'>The parameter <paramref name='name'/> is a
+            32-bit signed integer.</param>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.net.IHttpHeaders.getHeaderFields">
+
+            <summary>Not documented yet.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.net.IHttpHeaders.getRequestMethod">
+
+            <summary>Not documented yet.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.net.IHttpHeaders.getResponseCode">
+
+            <summary>Not documented yet.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.net.IHttpHeaders.getUrl">
+
+            <summary>Not documented yet.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.net.IOnFinishedListener`1">
+
+            <summary>Not documented yet.</summary>
+            <typeparam name='T'>Type parameter not documented yet.</typeparam>
+
+</doc>
+<doc name="M:com.upokecenter.net.IOnFinishedListener`1.onFinished(System.String,`0,System.IO.IOException)">
+
+            <summary>Processes the data on the UI thread after it's downloaded.
+            @param url URL of the data. @param value Data processed by
+            'processResponse'. @param exception If this value is non-null, an
+            error has occurred and this exception contains further information
+            on the error, and 'value' will be null.</summary>
+
+</doc>
+<doc name="T:com.upokecenter.net.IResponseListener`1">
+
+            <summary>Not documented yet.</summary>
+            <typeparam name='T'>Type parameter not documented yet.</typeparam>
+
+</doc>
+<doc name="M:com.upokecenter.net.IResponseListener`1.processResponse(System.String,PeterO.Support.InputStream,com.upokecenter.net.IHttpHeaders)">
+<summary>Processes the Web response on a background thread. Please note: For the
       response to be cacheable, the entire stream must be read to the end.
       @param url URL of the resource. This may not be the same as the URL that
       the resource actually resolves to. For that, call the getUrl() method of
@@ -1051,97 +962,88 @@
     </summary>
     <returns>The return value is not documented yet.
     </returns>
-  </doc>
-  <doc name='T:com.upokecenter.net.NoConnectionException'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='T:com.upokecenter.util.ActionList`1'>
-    <summary>A class for holding tasks that can be referred to by integer index.
-    </summary>
-    <typeparam name='T'>Type parameter not documented yet.
-    </typeparam>
-  </doc>
-  <doc name='M:com.upokecenter.util.ActionList`1.#ctor'>
-    <summary>Initializes a new instance of the <see cref='ActionList'/> class.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.util.ActionList`1.rebindAction(System.Int32,System.Object)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='actionID'>The parameter
-      <paramref name='actionID'/>
-       is not documented yet.
-    </param>
-    <param name='boundObject'>The parameter
-      <paramref name='boundObject'/>
-       is not documented yet.
-    </param>
-    <returns>Either
-      <c>true</c> or
-      <c>false</c> .
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.ActionList`1.registerAction(System.Object,com.upokecenter.util.IBoundAction{`0})'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='boundObject'>The parameter
-      <paramref name='boundObject'/>
-       is not documented yet.
-    </param>
-    <param name='action'>The parameter
-      <paramref name='action'/>
-       is not documented yet.
-    </param>
-    <returns>A 32-bit signed integer.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.ActionList`1.removeAction(System.Int32)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='actionID'>The parameter
-      <paramref name='actionID'/>
-       is not documented yet.
-    </param>
-    <returns>Either
-      <c>true</c> or
-      <c>false</c> .
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.ActionList`1.triggerActionOnce(System.Int32,`0[])'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='actionID'>The parameter
-      <paramref name='actionID'/>
-       is not documented yet.
-    </param>
-    <param name='parameters'>The parameter
-      <paramref name='parameters'/>
-       is not documented yet.
-    </param>
-    <returns>Either
-      <c>true</c> or
-      <c>false</c> .
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.ActionList`1.unbindAction(System.Int32)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='actionID'>The parameter
-      <paramref name='actionID'/>
-       is not documented yet.
-    </param>
-    <returns>Either
-      <c>true</c> or
-      <c>false</c> .
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.util.DateTimeUtility'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.util.DateTimeUtility.convertYear(System.Int32)'>
-    <summary>Not documented yet.
+</doc>
+<doc name="M:com.upokecenter.net.IResponseListener`1.processResponse(System.String,System.IO.Stream,com.upokecenter.net.IHttpHeaders)">
+
+            <summary>Processes the Web response on a background thread. Please
+            note: For the response to be cacheable, the entire stream must be
+            read to the end. @param url URL of the resource. This may not be
+            the same as the URL that the resource actually resolves to. For
+            that, call the getUrl() method of the _headers_ _object. @param
+            stream Input stream for the response body. The listener must not
+            close the stream. @param headers Contains the headers returned by
+            the response. @.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.net.NoConnectionException">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="T:com.upokecenter.util.ActionList`1">
+
+            <summary>A class for holding tasks that can be referred to by
+            integer index.</summary>
+            <typeparam name='T'>Type parameter not documented yet.</typeparam>
+
+</doc>
+<doc name="M:com.upokecenter.util.ActionList`1.#ctor">
+
+            <summary>Initializes a new instance of the
+            <see cref='ActionList'/> class.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.util.ActionList`1.rebindAction(System.Int32,System.Object)">
+
+            <summary>Not documented yet.</summary>
+            <param name='actionID'>The parameter <paramref name='actionID'/> is
+            a 32-bit signed integer.</param>
+            <param name='boundObject'>The parameter <paramref name='boundObject'/> is a Object object.</param>
+            <returns>Either <c>true</c> or <c>false</c>.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.ActionList`1.registerAction(System.Object,com.upokecenter.util.IBoundAction{`0})">
+
+            <summary>Not documented yet.</summary>
+            <param name='boundObject'>The parameter <paramref name='boundObject'/> is a Object object.</param>
+            <param name='action'>The parameter <paramref name='action'/> is
+            a.upokecenter.util.IBoundAction{`0} object.</param>
+            <returns>A 32-bit signed integer.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.ActionList`1.removeAction(System.Int32)">
+
+            <summary>Not documented yet.</summary>
+            <param name='actionID'>The parameter <paramref name='actionID'/> is
+            a 32-bit signed integer.</param>
+            <returns>Either <c>true</c> or <c>false</c>.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.ActionList`1.triggerActionOnce(System.Int32,`0[])">
+
+            <summary>Not documented yet.</summary>
+            <param name='actionID'>The parameter <paramref name='actionID'/> is
+            a 32-bit signed integer.</param>
+            <param name='parameters'>The parameter <paramref name='parameters'/> is a `0[] object.</param>
+            <returns>Either <c>true</c> or <c>false</c>.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.ActionList`1.unbindAction(System.Int32)">
+
+            <summary>Not documented yet.</summary>
+            <param name='actionID'>The parameter <paramref name='actionID'/> is
+            a 32-bit signed integer.</param>
+            <returns>Either <c>true</c> or <c>false</c>.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.util.DateTimeUtility">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.util.DateTimeUtility.convertYear(System.Int32)">
+<summary>Not documented yet.
     </summary>
     <param name='twoDigitYear'>The parameter
       <paramref name='twoDigitYear'/>
@@ -1149,133 +1051,121 @@
     </param>
     <returns>A 32-bit signed integer.
     </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.DateTimeUtility.getCurrentGmtDateComponents'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>An array of 32-bit unsigned integers.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.util.IAction`1'>
-    <summary>Not documented yet.
-    </summary>
-    <typeparam name='T'>Type parameter not documented yet.
-    </typeparam>
-  </doc>
-  <doc name='M:com.upokecenter.util.IAction`1.action(`0[])'>
-    <summary>Does an arbitrary action. @param parameters An array of parameters that
-      the action accepts.
-    </summary>
-  </doc>
-  <doc name='T:com.upokecenter.util.IBoundAction`1'>
-    <summary>Not documented yet.
-    </summary>
-    <typeparam name='T'>Type parameter not documented yet.
-    </typeparam>
-  </doc>
-  <doc name='M:com.upokecenter.util.IBoundAction`1.action(System.Object,`0[])'>
-    <summary>Not documented yet.
-    </summary>
-  </doc>
-  <doc name='T:com.upokecenter.util.IndexedObjectList`1'>
-    <summary>Not documented yet.
-    </summary>
-    <typeparam name='T'>Type parameter not documented yet.
-    </typeparam>
-  </doc>
-  <doc name='M:com.upokecenter.util.IndexedObjectList`1.receiveObject(System.Int32)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='index'>The parameter
-      <paramref name='index'/>
-       is not documented yet.
-    </param>
-    <returns>A T object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.IndexedObjectList`1.sendObject(`0)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='value'>The parameter
-      <paramref name='value'/>
-       is not documented yet.
-    </param>
-    <returns>A 32-bit signed integer.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.util.StringUtility'>
-    <summary>Contains utility methods for working with strings.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.util.StringUtility.SplitAtSpTabCrLf(System.String)'>
-    <summary>Splits a _string separated by space characters other than form feed. This
-      method acts as though it strips leading and trailing space characters from
-      the _string before splitting it. The space characters used here are
-      U+0009, U+000A, U+000D, and U+0020. @param s a _string. Can be null.
-      @return an array of all items separated by spaces. If _string is null or
-      empty, returns an empty array.
-    </summary>
-    <param name='s'>The parameter
-      <paramref name='s'/>
-       is not documented yet.
-    </param>
-    <returns>A string[] object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.StringUtility.SplitAtSpTabCrLfFf(System.String)'>
-    <summary>Splits a _string separated by space characters. This method acts as though
-      it strips leading and trailing space characters from the _string before
-      splitting it. The space characters are U+0009, U+000A, U+000C, U+000D, and
-      U+0020. @param s a _string. Can be null. @return an array of all items
-      separated by spaces. If _string is null or empty, returns an empty array.
-    </summary>
-    <param name='s'>The parameter
-      <paramref name='s'/>
-       is not documented yet.
-    </param>
-    <returns>A string[] object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.StringUtility.isNullOrSpaces(System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='s'>The parameter
-      <paramref name='s'/>
-       is not documented yet.
-    </param>
-    <returns>Either
-      <c>true</c> or
-      <c>false</c> .
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.StringUtility.splitAt(System.String,System.String)'>
-    <summary>Splits a _string by a delimiter. If the _string ends with the delimiter,
-      the result will end with an empty _string. If the _string begins with the
-      delimiter, the result will start with an empty _string. If the delimiter
-      is null or empty, exception. @param s a _string to split. @param delimiter
-      a _string to signal where each substring begins and ends. @return An array
-      containing strings that are split by the delimiter. If s is null or empty,
-      returns an array whose sole element is the empty _string.
-    </summary>
-    <param name='str'>The parameter
-      <paramref name='str'/>
-       is not documented yet.
-    </param>
-    <param name='delimiter'>The parameter
-      <paramref name='delimiter'/>
-       is not documented yet.
-    </param>
-    <returns>A string[] object.
-    </returns>
-    <exception cref='T:System.ArgumentNullException'>The parameter
-      <paramref name='delimiter'/>
-       is null.
-    </exception>
-    <exception cref='T:System.ArgumentException'>Delimiter is empty.
-    </exception>
-  </doc>
-  <doc name='M:com.upokecenter.util.StringUtility.startsWith(System.String,System.String,System.Int32)'>
-    <summary>Not documented yet.
+</doc>
+<doc name="M:com.upokecenter.util.DateTimeUtility.getCurrentGmtDateComponents">
+
+            <summary>Not documented yet.</summary>
+            <returns>An array of 32-bit unsigned integers.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.util.IAction`1">
+
+            <summary>Not documented yet.</summary>
+            <typeparam name='T'>Type parameter not documented yet.</typeparam>
+
+</doc>
+<doc name="M:com.upokecenter.util.IAction`1.action(`0[])">
+
+            <summary>Does an arbitrary action. @param parameters An array of
+            parameters that the action accepts.</summary>
+
+</doc>
+<doc name="T:com.upokecenter.util.IBoundAction`1">
+
+            <summary>Not documented yet.</summary>
+            <typeparam name='T'>Type parameter not documented yet.</typeparam>
+
+</doc>
+<doc name="M:com.upokecenter.util.IBoundAction`1.action(System.Object,`0[])">
+
+            <summary>Not documented yet.</summary>
+
+</doc>
+<doc name="T:com.upokecenter.util.IndexedObjectList`1">
+
+            <summary>Not documented yet.</summary>
+            <typeparam name='T'>Type parameter not documented yet.</typeparam>
+
+</doc>
+<doc name="M:com.upokecenter.util.IndexedObjectList`1.receiveObject(System.Int32)">
+
+            <summary>Not documented yet.</summary>
+            <param name='index'>The parameter <paramref name='index'/> is a
+            32-bit signed integer.</param>
+            <returns>A T object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.IndexedObjectList`1.sendObject(`0)">
+
+            <summary>Not documented yet.</summary>
+            <param name='value'>The parameter <paramref name='value'/> is a `0
+            object.</param>
+            <returns>A 32-bit signed integer.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.util.StringUtility">
+
+            <summary>Contains utility methods for working with
+            strings.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.util.StringUtility.SplitAtSpTabCrLf(System.String)">
+
+            <summary>Splits a _string separated by space characters other than
+            form feed. This method acts as though it strips leading and
+            trailing space characters from the _string before splitting it. The
+            space characters used here are U+0009, U+000A, U+000D, and U+0020.
+            @param s a _string. Can be null. @return an array of all items
+            separated by spaces. If _string is null or empty, returns an empty
+            array.</summary>
+            <param name='s'>The parameter <paramref name='s'/> is a text
+            string.</param>
+            <returns>A string[] object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.StringUtility.SplitAtSpTabCrLfFf(System.String)">
+
+            <summary>Splits a _string separated by space characters. This
+            method acts as though it strips leading and trailing space
+            characters from the _string before splitting it. The space
+            characters are U+0009, U+000A, U+000C, U+000D, and U+0020. @param s
+            a _string. Can be null. @return an array of all items separated by
+            spaces. If _string is null or empty, returns an empty
+            array.</summary>
+            <param name='s'>The parameter <paramref name='s'/> is a text
+            string.</param>
+            <returns>A string[] object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.StringUtility.isNullOrSpaces(System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='s'>The parameter <paramref name='s'/> is a text
+            string.</param>
+            <returns>Either <c>true</c> or <c>false</c>.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.StringUtility.splitAt(System.String,System.String)">
+
+            <summary>Splits a _string by a delimiter. If the _string ends with
+            the delimiter, the result will end with an empty _string. If the
+            _string begins with the delimiter, the result will start with an
+            empty _string. If the delimiter is null or empty, exception. @param
+            s a _string to split. @param delimiter a _string to signal where
+            each substring begins and ends. @return An array containing strings
+            that are split by the delimiter. If s is null or empty, returns an
+            array whose sole element is the empty _string.</summary>
+            <param name='str'>The parameter <paramref name='str'/> is a text
+            string.</param>
+            <param name='delimiter'>The parameter <paramref name='delimiter'/>
+            is a text string.</param>
+            <returns>A string[] object.</returns>
+            <exception cref='ArgumentNullException'>The parameter <paramref name='delimiter'/> is null.</exception>
+            <exception cref='ArgumentException'>Delimiter is empty.</exception>
+
+</doc>
+<doc name="M:com.upokecenter.util.StringUtility.startsWith(System.String,System.String,System.Int32)">
+<summary>Not documented yet.
     </summary>
     <param name='str'>The parameter
       <paramref name='str'/>
@@ -1293,47 +1183,53 @@
       <c>true</c> or
       <c>false</c> .
     </returns>
-  </doc>
-  <doc name='T:com.upokecenter.util.SunriseSunset'>
-    <summary>Contains utility methods for calculating sunrise and sunset.
-    </summary>
-  </doc>
-  <doc name='T:com.upokecenter.util.SunriseSunset.DayState'>
-    <summary>A rough time of day.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.util.SunriseSunset.DayState.Day'>
-    <summary>Day light.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.util.SunriseSunset.DayState.DayToNight'>
-    <summary>Approaching nighttime.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.util.SunriseSunset.DayState.Night'>
-    <summary>The time of day is nighttime.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.util.SunriseSunset.DayState.NightToDay'>
-    <summary>Approaching daytime.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.util.SunriseSunset.getCurrentDayState(System.Double,System.Double)'>
-    <summary>Gets a value indicating whether it's currently day or night at the given
-      geographic location. @param lat @param lon a geographic longitude, in
-      degrees. West coordinates are negative. @return A day state value.
-    </summary>
-    <param name='lat'>A geographic latitude, in degrees. South coordinates are negative.
-    </param>
-    <param name='lon'>The parameter
-      <paramref name='lon'/>
-       is not documented yet.
-    </param>
-    <returns>A DayState object.
-    </returns>
-  </doc>
-  <doc name='T:com.upokecenter.util.URIUtility'>
-    <summary>Contains utility methods for processing Uniform Resource Identifiers
+</doc>
+<doc name="T:com.upokecenter.util.SunriseSunset">
+
+            <summary>Contains utility methods for calculating sunrise and
+            sunset.</summary>
+
+</doc>
+<doc name="T:com.upokecenter.util.SunriseSunset.DayState">
+
+            <summary>A rough time of day.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.util.SunriseSunset.DayState.Day">
+
+            <summary>Day light.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.util.SunriseSunset.DayState.DayToNight">
+
+            <summary>Approaching nighttime.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.util.SunriseSunset.DayState.Night">
+
+            <summary>The time of day is nighttime.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.util.SunriseSunset.DayState.NightToDay">
+
+            <summary>Approaching daytime.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.util.SunriseSunset.getCurrentDayState(System.Double,System.Double)">
+
+            <summary>Gets a value indicating whether it's currently day or
+            night at the given geographic location. @param lat @param lon a
+            geographic longitude, in degrees. West coordinates are negative.
+            @return A day state value.</summary>
+            <param name='lat'>A geographic latitude, in degrees. South
+            coordinates are negative.</param>
+            <param name='lon'>The parameter <paramref name='lon'/> is a Double
+            object.</param>
+            <returns>A DayState object.</returns>
+
+</doc>
+<doc name="T:com.upokecenter.util.URIUtility">
+<summary>Contains utility methods for processing Uniform Resource Identifiers
       (URIs) and Internationalized Resource Identifiers (IRIs) under RFC3986 and
       RFC3987, respectively. In the following documentation, URIs and IRIs
       include URI references and IRI references, for convenience.
@@ -1348,13 +1244,13 @@
         identifiers:
       </para>
       <list>
-        <item>The following application/* media types: epub + zip, pdf, senml +
-          cbor, senml + json, senml-exi, sensml + cbor, sensml + json,
-          sensml-exi, smil, vnd.3gpp-v2x-local-service-information,
-          vnd.3gpp.mcdata-signalling, vnd.collection.doc + json, vnd.hc + json,
-          vnd.hyper + json, vnd.hyper-item + json, vnd.mason + json,
-          vnd.microsoft.portable-executable, vnd.oma.bcast.sgdu, vnd.shootproof
-          + json
+        <item>The following application/* media types: epub+zip, pdf, senml+cbor,
+          senml+json, senml-exi, sensml+cbor, sensml+json, sensml-exi, smil,
+          vnd.3gpp-v2x-local-service-information, vnd.3gpp.mcdata-signalling,
+          vnd.collection.doc+json, vnd.hc+json, vnd.hyper+json,
+          vnd.hyper-item+json, vnd.mason+json,
+          vnd.microsoft.portable-executable, vnd.oma.bcast.sgdu,
+          vnd.shootproof+json
         </item>
         <item>The following image/* media types: avci, avcs, heic, heic-sequence,
           heif, heif-sequence
@@ -1365,8 +1261,8 @@
         </item>
         <item>All media types with subtypes ending in "+xml" (see RFC 7303) use
           XPointer Framework syntax as fragment identifiers, except the
-          following application/* media types: dicom + xml, senml + xml, sensml
-          + xml, ttml + xml, xliff + xml, yang-data + xml
+          following application/* media types: dicom+xml, senml+xml, sensml+xml,
+          ttml+xml, xliff+xml, yang-data+xml
         </item>
         <item>font/collection
         </item>
@@ -1384,59 +1280,67 @@
         </item>
       </list>
     </summary>
-  </doc>
-  <doc name='M:com.upokecenter.util.URIUtility.EncodeStringForURI(System.String)'>
-    <summary>Encodes characters other than "unreserved" characters for URIs.
+</doc>
+<doc name="M:com.upokecenter.util.URIUtility.EncodeStringForURI(System.String)">
+<summary>Encodes characters other than "unreserved" characters for URIs.
     </summary>
     <param name='s'>A string to encode.
     </param>
     <returns>The encoded string.
     </returns>
-    <exception cref='T:System.ArgumentNullException'>The parameter
+    <exception cref='ArgumentNullException'>The parameter
       <paramref name='s'/>
        is null.
     </exception>
-  </doc>
-  <doc name='T:com.upokecenter.util.URIUtility.ParseMode'>
-    <summary>Specifies whether certain characters are allowed when parsing IRIs and
+</doc>
+<doc name="T:com.upokecenter.util.URIUtility.ParseMode">
+<summary>Specifies whether certain characters are allowed when parsing IRIs and
       URIs.
     </summary>
-  </doc>
-  <doc name='F:com.upokecenter.util.URIUtility.ParseMode.IRILenient'>
-    <summary>The rules only check for the appropriate delimiters when splitting the
-      path, without checking if all the characters in each component are valid.
-      Even with this mode, strings with unpaired surrogate code points are
-      considered invalid.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.util.URIUtility.ParseMode.IRIStrict'>
-    <summary>The rules follow the syntax for parsing IRIs. In particular, many code
-      points outside the Basic Latin range (U+0000 to U+007F) are allowed.
-      Strings with unpaired surrogate code points are considered invalid.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.util.URIUtility.ParseMode.IRISurrogateLenient'>
-    <summary>The rules only check for the appropriate delimiters when splitting the
-      path, without checking if all the characters in each component are valid.
-      Unpaired surrogate code points are treated as though they were replacement
-      characters instead for the purposes of these rules, so that strings with
-      those code points are not considered invalid strings.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.util.URIUtility.ParseMode.URILenient'>
-    <summary>The rules only check for the appropriate delimiters when splitting the
-      path, without checking if all the characters in each component are valid.
-      Code points outside the Basic Latin range (U+0000 to U+007F) are not
-      allowed.
-    </summary>
-  </doc>
-  <doc name='F:com.upokecenter.util.URIUtility.ParseMode.URIStrict'>
-    <summary>The rules follow the syntax for parsing IRIs, except that code points
-      outside the Basic Latin range (U+0000 to U+007F) are not allowed.
-    </summary>
-  </doc>
-  <doc name='M:com.upokecenter.util.URIUtility.PercentDecode(System.String)'>
-    <summary>Decodes percent-encoding (of the form "%XX" where X is a hexadecimal
+</doc>
+<doc name="F:com.upokecenter.util.URIUtility.ParseMode.IRILenient">
+
+            <summary>The rules only check for the appropriate delimiters when
+            splitting the path, without checking if all the characters in each
+            component are valid. Even with this mode, strings with unpaired
+            surrogate code points are considered invalid.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.util.URIUtility.ParseMode.IRIStrict">
+
+            <summary>The rules follow the syntax for parsing IRIs. In
+            particular, many code points outside the Basic Latin range (U+0000
+            to U+007F) are allowed. Strings with unpaired surrogate code points
+            are considered invalid.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.util.URIUtility.ParseMode.IRISurrogateLenient">
+
+            <summary>The rules only check for the appropriate delimiters when
+            splitting the path, without checking if all the characters in each
+            component are valid. Unpaired surrogate code points are treated as
+            though they were replacement characters instead for the purposes of
+            these rules, so that strings with those code points are not
+            considered invalid strings.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.util.URIUtility.ParseMode.URILenient">
+
+            <summary>The rules only check for the appropriate delimiters when
+            splitting the path, without checking if all the characters in each
+            component are valid. Code points outside the Basic Latin range
+            (U+0000 to U+007F) are not allowed.</summary>
+
+</doc>
+<doc name="F:com.upokecenter.util.URIUtility.ParseMode.URIStrict">
+
+            <summary>The rules follow the syntax for parsing IRIs, except that
+            code points outside the Basic Latin range (U+0000 to U+007F) are
+            not allowed.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.util.URIUtility.PercentDecode(System.String)">
+<summary>Decodes percent-encoding (of the form "%XX" where X is a hexadecimal
       digit) in the given string. Successive percent-encoded bytes are assumed
       to form characters in UTF-8.
     </summary>
@@ -1444,9 +1348,9 @@
     </param>
     <returns>The string in which percent-encoding was decoded.
     </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URIUtility.PercentDecode(System.String,System.Int32,System.Int32)'>
-    <summary>Decodes percent-encoding (of the form "%XX" where X is a hexadecimal
+</doc>
+<doc name="M:com.upokecenter.util.URIUtility.PercentDecode(System.String,System.Int32,System.Int32)">
+<summary>Decodes percent-encoding (of the form "%XX" where X is a hexadecimal
       digit) in the given portion of a string. Successive percent-encoded bytes
       are assumed to form characters in UTF-8.
     </summary>
@@ -1465,9 +1369,9 @@
       <paramref name='str'/>
        is ull.
     </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URIUtility.escapeURI(System.String,System.Int32)'>
-    <summary>Escapes characters that can't appear in URIs or IRIs. The function is
+</doc>
+<doc name="M:com.upokecenter.util.URIUtility.escapeURI(System.String,System.Int32)">
+<summary>Escapes characters that can't appear in URIs or IRIs. The function is
       idempotent; that is, calling the function again on the result with the
       same mode doesn't change the result.
     </summary>
@@ -1479,34 +1383,34 @@
     </param>
     <returns>A string possibly containing escaped characters, or null if s is null.
     </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URIUtility.hasScheme(System.String)'>
-    <summary>Determines whether the string is a valid IRI with a scheme component. This
+</doc>
+<doc name="M:com.upokecenter.util.URIUtility.hasScheme(System.String)">
+<summary>Determines whether the string is a valid IRI with a scheme component. This
       can be used to check for relative IRI references.
       <para>The following cases return true:
       </para>
       <code>xx-x:mm example:/ww</code> The following cases return false:
-      <code>x@y:/z /x/y/z example.xyz</code> </summary>
+      <code>x@y:/z /x/y/z example.xyz</code> .
+    </summary>
     <param name='refValue'>A string representing an IRI to check.
     </param>
-    <returns><c>true</c> if the string is a valid IRI with a scheme component; otherwise,
-      <c>false</c> .
+    <returns><c>true</c> if the string is a valid IRI with a scheme component; otherwise, <c>false</c> .
     </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URIUtility.hasSchemeForURI(System.String)'>
-    <summary>Determines whether the string is a valid URI with a scheme component. This
+</doc>
+<doc name="M:com.upokecenter.util.URIUtility.hasSchemeForURI(System.String)">
+<summary>Determines whether the string is a valid URI with a scheme component. This
       can be used to check for relative URI references. The following cases
       return true:
       <code>http://example/z xx-x:mm example:/ww</code> The following cases return false:
-      <code>x@y:/z /x/y/z example.xyz</code> </summary>
+      <code>x@y:/z /x/y/z example.xyz</code> .
+    </summary>
     <param name='refValue'>A string representing an IRI to check.
     </param>
-    <returns><c>true</c> if the string is a valid URI with a scheme component; otherwise,
-      <c>false</c> .
+    <returns><c>true</c> if the string is a valid URI with a scheme component; otherwise, <c>false</c> .
     </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URIUtility.isValidCurieReference(System.String,System.Int32,System.Int32)'>
-    <summary>Determines whether the substring is a valid CURIE reference under RDFA
+</doc>
+<doc name="M:com.upokecenter.util.URIUtility.isValidCurieReference(System.String,System.Int32,System.Int32)">
+<summary>Determines whether the substring is a valid CURIE reference under RDFA
       1.1. (The CURIE reference is the part after the colon.).
     </summary>
     <param name='s'>A string containing a CURIE reference. Can be null.
@@ -1516,12 +1420,11 @@
     <param name='length'>The number of elements in the desired portion of "s" (but not more than
       "s" 's length).
     </param>
-    <returns><c>true</c> if the substring is a valid CURIE reference under RDFA 1; otherwise,
-      <c>false</c> . Returns false if
+    <returns><c>true</c> if the substring is a valid CURIE reference under RDFA 1; otherwise, <c>false</c> . Returns false if
       <paramref name='s'/>
        is null.
     </returns>
-    <exception cref='T:System.ArgumentException'>Either
+    <exception cref='ArgumentException'>Either
       <paramref name='offset'/>
        or
       <paramref name='length'/>
@@ -1536,13 +1439,13 @@
       <paramref name='length'/>
        .
     </exception>
-    <exception cref='T:System.ArgumentNullException'>The parameter
+    <exception cref='ArgumentNullException'>The parameter
       <paramref name='s'/>
        is null.
     </exception>
-  </doc>
-  <doc name='M:com.upokecenter.util.URIUtility.relativeResolve(System.String,System.String)'>
-    <summary>Resolves a URI or IRI relative to another URI or IRI.
+</doc>
+<doc name="M:com.upokecenter.util.URIUtility.relativeResolve(System.String,System.String)">
+<summary>Resolves a URI or IRI relative to another URI or IRI.
     </summary>
     <param name='refValue'>A string representing a URI or IRI reference. Example:
       <c>dir/file.txt</c> .
@@ -1557,9 +1460,9 @@
        is null or is not a valid IRI, returns refValue. Example:
       <c>http://example.com/my/path/dir/file.txt</c> .
     </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URIUtility.relativeResolve(System.String,System.String,com.upokecenter.util.URIUtility.ParseMode)'>
-    <summary>Resolves a URI or IRI relative to another URI or IRI.
+</doc>
+<doc name="M:com.upokecenter.util.URIUtility.relativeResolve(System.String,System.String,com.upokecenter.util.URIUtility.ParseMode)">
+<summary>Resolves a URI or IRI relative to another URI or IRI.
     </summary>
     <param name='refValue'>A string representing a URI or IRI reference. Example:
       <c>dir/file.txt</c> . Can be null.
@@ -1576,9 +1479,9 @@
       <paramref name='baseURI'/>
        is null or is not a valid IRI, returns refValue.
     </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URIUtility.splitIRI(System.String)'>
-    <summary>Parses an Internationalized Resource Identifier (IRI) reference under
+</doc>
+<doc name="M:com.upokecenter.util.URIUtility.splitIRI(System.String)">
+<summary>Parses an Internationalized Resource Identifier (IRI) reference under
       RFC3987. If the IRI reference is syntactically valid, splits the string
       into its components and returns an array containing the indices into the
       components.
@@ -1594,9 +1497,9 @@
       in that pair will be -1. If the string is null or is not a valid IRI,
       returns null.
     </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URIUtility.splitIRI(System.String,System.Int32,System.Int32,com.upokecenter.util.URIUtility.ParseMode)'>
-    <summary>Parses a substring that represents an Internationalized Resource
+</doc>
+<doc name="M:com.upokecenter.util.URIUtility.splitIRI(System.String,System.Int32,System.Int32,com.upokecenter.util.URIUtility.ParseMode)">
+<summary>Parses a substring that represents an Internationalized Resource
       Identifier (IRI) under RFC3987. If the IRI is syntactically valid, splits
       the string into its components and returns an array containing the indices
       into the components.
@@ -1619,7 +1522,7 @@
       pair will be -1 (an index won't be less than 0 in any other case). If the
       string is null or is not a valid IRI, returns null.
     </returns>
-    <exception cref='T:System.ArgumentException'>Either
+    <exception cref='ArgumentException'>Either
       <paramref name='offset'/>
        or
       <paramref name='length'/>
@@ -1634,13 +1537,13 @@
       <paramref name='length'/>
        .
     </exception>
-    <exception cref='T:System.ArgumentNullException'>The parameter
+    <exception cref='ArgumentNullException'>The parameter
       <paramref name='s'/>
        is null.
     </exception>
-  </doc>
-  <doc name='M:com.upokecenter.util.URIUtility.splitIRI(System.String,com.upokecenter.util.URIUtility.ParseMode)'>
-    <summary>Parses an Internationalized Resource Identifier (IRI) reference under
+</doc>
+<doc name="M:com.upokecenter.util.URIUtility.splitIRI(System.String,com.upokecenter.util.URIUtility.ParseMode)">
+<summary>Parses an Internationalized Resource Identifier (IRI) reference under
       RFC3987. If the IRI is syntactically valid, splits the string into its
       components and returns an array containing the indices into the
       components.
@@ -1660,243 +1563,200 @@
       in that pair will be -1. If the string is null or is not a valid IRI,
       returns null.
     </returns>
-  </doc>
-  <doc name='T:com.upokecenter.util.URL'>
-    <summary>A URL _object under the WHATWG's URL specification. See
-      http://url.spec.whatwg.org/.
+</doc>
+<doc name="T:com.upokecenter.util.URL">
+
+            <summary>A URL _object under the WHATWG's URL specification. See
+            http://url.spec.whatwg.org/.</summary>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.EncodeToBytesHtml(PeterO.Text.ICharacterInput,PeterO.Text.ICharacterEncoder)">
+
+            <summary>Not documented yet.</summary>
+            <param name='input'>The parameter <paramref name='input'/> is
+            a.Text.ICharacterInput object.</param>
+            <param name='encoder'>The parameter <paramref name='encoder'/> is
+            a.Text.ICharacterEncoder object.</param>
+            <returns>A byte array.</returns>
+            <exception cref='ArgumentNullException'>The parameter <paramref name='encoder'/> or <paramref name='input'/> is null.</exception>
+            <exception cref='ArgumentException'>Code point out of
+            range.</exception>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.Equals(System.Object)">
+
+            <summary>Not documented yet.</summary>
+            <param name='obj'>The parameter <paramref name='obj'/> is a Object
+            object.</param>
+            <returns>Either <c>true</c> or <c>false</c>.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.GetHashCode">
+
+            <summary>Not documented yet.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.ToString">
+
+            <summary>Not documented yet.</summary>
+            <returns>The return value is not documented yet.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getFragment">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getHash">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getHost">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getHostname">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getPassword">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getPath">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getPathname">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getPort">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getProtocol">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getQueryString">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getScheme">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getSchemeData">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getSearch">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.getUsername">
+
+            <summary>Not documented yet.</summary>
+            <returns>A text string.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.parse(System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='s'>The parameter <paramref name='s'/> is a text
+            string.</param>
+            <returns>An URL object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.parse(System.String,com.upokecenter.util.URL)">
+
+            <summary>Not documented yet.</summary>
+            <param name='s'>The parameter <paramref name='s'/> is a text
+            string.</param>
+            <param name='baseurl'>The parameter <paramref name='baseurl'/> is
+            a.upokecenter.util.URL object.</param>
+            <returns>An URL object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.parse(System.String,com.upokecenter.util.URL,System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='s'>The parameter <paramref name='s'/> is a text
+            string.</param>
+            <param name='baseurl'>The parameter <paramref name='baseurl'/> is
+            a.upokecenter.util.URL object.</param>
+            <param name='encoding'>The parameter <paramref name='encoding'/> is
+            a text string.</param>
+            <returns>An URL object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.parse(System.String,com.upokecenter.util.URL,System.String,System.Boolean)">
+
+            <summary>Not documented yet.</summary>
+            <param name='s'>The parameter <paramref name='s'/> is a text
+            string.</param>
+            <param name='baseurl'>The parameter <paramref name='baseurl'/> is
+            a.upokecenter.util.URL object.</param>
+            <param name='encoding'>The parameter <paramref name='encoding'/> is
+            a text string.</param>
+            <param name='strict'>The parameter <paramref name='strict'/> is
+            either <c>true</c> or <c>false</c>.</param>
+            <returns>An URL object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.parseQueryString(System.String,System.String,System.String,System.Boolean,System.Boolean)">
+
+            <summary>Not documented yet.</summary>
+            <param name='input'>The parameter <paramref name='input'/> is a
+            text string.</param>
+            <param name='delimiter'>The parameter <paramref name='delimiter'/>
+            is a text string.</param>
+            <param name='encoding'>The parameter <paramref name='encoding'/> is
+            a text string.</param>
+            <param name='useCharset'>The parameter <paramref name='useCharset'/> is either <c>true</c> or <c>false</c>.</param>
+            <param name='isindex'>The parameter <paramref name='isindex'/> is
+            either <c>true</c> or <c>false</c>.</param>
+            <returns>An IList(string[]) object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.pathList(System.String)">
+
+            <summary>Not documented yet.</summary>
+            <param name='s'>The parameter <paramref name='s'/> is a text
+            string.</param>
+            <returns>An IList(string) object.</returns>
+
+</doc>
+<doc name="M:com.upokecenter.util.URL.toQueryString(System.Collections.Generic.IList{System.String[]},System.String,System.String)">
+<summary>Not documented yet.
     </summary>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.EncodeToBytesHtml(PeterO.Text.ICharacterInput,PeterO.Text.ICharacterEncoder)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='input'>The parameter
-      <paramref name='input'/>
-       is not documented yet.
-    </param>
-    <param name='encoder'>The parameter
-      <paramref name='encoder'/>
-       is not documented yet.
-    </param>
-    <returns>A byte array.
-    </returns>
-    <exception cref='T:System.ArgumentNullException'>The parameter
-      <paramref name='encoder'/>
-       or
-      <paramref name='input'/>
-       is null.
-    </exception>
-    <exception cref='T:System.ArgumentException'>Code point out of range.
-    </exception>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.Equals(System.Object)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='obj'>The parameter
-      <paramref name='obj'/>
-       is not documented yet.
-    </param>
-    <returns>Either
-      <c>true</c> or
-      <c>false</c> .
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.GetHashCode'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.ToString'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>The return value is not documented yet.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getFragment'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getHash'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getHost'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getHostname'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getPassword'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getPath'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getPathname'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getPort'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getProtocol'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getQueryString'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getScheme'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getSchemeData'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getSearch'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.getUsername'>
-    <summary>Not documented yet.
-    </summary>
-    <returns>A text string.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.parse(System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='s'>The parameter
-      <paramref name='s'/>
-       is not documented yet.
-    </param>
-    <returns>An URL object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.parse(System.String,com.upokecenter.util.URL)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='s'>The parameter
-      <paramref name='s'/>
-       is not documented yet.
-    </param>
-    <param name='baseurl'>The parameter
-      <paramref name='baseurl'/>
-       is not documented yet.
-    </param>
-    <returns>An URL object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.parse(System.String,com.upokecenter.util.URL,System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='s'>The parameter
-      <paramref name='s'/>
-       is not documented yet.
-    </param>
-    <param name='baseurl'>The parameter
-      <paramref name='baseurl'/>
-       is not documented yet.
-    </param>
-    <param name='encoding'>The parameter
-      <paramref name='encoding'/>
-       is not documented yet.
-    </param>
-    <returns>An URL object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.parse(System.String,com.upokecenter.util.URL,System.String,System.Boolean)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='s'>The parameter
-      <paramref name='s'/>
-       is not documented yet.
-    </param>
-    <param name='baseurl'>The parameter
-      <paramref name='baseurl'/>
-       is not documented yet.
-    </param>
-    <param name='encoding'>The parameter
-      <paramref name='encoding'/>
-       is not documented yet.
-    </param>
-    <param name='strict'>The parameter
-      <paramref name='strict'/>
-       is not documented yet.
-    </param>
-    <returns>An URL object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.parseQueryString(System.String,System.String,System.String,System.Boolean,System.Boolean)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='input'>The parameter
-      <paramref name='input'/>
-       is not documented yet.
-    </param>
-    <param name='delimiter'>The parameter
-      <paramref name='delimiter'/>
-       is not documented yet.
-    </param>
-    <param name='encoding'>The parameter
-      <paramref name='encoding'/>
-       is not documented yet.
-    </param>
-    <param name='useCharset'>The parameter
-      <paramref name='useCharset'/>
-       is not documented yet.
-    </param>
-    <param name='isindex'>The parameter
-      <paramref name='isindex'/>
-       is not documented yet.
-    </param>
-    <returns>An IList(string[]) object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.pathList(System.String)'>
-    <summary>Not documented yet.
-    </summary>
-    <param name='s'>The parameter
-      <paramref name='s'/>
-       is not documented yet.
-    </param>
-    <returns>An IList(string) object.
-    </returns>
-  </doc>
-  <doc name='M:com.upokecenter.util.URL.toQueryString(System.Collections.Generic.IList{System.String[]},System.String,System.String)'>
     <param name='pairs'>The parameter
       <paramref name='pairs'/>
        is not documented yet.
@@ -1911,5 +1771,5 @@
     </param>
     <returns>A text string.
     </returns>
-  </doc>
+</doc>
 </docs>

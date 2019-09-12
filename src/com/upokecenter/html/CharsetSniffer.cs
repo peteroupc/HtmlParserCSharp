@@ -39,74 +39,106 @@ namespace com.upokecenter.html {
   internal sealed class CharsetSniffer {
     private const int NoFeed = 0;
 
-    private const int RSSFeed = 1;  // application/rss + xml
-    private const int AtomFeed = 2;  // application/atom + xml
-    private static readonly byte[] ValueRdfNamespace = new byte[] { 0x68, 0x74,
-    0x74, 0x70, 0x3a, 0x2f, 0x2f, 0x77, 0x77, 0x77, 0x2e,
-    0x77, 0x33, 0x2e, 0x6f, 0x72, 0x67, 0x2f, 0x31, 0x39, 0x39, 0x39,
-    0x2f, 0x30, 0x32, 0x2f, 0x32, 0x32, 0x2d, 0x72, 0x64, 0x66, 0x2d,
-    0x73, 0x79, 0x6e, 0x74, 0x61, 0x78, 0x2d, 0x6e, 0x73, 0x23 };
+    private const int RSSFeed = 1; // application/rss + xml
+    private const int AtomFeed = 2; // application/atom + xml
+    private static readonly byte[] ValueRdfNamespace = new byte[] {
+      0x68, 0x74,
+      0x74, 0x70, 0x3a, 0x2f, 0x2f, 0x77, 0x77, 0x77, 0x2e,
+      0x77, 0x33, 0x2e, 0x6f, 0x72, 0x67, 0x2f, 0x31, 0x39, 0x39, 0x39,
+      0x2f, 0x30, 0x32, 0x2f, 0x32, 0x32, 0x2d, 0x72, 0x64, 0x66, 0x2d,
+      0x73, 0x79, 0x6e, 0x74, 0x61, 0x78, 0x2d, 0x6e, 0x73, 0x23
+    };
 
-    private static readonly byte[] ValueRssNamespace = new byte[] { 0x68, 0x74,
-    0x74, 0x70, 0x3a, 0x2f, 0x2f, 0x70, 0x75, 0x72, 0x6c,
-    0x2e, 0x6f, 0x72, 0x67, 0x2f, 0x72, 0x73, 0x73, 0x2f, 0x31, 0x2e,
-    0x30, 0x2f };
+    private static readonly byte[] ValueRssNamespace = new byte[] {
+      0x68, 0x74,
+      0x74, 0x70, 0x3a, 0x2f, 0x2f, 0x70, 0x75, 0x72, 0x6c,
+      0x2e, 0x6f, 0x72, 0x67, 0x2f, 0x72, 0x73, 0x73, 0x2f, 0x31, 0x2e,
+      0x30, 0x2f
+    };
 
     private static byte[][] valuePatternsHtml = new byte[][] {
-    new byte[] { 0x3c, 0x21, 0x44, 0x4f, 0x43, 0x54, 0x59, 0x50, 0x45, 0x20,
-      0x48, 0x54, 0x4d, 0x4c },
-    new byte[] { (byte)255, (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+    new byte[] {
+      0x3c, 0x21, 0x44, 0x4f, 0x43, 0x54, 0x59, 0x50, 0x45, 0x20,
+      0x48, 0x54, 0x4d, 0x4c
+    },
+    new byte[] {
+      (byte)255, (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf,
       (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)255, (byte)0xdf,
-      (byte)0xdf, (byte)0xdf, (byte)0xdf },
-    new byte[] { 0x3c, 0x48, 0x54, 0x4d, 0x4c }, new byte[] { (byte)255,
-      (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
-    new byte[] { 0x3c, 0x48, 0x45, 0x41, 0x44 }, new byte[] { (byte)255,
-      (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
+      (byte)0xdf, (byte)0xdf, (byte)0xdf
+    },
+    new byte[] { 0x3c, 0x48, 0x54, 0x4d, 0x4c }, new byte[] {
+  (byte)255,
+  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+},
+    new byte[] { 0x3c, 0x48, 0x45, 0x41, 0x44 }, new byte[] {
+  (byte)255,
+  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+},
     new byte[] { 0x3c, 0x53, 0x43, 0x52, 0x49, 0x50, 0x54 }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-      (byte)0xdf },
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+  (byte)0xdf
+},
     new byte[] { 0x3c, 0x49, 0x46, 0x52, 0x41, 0x4d, 0x45 }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-      (byte)0xdf },
-    new byte[] { 0x3c, 0x48, 0x31 }, new byte[] { (byte)255, (byte)0xdf,
-      (byte)255 },
-    new byte[] { 0x3c, 0x44, 0x49, 0x56 }, new byte[] { (byte)255,
-      (byte)0xdf, (byte)0xdf, (byte)0xdf },
-    new byte[] { 0x3c, 0x46, 0x4f, 0x4e, 0x54 }, new byte[] { (byte)255,
-      (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+  (byte)0xdf
+},
+    new byte[] { 0x3c, 0x48, 0x31 }, new byte[] {
+  (byte)255, (byte)0xdf,
+  (byte)255
+},
+    new byte[] { 0x3c, 0x44, 0x49, 0x56 }, new byte[] {
+  (byte)255,
+  (byte)0xdf, (byte)0xdf, (byte)0xdf
+},
+    new byte[] { 0x3c, 0x46, 0x4f, 0x4e, 0x54 }, new byte[] {
+  (byte)255,
+  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+},
     new byte[] { 0x3c, 0x54, 0x41, 0x42, 0x4c, 0x45 }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
-      },
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+},
     new byte[] { 0x3c, 0x41 }, new byte[] { (byte)255, (byte)0xdf },
     new byte[] { 0x3c, 0x53, 0x54, 0x59, 0x4c, 0x45 }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
-      },
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+},
     new byte[] { 0x3c, 0x54, 0x49, 0x54, 0x4c, 0x45 }, new byte[] {
-      (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
-      },
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+},
     new byte[] { 0x3c, 0x42 }, new byte[] { (byte)255, (byte)0xdf },
-    new byte[] { 0x3c, 0x42, 0x4f, 0x44, 0x59 }, new byte[] { (byte)255,
-      (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf },
-  new byte[] { 0x3c, 0x42, 0x52 }, new byte[] { (byte)255, (byte)0xdf,
-    (byte)0xdf },
+    new byte[] { 0x3c, 0x42, 0x4f, 0x44, 0x59 }, new byte[] {
+  (byte)255,
+  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+},
+  new byte[] { 0x3c, 0x42, 0x52 }, new byte[] {
+  (byte)255, (byte)0xdf,
+  (byte)0xdf
+},
     new byte[] { 0x3c, 0x50 }, new byte[] { (byte)255, (byte)0xdf },
-    new byte[] { 0x3c, 0x21, 0x2d, 0x2d }, new byte[] { (byte)255,
-      (byte)255, (byte)255, (byte)255 },
+    new byte[] { 0x3c, 0x21, 0x2d, 0x2d }, new byte[] {
+  (byte)255,
+  (byte)255, (byte)255, (byte)255
+},
   };
 
     private static byte[][] valuePatternsXml = new byte[][] {
-    new byte[] { 0x3c, 0x3f, 0x78, 0x6d, 0x6c }, new byte[] { (byte)255,
-      (byte)255, (byte)255, (byte)255, (byte)255 },
+    new byte[] { 0x3c, 0x3f, 0x78, 0x6d, 0x6c }, new byte[] {
+  (byte)255,
+  (byte)255, (byte)255, (byte)255, (byte)255
+},
   };
 
     private static byte[][] valuePatternsPdf = new byte[][] {
-    new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2d }, new byte[] { (byte)255,
-      (byte)255, (byte)255, (byte)255, (byte)255 }
+    new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2d }, new byte[] {
+  (byte)255,
+  (byte)255, (byte)255, (byte)255, (byte)255
+}
   };
 
     private static byte[][] valuePatternsPs = new byte[][] {
-    new byte[] { 0x25, 0x21, 0x50, 0x53, 0x2d, 0x41,
-        0x64, 0x6f, 0x62, 0x65, 0x2d }, null
+    new byte[] {
+      0x25, 0x21, 0x50, 0x53, 0x2d, 0x41,
+      0x64, 0x6f, 0x62, 0x65, 0x2d
+    }, null
   };
 
     internal static string extractCharsetFromMeta(string value) {
@@ -159,8 +191,8 @@ namespace com.upokecenter.html {
           if (c == c2) {
             return Encodings.ResolveAlias(
   value.Substring(
-  index,
-  nextIndex - index));
+    index,
+    nextIndex - index));
           }
           ++nextIndex;
         }
@@ -171,8 +203,8 @@ namespace com.upokecenter.html {
           char c2 = value[nextIndex];
       if (c2 == 0x09 || c2 == 0x0c || c2 == 0x0d || c2 == 0x0a || c2 == 0x20 ||
             c2 == 0x3b) {
-            break;
-          }
+        break;
+      }
           ++nextIndex;
         }
         return
@@ -181,10 +213,10 @@ namespace com.upokecenter.html {
     }
 
     private static int indexOfBytes(
-  byte[] array,
-  int offset,
-  int count,
-  byte[] pattern) {
+      byte[] array,
+      int offset,
+      int count,
+      byte[] pattern) {
       int endIndex = Math.Min(offset + count, array.Length);
       endIndex -= pattern.Length - 1;
       if (endIndex < 0 || endIndex < offset) {
@@ -207,10 +239,10 @@ namespace com.upokecenter.html {
     }
 
     private static bool matchesPattern(
-        byte[] pattern,
-        byte[] sequence,
-        int seqIndex,
-        int count) {
+      byte[] pattern,
+      byte[] sequence,
+      int seqIndex,
+      int count) {
       count = Math.Min(count, sequence.Length - seqIndex);
       int len = pattern.Length;
       if (len <= count) {
@@ -225,11 +257,11 @@ namespace com.upokecenter.html {
     }
 
     private static bool matchesPattern(
-        byte[][] patterns,
-        int index,
-        byte[] sequence,
-        int seqIndex,
-        int count) {
+      byte[][] patterns,
+      int index,
+      byte[] sequence,
+      int seqIndex,
+      int count) {
       byte[] pattern = patterns[index];
       count = Math.Min(count, sequence.Length - seqIndex);
       byte[] mask = patterns[index + 1];
@@ -254,11 +286,11 @@ namespace com.upokecenter.html {
     }
 
     private static bool matchesPatternAndTagTerminator(
-        byte[][] patterns,
-        int index,
-        byte[] sequence,
-        int seqIndex,
-        int count) {
+      byte[][] patterns,
+      int index,
+      byte[] sequence,
+      int seqIndex,
+      int count) {
       byte[] pattern = patterns[index];
       count = Math.Min(count, sequence.Length - seqIndex);
       byte[] mask = patterns[index + 1];
@@ -274,172 +306,10 @@ namespace com.upokecenter.html {
       return false;
     }
 
-    private static int readAttribute(
-        byte[] data,
-        int length,
-        int position,
-        StringBuilder attrName,
-        StringBuilder attrValue) {
-      if (attrName != null) {
-        attrName.Clear();
-      }
-      if (attrValue != null) {
-        attrValue.Clear();
-      }
-      while (position < length && (data[position] == 0x09 ||
-          data[position] == 0x0a || data[position] == 0x0c ||
-          data[position] == 0x0d || data[position] == 0x20 ||
-          data[position] == 0x2f)) {
-        ++position;
-      }
-      if (position >= length || data[position] == 0x3f) {
-        return position;
-      }
-      var empty = true;
-      var tovalue = false;
-      var b = 0;
-      // Skip attribute name
-      while (true) {
-        if (position >= length) {
-          // end of stream reached, so clear
-          // the attribute name to indicate failure
-          if (attrName != null) {
-            attrName.Clear();
-          }
-          return position;
-        }
-        b = data[position] & 0xff;
-        if (b == 0x3d && !empty) {
-          ++position;
-          tovalue = true;
-          break;
-        } else if (b == 0x09 || b == 0x0a || b == 0x0c || b == 0x0d || b ==
-            0x20) {
-          break;
-        } else if (b == 0x2f || b == 0x3e) {
-          return position;
-        } else {
-          if (attrName != null) {
-            if (b >= 0x41 && b <= 0x5a) {
-              attrName.Append((char)(b + 0x20));
-            } else {
-              attrName.Append((char)b);
-            }
-          }
-          empty = false;
-          ++position;
-        }
-      }
-      if (!tovalue) {
-        while (position < length) {
-          b = data[position] & 0xff;
-          if (b != 0x09 && b != 0x0a && b != 0x0c && b != 0x0d && b != 0x20) {
-            break;
-          }
-          ++position;
-        }
-        if (position >= length) {
-          // end of stream reached, so clear
-          // the attribute name to indicate failure
-          if (attrName != null) {
-            attrName.Clear();
-          }
-          return position;
-        }
-        if ((data[position] & 0xff) != 0x3d) {
-          return position;
-        }
-        ++position;
-      }
-      while (position < length) {
-        b = data[position] & 0xff;
-        if (b != 0x09 && b != 0x0a && b != 0x0c && b != 0x0d && b != 0x20) {
-          break;
-        }
-        ++position;
-      }
-      // Skip value
-      if (position >= length) {
-        // end of stream reached, so clear
-        // the attribute name to indicate failure
-        if (attrName != null) {
-          attrName.Clear();
-        }
-        return position;
-      }
-      b = data[position] & 0xff;
-      if (b == 0x22 || b == 0x27) {  // have quoted _string
-        ++position;
-        while (true) {
-          if (position >= length) {
-            // end of stream reached, so clear
-            // the attribute name and value to indicate failure
-            if (attrName != null) {
-              attrName.Clear();
-            }
-            if (attrValue != null) {
-              attrValue.Clear();
-            }
-            return position;
-          }
-          int b2 = data[position] & 0xff;
-          if (b == b2) {  // quote mark reached
-            ++position;
-            break;
-          }
-          if (attrValue != null) {
-            if (b2 >= 0x41 && b2 <= 0x5a) {
-              attrValue.Append((char)(b2 + 0x20));
-            } else {
-              attrValue.Append((char)b2);
-            }
-          }
-          ++position;
-        }
-        return position;
-      } else if (b == 0x3e) {
-        return position;
-      } else {
-        if (attrValue != null) {
-          if (b >= 0x41 && b <= 0x5a) {
-            attrValue.Append((char)(b + 0x20));
-          } else {
-            attrValue.Append((char)b);
-          }
-        }
-        ++position;
-      }
-      while (true) {
-        if (position >= length) {
-          // end of stream reached, so clear
-          // the attribute name and value to indicate failure
-          if (attrName != null) {
-            attrName.Clear();
-          }
-          if (attrValue != null) {
-            attrValue.Clear();
-          }
-          return position;
-        }
-        b = data[position] & 0xff;
-        if (b == 0x09 || b == 0x0a || b == 0x0c || b == 0x0d || b == 0x20 || b
-          == 0x3e) {
-          return position;
-        }
-        if (attrValue != null) {
-          if (b >= 0x41 && b <= 0x5a) {
-            attrValue.Append((char)(b + 0x20));
-          } else {
-            attrValue.Append((char)b);
-          }
-        }
-        ++position;
-      }
-    }
     /*
     public static string sniffContentType(
-  PeterO.Support.InputStream input,
-  IHttpHeaders headers) {
+      PeterO.Support.InputStream input,
+      IHttpHeaders headers) {
       string contentType = headers.getHeaderField("content-type");
       if (contentType != null && (contentType.Equals("text/plain") ||
           contentType.Equals("text/plain; charset=ISO-8859-1") ||
@@ -456,8 +326,8 @@ namespace com.upokecenter.html {
       return sniffContentType(input, contentType);
     }
     public static string sniffContentType(
-    PeterO.Support.InputStream input,
-    string mediaType) {
+      PeterO.Support.InputStream input,
+      string mediaType) {
       // TODO: Use MediaType.Parse here
       if (mediaType != null) {
         string type = mediaType;
@@ -495,447 +365,6 @@ type.Equals("application/unknown")) {
       }
     }
 */
-
-    public static EncodingConfidence sniffEncoding(
-      PeterO.Support.InputStream stream,
-      string encoding) {
-      stream.mark(1026);
-      var b = 0;
-      try {
-        int b1 = stream.ReadByte();
-        int b2 = stream.ReadByte();
-        if (b1 == 0xfe && b2 == 0xff) {
-          return EncodingConfidence.UTF16BE;
-        }
-        if (b1 == 0xff && b2 == 0xfe) {
-          return EncodingConfidence.UTF16LE;
-        }
-        int b3 = stream.ReadByte();
-        if (b1 == 0xef && b2 == 0xbb && b3 == 0xbf) {
-          return EncodingConfidence.UTF8;
-        }
-      } finally {
-        stream.reset();
-      }
-      if (encoding != null && encoding.Length > 0) {
-        encoding = Encodings.ResolveAlias(encoding);
-        if (encoding != null) {
-          return new EncodingConfidence(encoding, EncodingConfidence.Certain);
-        }
-      }
-      // At this point, the confidence is tentative
-      var data = new byte[1024];
-      stream.mark(1028);
-      var count = 0;
-      try {
-        count = stream.Read(data, 0, 1024);
-      } finally {
-        stream.reset();
-      }
-      var position = 0;
-      while (position < count) {
-        if (position + 4 <= count && data[position + 0] == 0x3c &&
-            (data[position + 1] & 0xff) == 0x21 &&
-        (data[position + 2] & 0xff) == 0x2d &&
-            (data[position + 3] & 0xff) == 0x2d) {
-          // Skip comment
-          var hyphenCount = 2;
-          position += 4;
-          while (position < count) {
-            int c = data[position] & 0xff;
-            if (c == '-') {
-              hyphenCount = Math.Min(2, hyphenCount + 1);
-            } else if (c == '>' && hyphenCount >= 2) {
-              break;
-            } else {
-              hyphenCount = 0;
-            }
-            ++position;
-          }
-        } else if (position + 6 <= count && data[position] == 0x3c &&
-   ((data[position + 1] & 0xff) == 0x4d || (data[position + 1] & 0xff) ==
-            0x6d) &&
-   ((data[position + 2] & 0xff) == 0x45 || (data[position + 2] & 0xff) ==
-            0x65) &&
-          ((data[position + 3] & 0xff) == 0x54 || (data[position + 3] & 0xff) ==
-            0x74) && (data[position + 4] == 0x41 ||
-                   data[position + 4] == 0x61) &&
-   (data[position + 5] == 0x09 || data[position + 5] == 0x0a ||
-         data[position + 5] == 0x0d ||
-          data[position + 5] == 0x0c || data[position + 5] == 0x20 ||
-                data[position + 5] == 0x2f)) {
-          // META tag
-          var haveHttpEquiv = false;
-          var haveContent = false;
-          var haveCharset = false;
-          var gotPragma = false;
-          var needPragma = 0;  // need pragma null
-          string charset = null;
-          var attrName = new StringBuilder();
-          var attrValue = new StringBuilder();
-          position += 5;
-          while (true) {
-            int
-    newpos = CharsetSniffer.readAttribute(
-    data,
-    count,
-    position,
-    attrName,
-    attrValue);
-            if (newpos == position) {
-              break;
-            }
-            string attrNameString = attrName.ToString();
-            if (!haveHttpEquiv && attrNameString.Equals("http-equiv")) {
-              haveHttpEquiv = true;
-              if (attrValue.ToString().Equals("content-type")) {
-                gotPragma = true;
-              }
-            } else if (!haveContent && attrNameString.Equals("content")) {
-              haveContent = true;
-              if (charset == null) {
-                string newCharset =
-  CharsetSniffer.extractCharsetFromMeta(attrValue.ToString());
-                if (newCharset != null) {
-                  charset = newCharset;
-                  needPragma = 2;  // need pragma true
-                }
-              }
-            } else if (!haveCharset && attrNameString.Equals("charset")) {
-              haveCharset = true;
-              charset = Encodings.ResolveAlias(attrValue.ToString());
-              needPragma = 1;  // need pragma false
-            }
-            position = newpos;
-          }
-          if (needPragma == 0 || (needPragma == 2 && !gotPragma) || charset ==
-                 null) {
-            ++position;
-          } else {
-            if ("utf-16le".Equals(charset) || "utf-16be".Equals(charset)) {
-              charset = "utf-8";
-            }
-            return new EncodingConfidence(charset);
-          }
-        } else if ((position + 3 <= count &&
-                data[position] == 0x3c && (data[position + 1] & 0xff) == 0x2f &&
-  (((data[position + 2] & 0xff) >= 0x41 && (data[position + 2] & 0xff) <=
-           0x5a) ||
-         ((data[position + 2] & 0xff) >= 0x61 && (data[position + 2] & 0xff) <=
-           0x7a))) ||
-                    // </X
-                    (position + 2 <= count && data[position] == 0x3c &&
-        (((data[position + 1] & 0xff) >= 0x41 && (data[position + 1] & 0xff)
-              <= 0x5a) ||
-         ((data[position + 1] & 0xff) >= 0x61 && (data[position + 1] & 0xff)
-               <= 0x7a)))  // <X
-) {
-          // </X
-          while (position < count) {
-            if (data[position] == 0x09 ||
-                data[position] == 0x0a || data[position] == 0x0c ||
-                data[position] == 0x0d || data[position] == 0x20 ||
-                data[position] == 0x3e) {
-              break;
-            }
-            ++position;
-          }
-          while (true) {
-            int
-      newpos = CharsetSniffer.readAttribute(data, count, position, null, null);
-            if (newpos == position) {
-              break;
-            }
-            position = newpos;
-          }
-          ++position;
-        } else if (position + 2 <= count && data[position] == 0x3c &&
-    ((data[position + 1] & 0xff) == 0x21 || (data[position + 1] & 0xff) ==
-           0x3f || (data[position + 1] & 0xff) == 0x2f)) {
-          // <! or </ or <?
-          while (position < count) {
-            if (data[position] != 0x3e) {
-              break;
-            }
-            ++position;
-          }
-          ++position;
-        } else {
-          ++position;
-        }
-      }
-      var maybeUtf8 = 0;
-      // Check for UTF-8
-      position = 0;
-      while (position < count) {
-        b = data[position] & 0xff;
-        if (b < 0x80) {
-          ++position;
-          continue;
-        }
-        if (position + 2 <= count && (b >= 0xc2 && b <= 0xdf) &&
-         ((data[position + 1] & 0xff) >= 0x80 && (data[position + 1] & 0xff) <=
-              0xbf)
-) {
-          // DebugUtility.Log("%02X %02X",data[position],data[position+1]);
-          position += 2;
-          maybeUtf8 = 1;
-        } else if (position + 3 <= count && (b >= 0xe0 && b <= 0xef) &&
-      ((data[position + 2] & 0xff) >= 0x80 && (data[position + 2] & 0xff) <=
-              0xbf)) {
-          int startbyte = (b == 0xe0) ? 0xa0 : 0x80;
-          int endbyte = (b == 0xed) ? 0x9f : 0xbf;
-          // DebugUtility.Log("%02X %02X %02X"
-          // , data[position], data[position + 1], data[position + 2]);
-          if ((data[position + 1] & 0xff) < startbyte ||
-              (data[position + 1] & 0xff) > endbyte) {
-            maybeUtf8 = -1;
-            break;
-          }
-          position += 3;
-          maybeUtf8 = 1;
-        } else if (position + 4 <= count && (b >= 0xf0 && b <= 0xf4) &&
-   ((data[position + 2] & 0xff) >= 0x80 && (data[position + 2] & 0xff) <=
-        0xbf) &&
-      ((data[position + 3] & 0xff) >= 0x80 && (data[position + 3] & 0xff) <=
-              0xbf)) {
-          int startbyte = (b == 0xf0) ? 0x90 : 0x80;
-          int endbyte = (b == 0xf4) ? 0x8f : 0xbf;
-          // DebugUtility.Log("%02X %02X %02X %02X"
-          // , data[position], data[position + 1], data[position + 2],
-          // data[position + 3]);
-          if ((data[position + 1] & 0xff) < startbyte ||
-              (data[position + 1] & 0xff) > endbyte) {
-            maybeUtf8 = -1;
-            break;
-          }
-          position += 4;
-          maybeUtf8 = 1;
-        } else {
-          if (position + 4 < count) {
-            // we check for position here because the data may
-            // end within a UTF-8 byte sequence
-            maybeUtf8 = -1;
-          }
-          break;
-        }
-      }
-      if (maybeUtf8 == 1) {
-        return EncodingConfidence.UTF8_TENTATIVE;
-      }
-      // Check for other multi-byte encodings
-      var hasHighByte = false;
-      var notKREUC = false;
-      var notJPEUC = false;
-      var notShiftJIS = false;
-      var notBig5 = false;
-      var notGbk = false;
-      var maybeIso2022 = 0;
-      position = 0;
-      while (position < count) {
-        b = data[position] & 0xff;
-        if (b < 0x80) {
-          if (maybeIso2022 == 0 && b == 0x1b) {
-            maybeIso2022 = 1;
-          }
-          ++position;
-          continue;
-        }
-        hasHighByte = true;
-        if (b > 0xfc) {
-          notShiftJIS = true;
-        }
-        if ((b >= 0x80 && b <= 0x8d) || (b == 0xff)) {
-          notJPEUC = true;
-        }
-        maybeIso2022 = -1;
-        if (b == 0xff) {
-          notGbk = true;
-        }
-        if (b == 0x80 || b == 0xff) {
-          notKREUC = true;
-          notBig5 = true;
-        }
-        ++position;
-      }
-      if (maybeIso2022 <= 0 && !hasHighByte) {
-        return EncodingConfidence.UTF8_TENTATIVE;
-      }
-      IList<string> decoders = new List<string>();
-      if (hasHighByte && !notKREUC) {
-        decoders.Add("euc-kr");
-      }
-      if (hasHighByte && !notBig5) {
-        decoders.Add("big5");
-      }
-      if (hasHighByte && !notJPEUC) {
-        decoders.Add("euc-jp");
-      }
-      if (hasHighByte && !notGbk) {
-        decoders.Add("gbk");
-      }
-      if (hasHighByte && !notShiftJIS) {
-        decoders.Add("shift_jis");
-      }
-      if (maybeIso2022 > 0) {
-        decoders.Add("iso-2022-jp");
-        decoders.Add("iso-2022-kr");
-      }
-      if (decoders.Count > 0) {
-        var kana = new int[decoders.Count];
-        var nonascii = new int[decoders.Count];
-        var nowFailed = new bool[decoders.Count];
-        var streams = new PeterO.IByteReader[decoders.Count];
-        var decoderObjects = new ICharacterDecoder[decoders.Count];
-        for (int i = 0; i < decoders.Count; ++i) {
-          streams[i] = PeterO.DataIO.ToReader(
-              new MemoryStream(data, 0, count));
-          decoderObjects[i] = Encodings.GetEncoding(decoders[i])
-                    .GetDecoder();
-        }
-        int totalValid = streams.Length;
-        string validEncoding = null;
-        while (true) {
-          totalValid = 0;
-          var totalRunning = 0;
-          for (int i = 0; i < streams.Length; ++i) {
-            if (streams[i] == null) {
-              if (decoders[i] != null) {
-                validEncoding = decoders[i];
-                ++totalValid;
-              }
-              continue;
-            }
-            try {
-              int c = decoderObjects[i].ReadChar(streams[i]);
-              if (c < 0) {
-                // reached end of stream successfully
-                streams[i] = null;
-              }
-              if (c >= 0x80) {
-                ++nonascii[i];
-              }
-              // if this is a hiragana or katakana
-              if (c >= 0x3041 && c <= 0x30ff) {
-                ++kana[i];
-              }
-              // DebugUtility.Log("%s %d",decoders[i],c);
-              validEncoding = decoders[i];
-              ++totalValid;
-              ++totalRunning;
-              nowFailed[i] = false;
-            } catch (IOException) {
-              // Error
-              /* if (streams[i].available() == 0) {
-              // Reached the end of stream; the error
-              // was probably due to an incomplete
-              // byte sequence
-              //DebugUtility.Log("at end of stream");
-            } else {
-              //DebugUtility.Log("error %s in %s",
-              // e.GetType().getName(), decoders[i]);
-            }
-            */
-              streams[i] = null;
-              nowFailed[i] = true;
-            }
-          }
-          // if (failedCount>0) {
-          // DebugUtility.Log("failed: %d",failedCount);
-          // }
-          for (int i = 0; i < streams.Length; ++i) {
-            if (nowFailed[i]) {
-              nonascii[i] = 0;
-              kana[i] = 0;
-              decoderObjects[i] = null;
-              decoders[i] = null;
-            }
-          }
-          if (totalRunning == 0 || totalValid <= 1) {
-            break;
-          }
-        }
-        if (totalValid == 1 && validEncoding != null) {
-          return new EncodingConfidence(validEncoding);
-        }
-        // DebugUtility.Log(ArrayUtil.toIntList(kana));
-        // DebugUtility.Log(ArrayUtil.toIntList(nonascii));
-        // DebugUtility.Log(decoders);
-        for (int i = 0; i < decoders.Count; ++i) {
-          string d = decoders[i];
-          if (d != null) {
-            // return this encoding if the ratio of
-            // kana to non-ASCII characters is high
-            if (kana[i] >= nonascii[i] / 5 && !"gbk".Equals(d)) {
-              return new EncodingConfidence(d);
-            }
-          }
-        }
-      }
-      // Fall back
-      string
-    lang =
-
-  DataUtilities.ToLowerCaseAscii(CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
-      string
-
-    country =
-      DataUtilities.ToUpperCaseAscii(CultureInfo.CurrentCulture.Name.IndexOf(
-        '-') < 0 ? String.Empty :
-  CultureInfo.CurrentCulture.Name.Substring(
-    1 + CultureInfo.CurrentCulture.Name.IndexOf('-')));
-
-      if (lang.Equals("ar") || lang.Equals("fa")) {
-        return new EncodingConfidence("windows-1256");
-      }
-      if (lang.Equals("bg") ||
-lang.Equals("ru") ||
-lang.Equals("uk") ||
-lang.Equals("sr")) {
-        return new EncodingConfidence("windows-1251");
-      }
-      if (lang.Equals("cs") ||
-lang.Equals("hr") ||
-lang.Equals("sk")) {
-        return new EncodingConfidence("windows-1250");
-      }
-      if (lang.Equals("hu") ||
-lang.Equals("pl") ||
-lang.Equals("sl")) {
-        return new EncodingConfidence("iso-8859-2");
-      }
-      if (lang.Equals("ja")) {
-        return new EncodingConfidence("shift_jis");
-      }
-      if (lang.Equals("zh") && (country.Equals("CN") ||
-            country.Equals("CHS") || country.Equals("HANS"))) {
-        return new EncodingConfidence("gb18030");
-      } else if (lang.Equals("zh")) {
-        return new EncodingConfidence("big5");
-      }
-      if (lang.Equals("th")) {
-        return new EncodingConfidence("windows-874");
-      }
-      if (lang.Equals("ko")) {
-        return new EncodingConfidence("euc-kr");
-      }
-      if (lang.Equals("ku") || lang.Equals("tr")) {
-        return new EncodingConfidence("windows-1254");
-      }
-      if (lang.Equals("lt") ||
-lang.Equals("et") ||
-lang.Equals("lv")) {
-        return new EncodingConfidence("windows-1257");
-      }
-      if (lang.Equals("vi")) {
-        return new EncodingConfidence("windows-1258");
-      }
-      if (lang.Equals("iw") || lang.Equals("he")) {
-        // NOTE: iw is Java's two-letter code for Hebrew
-        return new EncodingConfidence("windows-1255");
-      }
-      return new EncodingConfidence("windows-1252");
-    }
 
     private static int sniffFeed(byte[] header, int offset, int count) {
       if (header == null || offset < 0 || count < 0 || offset + count >
@@ -1062,9 +491,9 @@ lang.Equals("lv")) {
         }
       }
       return (!binary) ? "text/plain" : sniffUnknownContentType(
-  header,
-  count,
-  false);
+        header,
+        count,
+        false);
     }
 
     private static string sniffUnknownContentType(
@@ -1085,22 +514,22 @@ lang.Equals("lv")) {
           for (int i = 0; i < valuePatternsHtml.Length; i += 2) {
             if (
     matchesPatternAndTagTerminator(
-  valuePatternsHtml,
-  i,
-  header,
-  index,
-  count)) {
+      valuePatternsHtml,
+      i,
+      header,
+      index,
+      count)) {
               return "text/html";
             }
           }
           for (int i = 0; i < valuePatternsXml.Length; i += 2) {
             if (
     matchesPattern(
-  valuePatternsXml,
-  i,
-  header,
-  index,
-  count)) {
+      valuePatternsXml,
+      i,
+      header,
+      index,
+      count)) {
               return "text/xml";
             }
           }
@@ -1108,11 +537,11 @@ lang.Equals("lv")) {
         for (int i = 0; i < valuePatternsPdf.Length; i += 2) {
           if (
     matchesPattern(
-  valuePatternsPdf,
-  i,
-  header,
-  0,
-  count)) {
+      valuePatternsPdf,
+      i,
+      header,
+      0,
+      count)) {
             return "text/xml";
           }
         }
@@ -1132,10 +561,10 @@ lang.Equals("lv")) {
       }
       // Image types
       if (matchesPattern(new byte[] { 0, 0, 1, 0 }, header, 0, count)) {
-        return "image/x-icon";  // icon
+        return "image/x-icon"; // icon
       }
       if (matchesPattern(new byte[] { 0, 0, 2, 0 }, header, 0, count)) {
-        return "image/x-icon";  // cursor
+        return "image/x-icon"; // cursor
       }
       if (matchesPattern(new byte[] { 0x42, 0x4d }, header, 0, count)) {
         return "image/bmp";
@@ -1170,8 +599,10 @@ lang.Equals("lv")) {
       }
       if (
     matchesPattern(
-  new byte[] { (byte)0x89, 0x50, 0x4e, 0x47, 0x0d,
-      0x0a, 0x1a, 0x0a },
+  new byte[] {
+    (byte)0x89, 0x50, 0x4e, 0x47, 0x0d,
+    0x0a, 0x1a, 0x0a
+  },
  header,
  0,
    count)) {
@@ -1204,13 +635,17 @@ lang.Equals("lv")) {
       }
       if (
     matchesPattern(
-  new byte[] { (byte)0x46, (byte)0x4f, (byte)0x52,
-  (byte)0x4d },
+  new byte[] {
+    (byte)0x46, (byte)0x4f, (byte)0x52,
+    (byte)0x4d
+  },
  header,
  0,
  count) && matchesPattern(
-    new byte[] { (byte)0x41, (byte)0x49, (byte)0x46,
-  (byte)0x46 },
+    new byte[] {
+      (byte)0x41, (byte)0x49, (byte)0x46,
+      (byte)0x46
+    },
  header,
  8,
  count - 8)) {
@@ -1226,8 +661,10 @@ lang.Equals("lv")) {
       }
       if (
     matchesPattern(
-  new byte[] { (byte)0x4f, (byte)0x67, (byte)0x67,
-  (byte)0x53, 0 },
+  new byte[] {
+    (byte)0x4f, (byte)0x67, (byte)0x67,
+    (byte)0x53, 0
+  },
  header,
  0,
  count)) {
@@ -1235,8 +672,10 @@ lang.Equals("lv")) {
       }
       if (
     matchesPattern(
-  new byte[] { (byte)0x4d, (byte)0x54, (byte)0x68,
-  (byte)0x64, 0, 0, 0, 6 },
+  new byte[] {
+    (byte)0x4d, (byte)0x54, (byte)0x68,
+    (byte)0x64, 0, 0, 0, 6
+  },
  header,
  0,
  count)) {
@@ -1244,21 +683,27 @@ lang.Equals("lv")) {
       }
       if (
     matchesPattern(
-  new byte[] { (byte)0x52, (byte)0x49, (byte)0x46,
-  (byte)0x46 },
+  new byte[] {
+    (byte)0x52, (byte)0x49, (byte)0x46,
+    (byte)0x46
+  },
  header,
  0,
  count)) {
         if (
     matchesPattern(
-  new byte[] { (byte)0x41, (byte)0x56, (byte)0x49,
-  (byte)' ' }, header, 8, count - 8)) {
+  new byte[] {
+    (byte)0x41, (byte)0x56, (byte)0x49,
+    (byte)' '
+  }, header, 8, count - 8)) {
           return "video/avi";
         }
         if (
     matchesPattern(
-  new byte[] { (byte)0x57, (byte)0x41, (byte)0x56,
-  (byte)0x45 },
+  new byte[] {
+    (byte)0x57, (byte)0x41, (byte)0x56,
+    (byte)0x45
+  },
  header,
  8,
  count - 8)) {
@@ -1307,8 +752,10 @@ lang.Equals("lv")) {
       }
       if (
     matchesPattern(
-  new byte[] { (byte)0x52, (byte)0x61, (byte)0x72,
-  (byte)' ' , 0x1a,7,0 }, header, 0, count)) {
+  new byte[] {
+    (byte)0x52, (byte)0x61, (byte)0x72,
+    (byte)' ' , 0x1a,7,0
+  }, header, 0, count)) {
         return "application/x-rar-compressed";
       }
       var binary = false;

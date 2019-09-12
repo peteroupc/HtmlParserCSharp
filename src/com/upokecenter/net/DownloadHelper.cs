@@ -51,7 +51,7 @@ public sealed class DownloadHelper {
     public PeterO.Support.File trueCacheInfoFile = null;
   }
 
-    /// <xmlbegin id="0"/><summary>* Connects to a URL to download data from that URL. @param
+    /// <summary>* Connects to a URL to download data from that URL. @param
     /// urlString a URL _string. All schemes (protocols) supported by
     /// Java's URLConnection are supported. Data URLs are also supported.
     /// @param callback an _object to call back on, particularly when the
@@ -66,35 +66,13 @@ public sealed class DownloadHelper {
     /// <param name='callback'>The parameter <paramref name='callback'/> is
     /// not documented yet.</param>
     /// <returns>A T object.</returns>
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
   public static T downloadUrl<T>(
       string urlString,
       IResponseListener<T> callback) {
     return downloadUrl(urlString, callback, false);
   }
 
-    /// <xmlbegin id="1"/><summary>* Connects to a URL to download data from that URL. @param
+    /// <summary>* Connects to a URL to download data from that URL. @param
     /// urlString a URL _string. All schemes (protocols) supported by
     /// Java's URLConnection are supported. Data URLs are also supported.
     /// @param callback an _object to call back on, particularly when the
@@ -118,35 +96,13 @@ public sealed class DownloadHelper {
     /// <param name='handleErrorResponses'>The parameter <paramref
     /// name='handleErrorResponses'/> is not documented yet.</param>
     /// <returns>A T object.</returns>
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
   public static T downloadUrl<T>(
       string urlString,
       IResponseListener<T> callback,
       bool handleErrorResponses) {
     if (urlString == null) {
- throw new ArgumentNullException();
-}
+      throw new ArgumentNullException();
+    }
  bool isEventHandler=(callback != null && callback is
        IDownloadEventListener<T>);
     URL uri = null;
@@ -155,16 +111,16 @@ public sealed class DownloadHelper {
     }
     uri = URL.parse(urlString);
     if (uri == null) {
- throw new ArgumentException();
-}
+      throw new ArgumentException();
+    }
     return DownloadHelperImpl.downloadUrl(urlString, callback,
       handleErrorResponses);
   }
 
   internal static CacheResponseInfo getCachedResponse(
-      string urlString,
-      PeterO.Support.File pathForCache,
-      bool getStream) {
+    string urlString,
+    PeterO.Support.File pathForCache,
+    bool getStream) {
     var incompleteName = new bool[1];
      string cacheFileName=getCacheFileName(urlString,incompleteName)+".htm";
     PeterO.Support.File trueCachedFile = null;
@@ -172,7 +128,7 @@ public sealed class DownloadHelper {
     var crinfo = new CacheResponseInfo();
     if (pathForCache != null && pathForCache.isDirectory()) {
       var cacheFiles = new PeterO.Support.File[] {
-          new PeterO.Support.File(pathForCache, cacheFileName)
+        new PeterO.Support.File(pathForCache, cacheFileName)
       };
       if (incompleteName[0]) {
         List<PeterO.Support.File> list = new List<PeterO.Support.File>();
@@ -311,8 +267,8 @@ public sealed class DownloadHelper {
 
   public static void pruneCache(PeterO.Support.File cache, long maximumSize) {
     if (cache == null || !cache.isDirectory()) {
- return;
-}
+      return;
+    }
     while (true) {
       long length = 0;
       var exceeded = false;
@@ -331,8 +287,8 @@ public sealed class DownloadHelper {
         }
       }
       if (count <= 1||!exceeded) {
- return;
-}
+        return;
+      }
  long threshold = oldest + Math.Abs(oldest-DateTimeUtility.getCurrentDate())/2;
       count = 0;
       foreach (var file in files) {
@@ -347,14 +303,14 @@ public sealed class DownloadHelper {
               ++count;
             }
             if (length<maximumSize) {
- return;
-}
+              return;
+            }
           }
         }
       }
       if (count == 0) {
- return;
-}
+        return;
+      }
     }
   }
 

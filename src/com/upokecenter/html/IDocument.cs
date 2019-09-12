@@ -31,28 +31,36 @@ THE SOFTWARE.
 namespace com.upokecenter.html {
 /// <summary>* Represents an HTML document.</summary>
 public interface IDocument : INode {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IDocument.getCharset"]/*'/>
+    /// <summary>Gets the character encoding used in this document. @return
+    /// A character encoding name.</summary>
+    /// <returns>The return value is not documented yet.</returns>
   string getCharset();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IDocument.getDoctype"]/*'/>
+    /// <summary>Gets the document type of this document, if any.</summary>
+    /// <returns>The return value is not documented yet.</returns>
    IDocumentType getDoctype();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IDocument.getDocumentElement"]/*'/>
+    /// <summary>Gets the root element of this document.</summary>
+    /// <returns>The return value is not documented yet.</returns>
    IElement getDocumentElement();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IDocument.getElementById(System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='id'>The parameter <paramref name='id'/> is a text
+    /// string.</param>
+    /// <returns>The return value is not documented yet.</returns>
   IElement getElementById(string id);
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IDocument.getElementsByTagName(System.String)"]/*'/>
+    /// <summary>Gets all descendents, both direct and indirect, that have
+    /// the specified tag name, using ASCII case-insensitive matching.
+    /// @param _string A tag name.</summary>
+    /// <param name='_string'>The parameter <paramref name='_string'/> is a
+    /// text string.</param>
+    /// <returns>The return value is not documented yet.</returns>
   IList<IElement> getElementsByTagName(string _string);
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IDocument.getURL"]/*'/>
+    /// <summary>Gets the document's address @return An absolute
+    /// URL.</summary>
+    /// <returns>The return value is not documented yet.</returns>
   string getURL();
 }
 }

@@ -8,10 +8,10 @@ using PeterO;
 namespace HtmlParserCSharpTest {
   internal class MainClass {
     private static string Implode(
-  string[] arr,
-  int index,
-  int endIndex,
-  string delim) {
+      string[] arr,
+      int index,
+      int endIndex,
+      string delim) {
       var sb = new StringBuilder();
       var i = index;
       while (i < endIndex) {
@@ -25,9 +25,9 @@ namespace HtmlParserCSharpTest {
     }
 
     private static string[] GetTestData(
-  byte[] bytes,
-  int offset,
-  int endOffset) {
+      byte[] bytes,
+      int offset,
+      int endOffset) {
       string str = DataUtilities.GetUtf8String(
         bytes,
         offset,

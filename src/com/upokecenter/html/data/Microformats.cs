@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,66 +8,70 @@ using com.upokecenter.html;
 using com.upokecenter.util;
 
 namespace com.upokecenter.html.data {
-    /// <include file='../../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.html.data.Microformats"]/*'/>
+    /// <summary>Not documented yet.</summary>
   public sealed class Microformats {
     private static IDictionary<string, string[]> complexLegacyMap = new
       Dictionary<string, string[]>();
 
     static Microformats() {
-string[] strarr;
+      string[] strarr;
       complexLegacyMap.Add("adr", new string[] { "p-adr", "h-adr" });
-strarr =
- new string[] { "p-affiliation",
-  "h-card" };
+      strarr = new string[] {
+        "p-affiliation",
+        "h-card"
+      };
       complexLegacyMap.Add(
-  "affiliation",
-  strarr);
+        "affiliation",
+        strarr);
       complexLegacyMap.Add("author", new string[] { "p-author", "h-card" });
       complexLegacyMap.Add("contact", new string[] { "p-contact", "h-card" });
-strarr =
-     new string[] { "p-education",
-        "h-event" };
+      strarr = new string[] {
+        "p-education",
+        "h-event"
+      };
       complexLegacyMap.Add(
-      "education",
-      strarr);
-strarr =
-       new string[] { "p-experience",
-        "h-event" };
+        "education",
+        strarr);
+      strarr = new string[] {
+        "p-experience",
+        "h-event"
+      };
       complexLegacyMap.Add(
         "experience",
         strarr);
       complexLegacyMap.Add("fn", new string[] { "p-item", "h-item", "p-name" });
       complexLegacyMap.Add("geo", new string[] { "p-geo", "h-geo" });
-strarr =
- new string[] { "p-location",
- "h-card",
-  "h-adr" };
+      strarr = new string[] {
+        "p-location",
+        "h-card",
+        "h-adr"
+      };
       complexLegacyMap.Add(
-  "location",
-  strarr);
-strarr =
-      new string[] { "p-item",
- "h-item",
-        "u-photo" };
+        "location",
+        strarr);
+      strarr = new string[] {
+        "p-item",
+        "h-item",
+        "u-photo"
+      };
       complexLegacyMap.Add(
-       "photo",
-       strarr);
+        "photo",
+        strarr);
       complexLegacyMap.Add("review", new string[] { "p-review", "h-review" });
       complexLegacyMap.Add("reviewer", new string[] { "p-reviewer", "h-card" });
       complexLegacyMap.Add("url", new string[] { "p-item", "h-item", "u-url" });
     }
 
     private static readonly string[] ValueLegacyLabels = new string[] {
-    "additional-name", "p-additional-name", "adr", "h-adr", "bday",
+      "additional-name", "p-additional-name", "adr", "h-adr", "bday",
       "dt-bday", "best", "p-best", "brand", "p-brand", "category",
       "p-category", "count", "p-count", "country-name", "p-country-name",
- "description", "e-description", "dtend", "dt-end", "dtreviewed",
- "dt-dtreviewed", "dtstart", "dt-start", "duration",
+      "description", "e-description", "dtend", "dt-end", "dtreviewed",
+      "dt-dtreviewed", "dtstart", "dt-start", "duration",
       "dt-duration", "e-entry-summary", "e-summary", "email", "u-email",
- "entry-content", "e-content", "entry-summary", "p-summary",
+      "entry-content", "e-content", "entry-summary", "p-summary",
       "entry-title",
-    "p-name", "extended-address", "p-extended-address", "family-name",
+      "p-name", "extended-address", "p-extended-address", "family-name",
       "p-family-name", "fn", "p-name", "geo", "h-geo", "given-name",
       "p-given-name", "hentry", "h-entry", "honorific-prefix",
       "p-honorific-prefix", "honorific-suffix", "p-honorific-suffix",
@@ -75,38 +79,40 @@ strarr =
       "h-resume", "hreview", "h-review", "hreview-aggregate",
       "h-review-aggregate", "identifier", "u-identifier", "ingredient",
       "p-ingredient",
-    "instructions", "e-instructions", "key", "u-key", "label",
+      "instructions", "e-instructions", "key", "u-key", "label",
       "p-label", "latitude", "p-latitude", "locality", "p-locality",
       "logo", "u-logo", "longitude", "p-longitude", "nickname",
       "p-nickname", "note", "p-note", "nutrition", "p-nutrition", "org",
- "p-org", "organization-name", "p-organization-name",
+      "p-org", "organization-name", "p-organization-name",
       "organization-unit", "p-organization-unit", "p-entry-summary",
       "p-summary", "p-entry-title", "p-name", "photo", "u-photo",
       "post-office-box", "p-post-office-box",
-    "postal-code", "p-postal-code", "price", "p-price", "published",
+      "postal-code", "p-postal-code", "price", "p-price", "published",
       "dt-published", "rating", "p-rating", "region", "p-region", "rev",
- "dt-rev", "skill", "p-skill", "street-address",
+      "dt-rev", "skill", "p-skill", "street-address",
       "p-street-address", "summary", "p-name", "tel", "p-tel", "tz",
       "p-tz", "uid", "u-uid", "updated", "dt-updated", "url", "p-url",
- "vcard", "h-card", "vevent", "h-event", "votes", "p-votes",
+      "vcard", "h-card", "vevent", "h-event", "votes", "p-votes",
       "worst", "p-worst", "yield", "p-yield"
-  };
+    };
 
     private static readonly IDictionary<string, string>
       ValueLegacyLabelsMap = createLegacyLabelsMap();
 
     private static readonly int[] ValueNormalDays = {
-    0, 31, 28, 31, 30, 31, 30, 31, 31, 30,
-    31, 30, 31 };
+      0, 31, 28, 31, 30, 31, 30, 31, 31, 30,
+      31, 30, 31
+    };
 
     private static readonly int[] ValueLeapDays = {
-    0, 31, 29, 31, 30, 31, 30, 31, 31, 30,
-    31, 30, 31 };
+      0, 31, 29, 31, 30, 31, 30, 31, 31, 30,
+      31, 30, 31
+    };
 
     private static void accumulateValue(
-  CBORObject obj,
-  string key,
-  Object value) {
+      CBORObject obj,
+      string key,
+      Object value) {
       CBORObject arr = null;
       if (obj.ContainsKey(key)) {
         arr = obj[key];
@@ -139,11 +145,11 @@ strarr =
     }
 
     private static void copyComponents(
-        int[] src,
-        int[] components,
-        bool useDate,
-        bool useTime,
-        bool useTimezone) {
+      int[] src,
+      int[] components,
+      bool useDate,
+      bool useTime,
+      bool useTimezone) {
       if (useDate) {
         if (src[0] != Int32.MinValue) {
           components[0] = src[0];
@@ -203,8 +209,8 @@ strarr =
     }
 
     private static string[] getClassNames(IElement element) {
-string[] ret = StringUtility.SplitAtSpTabCrLfFf(element.getAttribute(
-  "class"));
+      string[] ret = StringUtility.SplitAtSpTabCrLfFf(element.getAttribute(
+        "class"));
       string[] rel = parseLegacyRel(element.getAttribute("rel"));
       if (ret.Length == 0 && rel.Length == 0) {
         return ret;
@@ -231,30 +237,36 @@ string[] ret = StringUtility.SplitAtSpTabCrLfFf(element.getAttribute(
         ISet<string> stringSet = new HashSet<string>(retList);
         retList = new List<string>(stringSet);
       }
-       return retList.ToArray();
+      return retList.ToArray();
     }
 
-private static readonly string[] DatePatterns = new string[] { "%Y-%M-%d",
-  "%Y-%D" };
+    private static readonly string[] DatePatterns = new string[] {
+      "%Y-%M-%d",
+      "%Y-%D"
+    };
 
-private static readonly string[] TimePatterns = new string[] { "%H:%m:%s",
-  "%H:%m",
-          "%H:%m:%s%Z:%z",
-          "%H:%m:%s%Z%z", "%H:%m:%s%G",
-          "%H:%m%Z:%z", "%H:%m%Z%z",
-      "%H:%m%G"};
+    private static readonly string[] TimePatterns = new string[] {
+      "%H:%m:%s",
+      "%H:%m",
+      "%H:%m:%s%Z:%z",
+      "%H:%m:%s%Z%z", "%H:%m:%s%G",
+      "%H:%m%Z:%z", "%H:%m%Z%z",
+      "%H:%m%G"
+    };
 
     private static string getDTValue(IElement root, int[] source) {
       IList<IElement> valueElements = getValueClasses(root);
       bool haveDate = false, haveTime = false, haveTimeZone = false;
-      var components = new int[] { Int32.MinValue,
+      var components = new int[] {
         Int32.MinValue,
         Int32.MinValue,
         Int32.MinValue,
         Int32.MinValue,
         Int32.MinValue,
         Int32.MinValue,
-        Int32.MinValue };
+        Int32.MinValue,
+        Int32.MinValue
+      };
       if (source != null) {
         copyComponents(source, components, true, true, true);
       }
@@ -266,13 +278,13 @@ private static readonly string[] TimePatterns = new string[] { "%H:%m:%s",
         string text = getDTValueContent(valueElement);
         if (
   matchDateTimePattern(
-  text,  // check date or date + time
-  DatePatterns,
-  TimePatterns,
-  components,
-  !haveDate,
-  !haveTime,
-  !haveTimeZone)) {
+    text, // check date or date + time
+    DatePatterns,
+    TimePatterns,
+    components,
+    !haveDate,
+    !haveTime,
+    !haveTimeZone)) {
           // check if components are defined
           if (components[0] != Int32.MinValue) {
             haveDate = true;
@@ -285,13 +297,15 @@ private static readonly string[] TimePatterns = new string[] { "%H:%m:%s",
           }
         } else if (
   matchDateTimePattern(
-  text,  // check time-only formats
+  text, // check time-only formats
             null,
-            new string[] { "%H:%m:%s", "%H:%m",
-          "%H:%m:%s%Z:%z",
-          "%H:%m:%s%Z%z", "%H:%m:%s%G",
-          "%H:%m%Z:%z", "%H:%m%Z%z",
-      "%H:%m%G"},
+            new string[] {
+              "%H:%m:%s", "%H:%m",
+              "%H:%m:%s%Z:%z",
+              "%H:%m:%s%Z%z", "%H:%m:%s%G",
+              "%H:%m%Z:%z", "%H:%m%Z%z",
+              "%H:%m%G"
+            },
  components,
  false,
  !haveTime,
@@ -307,14 +321,16 @@ private static readonly string[] TimePatterns = new string[] { "%H:%m:%s",
   matchDateTimePattern(
   text,
             null,
- new string[] { "%Z:%z",
- "%Z%z",
- "%Z",
- "%G" },
+ new string[] {
+   "%Z:%z",
+   "%Z%z",
+   "%Z",
+   "%G"
+ },
          components,
  false,
  false,
- !haveTimeZone)) {  // check timezone
+ !haveTimeZone)) { // check timezone
                     // formats
           if (components[6] != Int32.MinValue) {
             haveTimeZone = true;
@@ -323,14 +339,16 @@ private static readonly string[] TimePatterns = new string[] { "%H:%m:%s",
   matchDateTimePattern(
   DataUtilities.ToLowerCaseAscii(text),
             null,
- new string[] { "%h:%m:%sa.m.",
-  // AM clock values
-        "%h:%m:%sam", "%h:%ma.m.", "%h:%mam",
-        "%ha.m.", "%ham"},
+ new string[] {
+   "%h:%m:%sa.m.",
+   // AM clock values
+   "%h:%m:%sam", "%h:%ma.m.", "%h:%mam",
+   "%ha.m.", "%ham"
+ },
           components,
  false,
  !haveTime,
- false)) {  // check AM time formats
+ false)) { // check AM time formats
           if (components[3] != Int32.MinValue) {
             haveTime = true;
             // convert AM hour to 24-hour clock
@@ -342,13 +360,15 @@ private static readonly string[] TimePatterns = new string[] { "%H:%m:%s",
   matchDateTimePattern(
   DataUtilities.ToLowerCaseAscii(text),
             null,
- new string[] { "%h:%m:%sp.m.",
-  // PM clock values
-        "%h:%m:%spm", "%h:%mp.m.", "%h:%mpm", "%hp.m.", "%hpm"},
+ new string[] {
+   "%h:%m:%sp.m.",
+   // PM clock values
+   "%h:%m:%spm", "%h:%mp.m.", "%h:%mpm", "%hp.m.", "%hpm"
+ },
           components,
  false,
  !haveTime,
- false)) {  // check PM time formats
+ false)) { // check PM time formats
           if (components[3] != Int32.MinValue) {
             haveTime = true;
             // convert PM hour to 24-hour clock
@@ -436,22 +456,26 @@ elname.Equals("time")) {
         // DebugUtility.Log("start %s",arr);
         Object result = arr[arr.Count - 1];
         if (result is string) {
-          var components = new int[] { Int32.MinValue,
+          var components = new int[] {
             Int32.MinValue,
             Int32.MinValue,
             Int32.MinValue,
             Int32.MinValue,
             Int32.MinValue,
             Int32.MinValue,
-            Int32.MinValue };
+            Int32.MinValue,
+            Int32.MinValue
+          };
           if (
   matchDateTimePattern(
   (string)result,
               new string[] { "%Y-%M-%d", "%Y-%D" },
-              new string[] { "%H:%m:%s", "%H:%m",
-            "%H:%m:%s%Z:%z",
-            "%H:%m:%s%Z%z", "%H:%m:%s%G",
-            "%H:%m%Z:%z", "%H:%m%Z%z", "%H:%m%G"},
+              new string[] {
+                "%H:%m:%s", "%H:%m",
+                "%H:%m:%s%Z:%z",
+                "%H:%m:%s%Z%z", "%H:%m:%s%G",
+                "%H:%m%Z:%z", "%H:%m%Z%z", "%H:%m%G"
+              },
               components,
  true,
  true,
@@ -472,8 +496,16 @@ elname.Equals("time")) {
       return null;
     }
 
-    /// <include file='../../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.data.Microformats.getMicroformatsJSON(com.upokecenter.html.IDocument)"]/*'/>
+    /// <summary>Scans an HTML document for Microformats.org metadata. The
+    /// resulting _object will contain an "items" property, an array of all
+    /// Microformats items. Each item will have a "type" and "properties"
+    /// properties. @param root the document to scan. @return a JSON
+    /// _object containing Microformats metadata.</summary>
+    /// <param name='root'>The parameter <paramref name='root'/> is
+    /// a.upokecenter.html.IDocument object.</param>
+    /// <returns>A CBORObject object.</returns>
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='root'/> is null.</exception>
     public static CBORObject getMicroformatsJSON(IDocument root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
@@ -481,8 +513,16 @@ elname.Equals("time")) {
       return getMicroformatsJSON(root.getDocumentElement());
     }
 
-    /// <include file='../../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.data.Microformats.getMicroformatsJSON(com.upokecenter.html.IElement)"]/*'/>
+    /// <summary>Scans an HTML element for Microformats.org metadata. The
+    /// resulting _object will contain an "items" property, an array of all
+    /// Microformats items. Each item will have a "type" and "properties"
+    /// properties. @param root the element to scan. @return a JSON _object
+    /// containing Microformats metadata.</summary>
+    /// <param name='root'>The parameter <paramref name='root'/> is
+    /// a.upokecenter.html.IElement object.</param>
+    /// <returns>A CBORObject object.</returns>
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='root'/> is null.</exception>
     public static CBORObject getMicroformatsJSON(IElement root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
@@ -545,8 +585,12 @@ elname.Equals("time")) {
                root.getAttribute("alt") : getValueContent(root, false);
     }
 
-    /// <include file='../../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.data.Microformats.getRelJSON(com.upokecenter.html.IDocument)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='root'>The parameter <paramref name='root'/> is
+    /// a.upokecenter.html.IDocument object.</param>
+    /// <returns>A CBORObject object.</returns>
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='root'/> is null.</exception>
     public static CBORObject getRelJSON(IDocument root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
@@ -554,8 +598,12 @@ elname.Equals("time")) {
       return getRelJSON(root.getDocumentElement());
     }
 
-    /// <include file='../../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.data.Microformats.getRelJSON(com.upokecenter.html.IElement)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='root'>The parameter <paramref name='root'/> is
+    /// a.upokecenter.html.IElement object.</param>
+    /// <returns>A CBORObject object.</returns>
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='root'/> is null.</exception>
     public static CBORObject getRelJSON(IElement root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
@@ -636,8 +684,11 @@ elname.Equals("time")) {
       return TrimAndCollapseSpaces(element.getTextContent());
     }
 
-    /// <include file='../../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.data.Microformats.getUValue(com.upokecenter.html.IElement)"]/*'/>
+    /// <summary>Gets a Microformats "u-*" value from an HTML element. It
+    /// tries to find the URL from the element's attributes, if possible;
+    /// otherwise from the element's text.</summary>
+    /// <param name='e'>An HTML element.</param>
+    /// <returns>A URL, or the empty _string if none was found.</returns>
     private static string getUValue(IElement e) {
       string url = getHref(e);
       if (String.IsNullOrEmpty(url)) {
@@ -763,8 +814,8 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
     }
 
     private static bool implyForLink(
-  IElement root,
-  CBORObject subProperties) {
+      IElement root,
+      CBORObject subProperties) {
       if (DataUtilities.ToLowerCaseAscii(root.getLocalName()).Equals("a") &&
           root.getAttribute("href") != null) {
         // get the link's URL
@@ -777,8 +828,8 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
           // from the image
           string valuePValue = getPValue(elements[0]);
           if (StringUtility.isNullOrSpaces(valuePValue)) {
-            valuePValue = getPValue(root);  // if empty, get text from link
-                    // instead
+            valuePValue = getPValue(root); // if empty, get text from link
+                                            // instead
           }
           setValueIfAbsent(subProperties, "name", valuePValue);
           // get the SRC of the image
@@ -796,10 +847,10 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
     }
 
     private static int isDatePattern(
-  string value,
-  int index,
-  string pattern,
-  int[] components) {
+      string value,
+      int index,
+      string pattern,
+      int[] components) {
       int[] c = components;
       c[0] = c[1] = c[2] = c[3] = c[4] = c[5] = c[6] = c[7] = Int32.MinValue;
       if (pattern == null) {
@@ -873,7 +924,7 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
             }
             patternValue = patternValue * 10 + (vc - '0');
             components[0] = patternValue;
-          } else if (pc == 'G') {  // expect 'Z'
+          } else if (pc == 'G') { // expect 'Z'
             if (valueIndex + 1 > value.Length) {
               return -1;
             }
@@ -881,9 +932,9 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
             if (vc != 'Z') {
               return -1;
             }
-            components[6] = 0;  // time zone offset is 0
+            components[6] = 0; // time zone offset is 0
             components[7] = 0;
-          } else if (pc == '%') {  // expect 'Z'
+          } else if (pc == '%') { // expect 'Z'
             if (valueIndex + 1 > value.Length) {
               return -1;
             }
@@ -891,7 +942,7 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
             if (vc != '%') {
               return -1;
             }
-          } else if (pc == 'Z') {  // expect plus or minus, then two digits
+          } else if (pc == 'Z') { // expect plus or minus, then two digits
             if (valueIndex + 3 > value.Length) {
               return -1;
             }
@@ -912,14 +963,14 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
             }
             patternValue = patternValue * 10 + (vc - '0');
             if (pc == 'Z' && patternValue > 12) {
-              return -1;  // time zone offset hour
+              return -1; // time zone offset hour
             }
             if (negative) {
               patternValue = -patternValue;
             }
             components[6] = patternValue;
           } else if (pc == 'M' || pc == 'd' || pc == 'H' || pc == 'h' ||
-              pc == 'm' || pc == 's' || pc == 'z') {  // expect two digits
+              pc == 'm' || pc == 's' || pc == 'z') { // expect two digits
             if (valueIndex + 2 > value.Length) {
               return -1;
             }
@@ -936,31 +987,31 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
             if (pc == 'M' && patternValue > 12) {
               return -1;
             } else if (pc == 'M') {
-              components[1] = patternValue;  // month
+              components[1] = patternValue; // month
             } else if (pc == 'd' && patternValue > 31) {
               return -1;
             } else if (pc == 'd') {
-              components[2] = patternValue;  // day
+              components[2] = patternValue; // day
             } else if (pc == 'H' && patternValue >= 24) {
               return -1;
             } else if (pc == 'H') {
-              components[3] = patternValue;  // hour
+              components[3] = patternValue; // hour
             } else if (pc == 'h' && patternValue >= 12 && patternValue != 0) {
               return -1;
             } else if (pc == 'h') {
-              components[3] = patternValue;  // hour (12-hour clock)
+              components[3] = patternValue; // hour (12-hour clock)
             } else if (pc == 'm' && patternValue >= 60) {
               return -1;
             } else if (pc == 'm') {
-              components[4] = patternValue;  // minute
+              components[4] = patternValue; // minute
             } else if (pc == 's' && patternValue > 60) {
               return -1;
             } else if (pc == 's') {
-              components[5] = patternValue;  // second
+              components[5] = patternValue; // second
             } else if (pc == 'z' && patternValue >= 60) {
               return -1;
             } else if (pc == 'z') {
-              components[7] = patternValue;  // timezone offset minute
+              components[7] = patternValue; // timezone offset minute
             }
           } else {
             return -1;
@@ -999,13 +1050,13 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
     }
 
     private static bool matchDateTimePattern(
-        string value,
-        string[] datePatterns,
-        string[] timePatterns,
-        int[] components,
-        bool useDate,
-        bool useTime,
-        bool useTimezone) {
+      string value,
+      string[] datePatterns,
+      string[] timePatterns,
+      int[] components,
+      bool useDate,
+      bool useTime,
+      bool useTimezone) {
       // year, month, day, hour, minute, second, zone offset,
       // zone offset minutes
       if (!useDate && !useTime && !useTimezone) {
@@ -1024,11 +1075,11 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
             // copy any matching components
             if (endIndex >= value.Length) {
               copyComponents(
-  c,
-  components,
-  useDate,
-  useTime,
-  useTimezone);
+                c,
+                components,
+                useDate,
+                useTime,
+                useTimezone);
               // we have just a date
               return true;
             }
@@ -1055,17 +1106,17 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
         if (endIndex == value.Length) {
           // copy any matching components
           copyComponents(
-  c,
-  components,
-  useDate,
-  useTime,
-  useTimezone);
+            c,
+            components,
+            useDate,
+            useTime,
+            useTimezone);
           copyComponents(
-  c2,
-  components,
-  useDate,
-  useTime,
-  useTimezone);
+            c2,
+            components,
+            useDate,
+            useTime,
+            useTimezone);
           return true;
         }
       }
@@ -1102,9 +1153,9 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
     }
 
     private static void propertyWalk(
-  IElement root,
-  CBORObject properties,
-  CBORObject children) {
+      IElement root,
+      CBORObject properties,
+      CBORObject children) {
       string[] className = getClassNames(root);
       if (className.Length > 0) {
         IList<string> types = new List<string>();
@@ -1140,12 +1191,12 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
   properties,
   cls.Substring(2),
   getUValue(root));
-            } else if (cls.StartsWith("dt-", StringComparison.Ordinal)) {
+} else if (cls.StartsWith("dt-", StringComparison.Ordinal)) {
               accumulateValue(
   properties,
   cls.Substring(3),
   getDTValue(root, getLastKnownTime(properties)));
-            } else if (cls.StartsWith("e-", StringComparison.Ordinal)) {
+} else if (cls.StartsWith("e-", StringComparison.Ordinal)) {
               accumulateValue(
   properties,
   cls.Substring(2),
@@ -1207,7 +1258,7 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
           obj.Add("properties", subProperties);
           if (hasProperties) {
             foreach (var cls in className) {
-              if (cls.StartsWith("p-", StringComparison.Ordinal)) {  // property
+              if (cls.StartsWith("p-", StringComparison.Ordinal)) { // property
                 CBORObject clone = copyJson(obj);
                 clone.Add("value", getPValue(root));
                 accumulateValue(properties, cls.Substring(2), clone);
@@ -1248,8 +1299,8 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
     }
 
     private static void relWalk(
-  IElement root,
-  CBORObject properties) {
+      IElement root,
+      CBORObject properties) {
       string[] className = getRelNames(root);
       if (className.Length > 0) {
         string href = getHref(root);
@@ -1267,9 +1318,9 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
     }
 
     private static void setValueIfAbsent(
-  CBORObject obj,
-  string key,
-  Object value) {
+      CBORObject obj,
+      string key,
+      Object value) {
       if (!obj.ContainsKey(key)) {
         CBORObject arr = null;
         arr = CBORObject.NewArray();
@@ -1280,13 +1331,13 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
 
     private static string toDateTimeString(int[] components) {
       var builder = new StringBuilder();
-      if (components[0] != Int32.MinValue) {  // has a date
-                    // add year
+      if (components[0] != Int32.MinValue) { // has a date
+                                              // add year
         append4d(builder, components[0]);
         builder.Append('-');
         if (components[1] == Int32.MinValue) {
-          append3d(builder, components[2]);  // year and day of year
-        } else {  // has month
+          append3d(builder, components[2]); // year and day of year
+        } else { // has month
                   // add month and day
           append2d(builder, components[1]);
           builder.Append('-');
@@ -1307,11 +1358,11 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
       if (components[6] != Int32.MinValue) {
         if (components[6] == 0 && components[7] == 0) {
           builder.Append('Z');
-        } else if (components[6] < 0) {  // negative time zone offset
+        } else if (components[6] < 0) { // negative time zone offset
           builder.Append('-');
           append2d(builder, components[6]);
           append2d(builder, components[7]);
-        } else {  // positive time zone offset
+        } else { // positive time zone offset
           builder.Append('+');
           append2d(builder, components[6]);
           append2d(builder, components[7]);

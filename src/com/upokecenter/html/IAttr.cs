@@ -1,27 +1,30 @@
 using System;
 
 namespace com.upokecenter.html {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.html.IAttr"]/*'/>
+    /// <summary>Represents one of the attributes within an HTML
+    /// element.</summary>
 public interface IAttr {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IAttr.getLocalName"]/*'/>
+    /// <summary>Gets the attribute name's local name (the part after the
+    /// colon, if it's bound to a _namespace).</summary>
+    /// <returns>The return value is not documented yet.</returns>
    string getLocalName();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IAttr.getName"]/*'/>
+    /// <summary>Gets the attribute's qualified name.</summary>
+    /// <returns>The return value is not documented yet.</returns>
    string getName();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IAttr.getNamespaceURI"]/*'/>
+    /// <summary>Gets the attribute's _namespace URI, if it's bound to a
+    /// _namespace.</summary>
+    /// <returns>The return value is not documented yet.</returns>
    string getNamespaceURI();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IAttr.getPrefix"]/*'/>
+    /// <summary>Gets the attribute name's prefix (the part before the
+    /// colon, if it's bound to a _namespace).</summary>
+    /// <returns>The return value is not documented yet.</returns>
    string getPrefix();
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.IAttr.getValue"]/*'/>
+    /// <summary>Gets the attribute's value.</summary>
+    /// <returns>The return value is not documented yet.</returns>
    string getValue();
 }
 }

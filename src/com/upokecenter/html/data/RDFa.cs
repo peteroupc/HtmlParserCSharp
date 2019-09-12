@@ -160,7 +160,7 @@ using com.upokecenter.util;
         if ((c & 0xfc00) == 0xd800 && index + 1 < valueSLength &&
             (s[index + 1] & 0xfc00) == 0xdc00) {
           // Get the Unicode code point for the surrogate pair
-          c = 0x10000 + ((c - 0xd800) << 10) + (s[index + 1] - 0xdc00);
+          c = 0x10000 + ((c & 0x3ff) << 10) + (s[index + 1] & 0x3ff);
           ++index;
         } else if ((c & 0xf800) == 0xd800) {
           // error
@@ -178,8 +178,7 @@ using com.upokecenter.util;
 
     private static T getValueCaseInsensitive<T>(
         IDictionary<string, T> map,
-        string key
-) {
+        string key) {
       if (key == null) {
         return map[null];
       }
@@ -193,9 +192,9 @@ using com.upokecenter.util;
     }
 
     private static bool isValidCurieReference(
-    string s,
-    int offset,
-    int length) {
+      string s,
+      int offset,
+      int length) {
       return URIUtility.IsValidCurieReference(s, offset, length);
     }
 
@@ -214,7 +213,7 @@ using com.upokecenter.util;
         if ((c & 0xfc00) == 0xd800 && index + 1 < valueSLength &&
             (s[index + 1] & 0xfc00) == 0xdc00) {
           // Get the Unicode code point for the surrogate pair
-          c = 0x10000 + ((c - 0xd800) << 10) + (s[index + 1] - 0xdc00);
+          c = 0x10000 + ((c & 0x3ff) << 10) + (s[index + 1] & 0x3ff);
           ++index;
         } else if ((c & 0xf800) == 0xd800) {
           // error
@@ -245,7 +244,7 @@ using com.upokecenter.util;
       }
       var prefix = new StringBuilder();
       var iri = new StringBuilder();
-      var state = 0;  // Before NCName state
+      var state = 0; // Before NCName state
       var strings = new List<string>();
       while (index < valueSLength) {
         // Get the next Unicode character
@@ -253,13 +252,13 @@ using com.upokecenter.util;
         if ((c & 0xfc00) == 0xd800 && index + 1 < valueSLength &&
             (s[index + 1] & 0xfc00) == 0xdc00) {
           // Get the Unicode code point for the surrogate pair
-          c = 0x10000 + ((c - 0xd800) << 10) + (s[index + 1] - 0xdc00);
+          c = 0x10000 + ((c & 0x3ff) << 10) + (s[index + 1] & 0x3ff);
           ++index;
         } else if ((c & 0xf800) == 0xd800) {
           // error
           break;
         }
-        if (state == 0) {  // Before NCName
+        if (state == 0) { // Before NCName
           if (c == 0x09 || c == 0x0a || c == 0x0d || c == 0x20) {
             // ignore whitespace
             ++index;
@@ -270,8 +269,8 @@ using com.upokecenter.util;
                 prefix.Append((char)c);
               }
             } else if (c <= 0x10ffff) {
-              prefix.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-              prefix.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+              prefix.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+              prefix.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
             }
             state = 1;
             ++index;
@@ -279,7 +278,7 @@ using com.upokecenter.util;
             // error
             break;
           }
-        } else if (state == 1) {  // NCName
+        } else if (state == 1) { // NCName
           if (c == ':') {
             state = 2;
             ++index;
@@ -290,15 +289,15 @@ using com.upokecenter.util;
                 prefix.Append((char)c);
               }
             } else if (c <= 0x10ffff) {
-              prefix.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-              prefix.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+              prefix.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+              prefix.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
             }
             ++index;
           } else {
             // error
             break;
           }
-        } else if (state == 2) {  // After NCName
+        } else if (state == 2) { // After NCName
           if (c == ' ') {
             state = 3;
             ++index;
@@ -306,7 +305,7 @@ using com.upokecenter.util;
             // error
             break;
           }
-        } else if (state == 3) {  // Before IRI
+        } else if (state == 3) { // Before IRI
           if (c == ' ') {
             ++index;
           } else {
@@ -316,13 +315,13 @@ using com.upokecenter.util;
                 iri.Append((char)c);
               }
             } else if (c <= 0x10ffff) {
-              iri.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-              iri.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+              iri.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+              iri.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
             }
             state = 4;
             ++index;
           }
-        } else if (state == 4) {  // IRI
+        } else if (state == 4) { // IRI
           if (c == 0x09 || c == 0x0a || c == 0x0d || c == 0x20) {
        string prefixString = DataUtilities.ToLowerCaseAscii(prefix.ToString());
             // add prefix only if it isn't empty;
@@ -342,8 +341,8 @@ using com.upokecenter.util;
                 iri.Append((char)c);
               }
             } else if (c <= 0x10ffff) {
-              iri.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-              iri.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+              iri.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+              iri.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
             }
             ++index;
           }
@@ -360,11 +359,8 @@ using com.upokecenter.util;
     private IDictionary<string, RDFTerm> bnodeLabels = new
       Dictionary<string, RDFTerm>();
 
-    /// <param name='document'>
-    /// The parameter
-    /// <paramref name='document'/>
-    /// is an IDocument object.
-    /// </param>
+    /// <param name='document'>The parameter <paramref name='document'/> is
+    /// an IDocument object.</param>
     public RDFa(IDocument document) {
       this.document = document;
       this.parser = null;
@@ -386,14 +382,14 @@ using com.upokecenter.util;
       this.context.ValueLanguage = null;
       this.outputGraph = new HashSet<RDFTriple>();
       this.context.ValueTermMap.Add(
-  "describedby",
-  "http://www.w3.org/2007/05/powder-s#describedby");
+        "describedby",
+        "http://www.w3.org/2007/05/powder-s#describedby");
       this.context.ValueTermMap.Add(
-  "license",
-  "http://www.w3.org/1999/xhtml/vocab#license");
+        "license",
+        "http://www.w3.org/1999/xhtml/vocab#license");
       this.context.ValueTermMap.Add(
-     "role",
-     "http://www.w3.org/1999/xhtml/vocab#role");
+        "role",
+        "http://www.w3.org/1999/xhtml/vocab#role");
       this.context.ValueIriMap.Add("cc", "http://creativecommons.org/ns#");
       this.context.ValueIriMap.Add("ctag", "http://commontag.org/ns#");
       this.context.ValueIriMap.Add("dc", "http://purl.org/dc/terms/");
@@ -409,42 +405,42 @@ using com.upokecenter.util;
       this.context.ValueIriMap.Add("rev", "http://purl.org/stuff/rev#");
       this.context.ValueIriMap.Add("sioc", "http://rdfs.org/sioc/ns#");
       this.context.ValueIriMap.Add(
-      "grddl",
-      "http://www.w3.org/2003/g/data-view#");
+        "grddl",
+        "http://www.w3.org/2003/g/data-view#");
       this.context.ValueIriMap.Add("ma", "http://www.w3.org/ns/ma-ont#");
       this.context.ValueIriMap.Add("owl", "http://www.w3.org/2002/07/owl#");
       this.context.ValueIriMap.Add("prov", "http://www.w3.org/ns/prov#");
       this.context.ValueIriMap.Add(
-  "rdf",
-  "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        "rdf",
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
       this.context.ValueIriMap.Add("rdfa", "http://www.w3.org/ns/rdfa#");
       this.context.ValueIriMap.Add(
-       "rdfs",
-       "http://www.w3.org/2000/01/rdf-schema#");
+        "rdfs",
+        "http://www.w3.org/2000/01/rdf-schema#");
       this.context.ValueIriMap.Add("rif", "http://www.w3.org/2007/rif#");
       this.context.ValueIriMap.Add("rr", "http://www.w3.org/ns/r2rml#");
       this.context.ValueIriMap.Add(
-  "sd",
-  "http://www.w3.org/ns/sparql-service-description#");
+        "sd",
+        "http://www.w3.org/ns/sparql-service-description#");
       this.context.ValueIriMap.Add(
-      "skos",
-      "http://www.w3.org/2004/02/skos/core#");
+        "skos",
+        "http://www.w3.org/2004/02/skos/core#");
       this.context.ValueIriMap.Add(
-      "skosxl",
-      "http://www.w3.org/2008/05/skos-xl#");
+        "skosxl",
+        "http://www.w3.org/2008/05/skos-xl#");
       this.context.ValueIriMap.Add("v", "http://rdf.data-vocabulary.org/#");
       this.context.ValueIriMap.Add("vcard", "http://www.w3.org/2006/vcard/ns#");
       this.context.ValueIriMap.Add("void", "http://rdfs.org/ns/void#");
       this.context.ValueIriMap.Add("wdr", "http://www.w3.org/2007/05/powder#");
       this.context.ValueIriMap.Add(
-     "wdrs",
-     "http://www.w3.org/2007/05/powder-s#");
+        "wdrs",
+        "http://www.w3.org/2007/05/powder-s#");
       this.context.ValueIriMap.Add(
-    "xhv",
-    "http://www.w3.org/1999/xhtml/vocab#");
+        "xhv",
+        "http://www.w3.org/1999/xhtml/vocab#");
       this.context.ValueIriMap.Add(
-      "xml",
-      "http://www.w3.org/XML/1998/_namespace");
+        "xml",
+        "http://www.w3.org/XML/1998/_namespace");
       this.context.ValueIriMap.Add("xsd", "http://www.w3.org/2001/XMLSchema#");
       IElement docElement = document.getDocumentElement();
       if (docElement != null && isHtmlElement(docElement, "html")) {
@@ -461,11 +457,11 @@ using com.upokecenter.util;
             "previous", "section", "start",
             "stylesheet", "subsection", "top",
             "up", "p3pv1"
-        };
+          };
           foreach (var term in terms) {
             this.context.ValueTermMap.Add(
-    term,
-    "http://www.w3.org/1999/xhtml/vocab#" + term);
+              term,
+              "http://www.w3.org/1999/xhtml/vocab#" + term);
           }
         }
         if (version != null && "XHTML+RDFa 1.0".Equals(version)) {
@@ -490,8 +486,8 @@ using com.upokecenter.util;
       // conflict with those stated explicitly
       string blankNodeString = "//" +
         Convert.ToString(
-  this.blankNode,
-  System.Globalization.CultureInfo.InvariantCulture);
+          this.blankNode,
+          System.Globalization.CultureInfo.InvariantCulture);
       ++this.blankNode;
       RDFTerm term = RDFTerm.fromBlankNode(blankNodeString);
       this.bnodeLabels.Add(blankNodeString, term);
@@ -606,7 +602,8 @@ using com.upokecenter.util;
     }
 
     private RDFTerm getSafeCurieOrCurieOrIri(
-        string attribute, IDictionary<string, string> prefixMapping) {
+        string attribute,
+        IDictionary<string, string> prefixMapping) {
       if (attribute == null) {
         return null;
       }
@@ -614,17 +611,17 @@ using com.upokecenter.util;
     if (attribute.Length >= 2 && attribute[0] == '[' && attribute[lastIndex]
         == ']') {
         RDFTerm curie = this.getCurieOrBnode(
-  attribute,
-  1,
-  attribute.Length - 2,
-  prefixMapping);
+          attribute,
+          1,
+          attribute.Length - 2,
+          prefixMapping);
         return curie;
       } else {
         RDFTerm curie = this.getCurieOrBnode(
-  attribute,
-  0,
-  attribute.Length,
-  prefixMapping);
+          attribute,
+          0,
+          attribute.Length,
+          prefixMapping);
         if (curie == null) {
           // evaluate as IRI
           return this.relativeResolve(attribute);
@@ -653,10 +650,10 @@ using com.upokecenter.util;
         }
       }
       string curie = this.getCurie(
-  attribute,
-  0,
-  attribute.Length,
-  prefixMapping);
+        attribute,
+        0,
+        attribute.Length,
+        prefixMapping);
       if (curie == null) {
         // evaluate as IRI if it's absolute
         if (URIUtility.HasScheme(attribute)) {
@@ -668,8 +665,8 @@ using com.upokecenter.util;
       return curie;
     }
 
-    /// <include file='../../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.data.RDFa.Parse"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>An ISet(RDFTriple) object.</returns>
     public ISet<RDFTriple> Parse() {
       if (this.parser != null) {
         return this.parser.Parse();
@@ -705,8 +702,8 @@ new Dictionary<string, string>(this.context.ValueIriMap);
       attr = node.getAttribute("xml:base");
       if (attr != null) {
         this.context.ValueBaseURI = URIUtility.RelativeResolve(
-  attr,
-  this.context.ValueBaseURI);
+          attr,
+          this.context.ValueBaseURI);
       }
       // Support deprecated XML ValueNamespaces
       foreach (var attrib in node.getAttributes()) {
@@ -777,8 +774,8 @@ new Dictionary<string, string>(this.context.ValueIriMap);
             newSubject = about;
           } else if (root) {
             newSubject = this.getSafeCurieOrCurieOrIri(
-          String.Empty,
-          iriMapLocal);
+              String.Empty,
+              iriMapLocal);
           } else if (this.context.ValueParentObject != null) {
             newSubject = this.context.ValueParentObject;
           }
@@ -788,8 +785,8 @@ new Dictionary<string, string>(this.context.ValueIriMap);
               typedResource = about;
             } else if (root) {
               typedResource = this.getSafeCurieOrCurieOrIri(
-               String.Empty,
-               iriMapLocal);
+                String.Empty,
+                iriMapLocal);
             } else {
               RDFTerm resource = this.getSafeCurieOrCurieOrIri(
                   node.getAttribute("resource"),
@@ -837,8 +834,8 @@ new Dictionary<string, string>(this.context.ValueIriMap);
           if (resource == null) {
             if (root) {
               newSubject = this.getSafeCurieOrCurieOrIri(
-            String.Empty,
-            iriMapLocal);
+                String.Empty,
+                iriMapLocal);
             } else if (node.getAttribute("typeof") != null) {
               newSubject = this.generateBlankNode();
             } else {
@@ -870,8 +867,8 @@ new Dictionary<string, string>(this.context.ValueIriMap);
         if (about == null) {
           if (root) {
             about = this.getSafeCurieOrCurieOrIri(
-     String.Empty,
-     iriMapLocal);
+              String.Empty,
+              iriMapLocal);
           } else if (this.context.ValueParentObject != null) {
             newSubject = this.context.ValueParentObject;
           }
@@ -907,10 +904,10 @@ new Dictionary<string, string>(this.context.ValueIriMap);
         "typeof"));
         foreach (var type in types) {
           string iri = this.getTermOrCurieOrAbsIri(
-  type,
-  iriMapLocal,
-  termMapLocal,
-  localDefaultVocab);
+            type,
+            iriMapLocal,
+            termMapLocal,
+            localDefaultVocab);
           if (iri != null) {
             this.outputGraph.Add(new RDFTriple(
                 typedResource,
@@ -931,10 +928,10 @@ new Dictionary<string, string>(this.context.ValueIriMap);
           string[] types = StringUtility.SplitAtSpTabCrLf(rel);
           foreach (var type in types) {
             string iri = this.getTermOrCurieOrAbsIri(
-  type,
-  iriMapLocal,
-  termMapLocal,
-  localDefaultVocab);
+              type,
+              iriMapLocal,
+              termMapLocal,
+              localDefaultVocab);
             if (iri != null) {
               if (!listMapLocal.ContainsKey(iri)) {
                 IList<RDFTerm> newList = new List<RDFTerm>();
@@ -956,10 +953,10 @@ new Dictionary<string, string>(this.context.ValueIriMap);
 #endif
           foreach (var type in types) {
             string iri = this.getTermOrCurieOrAbsIri(
-  type,
-  iriMapLocal,
-  termMapLocal,
-  localDefaultVocab);
+              type,
+              iriMapLocal,
+              termMapLocal,
+              localDefaultVocab);
             if (iri != null) {
               this.outputGraph.Add(new RDFTriple(
                   newSubject,
@@ -970,10 +967,10 @@ new Dictionary<string, string>(this.context.ValueIriMap);
           types = StringUtility.SplitAtSpTabCrLf(rev);
           foreach (var type in types) {
             string iri = this.getTermOrCurieOrAbsIri(
-  type,
-  iriMapLocal,
-  termMapLocal,
-  localDefaultVocab);
+              type,
+              iriMapLocal,
+              termMapLocal,
+              localDefaultVocab);
             if (iri != null) {
               this.outputGraph.Add(new RDFTriple(
                   currentObject,
@@ -990,10 +987,10 @@ new Dictionary<string, string>(this.context.ValueIriMap);
         // Defines predicates
         foreach (var type in types) {
           string iri = this.getTermOrCurieOrAbsIri(
-  type,
-  iriMapLocal,
-  termMapLocal,
-  localDefaultVocab);
+            type,
+            iriMapLocal,
+            termMapLocal,
+            localDefaultVocab);
           if (iri != null) {
             if (!hasPredicates) {
               hasPredicates = true;
@@ -1022,10 +1019,10 @@ new Dictionary<string, string>(this.context.ValueIriMap);
         types = StringUtility.SplitAtSpTabCrLf(rev);
         foreach (var type in types) {
           string iri = this.getTermOrCurieOrAbsIri(
-  type,
-  iriMapLocal,
-  termMapLocal,
-  localDefaultVocab);
+            type,
+            iriMapLocal,
+            termMapLocal,
+            localDefaultVocab);
           if (iri != null) {
             if (!hasPredicates) {
               hasPredicates = true;
@@ -1041,10 +1038,10 @@ new Dictionary<string, string>(this.context.ValueIriMap);
       // Step 11
       string[] preds = StringUtility.SplitAtSpTabCrLf(property);
       string datatypeValue = this.getTermOrCurieOrAbsIri(
-  datatype,
-  iriMapLocal,
-  termMapLocal,
-  localDefaultVocab);
+        datatype,
+        iriMapLocal,
+        termMapLocal,
+        localDefaultVocab);
       if (datatype != null && datatypeValue == null) {
         datatypeValue = String.Empty;
       }
@@ -1053,10 +1050,10 @@ new Dictionary<string, string>(this.context.ValueIriMap);
       // DebugUtility.Log("datatypeValue=[%s]",datatypeValue);
       foreach (var pred in preds) {
         string iri = this.getTermOrCurieOrAbsIri(
-  pred,
-  iriMapLocal,
-  termMapLocal,
-  localDefaultVocab);
+          pred,
+          iriMapLocal,
+          termMapLocal,
+          localDefaultVocab);
         if (iri != null) {
           // DebugUtility.Log("iri=[%s]",iri);
           currentProperty = null;
@@ -1071,13 +1068,14 @@ new Dictionary<string, string>(this.context.ValueIriMap);
             currentProperty = (!String.IsNullOrEmpty(localLanguage)) ?
                 RDFTerm.fromLangString(literal, localLanguage) :
                   RDFTerm.fromTypedString(literal);
-    } else if (datatypeValue != null && datatypeValue.Equals(RDF_XMLLITERAL)) {
+                } else if (datatypeValue != null &&
+datatypeValue.Equals(RDF_XMLLITERAL)) {
             // XML literal
             try {
               string literal = ExclusiveCanonicalXML.canonicalize(
-  node,
-  false,
-  namespacesLocal);
+                node,
+                false,
+                namespacesLocal);
               currentProperty = RDFTerm.fromTypedString(literal, datatypeValue);
             } catch (ArgumentException) {
               // failure to canonicalize
@@ -1087,7 +1085,7 @@ new Dictionary<string, string>(this.context.ValueIriMap);
             currentProperty = (!String.IsNullOrEmpty(localLanguage)) ?
                 RDFTerm.fromLangString(literal, localLanguage) :
                   RDFTerm.fromTypedString(literal);
-          } else if (rel == null && content == null && rev == null) {
+                } else if (rel == null && content == null && rev == null) {
             RDFTerm resource = this.getSafeCurieOrCurieOrIri(
                 node.getAttribute("resource"),
                 iriMapLocal);
@@ -1143,14 +1141,14 @@ new Dictionary<string, string>(this.context.ValueIriMap);
             valueTripleList.Add(newSubject);
           } else if (triple.ValueDirection == ChainingDirection.Forward) {
             this.outputGraph.Add(new RDFTriple(
-                this.context.ValueParentSubject,
-                triple.ValuePredicate,
-                newSubject));
+              this.context.ValueParentSubject,
+              triple.ValuePredicate,
+              newSubject));
           } else {
             this.outputGraph.Add(new RDFTriple(
-                newSubject,
-                triple.ValuePredicate,
-                this.context.ValueParentSubject));
+              newSubject,
+              triple.ValuePredicate,
+              this.context.ValueParentSubject));
           }
         }
       }
@@ -1209,13 +1207,13 @@ new Dictionary<string, string>(this.context.ValueIriMap);
               RDFTerm nextBnode = (i == valueTripleList.Count - 1) ?
                   this.generateBlankNode() : RDFTerm.NIL;
               this.outputGraph.Add(new RDFTriple(
-              bnode,
-              RDFTerm.FIRST,
-              valueTripleList[i]));
+                bnode,
+                RDFTerm.FIRST,
+                valueTripleList[i]));
               this.outputGraph.Add(new RDFTriple(
-                  bnode,
-                  RDFTerm.REST,
-                  nextBnode));
+                bnode,
+                RDFTerm.REST,
+                nextBnode));
               bnode = nextBnode;
             }
           }
@@ -1230,8 +1228,8 @@ new Dictionary<string, string>(this.context.ValueIriMap);
       return (URIUtility.SplitIRI(iri) == null) ? null :
    RDFTerm.fromIRI(
   URIUtility.RelativeResolve(
-  iri,
-  this.context.ValueBaseURI));
+    iri,
+    this.context.ValueBaseURI));
     }
   }
 }

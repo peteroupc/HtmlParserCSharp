@@ -6,8 +6,7 @@ using com.upokecenter.net;
 using com.upokecenter.util;
 
 namespace com.upokecenter.html {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.html.HtmlDocument"]/*'/>
+    /// <summary>Not documented yet.</summary>
 public static class HtmlDocument {
     /*
   private sealed class ParseURLListener : IResponseListener<IDocument> {
@@ -20,35 +19,13 @@ public IDocument processResponse(string url, IReader
     }
   }
 
-    /// <xmlbegin id="2"/><summary>* Gets the absolute URL from an HTML element. @param node
+    /// <summary>* Gets the absolute URL from an HTML element. @param node
     /// A HTML element containing a URL @return an absolute URL of the
     /// element's SRC, DATA, or HREF, or an empty _string if none
     /// exists.</summary>
     /// <param name='node'>The parameter <paramref name='node'/> is not
     /// documented yet.</param>
     /// <returns>A string object.</returns>
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
   public static string getHref(IElement node) {
     string name = node.getTagName();
     string href="";
@@ -76,7 +53,7 @@ public IDocument processResponse(string url, IReader
       (HtmlDocument.resolveURL(node, href, null));
   }
 
-    /// <xmlbegin id="3"/><summary>Utility method for converting a relative URL to an
+    /// <summary>Utility method for converting a relative URL to an
     /// absolute one, using the _base URI and the encoding of the given
     /// node. @param node An HTML node, usually an IDocument or IElement
     /// @param href A relative or absolute URL. @return An absolute
@@ -86,51 +63,37 @@ public IDocument processResponse(string url, IReader
     /// <param name='href'>The parameter <paramref name='href'/> is not
     /// documented yet.</param>
     /// <returns>A string object.</returns>
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
   public static string getHref(INode node, string href) {
     return (href==null || href.Length==0) ? ("") :
 
         (HtmlDocument.resolveURL(
-         node,
-         href,
-         null));
+          node,
+          href,
+          null));
   }
     */
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.FromString(System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='str'>The parameter <paramref name='str'/> is a text
+    /// string.</param>
+    /// <returns>An IDocument object.</returns>
     public static IDocument FromString(string str) {
       byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
       return parseStream(DataIO.ToReader(bytes));
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.ParseTokens(System.String,System.String,System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='str'>The parameter <paramref name='str'/> is a text
+    /// string.</param>
+    /// <param name='state'>The parameter <paramref name='state'/> is a
+    /// text string.</param>
+    /// <param name='lst'>The parameter <paramref name='lst'/> is a text
+    /// string.</param>
+    /// <returns>An IList(string[]) object.</returns>
    public static IList<string[]> ParseTokens(
-  string str,
-  string state,
-  string lst) {
+     string str,
+     string state,
+     string lst) {
 byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
 
         // TODO: add lang (from Content-Language?)
@@ -142,15 +105,20 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
   return parser.parseTokens(state, lst);
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.FromString(System.String,System.Boolean)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='str'>The parameter <paramref name='str'/> is a text
+    /// string.</param>
+    /// <param name='checkError'>Either <c>true</c> or <c>false</c>.</param>
+    /// <returns>An IDocument object.</returns>
     public static IDocument FromString(string str, bool checkError) {
       byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
       return parseStream(DataIO.ToReader(bytes), checkError);
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.CreateHtmlElement(System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>The parameter <paramref name='name'/> is a text
+    /// string.</param>
+    /// <returns>An IElement object.</returns>
   public static IElement CreateHtmlElement(string name) {
        var valueElement = new Element();
             valueElement.setLocalName(name);
@@ -158,8 +126,12 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
             return valueElement;
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.CreateElement(System.String,System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='name'>The parameter <paramref name='name'/> is a text
+    /// string.</param>
+    /// <param name='namespaceName'>The parameter <paramref
+    /// name='namespaceName'/> is a text string.</param>
+    /// <returns>An IElement object.</returns>
   public static IElement CreateElement(string name, string namespaceName) {
        var valueElement = new Element();
             valueElement.setLocalName(name);
@@ -167,26 +139,34 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
             return valueElement;
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.ToDebugString(System.Collections.Generic.IList{com.upokecenter.html.INode})"]/*'/>
     public static string ToDebugString(IList<INode> nodes) {
 return Document.toDebugString(nodes);
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.FragmentFromString(System.String,com.upokecenter.html.IElement)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='str'>The parameter <paramref name='str'/> is a text
+    /// string.</param>
+    /// <param name='context'>The parameter <paramref name='context'/> is
+    /// a.upokecenter.html.IElement object.</param>
+    /// <returns>An IList(INode) object.</returns>
   public static IList<INode> FragmentFromString(
-  string str,
-  IElement context) {
+    string str,
+    IElement context) {
 return FragmentFromString(str, context, false);
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.FragmentFromString(System.String,com.upokecenter.html.IElement,System.Boolean)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='str'>The parameter <paramref name='str'/> is a text
+    /// string.</param>
+    /// <param name='context'>The parameter <paramref name='context'/> is
+    /// a.upokecenter.html.IElement object.</param>
+    /// <param name='checkError'>The parameter <paramref
+    /// name='checkError'/> is either <c>true</c> or <c>false</c>.</param>
+    /// <returns>An IList(INode) object.</returns>
     public static IList<INode> FragmentFromString(
-  string str,
-  IElement context,
-  bool checkError) {
+      string str,
+      IElement context,
+      bool checkError) {
 byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
 
         // TODO: add lang (from Content-Language?)
@@ -199,62 +179,108 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
       return ret;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader)"]/*'/>
+    /// <summary>Parses an HTML document from an input stream, using
+    /// "about:blank" as its address. @param stream an input stream @ if an
+    /// I/O error occurs.</summary>
+    /// <param name='stream'>The parameter <paramref name='stream'/> is a
+    /// IReader object.</param>
+    /// <returns>An IDocument object.</returns>
   public static IDocument parseStream(IReader stream) {
     return parseStream(stream, "about:blank");
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.Boolean)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='stream'>The parameter <paramref name='stream'/> is a
+    /// IReader object.</param>
+    /// <param name='checkError'>The parameter <paramref
+    /// name='checkError'/> is either <c>true</c> or <c>false</c>.</param>
+    /// <returns>An IDocument object.</returns>
   public static IDocument parseStream(IReader stream, bool checkError) {
     return parseStream(stream, "about:blank", "text/html", null, checkError);
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='stream'>The parameter <paramref name='stream'/> is a
+    /// IReader object.</param>
+    /// <param name='address'>The parameter <paramref name='address'/> is a
+    /// text string.</param>
+    /// <returns>An IDocument object.</returns>
   public static IDocument parseStream(
-      IReader stream,
-      string address) {
+    IReader stream,
+    string address) {
     return parseStream(stream, address, "text/html");
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='stream'>The parameter <paramref name='stream'/> is a
+    /// IReader object.</param>
+    /// <param name='address'>The parameter <paramref name='address'/> is a
+    /// text string.</param>
+    /// <param name='contentType'>The parameter <paramref
+    /// name='contentType'/> is a text string.</param>
+    /// <returns>An IDocument object.</returns>
   public static IDocument parseStream(
-      IReader stream,
-      string address,
-      string contentType) {
+    IReader stream,
+    string address,
+    string contentType) {
     return parseStream(stream, address, contentType, null);
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String,System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='stream'>The parameter <paramref name='stream'/> is a
+    /// IReader object.</param>
+    /// <param name='address'>The parameter <paramref name='address'/> is a
+    /// text string.</param>
+    /// <param name='contentType'>The parameter <paramref
+    /// name='contentType'/> is a text string.</param>
+    /// <param name='contentLang'>The parameter <paramref
+    /// name='contentLang'/> is a text string.</param>
+    /// <returns>An IDocument object.</returns>
   public static IDocument parseStream(
-      IReader stream,
-      string address,
-      string contentType,
-      string contentLang) {
+    IReader stream,
+    string address,
+    string contentType,
+    string contentLang) {
 return parseStream(stream, address, contentType, contentLang, false);
   }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String,System.String,System.Boolean)"]/*'/>
+    /// <summary>* Parses an HTML document from an input stream, using the
+    /// given URL as its address. @param stream an input stream
+    /// representing an HTML document. @param address an absolute URL
+    /// representing an address. @param contentType Desired MIME media type
+    /// of the document, including the charset parameter, if any. Examples:
+    /// "text/html" or "application/xhtml+xml; charset=utf-8". @param
+    /// contentLang Language tag from the Content-Language header @return
+    /// an IDocument representing the HTML document. @ if an I/O error
+    /// occurs @ if the given address is not an absolute URL.</summary>
+    /// <param name='stream'>The parameter <paramref name='stream'/> is a
+    /// IReader object.</param>
+    /// <param name='address'>The parameter <paramref name='address'/> is a
+    /// text string.</param>
+    /// <param name='contentType'>The parameter <paramref
+    /// name='contentType'/> is a text string.</param>
+    /// <param name='contentLang'>The parameter <paramref
+    /// name='contentLang'/> is a text string.</param>
+    /// <param name='checkError'>Either <c>true</c> or <c>false</c>.</param>
+    /// <returns>An IDocument object.</returns>
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='stream'/> or <paramref name='address'/> or <paramref
+    /// name='contentType'/> is null.</exception>
   public static IDocument parseStream(
-      IReader stream,
-      string address,
-      string contentType,
-      string contentLang,
-      bool checkError) {
+    IReader stream,
+    string address,
+    string contentType,
+    string contentLang,
+    bool checkError) {
     if (stream == null) {
- throw new ArgumentNullException(nameof(stream));
-}
+      throw new ArgumentNullException(nameof(stream));
+    }
     if (address == null) {
- throw new ArgumentNullException(nameof(address));
-}
+      throw new ArgumentNullException(nameof(address));
+    }
     if (contentType == null) {
- throw new ArgumentNullException(nameof(contentType));
-}
+      throw new ArgumentNullException(nameof(contentType));
+    }
       // TODO: Use MediaType to get media type and charset
       string mediatype = contentType;
       string charset = "utf-8";
@@ -267,7 +293,7 @@ return parseStream(stream, address, contentType, contentLang, false);
 mediatype.Equals("application/xml") ||
 mediatype.Equals("image/svg+xml") ||
 mediatype.Equals("text/xml")) {
-        throw new NotSupportedException();
+      throw new NotSupportedException();
 // var parser = new XhtmlParser(stream, address, charset, contentLang);
  // return parser.parse();
     } else {

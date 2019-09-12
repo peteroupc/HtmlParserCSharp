@@ -14,8 +14,8 @@ using PeterO;
 using PeterO.Text;
 
 namespace com.upokecenter.util {
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="T:com.upokecenter.util.URL"]/*'/>
+    /// <summary>A URL _object under the WHATWG's URL specification. See
+    /// http://url.spec.whatwg.org/.</summary>
   public sealed class URL {
     private enum ParseState {
       SchemeStart,
@@ -36,8 +36,8 @@ namespace com.upokecenter.util {
     // encodingerror uses ? as repl. ch. when encoding
     // querySerializerError uses decimal HTML entity of bad c.p. when encoding
     private static void appendOutputBytes(
-  StringBuilder builder,
-  byte[] bytes) {
+      StringBuilder builder,
+      byte[] bytes) {
       for (int i = 0; i < bytes.Length; ++i) {
         int c = bytes[i] & 0xff;
         if (c == 0x20) {
@@ -79,8 +79,8 @@ namespace com.upokecenter.util {
             if ((c & 0xfc00) == 0xd800 && index + 1 < ending &&
                 (stringValue[index + 1] & 0xfc00) == 0xdc00) {
               // Get the Unicode code point for the surrogate pair
-            c = 0x10000 + ((c - 0xd800) << 10) + (stringValue[index + 1] -
-                0xdc00);
+            c = 0x10000 + ((c & 0x3ff) << 10) + (stringValue[index + 1] &
+0x3ff);
               ++index;
             } else if ((c & 0xf800) == 0xd800) {
               // illegal surrogate
@@ -206,39 +206,60 @@ namespace com.upokecenter.util {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >=
           '0' && c <= '9') || ((c & 0x7F) == c && "!$&'()*+,-./:;=?@_~"
           .IndexOf((char)c) >= 0);
-      } else if ((c & 0xfffe) == 0xfffe) {
-        return false;
-   } else return ((c >= 0xa0 && c <= 0xd7ff) || (c >= 0xe000 && c <= 0xfdcf)
+        } else if ((c & 0xfffe) == 0xfffe) {
+          return false;
+        } else return ((c >= 0xa0 && c <= 0xd7ff) || (c >= 0xe000 && c <=
+0xfdcf)
         ||
     (c >= 0xfdf0 && c <= 0xffef) || (c >= 0x10000 && c <= 0x10fffd)) ?
          true : false;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.parse(System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='s'>The parameter <paramref name='s'/> is a text
+    /// string.</param>
+    /// <returns>An URL object.</returns>
     public static URL parse(string s) {
       return parse(s, null, null, false);
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.parse(System.String,com.upokecenter.util.URL)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='s'>The parameter <paramref name='s'/> is a text
+    /// string.</param>
+    /// <param name='baseurl'>The parameter <paramref name='baseurl'/> is
+    /// a.upokecenter.util.URL object.</param>
+    /// <returns>An URL object.</returns>
     public static URL parse(string s, URL baseurl) {
       return parse(s, baseurl, null, false);
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.parse(System.String,com.upokecenter.util.URL,System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='s'>The parameter <paramref name='s'/> is a text
+    /// string.</param>
+    /// <param name='baseurl'>The parameter <paramref name='baseurl'/> is
+    /// a.upokecenter.util.URL object.</param>
+    /// <param name='encoding'>The parameter <paramref name='encoding'/> is
+    /// a text string.</param>
+    /// <returns>An URL object.</returns>
     public static URL parse(string s, URL baseurl, string encoding) {
       return parse(s, baseurl, encoding, false);
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.parse(System.String,com.upokecenter.util.URL,System.String,System.Boolean)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='s'>The parameter <paramref name='s'/> is a text
+    /// string.</param>
+    /// <param name='baseurl'>The parameter <paramref name='baseurl'/> is
+    /// a.upokecenter.util.URL object.</param>
+    /// <param name='encoding'>The parameter <paramref name='encoding'/> is
+    /// a text string.</param>
+    /// <param name='strict'>The parameter <paramref name='strict'/> is
+    /// either <c>true</c> or <c>false</c>.</param>
+    /// <returns>An URL object.</returns>
  public static URL parse(
-  string s,
-  URL baseurl,
-  string encoding,
-  bool strict) {
+   string s,
+   URL baseurl,
+   string encoding,
+   bool strict) {
       if (s == null) {
         throw new ArgumentException();
       }
@@ -300,7 +321,7 @@ namespace com.upokecenter.util {
           if ((c & 0xfc00) == 0xd800 && index + 1 < ending &&
               (s[index + 1] & 0xfc00) == 0xdc00) {
             // Get the Unicode code point for the surrogate pair
-            c = 0x10000 + ((c - 0xd800) << 10) + (s[index + 1] - 0xdc00);
+            c = 0x10000 + ((c & 0x3ff) << 10) + (s[index + 1] & 0x3ff);
             ++index;
           } else if ((c & 0xf800) == 0xd800) {
             // illegal surrogate
@@ -315,8 +336,8 @@ namespace com.upokecenter.util {
   { buffer.Append((char)(c + 0x20));
 }
   } else if (c + 0x20 <= 0x10ffff) {
-buffer.Append((char)((((c + 0x20 - 0x10000) >> 10) & 0x3ff) + 0xd800));
-buffer.Append((char)(((c + 0x20 - 0x10000) & 0x3ff) + 0xdc00));
+    buffer.Append((char)((((c + 0x20 - 0x10000) >> 10) & 0x3ff) | 0xd800));
+buffer.Append((char)(((c + 0x20 - 0x10000) & 0x3ff) | 0xdc00));
 }
               state = ParseState.Scheme;
             } else if (c >= 'a' && c <= 'z') {
@@ -324,8 +345,8 @@ buffer.Append((char)(((c + 0x20 - 0x10000) & 0x3ff) + 0xdc00));
   { buffer.Append((char)(c));
 }
   } else if (c <= 0x10ffff) {
-buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+    buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
               state = ParseState.Scheme;
             } else {
@@ -339,8 +360,8 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
   { buffer.Append((char)(c + 0x20));
 }
   } else if (c + 0x20 <= 0x10ffff) {
-buffer.Append((char)((((c + 0x20 - 0x10000) >> 10) & 0x3ff) + 0xd800));
-buffer.Append((char)(((c + 0x20 - 0x10000) & 0x3ff) + 0xdc00));
+    buffer.Append((char)((((c + 0x20 - 0x10000) >> 10) & 0x3ff) | 0xd800));
+buffer.Append((char)(((c + 0x20 - 0x10000) & 0x3ff) | 0xdc00));
 }
        } else if ((c >= 'a' && c <= 'z') || c == '.' || c == '-' || c ==
               '+') {
@@ -348,8 +369,8 @@ buffer.Append((char)(((c + 0x20 - 0x10000) & 0x3ff) + 0xdc00));
   { buffer.Append((char)(c));
 }
   } else if (c <= 0x10ffff) {
-buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+    buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
             } else if (c == ':') {
               url.scheme = buffer.ToString();
@@ -404,8 +425,8 @@ url.scheme.Equals("file")) {
   { schemeData.Append((char)c);
 }
   } else if (c <= 0x10ffff) {
-schemeData.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-schemeData.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+    schemeData.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+schemeData.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
               } else {
                 percentEncodeUtf8(schemeData, c);
@@ -421,8 +442,8 @@ schemeData.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
   "https") || baseurl.scheme.Equals("ftp") || baseurl.scheme.Equals(
   "gopher") || baseurl.scheme.Equals("ws") || baseurl.scheme.Equals("wss") ||
                 baseurl.scheme.Equals("file"))) {
-              return null;
-            }
+         return null;
+       }
             state = ParseState.Relative;
             index = oldindex;
             break;
@@ -468,7 +489,7 @@ schemeData.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
                 url.host = baseurl.host;
                 url.port = baseurl.port;
                 path = pathList(baseurl.path);
-                if (path.Count > 0) {  // Pop path
+                if (path.Count > 0) { // Pop path
                   path.RemoveAt(path.Count - 1);
                 }
                 state = ParseState.RelativePath;
@@ -483,7 +504,7 @@ schemeData.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
               }
               state = "file".Equals(url.scheme) ? ParseState.FileHost :
                 ParseState.AuthorityIgnoreSlashes;
-            } else {
+              } else {
               if (baseurl != null) {
                 url.host = baseurl.host;
                 url.port = baseurl.port;
@@ -532,8 +553,8 @@ schemeData.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
               for (var i = 0; i < bstr.Length; ++i) {
                 int cp = DataUtilities.CodePointAt(bstr, i);
                 if (cp >= 0x10000) {
- ++i;
-}
+                  ++i;
+                }
                 if (cp == 0x9 || cp == 0xa || cp == 0xd) {
                   error = true;
                   continue;
@@ -556,8 +577,8 @@ schemeData.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
   { result.Append((char)cp);
 }
   } else if (cp <= 0x10ffff) {
-result.Append((char)((((cp - 0x10000) >> 10) & 0x3ff) + 0xd800));
-result.Append((char)(((cp - 0x10000) & 0x3ff) + 0xdc00));
+    result.Append((char)((((cp - 0x10000) >> 10) & 0x3ff) | 0xd800));
+result.Append((char)(((cp - 0x10000) & 0x3ff) | 0xdc00));
 }
                 }
               }
@@ -566,7 +587,7 @@ result.Append((char)(((cp - 0x10000) & 0x3ff) + 0xdc00));
               // DebugUtility.Log("password=%s",password);
               buffer.Remove(0, buffer.Length);
               hostStart = index;
-      } else if (c < 0 || ((c & 0x7F) == c && "/\\?#" .IndexOf((char)c) >=
+            } else if (c < 0 || ((c & 0x7F) == c && "/\\?#" .IndexOf((char)c) >=
               0)) {
               buffer.Remove(0, buffer.Length);
               state = ParseState.Host;
@@ -576,8 +597,8 @@ result.Append((char)(((cp - 0x10000) & 0x3ff) + 0xdc00));
   { buffer.Append((char)(c));
 }
   } else if (c <= 0x10ffff) {
-buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+    buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
             }
             break;
@@ -607,8 +628,8 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
   { buffer.Append((char)(c));
 }
   } else if (c <= 0x10ffff) {
-buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+    buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
             }
             break;
@@ -622,7 +643,7 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
               url.host = host;
               buffer.Remove(0, buffer.Length);
               state = ParseState.Port;
-      } else if (c < 0 || ((c & 0x7F) == c && "/\\?#" .IndexOf((char)c) >=
+            } else if (c < 0 || ((c & 0x7F) == c && "/\\?#" .IndexOf((char)c) >=
               0)) {
               string host = hostParse(buffer.ToString());
               if (host == null) {
@@ -644,25 +665,25 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
   { buffer.Append((char)(c));
 }
   } else if (c <= 0x10ffff) {
-buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+    buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
             }
             break;
           case ParseState.Port:
             if (c >= '0' && c <= '9') {
               if (c != '0') {
-                portstate = 2;  // first non-zero found
+                portstate = 2; // first non-zero found
               } else if (portstate == 0) {
-                portstate = 1;  // have a port number
+                portstate = 1; // have a port number
               }
               if (portstate == 2) {
                 if (c <= 0xffff) {
   { buffer.Append((char)c);
 }
   } else if (c <= 0x10ffff) {
-buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+    buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
               }
       } else if (c < 0 || ((c & 0x7F) == c && "/\\?#" .IndexOf((char)c) >=
@@ -713,8 +734,8 @@ string bstr = buffer.ToString();
                 for (var i = 0; i < bstr.Length; ++i) {
                   int ch = DataUtilities.CodePointAt(bstr, i);
                   if (ch >= 0x10000) {
- ++i;
-}
+                    ++i;
+                  }
                   if (ch < 0x21 || ch > 0x7e || ch == 0x22 || ch == 0x23 ||
                     ch == 0x3c || ch == 0x3e || ch == 0x60) {
                     percentEncodeUtf8(query, ch);
@@ -731,7 +752,7 @@ string bstr = buffer.ToString();
                   foreach (var ch in bytes) {
                     if (ch < 0x21 || ch > 0x7e || ch == 0x22 || ch == 0x23 ||
                     ch == 0x3c || ch == 0x3e || ch == 0x60) {
-                    percentEncode(query, ch);
+                      percentEncode(query, ch);
                     } else {
   { query.Append((char)ch);
 }
@@ -755,8 +776,8 @@ string bstr = buffer.ToString();
   { buffer.Append((char)(c));
 }
   } else if (c <= 0x10ffff) {
-buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+    buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
             }
             break;
@@ -793,8 +814,8 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
                   int c2 = buffer[1];
      if ((c2 == '|' || c2 == ':') && ((c1 >= 'A' && c1 <= 'Z') || (c1 >=
                 'a' && c1 <= 'z'))) {
-                    buffer[1] = ':';
-                  }
+       buffer[1] = ':';
+     }
                 }
                 path.Add(buffer.ToString());
               }
@@ -811,9 +832,9 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
                 (s[index + 1] == 'e' || s[index + 1] == 'E')) {
               index += 2;
       buffer.Append((char)('.'));
-            } else if (c == 0x09 || c == 0x0a || c == 0x0d) {
-              error = true;
-            } else {
+    } else if (c == 0x09 || c == 0x0a || c == 0x0d) {
+      error = true;
+    } else {
               if ((!isUrlCodePoint(c) && c != '%') || (c == '%' &&
                   (index + 2 > ending || !isHexDigit(s[index]) ||
                     !isHexDigit(s[index + 1])))) {
@@ -827,8 +848,8 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
   { buffer.Append((char)(c));
 }
   } else if (c <= 0x10ffff) {
-buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+    buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
               }
             }
@@ -852,8 +873,8 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
   { fragment.Append((char)(c));
 }
   } else if (c <= 0x10ffff) {
-fragment.Append((char)((((c - 0x10000) >> 10) & 0x3ff) + 0xd800));
-fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+    fragment.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
+fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
               } else {
                 percentEncodeUtf8(fragment, c);
@@ -894,14 +915,24 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
       return url;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.parseQueryString(System.String,System.String,System.String,System.Boolean,System.Boolean)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='input'>The parameter <paramref name='input'/> is a
+    /// text string.</param>
+    /// <param name='delimiter'>The parameter <paramref name='delimiter'/>
+    /// is a text string.</param>
+    /// <param name='encoding'>The parameter <paramref name='encoding'/> is
+    /// a text string.</param>
+    /// <param name='useCharset'>The parameter <paramref
+    /// name='useCharset'/> is either <c>true</c> or <c>false</c>.</param>
+    /// <param name='isindex'>The parameter <paramref name='isindex'/> is
+    /// either <c>true</c> or <c>false</c>.</param>
+    /// <returns>An IList(string[]) object.</returns>
     public static IList<string[]> parseQueryString(
-        string input,
-        string delimiter,
-        string encoding,
-        bool useCharset,
-        bool isindex) {
+      string input,
+      string delimiter,
+      string encoding,
+      bool useCharset,
+      bool isindex) {
       if (input == null) {
         throw new ArgumentException();
       }
@@ -948,8 +979,10 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
       return pairs;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.pathList(System.String)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='s'>The parameter <paramref name='s'/> is a text
+    /// string.</param>
+    /// <returns>An IList(string) object.</returns>
     public static IList<string> pathList(string s) {
       IList<string> str = new List<string>();
       if (s == null || s.Length == 0) {
@@ -1044,11 +1077,19 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
       }
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.EncodeToBytesHtml(PeterO.Text.ICharacterInput,PeterO.Text.ICharacterEncoder)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='input'>The parameter <paramref name='input'/> is
+    /// a.Text.ICharacterInput object.</param>
+    /// <param name='encoder'>The parameter <paramref name='encoder'/> is
+    /// a.Text.ICharacterEncoder object.</param>
+    /// <returns>A byte array.</returns>
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='encoder'/> or <paramref name='input'/> is null.</exception>
+    /// <exception cref='ArgumentException'>Code point out of
+    /// range.</exception>
     public static byte[] EncodeToBytesHtml(
-  PeterO.Text.ICharacterInput input,
-  ICharacterEncoder encoder) {
+      PeterO.Text.ICharacterInput input,
+      ICharacterEncoder encoder) {
       if (encoder == null) {
         throw new ArgumentNullException(nameof(encoder));
       }
@@ -1082,8 +1123,6 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
       return writer.ToArray();
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.toQueryString(System.Collections.Generic.IList{System.String[]},System.String,System.String)"]/*'/>
     public static string toQueryString(
   IList<string[]> pairs,
   string delimiter,
@@ -1111,7 +1150,7 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
   EncodeToBytesHtml(Encodings.StringToInput(pair[0]), encoder));
         builder.Append('=');
         {
-StringBuilder objectTemp = builder;
+          StringBuilder objectTemp = builder;
 byte[] objectTemp2 = EncodeToBytesHtml(
           Encodings.StringToInput(pair[1]),
           encoder);
@@ -1139,8 +1178,10 @@ appendOutputBytes(objectTemp, objectTemp2);
 
     private string port = String.Empty;
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.Equals(System.Object)"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <param name='obj'>The parameter <paramref name='obj'/> is a Object
+    /// object.</param>
+    /// <returns>Either <c>true</c> or <c>false</c>.</returns>
     public override bool Equals(object obj) {
       if (this == obj) {
         return true;
@@ -1218,46 +1259,46 @@ appendOutputBytes(objectTemp, objectTemp2);
       return true;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getFragment"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getFragment() {
       return this.fragment ?? String.Empty;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getHash"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getHash() {
       return String.IsNullOrEmpty(this.fragment) ? String.Empty : "#" +
         this.fragment;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getHost"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getHost() {
       return (this.port.Length == 0) ? hostSerialize(this.host) :
         (hostSerialize(this.host) + ":" + this.port);
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getHostname"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getHostname() {
       return hostSerialize(this.host);
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getPassword"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getPassword() {
       return this.password == null ? String.Empty : this.password;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getPath"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getPath() {
       return this.path;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getPathname"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getPathname() {
       if (this.schemeData.Length > 0) {
         return this.schemeData;
@@ -1266,58 +1307,58 @@ appendOutputBytes(objectTemp, objectTemp2);
       }
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getPort"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getPort() {
       return this.port;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getProtocol"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getProtocol() {
       return this.scheme + ":";
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getQueryString"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getQueryString() {
       return this.query == null ? String.Empty : this.query;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getScheme"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getScheme() {
       return this.scheme;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getSchemeData"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getSchemeData() {
       return this.schemeData;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getSearch"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getSearch() {
       return (this.query == null || this.query.Length == 0) ? String.Empty :
         "?" + this.query;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.getUsername"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>A text string.</returns>
     public string getUsername() {
       return this.username == null ? String.Empty : this.username;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.GetHashCode"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>The return value is not documented yet.</returns>
     public override sealed int GetHashCode() {
       var prime = 31;
       var result = 17;
 if (this.fragment != null) {
-        for (var i = 0; i < this.fragment.Length; ++i) {
-          result = (prime * result) + this.fragment[i];
-        }
+  for (var i = 0; i < this.fragment.Length; ++i) {
+    result = (prime * result) + this.fragment[i];
+  }
       }
       if (this.host != null) {
         for (var i = 0; i < this.host.Length; ++i) {
@@ -1362,8 +1403,8 @@ if (this.fragment != null) {
             return result;
     }
 
-    /// <include file='../../../../docs.xml'
-    /// path='docs/doc[@name="M:com.upokecenter.util.URL.ToString"]/*'/>
+    /// <summary>Not documented yet.</summary>
+    /// <returns>The return value is not documented yet.</returns>
     public override sealed string ToString() {
       var builder = new StringBuilder();
       builder.Append(this.scheme);

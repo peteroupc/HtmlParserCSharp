@@ -71,8 +71,8 @@ namespace com.upokecenter.html {
           // leading BOM
           this.valueHavebom = true;
           continue;
-        } else if (c != 0xfeff) {
-          this.valueHavebom = false;
+        } else {
+          this.valueHavebom &= c == 0xfeff;
         }
         if (c < 0x09 || (c >= 0x0e && c <= 0x1f) || (c >= 0x7f && c <= 0x9f) ||
         (c & 0xfffe) == 0xfffe || c > 0x10ffff || c == 0x0b || (c >= 0xfdd0 &&
@@ -154,10 +154,6 @@ namespace com.upokecenter.html {
         --length;
       }
       return count == 0 ? -1 : count;
-    }
-
-    public bool isError() {
-      return this.valueIserror;
     }
   }
 }
