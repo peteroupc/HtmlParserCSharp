@@ -159,6 +159,7 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
     /// @param attrprefix.</summary>
     /// <param name='attrprefix'>The parameter <paramref
     /// name='attrprefix'/> is a text string.</param>
+  ///
   public void setPrefix(string attrprefix) {
     this.valuePrefix = attrprefix;
   }

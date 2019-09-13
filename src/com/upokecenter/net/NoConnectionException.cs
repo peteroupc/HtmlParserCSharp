@@ -29,6 +29,7 @@ using System.IO;
 
 namespace com.upokecenter.net {
     /// <summary>Not documented yet.</summary>
+  ///
 public class NoConnectionException : IOException {
 }
 }

@@ -29,9 +29,11 @@ using System;
 
 namespace com.upokecenter.html {
     /// <summary>Represents text within an HTML document.</summary>
+  ///
 public interface IText : INode {
     /// <summary>Gets this node's text.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    string getData();
 }
 }

@@ -29,23 +29,30 @@ using System;
 
 namespace com.upokecenter.html {
     /// <summary>Contains constants for node types.</summary>
+  ///
 public sealed class NodeType {
     /// <summary>A document node.</summary>
+  ///
   public const int DOCUMENT_NODE = 9;
 
     /// <summary>A comment node.</summary>
+  ///
   public const int COMMENT_NODE = 8;
 
     /// <summary>An HTML element node.</summary>
+  ///
   public const int ELEMENT_NODE = 1;
 
     /// <summary>A node containing text.</summary>
+  ///
   public const int TEXT_NODE = 3;
 
     /// <summary>A DOCTYPE node.</summary>
+  ///
   public const int DOCUMENT_TYPE_NODE = 10;
 
     /// <summary>Not documented yet.</summary>
+  ///
   public const int PROCESSING_INSTRUCTION_NODE = 7;
 
   private NodeType() {

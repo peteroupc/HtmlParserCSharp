@@ -13,6 +13,7 @@ namespace com.upokecenter.util {
     /// <summary>A class for holding tasks that can be referred to by
     /// integer index.</summary>
     /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+  ///
 public sealed class ActionList<T> {
   private IList<IBoundAction<T>> actions;
   private IList<Object> boundObjects;
@@ -21,6 +22,7 @@ public sealed class ActionList<T> {
 
     /// <summary>Initializes a new instance of the
     /// <see cref='ActionList'/> class.</summary>
+  ///
   public ActionList() {
     this.actions = new List<IBoundAction<T>>();
     this.boundObjects = new List<Object>();
@@ -33,6 +35,7 @@ public sealed class ActionList<T> {
     /// <param name='boundObject'>The parameter <paramref
     /// name='boundObject'/> is a Object object.</param>
     /// <returns>Either <c>true</c> or <c>false</c>.</returns>
+  ///
   public bool rebindAction(int actionID, Object boundObject) {
     // DebugUtility.Log("Rebinding action %d",actionID);
     IBoundAction<T> action = null;
@@ -69,6 +72,7 @@ public sealed class ActionList<T> {
     /// <param name='action'>The parameter <paramref name='action'/> is
     /// a.upokecenter.util.IBoundAction{`0} object.</param>
     /// <returns>A 32-bit signed integer.</returns>
+  ///
   public int registerAction(Object boundObject, IBoundAction<T> action) {
     lock (this.syncRoot) {
       for (int i = 0; i < this.actions.Count; ++i) {
@@ -93,6 +97,7 @@ public sealed class ActionList<T> {
     /// <param name='actionID'>The parameter <paramref name='actionID'/> is
     /// a 32-bit signed integer.</param>
     /// <returns>Either <c>true</c> or <c>false</c>.</returns>
+  ///
   public bool removeAction(int actionID) {
     // DebugUtility.Log("Removing action %d",actionID);
     if (actionID < 0) {
@@ -115,6 +120,7 @@ public sealed class ActionList<T> {
     /// <param name='parameters'>The parameter <paramref
     /// name='parameters'/> is a `0[] object.</param>
     /// <returns>Either <c>true</c> or <c>false</c>.</returns>
+  ///
   public bool triggerActionOnce(int actionID, params T[] parameters) {
     // DebugUtility.Log("Triggering action %d",actionID);
     IBoundAction<T> action = null;
@@ -148,6 +154,7 @@ public sealed class ActionList<T> {
     /// <param name='actionID'>The parameter <paramref name='actionID'/> is
     /// a 32-bit signed integer.</param>
     /// <returns>Either <c>true</c> or <c>false</c>.</returns>
+  ///
   public bool unbindAction(int actionID) {
     // DebugUtility.Log("Unbinding action %d",actionID);
     IBoundAction<T> action = null;

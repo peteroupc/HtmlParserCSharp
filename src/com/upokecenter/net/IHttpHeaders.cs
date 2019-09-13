@@ -29,43 +29,52 @@ using System.Collections.Generic;
 
 namespace com.upokecenter.net {
     /// <summary>Not documented yet.</summary>
+  ///
 public interface IHttpHeaders {
     /// <summary>Not documented yet.</summary>
     /// <param name='name'>The parameter <paramref name='name'/> is a
     /// 32-bit signed integer.</param>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    string getHeaderField(int name);
 
     /// <summary>Not documented yet.</summary>
     /// <param name='name'>The parameter <paramref name='name'/> is a text
     /// string.</param>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    string getHeaderField(string name);
 
     /// <summary>Not documented yet.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    long getHeaderFieldDate(string field, long defaultValue);
 
     /// <summary>Not documented yet.</summary>
     /// <param name='name'>The parameter <paramref name='name'/> is a
     /// 32-bit signed integer.</param>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    string getHeaderFieldKey(int name);
 
     /// <summary>Not documented yet.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    IDictionary<string, IList<string>> getHeaderFields();
 
     /// <summary>Not documented yet.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    string getRequestMethod();
 
     /// <summary>Not documented yet.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    int getResponseCode();
 
     /// <summary>Not documented yet.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    string getUrl();
 }
 }

@@ -7,6 +7,7 @@ using com.upokecenter.util;
 
 namespace com.upokecenter.html {
     /// <summary>Not documented yet.</summary>
+  ///
 public static class HtmlDocument {
     /*
   private sealed class ParseURLListener : IResponseListener<IDocument> {
@@ -26,6 +27,7 @@ public IDocument processResponse(string url, IReader
     /// <param name='node'>The parameter <paramref name='node'/> is not
     /// documented yet.</param>
     /// <returns>A string object.</returns>
+  ///
   public static string getHref(IElement node) {
     string name = node.getTagName();
     string href="";
@@ -63,6 +65,7 @@ public IDocument processResponse(string url, IReader
     /// <param name='href'>The parameter <paramref name='href'/> is not
     /// documented yet.</param>
     /// <returns>A string object.</returns>
+  ///
   public static string getHref(INode node, string href) {
     return (href==null || href.Length==0) ? ("") :
 
@@ -77,6 +80,7 @@ public IDocument processResponse(string url, IReader
     /// <param name='str'>The parameter <paramref name='str'/> is a text
     /// string.</param>
     /// <returns>An IDocument object.</returns>
+  ///
     public static IDocument FromString(string str) {
       byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
       return parseStream(DataIO.ToReader(bytes));
@@ -90,6 +94,7 @@ public IDocument processResponse(string url, IReader
     /// <param name='lst'>The parameter <paramref name='lst'/> is a text
     /// string.</param>
     /// <returns>An IList(string[]) object.</returns>
+  ///
    public static IList<string[]> ParseTokens(
      string str,
      string state,
@@ -110,6 +115,7 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
     /// string.</param>
     /// <param name='checkError'>Either <c>true</c> or <c>false</c>.</param>
     /// <returns>An IDocument object.</returns>
+  ///
     public static IDocument FromString(string str, bool checkError) {
       byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
       return parseStream(DataIO.ToReader(bytes), checkError);
@@ -119,6 +125,7 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
     /// <param name='name'>The parameter <paramref name='name'/> is a text
     /// string.</param>
     /// <returns>An IElement object.</returns>
+  ///
   public static IElement CreateHtmlElement(string name) {
        var valueElement = new Element();
             valueElement.setLocalName(name);
@@ -132,6 +139,7 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
     /// <param name='namespaceName'>The parameter <paramref
     /// name='namespaceName'/> is a text string.</param>
     /// <returns>An IElement object.</returns>
+  ///
   public static IElement CreateElement(string name, string namespaceName) {
        var valueElement = new Element();
             valueElement.setLocalName(name);
@@ -149,6 +157,7 @@ return Document.toDebugString(nodes);
     /// <param name='context'>The parameter <paramref name='context'/> is
     /// a.upokecenter.html.IElement object.</param>
     /// <returns>An IList(INode) object.</returns>
+  ///
   public static IList<INode> FragmentFromString(
     string str,
     IElement context) {
@@ -163,6 +172,7 @@ return FragmentFromString(str, context, false);
     /// <param name='checkError'>The parameter <paramref
     /// name='checkError'/> is either <c>true</c> or <c>false</c>.</param>
     /// <returns>An IList(INode) object.</returns>
+  ///
     public static IList<INode> FragmentFromString(
       string str,
       IElement context,
@@ -185,6 +195,7 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
     /// <param name='stream'>The parameter <paramref name='stream'/> is a
     /// IReader object.</param>
     /// <returns>An IDocument object.</returns>
+  ///
   public static IDocument parseStream(IReader stream) {
     return parseStream(stream, "about:blank");
   }
@@ -195,6 +206,7 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
     /// <param name='checkError'>The parameter <paramref
     /// name='checkError'/> is either <c>true</c> or <c>false</c>.</param>
     /// <returns>An IDocument object.</returns>
+  ///
   public static IDocument parseStream(IReader stream, bool checkError) {
     return parseStream(stream, "about:blank", "text/html", null, checkError);
   }
@@ -205,6 +217,7 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
     /// <param name='address'>The parameter <paramref name='address'/> is a
     /// text string.</param>
     /// <returns>An IDocument object.</returns>
+  ///
   public static IDocument parseStream(
     IReader stream,
     string address) {
@@ -219,6 +232,7 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
     /// <param name='contentType'>The parameter <paramref
     /// name='contentType'/> is a text string.</param>
     /// <returns>An IDocument object.</returns>
+  ///
   public static IDocument parseStream(
     IReader stream,
     string address,
@@ -236,6 +250,7 @@ byte[] bytes = DataUtilities.GetUtf8Bytes(str, true);
     /// <param name='contentLang'>The parameter <paramref
     /// name='contentLang'/> is a text string.</param>
     /// <returns>An IDocument object.</returns>
+  ///
   public static IDocument parseStream(
     IReader stream,
     string address,
@@ -266,6 +281,7 @@ return parseStream(stream, address, contentType, contentLang, false);
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='stream'/> or <paramref name='address'/> or <paramref
     /// name='contentType'/> is null.</exception>
+  ///
   public static IDocument parseStream(
     IReader stream,
     string address,

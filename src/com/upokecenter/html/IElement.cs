@@ -30,6 +30,7 @@ using System.Collections.Generic;
 
 namespace com.upokecenter.html {
     /// <summary>Represents an HTML element.</summary>
+  ///
 public interface IElement : INode {
     /// <summary>Gets an attribute declared on this element. @param name an
     /// attribute name. @return the attribute's value, or null if the
@@ -37,6 +38,7 @@ public interface IElement : INode {
     /// <param name='name'>The parameter <paramref name='name'/> is a text
     /// string.</param>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   string getAttribute(string name);
 
     /// <summary>Gets an attribute of this element, with the given
@@ -45,11 +47,13 @@ public interface IElement : INode {
     /// the attribute's value, or null if the attribute doesn't
     /// exist.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   string getAttributeNS(string _namespace, string name);
 
     /// <summary>Gets a list of all attributes declared on this
     /// element.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   IList<IAttr> getAttributes();
 
     /// <summary>Gets all descendents, both direct and indirect, that have
@@ -58,6 +62,7 @@ public interface IElement : INode {
     /// <param name='id'>The parameter <paramref name='id'/> is a text
     /// string.</param>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   IElement getElementById(string id);
 
     /// <summary>Gets all descendents, both direct and indirect, that have
@@ -66,18 +71,21 @@ public interface IElement : INode {
     /// <param name='tagName'>The parameter <paramref name='tagName'/> is a
     /// text string.</param>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   IList<IElement> getElementsByTagName(string tagName);
 
     /// <summary>Gets the value of the id attribute on this element.
     /// @return the value of the id attribute, or null if it doesn't
     /// exist.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   string getId();
 
     /// <summary>Gets a serialized form of this HTML element. @return a
     /// _string consisting of the serialized form of this element's
     /// children, in HTML.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   string getInnerHTML();
 
     /// <summary>Gets the element's local name. For elements with no
@@ -85,21 +93,25 @@ public interface IElement : INode {
     /// element's local name. This method doesn't convert it to uppercase
     /// even for HTML elements, unlike getTagName.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   string getLocalName();
 
     /// <summary>Gets the _namespace name of this element. For HTML
     /// elements, it will equal "http://www.w3.org/1999/xhtml".</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   string getNamespaceURI();
 
     /// <summary>Not documented yet.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   string getPrefix();
 
     /// <summary>Gets the name of the element as used on its HTML tags.
     /// @return the element's tag name. For HTML elements, an uppercase
     /// version of the name will be returned.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   string getTagName();
 }
 }

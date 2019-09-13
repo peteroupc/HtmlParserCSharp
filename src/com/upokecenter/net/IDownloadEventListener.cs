@@ -29,15 +29,18 @@ using System;
 namespace com.upokecenter.net {
     /// <summary>Not documented yet.</summary>
     /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+  ///
 public interface IDownloadEventListener<T> : IResponseListener<T> {
     /// <summary>Not documented yet.</summary>
     /// <param name='url'>The parameter <paramref name='url'/> is a text
     /// string.</param>
+  ///
    void onConnected(string url);
 
     /// <summary>Not documented yet.</summary>
     /// <param name='url'>The parameter <paramref name='url'/> is a text
     /// string.</param>
+  ///
    void onConnecting(string url);
 }
 }

@@ -16,6 +16,7 @@ namespace com.upokecenter.io {
     /// However, when the buffer is disabled, no further bytes are put into
     /// the buffer, but any remaining bytes in the buffer will still be
     /// used until it's exhausted.</summary>
+  ///
   public sealed class ConditionalBufferInputStream :
     IReader, com.upokecenter.html.HtmlParser.IInputStream {
     private byte[] buffer = null;
@@ -29,6 +30,7 @@ namespace com.upokecenter.io {
 
     /// <param name='input'>The parameter <paramref name='input'/> is an
     /// IReader object.</param>
+  ///
     public ConditionalBufferInputStream(IReader input) {
       this.stream = input;
       this.buffer = new byte[1024];
@@ -38,6 +40,7 @@ namespace com.upokecenter.io {
     /// underlying stream. However, any bytes already buffered can still be
     /// read until the buffer is exhausted. After the buffer is exhausted,
     /// this stream will fully delegate to the underlying stream.</summary>
+  ///
     public void disableBuffer() {
       this.disabled = true;
       if (this.buffer != null && this.isDisabled()) {
@@ -76,6 +79,7 @@ namespace com.upokecenter.io {
     /// <summary>Not documented yet.</summary>
     /// <param name='limit'>The parameter <paramref name='limit'/> is a
     /// 32-bit signed integer.</param>
+  ///
     public void mark(int limit) {
       // DebugUtility.Log("mark %d: %s",limit,isDisabled());
       if (this.isDisabled()) {
@@ -93,12 +97,14 @@ namespace com.upokecenter.io {
 
     /// <summary>Not documented yet.</summary>
     /// <returns>Either <c>true</c> or <c>false</c>.</returns>
+  ///
     public bool markSupported() {
       return true;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A 32-bit signed integer.</returns>
+  ///
     public int ReadByte() {
       if (this.markpos < 0) {
         return this.readInternal();
@@ -129,6 +135,7 @@ namespace com.upokecenter.io {
     /// <param name='byteCount'>The parameter <paramref name='byteCount'/>
     /// is a 32-bit signed integer.</param>
     /// <returns>A 32-bit signed integer.</returns>
+  ///
     public int Read(byte[] buffer, int offset, int byteCount) {
       return this.doRead(buffer, offset, byteCount);
     }
@@ -261,6 +268,7 @@ namespace com.upokecenter.io {
     }
 
     /// <summary>Not documented yet.</summary>
+  ///
     public void reset() {
       // DebugUtility.Log("reset: %s",isDisabled());
       if (this.isDisabled()) {
@@ -277,6 +285,7 @@ namespace com.upokecenter.io {
     /// <summary>Resets the stream to the beginning of the input. This will
     /// invalidate the mark placed on the stream, if any. @ if
     /// disableBuffer() was already called.</summary>
+  ///
     public void rewind() {
       if (this.disabled) {
         throw new IOException();
@@ -289,6 +298,7 @@ namespace com.upokecenter.io {
     /// <param name='byteCount'>The parameter <paramref name='byteCount'/>
     /// is a 64-bit signed integer.</param>
     /// <returns>A 64-bit signed integer.</returns>
+  ///
     public long skip(long byteCount) {
       if (this.isDisabled()) {
         throw new NotSupportedException();

@@ -13,6 +13,7 @@ using System.Text;
 namespace com.upokecenter.util {
     /// <summary>Contains utility methods for working with
     /// strings.</summary>
+  ///
   public static class StringUtility {
     private static readonly string[] ValueEmptyStringArray = new string[0];
 
@@ -20,6 +21,7 @@ namespace com.upokecenter.util {
     /// <param name='s'>The parameter <paramref name='s'/> is a text
     /// string.</param>
     /// <returns>Either <c>true</c> or <c>false</c>.</returns>
+  ///
     public static bool isNullOrSpaces(string s) {
       if (s == null) {
         return true;
@@ -52,6 +54,7 @@ namespace com.upokecenter.util {
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='delimiter'/> is null.</exception>
     /// <exception cref='ArgumentException'>Delimiter is empty.</exception>
+  ///
     public static string[] splitAt(string str, string delimiter) {
       if (delimiter == null) {
         throw new ArgumentNullException(nameof(delimiter));
@@ -98,6 +101,7 @@ namespace com.upokecenter.util {
     /// <param name='s'>The parameter <paramref name='s'/> is a text
     /// string.</param>
     /// <returns>A string[] object.</returns>
+  ///
     public static string[] SplitAtSpTabCrLf(string s) {
       if (s == null || s.Length == 0) {
         return ValueEmptyStringArray;
@@ -150,6 +154,7 @@ namespace com.upokecenter.util {
     /// <param name='s'>The parameter <paramref name='s'/> is a text
     /// string.</param>
     /// <returns>A string[] object.</returns>
+  ///
     public static string[] SplitAtSpTabCrLfFf(string s) {
       if (s == null || s.Length == 0) {
         return ValueEmptyStringArray;

@@ -32,6 +32,7 @@ THE SOFTWARE.
 namespace com.upokecenter.net {
     /// <summary>Contains methods useful for parsing header
     /// fields.</summary>
+  ///
   public sealed class HeaderParser {
     private static string[] emptyStringArray = new string[0];
 

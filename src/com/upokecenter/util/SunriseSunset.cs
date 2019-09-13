@@ -8,19 +8,25 @@ released to the public domain by Paul Schlyter, December 1992
 namespace com.upokecenter.util {
     /// <summary>Contains utility methods for calculating sunrise and
     /// sunset.</summary>
+  ///
   public sealed class SunriseSunset {
     /// <summary>A rough time of day.</summary>
+  ///
     public enum DayState {
     /// <summary>Day light.</summary>
+  ///
       Day,
 
     /// <summary>Approaching nighttime.</summary>
+  ///
       DayToNight,
 
     /// <summary>The time of day is nighttime.</summary>
+  ///
       Night,
 
     /// <summary>Approaching daytime.</summary>
+  ///
       NightToDay
     }
 
@@ -220,6 +226,7 @@ namespace com.upokecenter.util {
     /// <param name='lon'>The parameter <paramref name='lon'/> is a Double
     /// object.</param>
     /// <returns>A DayState object.</returns>
+  ///
     public static DayState getCurrentDayState(double lat, double lon) {
       int[] components = DateTimeUtility.getCurrentGmtDateComponents();
       var trise = new double[1];

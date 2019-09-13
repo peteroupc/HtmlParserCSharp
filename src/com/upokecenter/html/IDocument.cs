@@ -34,20 +34,24 @@ public interface IDocument : INode {
     /// <summary>Gets the character encoding used in this document. @return
     /// A character encoding name.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   string getCharset();
 
     /// <summary>Gets the document type of this document, if any.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    IDocumentType getDoctype();
 
     /// <summary>Gets the root element of this document.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    IElement getDocumentElement();
 
     /// <summary>Not documented yet.</summary>
     /// <param name='id'>The parameter <paramref name='id'/> is a text
     /// string.</param>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   IElement getElementById(string id);
 
     /// <summary>Gets all descendents, both direct and indirect, that have
@@ -56,11 +60,13 @@ public interface IDocument : INode {
     /// <param name='_string'>The parameter <paramref name='_string'/> is a
     /// text string.</param>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   IList<IElement> getElementsByTagName(string _string);
 
     /// <summary>Gets the document's address @return An absolute
     /// URL.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   string getURL();
 }
 }

@@ -7,6 +7,7 @@ using com.upokecenter.util;
 
 namespace com.upokecenter.html.data {
     /// <summary>Not documented yet.</summary>
+  ///
 public sealed class Microdata {
   private class ElementAndIndex {
       internal int Index { get; set; }
@@ -78,6 +79,7 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
     /// <param name='document'>The parameter <paramref name='document'/> is
     /// a.upokecenter.html.IDocument object.</param>
     /// <returns>The return value is not documented yet.</returns>
+  ///
   public static PeterO.Cbor.CBORObject getMicrodataJSON(IDocument document) {
     if (document == null) {
       throw new ArgumentNullException(nameof(document));

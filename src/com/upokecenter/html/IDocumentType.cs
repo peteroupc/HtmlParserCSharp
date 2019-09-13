@@ -29,19 +29,23 @@ using System;
 
 namespace com.upokecenter.html {
     /// <summary>Represents the HTML "!DOCTYPE" tag.</summary>
+  ///
 public interface IDocumentType : INode {
     /// <summary>Gets the name of this document type. For HTML documents,
     /// this should be "html".</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    string getName();
 
     /// <summary>Gets the identifier of this document type.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    string getPublicId();
 
     /// <summary>Gets the system identifier of this document
     /// type.</summary>
     /// <returns>The return value is not documented yet.</returns>
+  ///
    string getSystemId();
 }
 }

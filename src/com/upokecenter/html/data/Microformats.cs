@@ -9,6 +9,7 @@ using com.upokecenter.util;
 
 namespace com.upokecenter.html.data {
     /// <summary>Not documented yet.</summary>
+  ///
   public sealed class Microformats {
     private static IDictionary<string, string[]> complexLegacyMap = new
       Dictionary<string, string[]>();
@@ -506,6 +507,7 @@ elname.Equals("time")) {
     /// <returns>A CBORObject object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
+  ///
     public static CBORObject getMicroformatsJSON(IDocument root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
@@ -523,6 +525,7 @@ elname.Equals("time")) {
     /// <returns>A CBORObject object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
+  ///
     public static CBORObject getMicroformatsJSON(IElement root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
@@ -591,6 +594,7 @@ elname.Equals("time")) {
     /// <returns>A CBORObject object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
+  ///
     public static CBORObject getRelJSON(IDocument root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
@@ -604,6 +608,7 @@ elname.Equals("time")) {
     /// <returns>A CBORObject object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
+  ///
     public static CBORObject getRelJSON(IElement root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
@@ -689,6 +694,7 @@ elname.Equals("time")) {
     /// otherwise from the element's text.</summary>
     /// <param name='e'>An HTML element.</param>
     /// <returns>A URL, or the empty _string if none was found.</returns>
+  ///
     private static string getUValue(IElement e) {
       string url = getHref(e);
       if (String.IsNullOrEmpty(url)) {
