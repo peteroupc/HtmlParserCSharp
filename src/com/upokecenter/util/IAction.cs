@@ -8,14 +8,12 @@ at: http://peteroupc.github.io/
 */
 using System;
 
-namespace com.upokecenter.util {
+namespace Com.Upokecenter.Util {
     /// <summary>Not documented yet.</summary>
     /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
-  ///
 public interface IAction<T> {
-    /// <summary>Does an arbitrary action. @param parameters An array of
-    /// parameters that the action accepts.</summary>
-  ///
-   void action(params T[] parameters);
+    /// <summary>Does an arbitrary Action. @param parameters An array of
+    /// parameters that the Action accepts.</summary>
+   void Action(params T[] parameters);
 }
 }

@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 using System;
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
 internal class Comment : Node, IComment {
   private string valueData;
 
@@ -46,7 +46,7 @@ internal class Comment : Node, IComment {
     return null;
   }
 
-  internal void setData(string valueData) {
+  internal void SetData(string valueData) {
     this.valueData = valueData;
   }
 

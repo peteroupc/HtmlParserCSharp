@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using Com.Upokecenter.net;
+using Com.Upokecenter.util;
 using PeterO;
 using PeterO.Text;
-using com.upokecenter.net;
-using com.upokecenter.util;
 
 /*
 If you like this, you should donate to Peter O.
@@ -35,7 +35,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
   internal sealed class CharsetSniffer {
     private const int NoFeed = 0;
 
@@ -46,102 +46,102 @@ namespace com.upokecenter.html {
       0x74, 0x70, 0x3a, 0x2f, 0x2f, 0x77, 0x77, 0x77, 0x2e,
       0x77, 0x33, 0x2e, 0x6f, 0x72, 0x67, 0x2f, 0x31, 0x39, 0x39, 0x39,
       0x2f, 0x30, 0x32, 0x2f, 0x32, 0x32, 0x2d, 0x72, 0x64, 0x66, 0x2d,
-      0x73, 0x79, 0x6e, 0x74, 0x61, 0x78, 0x2d, 0x6e, 0x73, 0x23
+      0x73, 0x79, 0x6e, 0x74, 0x61, 0x78, 0x2d, 0x6e, 0x73, 0x23,
     };
 
     private static readonly byte[] ValueRssNamespace = new byte[] {
       0x68, 0x74,
       0x74, 0x70, 0x3a, 0x2f, 0x2f, 0x70, 0x75, 0x72, 0x6c,
       0x2e, 0x6f, 0x72, 0x67, 0x2f, 0x72, 0x73, 0x73, 0x2f, 0x31, 0x2e,
-      0x30, 0x2f
+      0x30, 0x2f,
     };
 
     private static byte[][] valuePatternsHtml = new byte[][] {
     new byte[] {
       0x3c, 0x21, 0x44, 0x4f, 0x43, 0x54, 0x59, 0x50, 0x45, 0x20,
-      0x48, 0x54, 0x4d, 0x4c
+      0x48, 0x54, 0x4d, 0x4c,
     },
     new byte[] {
       (byte)255, (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf,
       (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)255, (byte)0xdf,
-      (byte)0xdf, (byte)0xdf, (byte)0xdf
+      (byte)0xdf, (byte)0xdf, (byte)0xdf,
     },
     new byte[] { 0x3c, 0x48, 0x54, 0x4d, 0x4c }, new byte[] {
   (byte)255,
-  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
 },
     new byte[] { 0x3c, 0x48, 0x45, 0x41, 0x44 }, new byte[] {
   (byte)255,
-  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
 },
     new byte[] { 0x3c, 0x53, 0x43, 0x52, 0x49, 0x50, 0x54 }, new byte[] {
   (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-  (byte)0xdf
+  (byte)0xdf,
 },
     new byte[] { 0x3c, 0x49, 0x46, 0x52, 0x41, 0x4d, 0x45 }, new byte[] {
   (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-  (byte)0xdf
+  (byte)0xdf,
 },
     new byte[] { 0x3c, 0x48, 0x31 }, new byte[] {
   (byte)255, (byte)0xdf,
-  (byte)255
+  (byte)255,
 },
     new byte[] { 0x3c, 0x44, 0x49, 0x56 }, new byte[] {
   (byte)255,
-  (byte)0xdf, (byte)0xdf, (byte)0xdf
+  (byte)0xdf, (byte)0xdf, (byte)0xdf,
 },
     new byte[] { 0x3c, 0x46, 0x4f, 0x4e, 0x54 }, new byte[] {
   (byte)255,
-  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
 },
     new byte[] { 0x3c, 0x54, 0x41, 0x42, 0x4c, 0x45 }, new byte[] {
-  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
 },
     new byte[] { 0x3c, 0x41 }, new byte[] { (byte)255, (byte)0xdf },
     new byte[] { 0x3c, 0x53, 0x54, 0x59, 0x4c, 0x45 }, new byte[] {
-  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
 },
     new byte[] { 0x3c, 0x54, 0x49, 0x54, 0x4c, 0x45 }, new byte[] {
-  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
 },
     new byte[] { 0x3c, 0x42 }, new byte[] { (byte)255, (byte)0xdf },
     new byte[] { 0x3c, 0x42, 0x4f, 0x44, 0x59 }, new byte[] {
   (byte)255,
-  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf
+  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
 },
   new byte[] { 0x3c, 0x42, 0x52 }, new byte[] {
   (byte)255, (byte)0xdf,
-  (byte)0xdf
+  (byte)0xdf,
 },
     new byte[] { 0x3c, 0x50 }, new byte[] { (byte)255, (byte)0xdf },
     new byte[] { 0x3c, 0x21, 0x2d, 0x2d }, new byte[] {
   (byte)255,
-  (byte)255, (byte)255, (byte)255
+  (byte)255, (byte)255, (byte)255,
 },
   };
 
     private static byte[][] valuePatternsXml = new byte[][] {
     new byte[] { 0x3c, 0x3f, 0x78, 0x6d, 0x6c }, new byte[] {
   (byte)255,
-  (byte)255, (byte)255, (byte)255, (byte)255
+  (byte)255, (byte)255, (byte)255, (byte)255,
 },
   };
 
     private static byte[][] valuePatternsPdf = new byte[][] {
-    new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2d }, new byte[] {
+    new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2d, }, new byte[] {
   (byte)255,
-  (byte)255, (byte)255, (byte)255, (byte)255
+  (byte)255, (byte)255, (byte)255, (byte)255,
 }
   };
 
     private static byte[][] valuePatternsPs = new byte[][] {
     new byte[] {
       0x25, 0x21, 0x50, 0x53, 0x2d, 0x41,
-      0x64, 0x6f, 0x62, 0x65, 0x2d
+      0x64, 0x6f, 0x62, 0x65, 0x2d, ,
     }, null
   };
 
-    internal static string extractCharsetFromMeta(string value) {
+    internal static string ExtractCharsetFromMeta(string value) {
       if (value == null) {
         return value;
       }
@@ -201,10 +201,12 @@ namespace com.upokecenter.html {
         int nextIndex = index;
         while (nextIndex < length) {
           char c2 = value[nextIndex];
-      if (c2 == 0x09 || c2 == 0x0c || c2 == 0x0d || c2 == 0x0a || c2 == 0x20 ||
+          if (
+            c2 == 0x09 || c2 == 0x0c || c2 == 0x0d || c2 == 0x0a || c2 ==
+0x20 ||
             c2 == 0x3b) {
-        break;
-      }
+            break;
+          }
           ++nextIndex;
         }
         return
@@ -212,7 +214,7 @@ namespace com.upokecenter.html {
       }
     }
 
-    private static int indexOfBytes(
+    private static int IndexOfBytes(
       byte[] array,
       int offset,
       int count,
@@ -238,7 +240,7 @@ namespace com.upokecenter.html {
       return -1;
     }
 
-    private static bool matchesPattern(
+    private static bool MatchesPattern(
       byte[] pattern,
       byte[] sequence,
       int seqIndex,
@@ -256,7 +258,7 @@ namespace com.upokecenter.html {
       return false;
     }
 
-    private static bool matchesPattern(
+    private static bool MatchesPattern(
       byte[][] patterns,
       int index,
       byte[] sequence,
@@ -285,7 +287,7 @@ namespace com.upokecenter.html {
       return false;
     }
 
-    private static bool matchesPatternAndTagTerminator(
+    private static bool MatchesPatternAndTagTerminator(
       byte[][] patterns,
       int index,
       byte[] sequence,
@@ -320,7 +322,7 @@ namespace com.upokecenter.html {
           (url[0] == 'h' || url[0] == 'H') && (url[1] == 't' || url[0] == 'T'
 ) && (url[2] == 't' || url[0] == 'T') && (url[3] == 'p' || url[0] == 'P'
 ) && (url[4] == ':')) {
-          return sniffTextOrBinary(input);
+          return SniffTextOrBinary(input);
         }
       }
       return sniffContentType(input, contentType);
@@ -339,9 +341,9 @@ type.EndsWith("+xml", StringComparison.Ordinal)) {
         if (type.Equals("*" + "/*") ||
 type.Equals("unknown/unknown") ||
 type.Equals("application/unknown")) {
-          return sniffUnknownContentType(input, true);
+          return SniffUnknownContentType(input, true);
         }
-        if (type.Equals("text/html")) {
+        if (type.Equals("text/Html")) {
           var header = new byte[512];
           input.mark(514);
           var count = 0;
@@ -350,9 +352,9 @@ type.Equals("application/unknown")) {
           } finally {
             input.reset();
           }
-          int feed = sniffFeed(header, 0, count);
+          int feed = SniffFeed(header, 0, count);
           if (feed == 0) {
-            return "text/html";
+            return "text/Html";
           } else if (feed == 1) {
             return "application/rss+xml";
           } else if (feed == 2) {
@@ -361,12 +363,12 @@ type.Equals("application/unknown")) {
         }
         return mediaType;
       } else {
-        return sniffUnknownContentType(input, true);
+        return SniffUnknownContentType(input, true);
       }
     }
 */
 
-    private static int sniffFeed(byte[] header, int offset, int count) {
+    private static int SniffFeed(byte[] header, int offset, int count) {
       if (header == null || offset < 0 || count < 0 || offset + count >
         header.Length) {
         throw new ArgumentException();
@@ -454,9 +456,9 @@ type.Equals("application/unknown")) {
       (header[index + 5] & 0xFF) == 'D' && (header[index + 6] & 0xFF) == 'F'
 ) {
             index += 7;
-            if (indexOfBytes(header, index, endPos - index, ValueRdfNamespace)
+            if (IndexOfBytes(header, index, endPos - index, ValueRdfNamespace)
                   >= 0 &&
-                  indexOfBytes(header, index, endPos - index, ValueRssNamespace)
+                  IndexOfBytes(header, index, endPos - index, ValueRssNamespace)
                     >= 0) {
               return RSSFeed;
             } else {
@@ -470,7 +472,7 @@ type.Equals("application/unknown")) {
       return NoFeed;
     }
 
-    private static string sniffTextOrBinary(byte[] header, int count) {
+    private static string SniffTextOrBinary(byte[] header, int count) {
       if (count >= 4 && header[0] == (byte)0xfe && header[1] == (byte)0xff) {
         return "text/plain";
       }
@@ -490,13 +492,13 @@ type.Equals("application/unknown")) {
           break;
         }
       }
-      return (!binary) ? "text/plain" : sniffUnknownContentType(
+      return (!binary) ? "text/plain" : SniffUnknownContentType(
         header,
         count,
         false);
     }
 
-    private static string sniffUnknownContentType(
+    private static string SniffUnknownContentType(
       byte[] header,
       int count,
       bool sniffScriptable) {
@@ -513,18 +515,18 @@ type.Equals("application/unknown")) {
         if (index < count && header[index] == 0x3c) {
           for (int i = 0; i < valuePatternsHtml.Length; i += 2) {
             if (
-    matchesPatternAndTagTerminator(
+    MatchesPatternAndTagTerminator(
       valuePatternsHtml,
       i,
       header,
       index,
       count)) {
-              return "text/html";
+              return "text/Html";
             }
           }
           for (int i = 0; i < valuePatternsXml.Length; i += 2) {
             if (
-    matchesPattern(
+    MatchesPattern(
       valuePatternsXml,
       i,
       header,
@@ -536,7 +538,7 @@ type.Equals("application/unknown")) {
         }
         for (int i = 0; i < valuePatternsPdf.Length; i += 2) {
           if (
-    matchesPattern(
+    MatchesPattern(
       valuePatternsPdf,
       i,
       header,
@@ -546,7 +548,7 @@ type.Equals("application/unknown")) {
           }
         }
       }
-      if (matchesPattern(valuePatternsPs, 0, header, 0, count)) {
+      if (MatchesPattern(valuePatternsPs, 0, header, 0, count)) {
         return "application/postscript";
       }
       if (count >= 4 && header[0] == (byte)0xfe && header[1] == (byte)0xff) {
@@ -560,153 +562,153 @@ type.Equals("application/unknown")) {
         return "text/plain";
       }
       // Image types
-      if (matchesPattern(new byte[] { 0, 0, 1, 0 }, header, 0, count)) {
+      if (MatchesPattern(new byte[] { 0, 0, 1, 0 }, header, 0, count)) {
         return "image/x-icon"; // icon
       }
-      if (matchesPattern(new byte[] { 0, 0, 2, 0 }, header, 0, count)) {
+      if (MatchesPattern(new byte[] { 0, 0, 2, 0 }, header, 0, count)) {
         return "image/x-icon"; // cursor
       }
-      if (matchesPattern(new byte[] { 0x42, 0x4d }, header, 0, count)) {
+      if (MatchesPattern(new byte[] { 0x42, 0x4d }, header, 0, count)) {
         return "image/bmp";
       }
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] { 0x47, 0x49, 0x46, 0x38, 0x37, 0x61 },
-        header,
- 0,
-   count)) {
+  header,
+  0,
+  count)) {
         return "image/gif";
       }
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] { 0x47, 0x49, 0x46, 0x38, 0x39, 0x61 },
-        header,
- 0,
-   count)) {
+  header,
+  0,
+  count)) {
         return "image/gif";
       }
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] { 0x52, 0x49, 0x46, 0x46 },
-          header,
- 0,
-   count) && matchesPattern(
+  header,
+  0,
+  count) && MatchesPattern(
     new byte[] { 0x57, 0x45, 0x42, 0x50, 0x56, 0x50 },
-              header,
- 8,
-   count - 8)) {
+    header,
+    8,
+    count - 8)) {
         return "image/webp";
       }
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] {
     (byte)0x89, 0x50, 0x4e, 0x47, 0x0d,
-    0x0a, 0x1a, 0x0a
+    0x0a, 0x1a, 0x0a,
   },
- header,
- 0,
-   count)) {
+  header,
+  0,
+  count)) {
         return "image/png";
       }
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] { (byte)0xff, (byte)0xd8, (byte)0xff },
-        header,
- 0,
-   count)) {
+  header,
+  0,
+  count)) {
         return "image/jpeg";
       }
       // Audio and video types
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] { 0x1a, 0x45, (byte)0xdf, (byte)0xa3 },
-        header,
- 0,
-   count)) {
+  header,
+  0,
+  count)) {
         return "video/webm";
       }
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] { 0x2e, 0x7e, (byte)0x6e, (byte)0x64 },
-        header,
- 0,
-   count)) {
+  header,
+  0,
+  count)) {
         return "audio/basic";
       }
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] {
     (byte)0x46, (byte)0x4f, (byte)0x52,
-    (byte)0x4d
+    (byte)0x4d,
   },
- header,
- 0,
- count) && matchesPattern(
+  header,
+  0,
+  count) && MatchesPattern(
     new byte[] {
       (byte)0x41, (byte)0x49, (byte)0x46,
-      (byte)0x46
+      (byte)0x46,
     },
- header,
- 8,
- count - 8)) {
+    header,
+    8,
+    count - 8)) {
         return "audio/aiff";
       }
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] { (byte)0x49, (byte)0x44, (byte)0x33 },
-        header,
- 0,
-   count)) {
+  header,
+  0,
+  count)) {
         return "audio/mpeg";
       }
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] {
     (byte)0x4f, (byte)0x67, (byte)0x67,
-    (byte)0x53, 0
+    (byte)0x53, 0,
   },
- header,
- 0,
- count)) {
+  header,
+  0,
+  count)) {
         return "application/ogg";
       }
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] {
     (byte)0x4d, (byte)0x54, (byte)0x68,
-    (byte)0x64, 0, 0, 0, 6
+    (byte)0x64, 0, 0, 0, 6,
   },
- header,
- 0,
- count)) {
+  header,
+  0,
+  count)) {
         return "audio/midi";
       }
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] {
     (byte)0x52, (byte)0x49, (byte)0x46,
-    (byte)0x46
+    (byte)0x46,
   },
- header,
- 0,
- count)) {
+  header,
+  0,
+  count)) {
         if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] {
     (byte)0x41, (byte)0x56, (byte)0x49,
-    (byte)' '
+    (byte)' ',
   }, header, 8, count - 8)) {
           return "video/avi";
         }
         if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] {
     (byte)0x57, (byte)0x41, (byte)0x56,
-    (byte)0x45
+    (byte)0x45,
   },
- header,
- 8,
- count - 8)) {
+  header,
+  8,
+  count - 8)) {
           return "audio/wave";
         }
       }
@@ -735,26 +737,26 @@ type.Equals("application/unknown")) {
       }
       // Archive types
       if (
-    matchesPattern(
+    MatchesPattern(
     new byte[] { 0x1f, (byte)0x8b, 8 },
-   header,
-   0,
-          count)) {
+    header,
+    0,
+    count)) {
         return "application/x-gzip";
       }
       if (
-  matchesPattern(
+  MatchesPattern(
   new byte[] { (byte)0x50, (byte)0x4b, 3, 4 },
- header,
-        0,
- count)) {
+  header,
+  0,
+  count)) {
         return "application/zip";
       }
       if (
-    matchesPattern(
+    MatchesPattern(
   new byte[] {
     (byte)0x52, (byte)0x61, (byte)0x72,
-    (byte)' ' , 0x1a,7,0
+    (byte)' ' , 0x1a,7,0,
   }, header, 0, count)) {
         return "application/x-rar-compressed";
       }

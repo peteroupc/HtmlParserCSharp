@@ -27,11 +27,11 @@ THE SOFTWARE.
 
 using System;
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
   internal // / <summary>Not documented yet.</summary>
 enum DocumentMode {
   NoQuirksMode,
   LimitedQuirksMode,
-  QuirksMode
-}
+  QuirksMode,
+  }
 }

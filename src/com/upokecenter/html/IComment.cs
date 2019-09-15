@@ -27,13 +27,11 @@ THE SOFTWARE.
 
 using System;
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
     /// <summary>Represents a comment on an HTML document.</summary>
-  ///
 public interface IComment : INode {
     /// <summary>Gets the comment's text.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  ///
-   string getData();
+   string GetData();
 }
 }

@@ -28,45 +28,41 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
 /// <summary>* Represents an HTML document.</summary>
 public interface IDocument : INode {
-    /// <summary>Gets the character encoding used in this document. @return
-    /// A character encoding name.</summary>
+    /// <summary>Gets the character encoding used in this
+    /// document.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  ///
-  string getCharset();
+  string GetCharset();
 
     /// <summary>Gets the document type of this document, if any.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  ///
-   IDocumentType getDoctype();
+    IDocumentType GetDoctype();
 
     /// <summary>Gets the root element of this document.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  ///
-   IElement getDocumentElement();
+    IElement GetDocumentElement();
 
     /// <summary>Not documented yet.</summary>
     /// <param name='id'>The parameter <paramref name='id'/> is a text
     /// string.</param>
     /// <returns>The return value is not documented yet.</returns>
-  ///
-  IElement getElementById(string id);
+  IElement GetElementById(string id);
 
     /// <summary>Gets all descendents, both direct and indirect, that have
-    /// the specified tag name, using ASCII case-insensitive matching.
-    /// @param _string A tag name.</summary>
+    /// the specified tag name, using a basic case-insensitive comparison.
+    /// (Two strings are equal in such a comparison, if they match after
+    /// converting the basic upper-case letters A to Z (U+0041 to U+005A)
+    /// in both strings to basic lower-case letters.) @param string A tag
+    /// name.</summary>
     /// <param name='_string'>The parameter <paramref name='_string'/> is a
     /// text string.</param>
     /// <returns>The return value is not documented yet.</returns>
-  ///
-  IList<IElement> getElementsByTagName(string _string);
+  IList<IElement> GetElementsByTagName(string _string);
 
-    /// <summary>Gets the document's address @return An absolute
-    /// URL.</summary>
+    /// <summary>Gets the document's address.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  ///
-  string getURL();
+  string GetURL();
 }
 }

@@ -5,35 +5,29 @@ Based on code from Sunriset.c, which was
 released to the public domain by Paul Schlyter, December 1992
 */
 // Converted to Java and C# by Peter O., 2013.
-namespace com.upokecenter.util {
+namespace Com.Upokecenter.Util {
     /// <summary>Contains utility methods for calculating sunrise and
     /// sunset.</summary>
-  ///
   public sealed class SunriseSunset {
     /// <summary>A rough time of day.</summary>
-  ///
     public enum DayState {
     /// <summary>Day light.</summary>
-  ///
       Day,
 
     /// <summary>Approaching nighttime.</summary>
-  ///
       DayToNight,
 
     /// <summary>The time of day is nighttime.</summary>
-  ///
       Night,
 
     /// <summary>Approaching daytime.</summary>
-  ///
-      NightToDay
+      NightToDay,
     }
 
     private static double valueRADEG = 180.0 / Math.PI;
     private static double valueDEGRAD = Math.PI / 180.0;
     // **
-    // This function reduces any angle to within the first revolution
+    // This function reduces any angle to within the first Revolution
     // by subtracting or adding even multiples of 360.0 until the
     // result is >= 0.0 and < 360.0
     // **
@@ -73,14 +67,15 @@ namespace com.upokecenter.util {
       t; // Diurnal arc
 
       // Compute d of 12h local mean solar time
-      d = days_since_2000_Jan_0(year, month, day) + 0.5 - (lon / 360.0);
+      d = Days_since_2000_Jan_0(year, month, day) + 0.5 - (lon / 360.0);
 
       // Compute obliquity of ecliptic (inclination of Earth's axis)
       double me7 = 3.563e-7;
       obl_ecl = 23.4393 - (me7 * d);
       // Compute Sun's position
-      double[] slon_sr = sunpos(d);
-      slon = slon_sr[0]; sr = slon_sr[1];
+      double[] slon_sr = Sunpos(d);
+      slon = slon_sr[0];
+      sr = slon_sr[1];
       // Compute sine and cosine of Sun's declination
       sin_sdecl = Math.Sin(valueDEGRAD * obl_ecl) * Math.Sin(valueDEGRAD *
           slon);
@@ -163,18 +158,18 @@ namespace com.upokecenter.util {
       var rc = 0; // Return cde from function - usually 0
 
       // Compute d of 12h local mean solar time
-      d = days_since_2000_Jan_0(year, month, day) + 0.5 - (lon / 360.0);
+      d = Days_since_2000_Jan_0(year, month, day) + 0.5 - (lon / 360.0);
 
       // Compute local sidereal time of this moment
-      sidtime = revolution(GMST0(d) + 180.0 + lon);
+      sidtime = Revolution(GMST0(d) + 180.0 + lon);
 
       // Compute Sun's valueRA + Decl at this moment
-      double[] ra_dec_sr = sun_RA_dec(d);
+      double[] ra_dec_sr = Sun_RA_dec(d);
       sRA = ra_dec_sr[0];
       sdec = ra_dec_sr[1];
       sr = ra_dec_sr[2];
       // Compute time when Sun is at south - in hours UT
-      tsouth = 12.0 - (rev180(sidtime - sRA) / 15.0);
+      tsouth = 12.0 - (Rev180(sidtime - sRA) / 15.0);
 
       // Compute the Sun's apparent radius, degrees
       sradius = 0.2666 / sr;
@@ -193,7 +188,7 @@ namespace com.upokecenter.util {
           Math.Cos(valueDEGRAD * sdec));
         if (cost >= 1.0) {
             rc = -1;
-          t = 0.0; // Sun always below altit
+            t = 0.0; // Sun always below altit
         } else if (cost <= -1.0) {
           rc = +1;
           t = 12.0;
@@ -210,24 +205,21 @@ namespace com.upokecenter.util {
     }
 
     // The "workhorse" function for sun rise/set times
-    private static long days_since_2000_Jan_0(long y, long m, long d) {
+    private static long Days_since_2000_Jan_0(long y, long m, long d) {
       return 367L * (y) - ((7 * ((y) + (((m) + 9) / 12))) / 4) + ((275 * m)
-        / 9) + d - 730530L;
+/ 9) + d - 730530L;
     }
 
     // The "workhorse" function
 
     /// <summary>Gets a value indicating whether it's currently day or
-    /// night at the given geographic location. @param lat @param lon a
-    /// geographic longitude, in degrees. West coordinates are negative.
-    /// @return A day state value.</summary>
+    /// night at the given geographic location.</summary>
     /// <param name='lat'>A geographic latitude, in degrees. South
     /// coordinates are negative.</param>
-    /// <param name='lon'>The parameter <paramref name='lon'/> is a Double
-    /// object.</param>
-    /// <returns>A DayState object.</returns>
-  ///
-    public static DayState getCurrentDayState(double lat, double lon) {
+    /// <param name='lon'>A geographic longitude, in degrees. West
+    /// coordinates are negative.</param>
+    /// <returns>A day state value.</returns>
+    public static DayState GetCurrentDayState(double lat, double lon) {
       int[] components = DateTimeUtility.getCurrentGmtDateComponents();
       var trise = new double[1];
       var tset = new double[1];
@@ -303,33 +295,33 @@ namespace com.upokecenter.util {
     internal static double GMST0(double d) {
       double sidtim0;
       // Sidtime at 0h UT = L (Sun's mean longitude) + 180.0 degr
-      // L = valueM + w, as defined in sunpos().
-      sidtim0 = revolution((180.0 + 356.0470 + 282.9404) +
+      // L = valueM + w, as defined in Sunpos().
+      sidtim0 = Revolution((180.0 + 356.0470 + 282.9404) +
           (0.9856002585 + 4.70935E-5) * d);
       return sidtim0; // GMST0
     }
 
-    internal static double rev180(double x)
+    internal static double Rev180(double x)
     // **
     // Reduce angle to within + 180..+180 degrees
     // **
     {
-      return x - (360.0 * Math.Floor((x * valueINV360) + 0.5)); // revolution
+      return x - (360.0 * Math.Floor((x * valueINV360) + 0.5)); // Revolution
     }
 
-    internal static double revolution(double x)
+    internal static double Revolution(double x)
     // **
     // Reduce angle to within 0..360 degrees
     // **
     {
-      return x - (360.0 * Math.Floor(x * valueINV360)); // revolution
+      return x - (360.0 * Math.Floor(x * valueINV360)); // Revolution
     }
 
-    internal static double[] sun_RA_dec(double d) {
+    internal static double[] Sun_RA_dec(double d) {
       double lon, obl_ecl, x, y, z;
 
       // Compute Sun's ecliptical coordinates
-      double[] lon_r = sunpos(d);
+      double[] lon_r = Sunpos(d);
       lon = lon_r[0];
       // Compute ecliptic rectangular coordinates (z = 0)
       x = lon_r[1] * Math.Cos(valueDEGRAD * lon);
@@ -346,10 +338,10 @@ namespace com.upokecenter.util {
       // Convert to spherical coordinates
       double valueRA = valueRADEG * Math.Atan2(y, x);
       double dec = valueRADEG * Math.Atan2(z, Math.Sqrt(x * x + y * y));
-      return new double[] { valueRA, dec, lon_r[1] }; // sun_RA_dec
+      return new double[] { valueRA, dec, lon_r[1] }; // Sun_RA_dec
     }
 
-    internal static double[] sunpos(double d) {
+    internal static double[] Sunpos(double d) {
       // Computes the Sun's ecliptic longitude and distance
       // at an instant given in d, number of days since
       // 2000 Jan 0.0. The Sun's ecliptic latitude is not
@@ -363,7 +355,7 @@ namespace com.upokecenter.util {
       v; // True anomaly
 
       // Compute mean elements
-      valueM = revolution(356.0470 + (0.9856002585 * d));
+      valueM = Revolution(356.0470 + (0.9856002585 * d));
       w = 282.9404 + (d * 4.70935E-5);
       e = 0.016709 - (d * 1.151E-9);
 

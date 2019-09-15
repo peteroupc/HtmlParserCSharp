@@ -12,7 +12,6 @@ using System.Text;
 namespace com.upokecenter.util {
     /// <summary>Represents a list of integers or Unicode
     /// characters.</summary>
-  ///
 public sealed class IntList {
   int[] buffer;
   int ptr;
@@ -98,7 +97,6 @@ public int get(int index) {
     /// documented yet.</param>
     /// <param name='value'>The parameter <paramref name='value'/> is not
     /// documented yet.</param>
-  ///
   public void set(int index, int value) {
     buffer[index]=value;
   }

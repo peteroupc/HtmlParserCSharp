@@ -27,22 +27,20 @@ THE SOFTWARE.
 using System;
 using System.IO;
 
-namespace com.upokecenter.net {
+namespace Com.Upokecenter.Net {
     /// <summary>Not documented yet.</summary>
     /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
-  ///
   public interface IResponseListener<T> {
     /// <summary>Processes the Web response on a background thread. Please
     /// note: For the response to be cacheable, the entire stream must be
     /// read to the end. @param url URL of the resource. This may not be
     /// the same as the URL that the resource actually resolves to. For
-    /// that, call the getUrl() method of the _headers_ _object. @param
+    /// that, call the getUrl() method of the _headers_ object. @param
     /// stream Input stream for the response body. The listener must not
     /// close the stream. @param headers Contains the headers returned by
     /// the response. @.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  ///
-   T processResponse(
+   T ProcessResponse(
      string url,
      Stream stream,
      IHttpHeaders headers);

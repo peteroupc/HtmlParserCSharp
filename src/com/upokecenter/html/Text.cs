@@ -27,19 +27,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
 internal class Text : Node, IText {
   public Text() : base(NodeType.TEXT_NODE) {
       this.ValueText = new StringBuilder();
   }
 
-    public StringBuilder ValueText { get; private set; }
+public StringBuilder ValueText { get; private set; }
 
-    public string getData() {
+public string getData() {
       return this.ValueText.ToString();
   }
 
-  public string getName() {
+  public string GetName() {
     return "#valueText";
   }
 

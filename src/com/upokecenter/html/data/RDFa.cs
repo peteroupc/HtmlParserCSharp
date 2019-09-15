@@ -361,7 +361,6 @@ using com.upokecenter.util;
 
     /// <param name='document'>The parameter <paramref name='document'/> is
     /// an IDocument object.</param>
-  ///
     public RDFa(IDocument document) {
       this.document = document;
       this.parser = null;
@@ -668,7 +667,6 @@ using com.upokecenter.util;
 
     /// <summary>Not documented yet.</summary>
     /// <returns>An ISet(RDFTriple) object.</returns>
-  ///
     public ISet<RDFTriple> Parse() {
       if (this.parser != null) {
         return this.parser.Parse();

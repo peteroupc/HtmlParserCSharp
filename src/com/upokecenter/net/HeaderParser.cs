@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using System.Text;
-using com.upokecenter.util;
+using Com.Upokecenter.util;
 
 /*
 If you like this, you should donate to Peter O.
@@ -29,14 +29,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-namespace com.upokecenter.net {
+namespace Com.Upokecenter.Net {
     /// <summary>Contains methods useful for parsing header
     /// fields.</summary>
-  ///
   public sealed class HeaderParser {
     private static string[] emptyStringArray = new string[0];
 
-    private static int getPositiveNumber(string v, int index) {
+    private static int GetPositiveNumber(string v, int index) {
       int length = v.Length;
       var c = (char)0;
       var haveNumber = false;
@@ -75,7 +74,7 @@ namespace com.upokecenter.net {
       }
     }
 
-    internal static int getResponseCode(string str) {
+    internal static int GetResponseCode(string str) {
       var index = 0;
       int endIndex = str.Length;
       int indexStart = index;
@@ -100,7 +99,7 @@ namespace com.upokecenter.net {
         0x20)) {
      ++index;
    }
-      return index;
+   return index;
     }
 
     private static int SkipObsFold(byte[] bytes, int index, int endIndex) {
@@ -109,7 +108,7 @@ namespace com.upokecenter.net {
         int si = index;
         var found = false;
         index += 2;
-   while (index < endIndex && (bytes[index] == 0x20 || bytes[index] ==
+        while (index < endIndex && (bytes[index] == 0x20 || bytes[index] ==
           0x09)) {
           found = true;
           ++index;
@@ -136,7 +135,7 @@ namespace com.upokecenter.net {
       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1,
     };
 
     private static bool IsTokenText(byte b) {
@@ -152,7 +151,7 @@ namespace com.upokecenter.net {
       return (b & 0x7f) != 0 || b == 0x09 || (b >= 0x20 && b <= 0x7e);
     }
 
-  private static int ParseCacheControl(
+private static int ParseCacheControl(
     byte[] bytes,
     int index,
     int endIndex) {

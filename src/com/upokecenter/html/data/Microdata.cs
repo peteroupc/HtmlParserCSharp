@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Com.Upokecenter.Html;
+using Com.Upokecenter.util;
 using PeterO;
 using PeterO.Cbor;
-using com.upokecenter.html;
-using com.upokecenter.util;
 
-namespace com.upokecenter.html.data {
+namespace Com.Upokecenter.Html.Data {
     /// <summary>Not documented yet.</summary>
-  ///
 public sealed class Microdata {
   private class ElementAndIndex {
       internal int Index { get; set; }
@@ -21,15 +20,15 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
     }
   }
 
-  private static int getElementIndex(
+  private static int GetElementIndex(
     INode root,
     IElement e,
     int startIndex) {
     var runningIndex = new int[] { startIndex };
-    return getElementIndex(root, e, runningIndex);
+    return GetElementIndex(root, e, runningIndex);
   }
 
-  private static int getElementIndex(
+  private static int GetElementIndex(
     INode root,
     IElement e,
     int[] runningIndex) {
@@ -39,7 +38,7 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
     }
     ++valueIndex;
     foreach (var child in root.getChildNodes()) {
-      int idx = getElementIndex(child, e, runningIndex);
+      int idx = GetElementIndex(child, e, runningIndex);
       if (idx >= 0) {
         return idx;
       }
@@ -48,22 +47,22 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
     return -1;
   }
 
-  private static string getHref(IElement node) {
+  private static string GetHref(IElement node) {
     string name = DataUtilities.ToLowerCaseAscii(node.getLocalName());
     string href = String.Empty;
-    if ("a".Equals(name) ||
-"link".Equals(name) ||
-"area".Equals(name)) {
+    if ("a".Equals(name, StringComparison.Ordinal) ||
+"link".Equals(name, StringComparison.Ordinal) ||
+"area".Equals(name, StringComparison.Ordinal)) {
       href = node.getAttribute("href");
-    } else if ("object".Equals(name)) {
-      href = node.getAttribute("data");
-    } else if ("img".Equals(name) ||
-"source".Equals(name) ||
-"track".Equals(name) ||
-"iframe".Equals(name) ||
-"audio".Equals(name) ||
-"video".Equals(name) ||
-"embed".Equals(name)) {
+    } else if ("object".Equals(name, StringComparison.Ordinal)) {
+      href = node.getAttribute("Data");
+    } else if ("img".Equals(name, StringComparison.Ordinal) ||
+"source".Equals(name, StringComparison.Ordinal) ||
+"track".Equals(name, StringComparison.Ordinal) ||
+"iframe".Equals(name, StringComparison.Ordinal) ||
+"audio".Equals(name, StringComparison.Ordinal) ||
+"video".Equals(name, StringComparison.Ordinal) ||
+"embed".Equals(name, StringComparison.Ordinal)) {
       href = node.getAttribute("src");
     } else {
  return null;
@@ -77,10 +76,9 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
 
     /// <summary>Not documented yet.</summary>
     /// <param name='document'>The parameter <paramref name='document'/> is
-    /// a.upokecenter.html.IDocument object.</param>
+    /// a.Upokecenter.Html.IDocument object.</param>
     /// <returns>The return value is not documented yet.</returns>
-  ///
-  public static PeterO.Cbor.CBORObject getMicrodataJSON(IDocument document) {
+  public static PeterO.Cbor.CBORObject GetMicrodataJSON(IDocument document) {
     if (document == null) {
       throw new ArgumentNullException(nameof(document));
     }
@@ -90,21 +88,21 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
       if (node.getAttribute("itemscope") != null &&
           node.getAttribute("itemprop") == null) {
         IList<IElement> memory = new List<IElement>();
-        items.Add(getMicrodataObject(node, memory));
+        items.Add(GetMicrodataObject(node, memory));
       }
     }
     result.Add("items", items);
     return result;
   }
 
-  private static PeterO.Cbor.CBORObject getMicrodataObject(
+  private static PeterO.Cbor.CBORObject GetMicrodataObject(
   IElement item,
   IList<IElement> memory) {
  string[] itemtypes = StringUtility.SplitAtSpTabCrLfFf(item.getAttribute(
   "itemtype"));
-    PeterO.Cbor.CBORObject result = PeterO.Cbor.CBORObject.NewMap();
-    memory.Add(item);
-    if (itemtypes.Length > 0) {
+  PeterO.Cbor.CBORObject result = PeterO.Cbor.CBORObject.NewMap();
+  memory.Add(item);
+  if (itemtypes.Length > 0) {
       var array = CBORObject.NewArray();
       foreach (var itemtype in itemtypes) {
         array.Add(itemtype);
@@ -120,15 +118,15 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
       result.Add("id", globalid);
     }
     PeterO.Cbor.CBORObject properties = PeterO.Cbor.CBORObject.NewMap();
-    foreach (var valueElement in getMicrodataProperties(item)) {
+    foreach (var valueElement in GetMicrodataProperties(item)) {
   string[] names = StringUtility.SplitAtSpTabCrLfFf(valueElement.getAttribute(
   "itemprop"));
-      Object obj = null;
-      if (valueElement.getAttribute("itemscope") != null) {
+  Object obj = null;
+  if (valueElement.getAttribute("itemscope") != null) {
         obj = memory.Contains(valueElement) ? (object)"ERROR" :
-        (object)getMicrodataObject(valueElement, new List<IElement>(memory));
+        (object)GetMicrodataObject(valueElement, new List<IElement>(memory));
       } else {
-        obj = getPropertyValue(valueElement);
+        obj = GetPropertyValue(valueElement);
       }
       foreach (var name in names) {
         if (properties.ContainsKey(name)) {
@@ -144,7 +142,7 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
     return result;
   }
 
-  private static IList<IElement> getMicrodataProperties(IElement root) {
+  private static IList<IElement> GetMicrodataProperties(IElement root) {
     IList<IElement> results = new List<IElement>();
     IList<IElement> memory = new List<IElement>();
     IList<IElement> pending = new List<IElement>();
@@ -155,7 +153,7 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
         pending.Add((IElement)child);
       }
     }
-  string[] itemref = StringUtility.SplitAtSpTabCrLfFf(root.getAttribute(
+    string[] itemref = StringUtility.SplitAtSpTabCrLfFf(root.getAttribute(
   "itemref"));
     foreach (var item in itemref) {
       IElement valueElement = document.getElementById(item);
@@ -181,24 +179,24 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
         results.Add(current);
       }
     }
-    return sortInTreeOrder(results, document);
+    return SortInTreeOrder(results, document);
   }
 
-  private static string getPropertyValue(IElement e) {
-    if (isHtmlElement(e)) {
-      if (isHtmlElement(e, "meta")) {
+  private static string GetPropertyValue(IElement e) {
+    if (IsHtmlElement(e)) {
+      if (IsHtmlElement(e, "meta")) {
         string attr = e.getAttribute("content");
         return (attr == null) ? String.Empty : attr;
       }
-      string href = getHref(e);
+      string href = GetHref(e);
       if (href != null) {
         return href;
       }
-      if (isHtmlElement(e, "data")) {
+      if (IsHtmlElement(e, "Data")) {
         string attr = e.getAttribute("value");
         return (attr == null) ? String.Empty : attr;
       }
-      if (isHtmlElement(e, "time")) {
+      if (IsHtmlElement(e, "time")) {
         string attr = e.getAttribute("datetime");
         if (attr != null) {
           return attr;
@@ -208,16 +206,17 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
     return e.getTextContent();
   }
 
-  private static bool isHtmlElement(IElement valueElement) {
+  private static bool IsHtmlElement(IElement valueElement) {
   return "http://www.w3.org/1999/xhtml"
       .Equals(valueElement.getNamespaceURI());
   }
 
-  private static bool isHtmlElement(IElement e, string name) {
-    return e.getLocalName().Equals(name) && isHtmlElement(e);
+  private static bool IsHtmlElement(IElement e, string name) {
+    return e.getLocalName().Equals(name, StringComparison.Ordinal) &&
+IsHtmlElement(e);
   }
 
-  private static IList<IElement> sortInTreeOrder(
+  private static IList<IElement> SortInTreeOrder(
       IList<IElement> elements,
       INode root) {
     if (elements == null || elements.Count < 2) {
@@ -227,7 +226,7 @@ return (arg0.Index == arg1.Index) ? 0 : ((arg0.Index < arg1.Index) ? -1 : 1);
     foreach (var valueElement in elements) {
       var el = new ElementAndIndex();
       el.Element = valueElement;
-      el.Index = getElementIndex(root, valueElement, 0);
+      el.Index = GetElementIndex(root, valueElement, 0);
       elems.Add(el);
     }
     elems.Sort(new SortInTreeOrderComparer());

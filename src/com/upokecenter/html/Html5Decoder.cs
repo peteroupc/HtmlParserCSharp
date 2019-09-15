@@ -29,7 +29,7 @@ using System.IO;
 using PeterO;
 using PeterO.Text;
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
   internal class Html5Decoder : ICharacterDecoder {
     private ICharacterDecoder valueDecoder = null;
     private bool valueHavebom = false;

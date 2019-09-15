@@ -16,8 +16,8 @@ namespace HtmlParserCSharpTest {
       var i = index;
       while (i < endIndex) {
         if (i > index) {
- sb.Append(delim);
-}
+          sb.Append(delim);
+        }
         sb.Append(arr[i]);
         ++i;
       }
@@ -36,18 +36,18 @@ namespace HtmlParserCSharpTest {
       string[] strarray = str.Split('\n');
       var ret = new string[2];
       if (strarray.Length == 0) {
- return null;
-}
-      if (strarray[0].Equals("#data")) {
+        return null;
+      }
+      if (strarray[0].Equals("#data", StringComparison.Ordinal)) {
         var state = 0;
         var index = 1;
         var lastIndex = 1;
         while (true) {
           if (state == 0) {
             if (index >= strarray.Length) {
- return null;
-}
-            if (strarray[index].Equals("#errors")) {
+              return null;
+            }
+            if (strarray[index].Equals("#errors", StringComparison.Ordinal)) {
               string data = Implode(strarray, lastIndex, index, "\n");
               ret[0] = data;
               state = 1;
@@ -81,8 +81,8 @@ namespace HtmlParserCSharpTest {
         if (i + 1 < bytes.Length && bytes[i] == 0x0a && bytes[i + 1] == 0x0a) {
           data = GetTestData(bytes, lastIndex, i);
           if (data == null) {
- Assert.Fail();
- }
+            Assert.Fail();
+          }
           ret.Add(data);
           lastIndex = i + 2;
           ++i;
@@ -90,8 +90,8 @@ namespace HtmlParserCSharpTest {
       }
       data = GetTestData(bytes, lastIndex, bytes.Length);
       if (data == null) {
- Assert.Fail();
- }
+        Assert.Fail();
+      }
       ret.Add(data);
       return ret;
     }

@@ -1,13 +1,13 @@
 using System;
 
-namespace com.upokecenter.util {
+namespace Com.Upokecenter.Util {
   // C# version of DateTimeUtility
 
     /// <summary>Not documented yet.</summary>
   public static class DateTimeUtility {
     /// <summary>Not documented yet.</summary>
     /// <returns>An array of 32-bit unsigned integers.</returns>
-    public static int[] getCurrentGmtDateComponents() {
+    public static int[] GetCurrentGmtDateComponents() {
       DateTime dt = DateTime.UtcNow;
       var ret = new int[8];
       ret[0] = dt.Year;

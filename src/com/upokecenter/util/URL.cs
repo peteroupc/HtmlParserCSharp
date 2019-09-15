@@ -13,10 +13,9 @@ using System.Text;
 using PeterO;
 using PeterO.Text;
 
-namespace com.upokecenter.util {
-    /// <summary>A URL _object under the WHATWG's URL specification. See
+namespace Com.Upokecenter.Util {
+    /// <summary>A URL object under the WHATWG's URL specification. See
     /// http://url.spec.whatwg.org/.</summary>
-  ///
   public sealed class URL {
     private enum ParseState {
       SchemeStart,
@@ -30,13 +29,13 @@ namespace com.upokecenter.util {
       AuthoritySecondSlash,
       AuthorityIgnoreSlashes,
       Authority, Query, Fragment, Host, FileHost,
-      RelativePathStart, RelativePath, HostName, Port
+      RelativePathStart, RelativePath, HostName, Port,
     }
 
     private static string hex = "0123456789ABCDEF";
     // encodingerror uses ? as repl. ch. when encoding
     // querySerializerError uses decimal HTML entity of bad c.p. when encoding
-    private static void appendOutputBytes(
+    private static void AppendOutputBytes(
       StringBuilder builder,
       byte[] bytes) {
       for (int i = 0; i < bytes.Length; ++i) {
@@ -55,7 +54,7 @@ namespace com.upokecenter.util {
       }
     }
 
-    private static string hostParse(string stringValue) {
+    private static string HostParse(string stringValue) {
       if (stringValue.Length > 0 && stringValue[0] == '[') {
         if (stringValue[stringValue.Length - 1] != ']') {
           var ipv6 = new int[8];
@@ -82,7 +81,7 @@ namespace com.upokecenter.util {
               // Get the Unicode code point for the surrogate pair
             c = 0x10000 + ((c & 0x3ff) << 10) + (stringValue[index + 1] &
 0x3ff);
-              ++index;
+++index;
             } else if ((c & 0xf800) == 0xd800) {
               // illegal surrogate
               throw new ArgumentException();
@@ -182,7 +181,7 @@ namespace com.upokecenter.util {
       }
       try {
         // DebugUtility.Log("was: %s",stringValue);
-        stringValue = percentDecode(stringValue, "utf-8");
+        stringValue = PercentDecode(stringValue, "utf-8");
         // DebugUtility.Log("now: %s",stringValue);
       } catch (IOException) {
         return null;
@@ -190,16 +189,16 @@ namespace com.upokecenter.util {
       return stringValue;
     }
 
-    private static string hostSerialize(string stringValue) {
+    private static string HostSerialize(string stringValue) {
       return (stringValue == null) ? String.Empty : stringValue;
     }
 
-    private static bool isHexDigit(int c) {
+    private static bool IsHexDigit(int c) {
       return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' &&
         c <= '9');
     }
 
-    private static bool isUrlCodePoint(int c) {
+    private static bool IsUrlCodePoint(int c) {
       if (c <= 0x20) {
         return false;
       }
@@ -220,51 +219,49 @@ namespace com.upokecenter.util {
     /// <param name='s'>The parameter <paramref name='s'/> is a text
     /// string.</param>
     /// <returns>An URL object.</returns>
-  ///
-    public static URL parse(string s) {
-      return parse(s, null, null, false);
+    public static URL Parse(string s) {
+      return Parse(s, null, null, false);
     }
 
     /// <summary>Not documented yet.</summary>
     /// <param name='s'>The parameter <paramref name='s'/> is a text
     /// string.</param>
     /// <param name='baseurl'>The parameter <paramref name='baseurl'/> is
-    /// a.upokecenter.util.URL object.</param>
+    /// a.Upokecenter.Util.URL object.</param>
     /// <returns>An URL object.</returns>
-  ///
-    public static URL parse(string s, URL baseurl) {
-      return parse(s, baseurl, null, false);
+    public static URL Parse(string s, URL baseurl) {
+      return Parse(s, baseurl, null, false);
     }
 
     /// <summary>Not documented yet.</summary>
     /// <param name='s'>The parameter <paramref name='s'/> is a text
     /// string.</param>
     /// <param name='baseurl'>The parameter <paramref name='baseurl'/> is
-    /// a.upokecenter.util.URL object.</param>
+    /// a.Upokecenter.Util.URL object.</param>
     /// <param name='encoding'>The parameter <paramref name='encoding'/> is
     /// a text string.</param>
     /// <returns>An URL object.</returns>
-  ///
-    public static URL parse(string s, URL baseurl, string encoding) {
-      return parse(s, baseurl, encoding, false);
+    public static URL Parse(string s, URL baseurl, string encoding) {
+      return Parse(s, baseurl, encoding, false);
     }
 
     /// <summary>Not documented yet.</summary>
     /// <param name='s'>The parameter <paramref name='s'/> is a text
     /// string.</param>
     /// <param name='baseurl'>The parameter <paramref name='baseurl'/> is
-    /// a.upokecenter.util.URL object.</param>
+    /// a.Upokecenter.Util.URL object.</param>
     /// <param name='encoding'>The parameter <paramref name='encoding'/> is
     /// a text string.</param>
     /// <param name='strict'>The parameter <paramref name='strict'/> is
     /// either <c>true</c> or <c>false</c>.</param>
     /// <returns>An URL object.</returns>
-  ///
- public static URL parse(
-   string s,
-   URL baseurl,
-   string encoding,
-   bool strict) {
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='baseurl'/> is null.</exception>
+    public static URL Parse(
+      string s,
+      URL baseurl,
+      string encoding,
+      bool strict) {
       if (s == null) {
         throw new ArgumentException();
       }
@@ -342,16 +339,16 @@ namespace com.upokecenter.util {
 }
   } else if (c + 0x20 <= 0x10ffff) {
     buffer.Append((char)((((c + 0x20 - 0x10000) >> 10) & 0x3ff) | 0xd800));
-buffer.Append((char)(((c + 0x20 - 0x10000) & 0x3ff) | 0xdc00));
+    buffer.Append((char)(((c + 0x20 - 0x10000) & 0x3ff) | 0xdc00));
 }
               state = ParseState.Scheme;
             } else if (c >= 'a' && c <= 'z') {
               if (c <= 0xffff) {
-  { buffer.Append((char)(c));
+  { buffer.Append((char)c);
 }
   } else if (c <= 0x10ffff) {
     buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
+    buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
               state = ParseState.Scheme;
             } else {
@@ -366,34 +363,35 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
   } else if (c + 0x20 <= 0x10ffff) {
     buffer.Append((char)((((c + 0x20 - 0x10000) >> 10) & 0x3ff) | 0xd800));
-buffer.Append((char)(((c + 0x20 - 0x10000) & 0x3ff) | 0xdc00));
+    buffer.Append((char)(((c + 0x20 - 0x10000) & 0x3ff) | 0xdc00));
 }
        } else if ((c >= 'a' && c <= 'z') || c == '.' || c == '-' || c ==
               '+') {
               if (c <= 0xffff) {
-  { buffer.Append((char)(c));
+  { buffer.Append((char)c);
 }
   } else if (c <= 0x10ffff) {
     buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
+    buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
             } else if (c == ':') {
               url.scheme = buffer.ToString();
               buffer.Remove(0, buffer.Length);
-              if (url.scheme.Equals("http") ||
-url.scheme.Equals("https") ||
-url.scheme.Equals("ftp") ||
-url.scheme.Equals("gopher") ||
-url.scheme.Equals("ws") ||
-url.scheme.Equals("wss") ||
-url.scheme.Equals("file")) {
+              if (url.scheme.Equals("http", StringComparison.Ordinal) ||
+url.scheme.Equals("https", StringComparison.Ordinal) ||
+url.scheme.Equals("ftp", StringComparison.Ordinal) ||
+url.scheme.Equals("gopher", StringComparison.Ordinal) ||
+url.scheme.Equals("ws", StringComparison.Ordinal) ||
+url.scheme.Equals("wss", StringComparison.Ordinal) ||
+url.scheme.Equals("file", StringComparison.Ordinal)) {
                 relative = true;
               }
-              if (url.scheme.Equals("file")) {
+              if (url.scheme.Equals("file", StringComparison.Ordinal)) {
                 state = ParseState.Relative;
                 relative = true;
               } else if (relative && baseurl != null &&
-                    url.scheme.Equals(baseurl.scheme)) {
+                    url.scheme.Equals(baseurl.scheme,
+  StringComparison.Ordinal)) {
                 state = ParseState.RelativeOrAuthority;
               } else if (relative) {
                 state = ParseState.AuthorityFirstSlash;
@@ -417,24 +415,24 @@ url.scheme.Equals("file")) {
               state = ParseState.Fragment;
               break;
             }
-            if (c >= 0 && (!isUrlCodePoint(c) && c != '%') || (c == '%' &&
-              (index + 2 > ending || !isHexDigit(s[index]) ||
-              !isHexDigit(s[index + 1])))) {
+            if (c >= 0 && (!IsUrlCodePoint(c) && c != '%') || (c == '%' &&
+              (index + 2 > ending || !IsHexDigit(s[index]) ||
+              !IsHexDigit(s[index + 1])))) {
               error = true;
             }
             if (c >= 0 && c != 0x09 && c != 0x0a && c != 0x0d) {
               if (c < 0x20 || c == 0x7f) {
-                percentEncode(schemeData, c);
+                PercentEncode(schemeData, c);
               } else if (c < 0x7f) {
                 if (c <= 0xffff) {
   { schemeData.Append((char)c);
 }
   } else if (c <= 0x10ffff) {
     schemeData.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
-schemeData.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
+    schemeData.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
               } else {
-                percentEncodeUtf8(schemeData, c);
+                PercentEncodeUtf8(schemeData, c);
               }
             }
             break;
@@ -443,12 +441,18 @@ schemeData.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
               return null;
             }
             // DebugUtility.Log("no scheme: [%s] [%s]",s,baseurl);
-       if (!(baseurl.scheme.Equals("http") || baseurl.scheme.Equals(
-  "https") || baseurl.scheme.Equals("ftp") || baseurl.scheme.Equals(
-  "gopher") || baseurl.scheme.Equals("ws") || baseurl.scheme.Equals("wss") ||
-                baseurl.scheme.Equals("file"))) {
-         return null;
-       }
+            if (!(baseurl.scheme.Equals("http", StringComparison.Ordinal) ||
+baseurl.scheme.Equals(
+  "https",
+  StringComparison.Ordinal) || baseurl.scheme.Equals("ftp",
+  StringComparison.Ordinal) || baseurl.scheme.Equals(
+  "gopher",
+  StringComparison.Ordinal) || baseurl.scheme.Equals("ws",
+  StringComparison.Ordinal) || baseurl.scheme.Equals("wss",
+  StringComparison.Ordinal) ||
+                baseurl.scheme.Equals("file", StringComparison.Ordinal))) {
+              return null;
+            }
             state = ParseState.Relative;
             index = oldindex;
             break;
@@ -464,13 +468,16 @@ schemeData.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
             break;
           case ParseState.Relative: {
               relative = true;
-              if (!"file".Equals(url.scheme)) {
+              if (!"file".Equals(url.scheme, StringComparison.Ordinal)) {
+                if (baseurl == null) {
+                  throw new ArgumentNullException(nameof(baseurl));
+                }
                 url.scheme = baseurl.scheme;
               }
               if (c < 0) {
                 url.host = baseurl.host;
                 url.port = baseurl.port;
-                path = pathList(baseurl.path);
+                path = PathList(baseurl.path);
                 url.query = baseurl.query;
               } else if (c == '/' || c == '\\') {
                 if (c == '\\') {
@@ -480,20 +487,20 @@ schemeData.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
               } else if (c == '?') {
                 url.host = baseurl.host;
                 url.port = baseurl.port;
-                path = pathList(baseurl.path);
+                path = PathList(baseurl.path);
                 query = new StringBuilder();
                 state = ParseState.Query;
               } else if (c == '#') {
                 url.host = baseurl.host;
                 url.port = baseurl.port;
-                path = pathList(baseurl.path);
+                path = PathList(baseurl.path);
                 url.query = baseurl.query;
                 fragment = new StringBuilder();
                 state = ParseState.Fragment;
               } else {
                 url.host = baseurl.host;
                 url.port = baseurl.port;
-                path = pathList(baseurl.path);
+                path = PathList(baseurl.path);
                 if (path.Count > 0) { // Pop path
                   path.RemoveAt(path.Count - 1);
                 }
@@ -507,7 +514,8 @@ schemeData.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
               if (c == '\\') {
                 error = true;
               }
-              state = "file".Equals(url.scheme) ? ParseState.FileHost :
+              state = "file".Equals(url.scheme, StringComparison.Ordinal) ?
+ParseState.FileHost :
                 ParseState.AuthorityIgnoreSlashes;
               } else {
               if (baseurl != null) {
@@ -564,9 +572,9 @@ schemeData.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
                   error = true;
                   continue;
                 }
-                if ((!isUrlCodePoint(c) && c != '%') || (cp == '%' &&
-                (i + 3 > bstr.Length || !isHexDigit(bstr[index + 1]) ||
-                    !isHexDigit(bstr[index + 2])))) {
+                if ((!IsUrlCodePoint(c) && c != '%') || (cp == '%' &&
+                (i + 3 > bstr.Length || !IsHexDigit(bstr[index + 1]) ||
+                    !IsHexDigit(bstr[index + 2])))) {
                   error = true;
                 }
                 if (cp == ':' && password == null) {
@@ -576,14 +584,14 @@ schemeData.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
                 StringBuilder result = (password == null) ? username : password;
                 if (cp <= 0x20 || cp >= 0x7F || ((cp & 0x7F) == cp && "#<>?`\""
                     .IndexOf((char)cp) >= 0)) {
-                  percentEncodeUtf8(result, cp);
+                  PercentEncodeUtf8(result, cp);
                 } else {
                   if (cp <= 0xffff) {
   { result.Append((char)cp);
 }
   } else if (cp <= 0x10ffff) {
     result.Append((char)((((cp - 0x10000) >> 10) & 0x3ff) | 0xd800));
-result.Append((char)(((cp - 0x10000) & 0x3ff) | 0xdc00));
+    result.Append((char)(((cp - 0x10000) & 0x3ff) | 0xdc00));
 }
                 }
               }
@@ -592,18 +600,18 @@ result.Append((char)(((cp - 0x10000) & 0x3ff) | 0xdc00));
               // DebugUtility.Log("password=%s",password);
               buffer.Remove(0, buffer.Length);
               hostStart = index;
-            } else if (c < 0 || ((c & 0x7F) == c && "/\\?#" .IndexOf((char)c) >=
+            } else if (c < 0 || ((c & 0x7F) == c && "/\\?#".IndexOf((char)c) >=
               0)) {
               buffer.Remove(0, buffer.Length);
               state = ParseState.Host;
               index = hostStart;
             } else {
               if (c <= 0xffff) {
-  { buffer.Append((char)(c));
+  { buffer.Append((char)c);
 }
   } else if (c <= 0x10ffff) {
     buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
+    buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
             }
             break;
@@ -613,13 +621,15 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
               if (buffer.Length == 2) {
                 int c1 = buffer[0];
                 int c2 = buffer[1];
-     if ((c2 == '|' || c2 == ':') && ((c1 >= 'A' && c1 <= 'Z') || (c1 >=
+                if (
+                  (c2 == '|' || c2 == ':') && ((c1 >= 'A' && c1 <= 'Z') ||
+(c1 >=
                 'a' && c1 <= 'z'))) {
                   state = ParseState.RelativePath;
                   break;
                 }
               }
-              string host = hostParse(buffer.ToString());
+              string host = HostParse(buffer.ToString());
               if (host == null) {
                 throw new ArgumentException();
               }
@@ -630,27 +640,27 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
               error = true;
             } else {
               if (c <= 0xffff) {
-  { buffer.Append((char)(c));
+  { buffer.Append((char)c);
 }
   } else if (c <= 0x10ffff) {
     buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
+    buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
             }
             break;
           case ParseState.Host:
           case ParseState.HostName:
             if (c == ':' && !bracketflag) {
-              string host = hostParse(buffer.ToString());
+              string host = HostParse(buffer.ToString());
               if (host == null) {
                 return null;
               }
               url.host = host;
               buffer.Remove(0, buffer.Length);
               state = ParseState.Port;
-            } else if (c < 0 || ((c & 0x7F) == c && "/\\?#" .IndexOf((char)c) >=
+            } else if (c < 0 || ((c & 0x7F) == c && "/\\?#".IndexOf((char)c) >=
               0)) {
-              string host = hostParse(buffer.ToString());
+              string host = HostParse(buffer.ToString());
               if (host == null) {
                 return null;
               }
@@ -667,11 +677,11 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
                 bracketflag = false;
               }
               if (c <= 0xffff) {
-  { buffer.Append((char)(c));
+  { buffer.Append((char)c);
 }
   } else if (c <= 0x10ffff) {
     buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
+    buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
             }
             break;
@@ -688,10 +698,10 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
   } else if (c <= 0x10ffff) {
     buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
+    buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
               }
-      } else if (c < 0 || ((c & 0x7F) == c && "/\\?#" .IndexOf((char)c) >=
+      } else if (c < 0 || ((c & 0x7F) == c && "/\\?#".IndexOf((char)c) >=
               0)) {
               string bufport = String.Empty;
               if (portstate == 1) {
@@ -700,20 +710,22 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
                 bufport = buffer.ToString();
               }
               // DebugUtility.Log("port: [%s]",buffer.ToString());
-              if ((url.scheme.Equals("http") || url.scheme.Equals("ws")) &&
-                  bufport.Equals("80")) {
+              if ((url.scheme.Equals("http", StringComparison.Ordinal) ||
+url.scheme.Equals("ws", StringComparison.Ordinal)) &&
+                  bufport.Equals("80", StringComparison.Ordinal)) {
                 bufport = String.Empty;
               }
-              if ((url.scheme.Equals("https") || url.scheme.Equals("wss")) &&
-                  bufport.Equals("443")) {
+              if ((url.scheme.Equals("https", StringComparison.Ordinal) ||
+url.scheme.Equals("wss", StringComparison.Ordinal)) &&
+                  bufport.Equals("443", StringComparison.Ordinal)) {
                 bufport = String.Empty;
               }
-              if ((url.scheme.Equals("gopher")) &&
-                  bufport.Equals("70")) {
+              if ((url.scheme.Equals("gopher", StringComparison.Ordinal)) &&
+bufport.Equals("70", StringComparison.Ordinal)) {
                 bufport = String.Empty;
               }
-              if ((url.scheme.Equals("ftp")) &&
-                  bufport.Equals("21")) {
+              if ((url.scheme.Equals("ftp", StringComparison.Ordinal)) &&
+bufport.Equals("21", StringComparison.Ordinal)) {
                 bufport = String.Empty;
               }
               url.port = bufport;
@@ -736,14 +748,14 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
                 // NOTE: Encoder errors can never happen in
                 // this case
 string bstr = buffer.ToString();
-                for (var i = 0; i < bstr.Length; ++i) {
+for (var i = 0; i < bstr.Length; ++i) {
                   int ch = DataUtilities.CodePointAt(bstr, i);
                   if (ch >= 0x10000) {
                     ++i;
                   }
                   if (ch < 0x21 || ch > 0x7e || ch == 0x22 || ch == 0x23 ||
                     ch == 0x3c || ch == 0x3e || ch == 0x60) {
-                    percentEncodeUtf8(query, ch);
+                    PercentEncodeUtf8(query, ch);
                   } else {
   { query.Append((char)ch);
 }
@@ -754,11 +766,11 @@ string bstr = buffer.ToString();
                     Encodings.EncodeToBytes(
                     Encodings.StringToInput(buffer.ToString()),
                     encoder);
-                  foreach (var ch in bytes) {
-                    if (ch < 0x21 || ch > 0x7e || ch == 0x22 || ch == 0x23 ||
+                    foreach (var ch in bytes) {
+                      if (ch < 0x21 || ch > 0x7e || ch == 0x22 || ch == 0x23 ||
                     ch == 0x3c || ch == 0x3e || ch == 0x60) {
-                      percentEncode(query, ch);
-                    } else {
+                        PercentEncode(query, ch);
+                      } else {
   { query.Append((char)ch);
 }
                     }
@@ -772,17 +784,17 @@ string bstr = buffer.ToString();
             } else if (c == 0x09 || c == 0x0a || c == 0x0d) {
               error = true;
             } else {
-              if ((!isUrlCodePoint(c) && c != '%') || (c == '%' &&
-                  (index + 2 > ending || !isHexDigit(s[index]) ||
-                    !isHexDigit(s[index + 1])))) {
+              if ((!IsUrlCodePoint(c) && c != '%') || (c == '%' &&
+                  (index + 2 > ending || !IsHexDigit(s[index]) ||
+                    !IsHexDigit(s[index + 1])))) {
                 error = true;
               }
               if (c <= 0xffff) {
-  { buffer.Append((char)(c));
+  { buffer.Append((char)c);
 }
   } else if (c <= 0x10ffff) {
     buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
+    buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
             }
             break;
@@ -813,14 +825,17 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
                   path.Add(String.Empty);
                 }
               } else {
-                if ("file".Equals(url.scheme) && path.Count == 0 &&
+                if ("file".Equals(url.scheme, StringComparison.Ordinal) &&
+path.Count == 0 &&
                     buffer.Length == 2) {
                   int c1 = buffer[0];
                   int c2 = buffer[1];
-     if ((c2 == '|' || c2 == ':') && ((c1 >= 'A' && c1 <= 'Z') || (c1 >=
+                  if (
+                    (c2 == '|' || c2 == ':') && ((c1 >= 'A' && c1 <= 'Z') ||
+(c1 >=
                 'a' && c1 <= 'z'))) {
-       buffer[1] = ':';
-     }
+                    buffer[1] = ':';
+                  }
                 }
                 path.Add(buffer.ToString());
               }
@@ -836,25 +851,25 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
             } else if (c == '%' && index + 2 <= ending && s[index] == '2' &&
                 (s[index + 1] == 'e' || s[index + 1] == 'E')) {
               index += 2;
-      buffer.Append((char)('.'));
-    } else if (c == 0x09 || c == 0x0a || c == 0x0d) {
-      error = true;
+              buffer.Append((char)'.');
+            } else if (c == 0x09 || c == 0x0a || c == 0x0d) {
+              error = true;
     } else {
-              if ((!isUrlCodePoint(c) && c != '%') || (c == '%' &&
-                  (index + 2 > ending || !isHexDigit(s[index]) ||
-                    !isHexDigit(s[index + 1])))) {
+              if ((!IsUrlCodePoint(c) && c != '%') || (c == '%' &&
+                  (index + 2 > ending || !IsHexDigit(s[index]) ||
+                    !IsHexDigit(s[index + 1])))) {
                 error = true;
               }
               if (c <= 0x20 || c >= 0x7F || ((c & 0x7F) == c && "#<>?`\""
                     .IndexOf((char)c) >= 0)) {
-                percentEncodeUtf8(buffer, c);
+                PercentEncodeUtf8(buffer, c);
               } else {
                 if (c <= 0xffff) {
-  { buffer.Append((char)(c));
+  { buffer.Append((char)c);
 }
   } else if (c <= 0x10ffff) {
     buffer.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
-buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
+    buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
               }
             }
@@ -866,23 +881,23 @@ buffer.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
             if (c == 0x09 || c == 0x0a || c == 0x0d) {
               error = true;
             } else {
-              if ((!isUrlCodePoint(c) && c != '%') || (c == '%' &&
-                  (index + 2 > ending || !isHexDigit(s[index]) ||
-                    !isHexDigit(s[index + 1])))) {
+              if ((!IsUrlCodePoint(c) && c != '%') || (c == '%' &&
+                  (index + 2 > ending || !IsHexDigit(s[index]) ||
+                    !IsHexDigit(s[index + 1])))) {
                 error = true;
               }
               if (c < 0x20 || c == 0x7f) {
-                percentEncode(fragment, c);
+                PercentEncode(fragment, c);
               } else if (c < 0x7f) {
                 if (c <= 0xffff) {
-  { fragment.Append((char)(c));
+  { fragment.Append((char)c);
 }
   } else if (c <= 0x10ffff) {
     fragment.Append((char)((((c - 0x10000) >> 10) & 0x3ff) | 0xd800));
-fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
+    fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
 }
               } else {
-                percentEncodeUtf8(fragment, c);
+                PercentEncodeUtf8(fragment, c);
               }
             }
             break;
@@ -932,8 +947,7 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
     /// <param name='isindex'>The parameter <paramref name='isindex'/> is
     /// either <c>true</c> or <c>false</c>.</param>
     /// <returns>An IList(string[]) object.</returns>
-  ///
-    public static IList<string[]> parseQueryString(
+    public static IList<string[]> ParseQueryString(
       string input,
       string delimiter,
       string encoding,
@@ -964,7 +978,7 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
         }
         name = name.Replace('+', ' ');
         value = value.Replace('+', ' ');
-        if (useCharset && "_charset_".Equals(name)) {
+        if (useCharset && "_charset_".Equals(name, StringComparison.Ordinal)) {
           string ch = Encodings.ResolveAlias(value);
           if (ch != null) {
             useCharset = false;
@@ -976,8 +990,8 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
       }
       try {
         foreach (var pair in pairs) {
-          pair[0] = percentDecode(pair[0], encoding);
-          pair[1] = percentDecode(pair[1], encoding);
+          pair[0] = PercentDecode(pair[0], encoding);
+          pair[1] = PercentDecode(pair[1], encoding);
         }
       } catch (IOException e) {
         throw e;
@@ -989,8 +1003,7 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
     /// <param name='s'>The parameter <paramref name='s'/> is a text
     /// string.</param>
     /// <returns>An IList(string) object.</returns>
-  ///
-    public static IList<string> pathList(string s) {
+    public static IList<string> PathList(string s) {
       IList<string> str = new List<string>();
       if (s == null || s.Length == 0) {
         return str;
@@ -1012,7 +1025,7 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
       return str;
     }
 
-    private static string percentDecode(string str, string encoding) {
+    private static string PercentDecode(string str, string encoding) {
       int len = str.Length;
       var percent = false;
       for (int i = 0; i < len; ++i) {
@@ -1033,8 +1046,8 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
           int c = str[i];
           if (c == '%') {
             if (i + 2 < len) {
-              int a = toHexNumber(str[i + 1]);
-              int b = toHexNumber(str[i + 2]);
+              int a = ToHexNumber(str[i + 1]);
+              int b = ToHexNumber(str[i + 2]);
               if (a >= 0 && b >= 0) {
                 mos.WriteByte((byte)((a * 16) + b));
                 i += 2;
@@ -1048,33 +1061,33 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
       }
     }
 
-    private static void percentEncode(StringBuilder buffer, int b) {
+    private static void PercentEncode(StringBuilder buffer, int b) {
      buffer.Append((char)'%');
-      buffer.Append(hex[(b >> 4) & 0x0f]);
-      buffer.Append(hex[b & 0x0f]);
+     buffer.Append(hex[(b >> 4) & 0x0f]);
+     buffer.Append(hex[b & 0x0f]);
     }
 
-    private static void percentEncodeUtf8(StringBuilder buffer, int cp) {
+    private static void PercentEncodeUtf8(StringBuilder buffer, int cp) {
       if (cp <= 0x7f) {
       buffer.Append((char)'%');
-        buffer.Append(hex[(cp >> 4) & 0x0f]);
-        buffer.Append(hex[cp & 0x0f]);
-      } else if (cp <= 0x7ff) {
-        percentEncode(buffer, 0xc0 | ((cp >> 6) & 0x1f));
-        percentEncode(buffer, 0x80 | (cp & 0x3f));
+      buffer.Append(hex[(cp >> 4) & 0x0f]);
+      buffer.Append(hex[cp & 0x0f]);
+    } else if (cp <= 0x7ff) {
+      PercentEncode(buffer, 0xc0 | ((cp >> 6) & 0x1f));
+        PercentEncode(buffer, 0x80 | (cp & 0x3f));
       } else if (cp <= 0xffff) {
-        percentEncode(buffer, 0xe0 | ((cp >> 12) & 0x0f));
-        percentEncode(buffer, 0x80 | ((cp >> 6) & 0x3f));
-        percentEncode(buffer, 0x80 | (cp & 0x3f));
+        PercentEncode(buffer, 0xe0 | ((cp >> 12) & 0x0f));
+        PercentEncode(buffer, 0x80 | ((cp >> 6) & 0x3f));
+        PercentEncode(buffer, 0x80 | (cp & 0x3f));
       } else {
-        percentEncode(buffer, 0xf0 | ((cp >> 18) & 0x07));
-        percentEncode(buffer, 0x80 | ((cp >> 12) & 0x3f));
-        percentEncode(buffer, 0x80 | ((cp >> 6) & 0x3f));
-        percentEncode(buffer, 0x80 | (cp & 0x3f));
+        PercentEncode(buffer, 0xf0 | ((cp >> 18) & 0x07));
+        PercentEncode(buffer, 0x80 | ((cp >> 12) & 0x3f));
+        PercentEncode(buffer, 0x80 | ((cp >> 6) & 0x3f));
+        PercentEncode(buffer, 0x80 | (cp & 0x3f));
       }
     }
 
-    private static int toHexNumber(int c) {
+    private static int ToHexNumber(int c) {
       if (c >= 'A' && c <= 'Z') {
         return 10 + c - 'A';
       } else if (c >= 'a' && c <= 'z') {
@@ -1094,7 +1107,6 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
     /// name='encoder'/> or <paramref name='input'/> is null.</exception>
     /// <exception cref='ArgumentException'>Code point out of
     /// range.</exception>
-  ///
     public static byte[] EncodeToBytesHtml(
       PeterO.Text.ICharacterInput input,
       ICharacterEncoder encoder) {
@@ -1131,7 +1143,15 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
       return writer.ToArray();
     }
 
-    public static string toQueryString(
+  /// <summary>Not documented yet.</summary>
+  /// <summary>Not documented yet.</summary>
+  /// <param name='pairs'>Not documented yet.</param>
+  /// <param name='delimiter'>Not documented yet.</param>
+  /// <param name='encoding'>Not documented yet.</param>
+  /// <returns/>
+  /// <exception cref='ArgumentNullException'>The parameter <paramref
+  /// name='pairs'/> is null.</exception>
+    public static string ToQueryString(
   IList<string[]> pairs,
   string delimiter,
   string encoding) {
@@ -1143,6 +1163,9 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
       ICharacterEncoder encoder = ienc.GetEncoder();
       var builder = new StringBuilder();
       var first = true;
+      if (pairs == null) {
+        throw new ArgumentNullException(nameof(pairs));
+      }
       foreach (var pair in pairs) {
         if (!first) {
           builder.Append(delimiter == null ? "&" : delimiter);
@@ -1153,16 +1176,16 @@ fragment.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
         }
           // TODO: Use htmlFallback parameter in EncodeToBytes
         // added to next version of Encoding library
-        appendOutputBytes(
+        AppendOutputBytes(
   builder,
   EncodeToBytesHtml(Encodings.StringToInput(pair[0]), encoder));
         builder.Append('=');
         {
           StringBuilder objectTemp = builder;
-byte[] objectTemp2 = EncodeToBytesHtml(
+          byte[] objectTemp2 = EncodeToBytesHtml(
           Encodings.StringToInput(pair[1]),
           encoder);
-appendOutputBytes(objectTemp, objectTemp2);
+          AppendOutputBytes(objectTemp, objectTemp2);
 }
       }
       return builder.ToString();
@@ -1190,7 +1213,6 @@ appendOutputBytes(objectTemp, objectTemp2);
     /// <param name='obj'>The parameter <paramref name='obj'/> is a Object
     /// object.</param>
     /// <returns>Either <c>true</c> or <c>false</c>.</returns>
-  ///
     public override bool Equals(object obj) {
       if (this == obj) {
         return true;
@@ -1198,7 +1220,7 @@ appendOutputBytes(objectTemp, objectTemp2);
       if (obj == null) {
         return false;
       }
-      if (GetType() != obj.GetType()) {
+      if (this.GetType() != obj.GetType()) {
         return false;
       }
       var other = (URL)obj;
@@ -1206,56 +1228,59 @@ appendOutputBytes(objectTemp, objectTemp2);
         if (other.fragment != null) {
           return false;
         }
-      } else if (!this.fragment.Equals(other.fragment)) {
+      } else if (!this.fragment.Equals(other.fragment,
+  StringComparison.Ordinal)) {
         return false;
       }
       if (this.host == null) {
         if (other.host != null) {
           return false;
         }
-      } else if (!this.host.Equals(other.host)) {
+      } else if (!this.host.Equals(other.host, StringComparison.Ordinal)) {
         return false;
       }
       if (this.password == null) {
         if (other.password != null) {
           return false;
         }
-      } else if (!this.password.Equals(other.password)) {
+      } else if (!this.password.Equals(other.password,
+  StringComparison.Ordinal)) {
         return false;
       }
       if (this.path == null) {
         if (other.path != null) {
           return false;
         }
-      } else if (!this.path.Equals(other.path)) {
+      } else if (!this.path.Equals(other.path, StringComparison.Ordinal)) {
         return false;
       }
       if (this.port == null) {
         if (other.port != null) {
           return false;
         }
-      } else if (!this.port.Equals(other.port)) {
+      } else if (!this.port.Equals(other.port, StringComparison.Ordinal)) {
         return false;
       }
       if (this.query == null) {
         if (other.query != null) {
           return false;
         }
-      } else if (!this.query.Equals(other.query)) {
+      } else if (!this.query.Equals(other.query, StringComparison.Ordinal)) {
         return false;
       }
       if (this.scheme == null) {
         if (other.scheme != null) {
           return false;
         }
-      } else if (!this.scheme.Equals(other.scheme)) {
+      } else if (!this.scheme.Equals(other.scheme, StringComparison.Ordinal)) {
         return false;
       }
       if (this.schemeData == null) {
         if (other.schemeData != null) {
           return false;
         }
-      } else if (!this.schemeData.Equals(other.schemeData)) {
+      } else if (!this.schemeData.Equals(other.schemeData,
+  StringComparison.Ordinal)) {
         return false;
       }
       if (this.username == null) {
@@ -1263,59 +1288,52 @@ appendOutputBytes(objectTemp, objectTemp2);
           return false;
         }
       } else {
-        return !this.username.Equals(other.username);
+        return !this.username.Equals(other.username, StringComparison.Ordinal);
       }
       return true;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getFragment() {
+    public string GetFragment() {
       return this.fragment ?? String.Empty;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getHash() {
+    public string GetHash() {
       return String.IsNullOrEmpty(this.fragment) ? String.Empty : "#" +
         this.fragment;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getHost() {
-      return (this.port.Length == 0) ? hostSerialize(this.host) :
-        (hostSerialize(this.host) + ":" + this.port);
+    public string GetHost() {
+      return (this.port.Length == 0) ? HostSerialize(this.host) :
+        (HostSerialize(this.host) + ":" + this.port);
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getHostname() {
-      return hostSerialize(this.host);
+    public string GetHostname() {
+      return HostSerialize(this.host);
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getPassword() {
+    public string GetPassword() {
       return this.password == null ? String.Empty : this.password;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getPath() {
+    public string GetPath() {
       return this.path;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getPathname() {
+    public string GetPathname() {
       if (this.schemeData.Length > 0) {
         return this.schemeData;
       } else {
@@ -1325,64 +1343,56 @@ appendOutputBytes(objectTemp, objectTemp2);
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getPort() {
+    public string GetPort() {
       return this.port;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getProtocol() {
+    public string GetProtocol() {
       return this.scheme + ":";
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getQueryString() {
+    public string GetQueryString() {
       return this.query == null ? String.Empty : this.query;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getScheme() {
+    public string GetScheme() {
       return this.scheme;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getSchemeData() {
+    public string GetSchemeData() {
       return this.schemeData;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getSearch() {
+    public string GetSearch() {
       return (this.query == null || this.query.Length == 0) ? String.Empty :
         "?" + this.query;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>A text string.</returns>
-  ///
-    public string getUsername() {
+    public string GetUsername() {
       return this.username == null ? String.Empty : this.username;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  ///
     public override sealed int GetHashCode() {
       var prime = 31;
       var result = 17;
-if (this.fragment != null) {
-  for (var i = 0; i < this.fragment.Length; ++i) {
-    result = (prime * result) + this.fragment[i];
-  }
+      if (this.fragment != null) {
+        for (var i = 0; i < this.fragment.Length; ++i) {
+          result = (prime * result) + this.fragment[i];
+        }
       }
       if (this.host != null) {
         for (var i = 0; i < this.host.Length; ++i) {
@@ -1424,23 +1434,22 @@ if (this.fragment != null) {
           result = (prime * result) + this.username[i];
         }
       }
-            return result;
+      return result;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  ///
     public override sealed string ToString() {
       var builder = new StringBuilder();
       builder.Append(this.scheme);
       builder.Append(':');
-      if (this.scheme.Equals("file") ||
-this.scheme.Equals("http") ||
-this.scheme.Equals("https") ||
-this.scheme.Equals("ftp") ||
-this.scheme.Equals("gopher") ||
-this.scheme.Equals("ws") ||
-this.scheme.Equals("wss")) {
+      if (this.scheme.Equals("file", StringComparison.Ordinal) ||
+this.scheme.Equals("http", StringComparison.Ordinal) ||
+this.scheme.Equals("https", StringComparison.Ordinal) ||
+this.scheme.Equals("ftp", StringComparison.Ordinal) ||
+this.scheme.Equals("gopher", StringComparison.Ordinal) ||
+this.scheme.Equals("ws", StringComparison.Ordinal) ||
+this.scheme.Equals("wss", StringComparison.Ordinal)) {
         // NOTE: We check relative schemes here
         // rather than have a relative flag,
         // as specified in the URL Standard
@@ -1456,7 +1465,7 @@ this.scheme.Equals("wss")) {
           }
           builder.Append('@');
         }
-        builder.Append(hostSerialize(this.host));
+        builder.Append(HostSerialize(this.host));
         if (this.port.Length > 0) {
           builder.Append(':');
           builder.Append(this.port);

@@ -11,7 +11,6 @@ sealed class RDFInternal {
     /// <param name='bnodeLabels'>A mapping of blank node names already
     /// allocated. This method will modify this object as needed to
     /// allocate new blank nodes.</param>
-  ///
   internal static void replaceBlankNodes(
   ISet<RDFTriple> triples,
       IDictionary<string, RDFTerm> bnodeLabels) {

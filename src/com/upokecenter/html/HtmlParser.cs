@@ -28,13 +28,13 @@ THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Com.Upokecenter.io;
+using Com.Upokecenter.net;
+using Com.Upokecenter.util;
 using PeterO;
 using PeterO.Text;
-using com.upokecenter.io;
-using com.upokecenter.net;
-using com.upokecenter.util;
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
   internal sealed class HtmlParser {
     public class CommentToken : IToken {
       public StringBuilder CommentValue { get; set; }
@@ -47,7 +47,7 @@ namespace com.upokecenter.html {
         this.CommentValue.Append(str);
       }
 
-      public void appendChar(int ch) {
+      public void AppendChar(int ch) {
         if (ch <= 0xffff) {
           this.CommentValue.Append((char)ch);
         } else if (ch <= 0x10ffff) {
@@ -57,7 +57,7 @@ namespace com.upokecenter.html {
         }
       }
 
-      public int getType() {
+      public int GetType() {
         return TOKEN_COMMENT;
       }
     }
@@ -80,7 +80,7 @@ namespace com.upokecenter.html {
 
       public bool ForceQuirks { get; set; }
 
-      public int getType() {
+      public int GetType() {
         return TOKEN_DOCTYPE;
       }
     }
@@ -92,7 +92,7 @@ namespace com.upokecenter.html {
       public EndTagToken(string name) : base(name) {
       }
 
-      public override sealed int getType() {
+      public override sealed int GetType() {
         return HtmlParser.TOKEN_END_TAG;
       }
     }
@@ -104,7 +104,7 @@ namespace com.upokecenter.html {
 
       public StartTagToken Token { get; set; }
 
-      public bool isMarker() {
+      public bool IsMarker() {
         return this.ValueMarker;
       }
 
@@ -137,11 +137,11 @@ namespace com.upokecenter.html {
       InFrameset,
       AfterFrameset,
       AfterAfterBody,
-      AfterAfterFrameset
+      AfterAfterFrameset,
     }
 
     internal interface IToken {
-      int getType();
+      int GetType();
     }
 
     internal class StartTagToken : TagToken {
@@ -151,30 +151,30 @@ namespace com.upokecenter.html {
       public StartTagToken(string name) : base(name) {
       }
 
-      public override sealed int getType() {
+      public override sealed int GetType() {
         return HtmlParser.TOKEN_START_TAG;
       }
 
-      public void setName(string _string) {
-        builder.Clear();
-        builder.Append(_string);
+      public void SetName(string _string) {
+        this.builder.Clear();
+        this.builder.Append(_string);
       }
     }
 
     internal abstract class TagToken : IToken, INameAndAttributes {
       protected StringBuilder builder;
 
-      public IList<Attr> valueAttributes { get; set; }
+      public IList<Attr> Attributes { get; set; }
 
-      public bool valueSelfClosing { get; set; }
+      public bool SelfClosing { get; set; }
 
       public bool ValueSelfClosingAck { get; set; }
 
       public TagToken(char ch) {
         this.builder = new StringBuilder();
         this.builder.Append(ch);
-        this.valueAttributes = null;
-        this.valueSelfClosing = false;
+        this.Attributes = null;
+        this.SelfClosing = false;
         this.ValueSelfClosingAck = false;
       }
 
@@ -183,25 +183,25 @@ namespace com.upokecenter.html {
         this.builder.Append(valueName);
       }
 
-      public void ackSelfClosing() {
+      public void AckSelfClosing() {
         this.ValueSelfClosingAck = true;
       }
 
-      public Attr addAttribute(char ch) {
-        this.valueAttributes = this.valueAttributes ?? (new List<Attr>());
+      public Attr AddAttribute(char ch) {
+        this.Attributes = this.Attributes ?? new List<Attr>();
         var a = new Attr(ch);
-        this.valueAttributes.Add(a);
+        this.Attributes.Add(a);
         return a;
       }
 
-      public Attr addAttribute(int ch) {
-        this.valueAttributes = this.valueAttributes ?? (new List<Attr>());
+      public Attr AddAttribute(int ch) {
+        this.Attributes = this.Attributes ?? new List<Attr>();
         var a = new Attr(ch);
-        this.valueAttributes.Add(a);
+        this.Attributes.Add(a);
         return a;
       }
 
-      public void append(int ch) {
+      public void Append(int ch) {
         if (ch < 0x10000) {
           this.builder.Append((char)ch);
         } else {
@@ -213,22 +213,23 @@ namespace com.upokecenter.html {
         }
       }
 
-      public void appendChar(char ch) {
+      public void AppendChar(char ch) {
         this.builder.Append(ch);
       }
 
-      public bool checkAttributeName() {
-        if (this.valueAttributes == null) {
+      public bool CheckAttributeName() {
+        if (this.Attributes == null) {
           return true;
         }
-        int size = this.valueAttributes.Count;
+        int size = this.Attributes.Count;
         if (size >= 2) {
-          string thisname = this.valueAttributes[size - 1].getName();
+          string thisname = this.Attributes[size - 1].getName();
           for (int i = 0; i < size - 1; ++i) {
-            if (this.valueAttributes[i].getName().Equals(thisname)) {
+            if (this.Attributes[i].getName().Equals(thisname,
+  StringComparison.Ordinal)) {
               // Attribute with this valueName already exists;
               // remove it
-              this.valueAttributes.RemoveAt(size - 1);
+              this.Attributes.RemoveAt(size - 1);
               return false;
             }
           }
@@ -236,28 +237,28 @@ namespace com.upokecenter.html {
         return true;
       }
 
-      public string getAttribute(string valueName) {
-        if (this.valueAttributes == null) {
+      public string GetAttribute(string valueName) {
+        if (this.Attributes == null) {
           return null;
         }
-        int size = this.valueAttributes.Count;
+        int size = this.Attributes.Count;
         for (int i = 0; i < size; ++i) {
-          IAttr a = this.valueAttributes[i];
+          IAttr a = this.Attributes[i];
           string thisname = a.getName();
-          if (thisname.Equals(valueName)) {
+          if (thisname.Equals(valueName, StringComparison.Ordinal)) {
             return a.getValue();
           }
         }
         return null;
       }
 
-      public string getAttributeNS(string valueName, string _namespace) {
-        if (this.valueAttributes == null) {
+      public string GetAttributeNS(string valueName, string _namespace) {
+        if (this.Attributes == null) {
           return null;
         }
-        int size = this.valueAttributes.Count;
+        int size = this.Attributes.Count;
         for (int i = 0; i < size; ++i) {
-          Attr a = this.valueAttributes[i];
+          Attr a = this.Attributes[i];
           if (a.isAttribute(valueName, _namespace)) {
             return a.getValue();
           }
@@ -266,10 +267,10 @@ namespace com.upokecenter.html {
       }
 
       public IList<Attr> getAttributes() {
-        if (this.valueAttributes == null) {
+        if (this.Attributes == null) {
           return new Attr[0];
         } else {
-          return this.valueAttributes;
+          return this.Attributes;
         }
       }
 
@@ -277,46 +278,45 @@ namespace com.upokecenter.html {
         return this.builder.ToString();
       }
 
-      public abstract int getType();
+      public abstract int GetType();
 
-      public bool isAckSelfClosing() {
-        return !this.valueSelfClosing || this.ValueSelfClosingAck;
+      public bool IsAckSelfClosing() {
+        return !this.SelfClosing || this.ValueSelfClosingAck;
       }
 
-      public bool isSelfClosing() {
-        return this.valueSelfClosing;
+      public bool IsSelfClosing() {
+        return this.SelfClosing;
       }
 
-      public bool isSelfClosingAck() {
+      public bool IsSelfClosingAck() {
         return this.ValueSelfClosingAck;
       }
 
-      public void setAttribute(string attrname, string value) {
-        if (this.valueAttributes == null) {
-          this.valueAttributes = new List<Attr>();
-          this.valueAttributes.Add(new Attr(attrname, value));
+      public void SetAttribute(string attrname, string value) {
+        if (this.Attributes == null) {
+          this.Attributes = new List<Attr>();
+          this.Attributes.Add(new Attr(attrname, value));
         } else {
-          int size = this.valueAttributes.Count;
+          int size = this.Attributes.Count;
           for (int i = 0; i < size; ++i) {
-            Attr a = this.valueAttributes[i];
+            Attr a = this.Attributes[i];
             string thisname = a.getName();
-            if (thisname.Equals(attrname)) {
+            if (thisname.Equals(attrname, StringComparison.Ordinal)) {
               a.setValue(value);
               return;
             }
           }
-          this.valueAttributes.Add(new Attr(attrname, value));
+          this.Attributes.Add(new Attr(attrname, value));
         }
       }
 
-      public void setSelfClosing(bool valueSelfClosing) {
-        this.valueSelfClosing = valueSelfClosing;
+      public void SetSelfClosing(bool SelfClosing) {
+        this.SelfClosing = SelfClosing;
       }
 
       public override sealed string ToString() {
         return "TagToken [" + this.builder.ToString() + ", " +
-    this.valueAttributes + (this.valueSelfClosing ?
-              (", ValueSelfClosingAck=" +
+    this.Attributes + (this.SelfClosing ? (", ValueSelfClosingAck=" +
               this.ValueSelfClosingAck) : String.Empty) + "]";
       }
     }
@@ -340,9 +340,9 @@ namespace com.upokecenter.html {
     }
 
     internal interface IInputStream {
-      void rewind();
+      void Rewind();
 
-      void disableBuffer();
+      void DisableBuffer();
     }
 
     private enum TokenizerState {
@@ -413,7 +413,7 @@ namespace com.upokecenter.html {
       DocTypeSystemIDSingleQuoted,
       AfterDocTypeSystemID,
       BogusDocType,
-      CData
+      CData,
     }
 
     private const int TOKEN_EOF = 0x10000000;
@@ -429,70 +429,70 @@ namespace com.upokecenter.html {
     private const int TOKEN_CHARACTER = 0x00000000;
     private const int TOKEN_INDEX_MASK = 0x0fffffff;
 
-    private void addToken(IToken token) {
+    private void AddToken(IToken token) {
       if (this.tokens.Count > TOKEN_INDEX_MASK) {
         throw new InvalidOperationException();
       }
-      tokens.Add(token);
+      this.tokens.Add(token);
     }
 
     private static string[] quirksModePublicIdPrefixes = new string[] {
-      "+//silmaril//dtd html pro v0r11 19970101//",
-      "-//advasoft ltd//dtd html 3.0 aswedit + extensions//",
-      "-//as//dtd html 3.0 aswedit + extensions//",
-      "-//ietf//dtd html 2.0 level 1//",
-      "-//ietf//dtd html 2.0 level 2//",
-      "-//ietf//dtd html 2.0 strict level 1//",
-      "-//ietf//dtd html 2.0 strict level 2//",
-      "-//ietf//dtd html 2.0 strict//",
-      "-//ietf//dtd html 2.0//",
-      "-//ietf//dtd html 2.1e//",
-      "-//ietf//dtd html 3.0//",
-      "-//ietf//dtd html 3.2 final//",
-      "-//ietf//dtd html 3.2//",
-      "-//ietf//dtd html 3//",
-      "-//ietf//dtd html level 0//",
-      "-//ietf//dtd html level 1//",
-      "-//ietf//dtd html level 2//",
-      "-//ietf//dtd html level 3//",
-      "-//ietf//dtd html strict level 0//",
-      "-//ietf//dtd html strict level 1//",
-      "-//ietf//dtd html strict level 2//",
-      "-//ietf//dtd html strict level 3//",
-      "-//ietf//dtd html strict//",
-      "-//ietf//dtd html//",
+      "+//silmaril//dtd Html pro v0r11 19970101//",
+      "-//advasoft ltd//dtd Html 3.0 aswedit + extensions//",
+      "-//as//dtd Html 3.0 aswedit + extensions//",
+      "-//ietf//dtd Html 2.0 level 1//",
+      "-//ietf//dtd Html 2.0 level 2//",
+      "-//ietf//dtd Html 2.0 strict level 1//",
+      "-//ietf//dtd Html 2.0 strict level 2//",
+      "-//ietf//dtd Html 2.0 strict//",
+      "-//ietf//dtd Html 2.0//",
+      "-//ietf//dtd Html 2.1e//",
+      "-//ietf//dtd Html 3.0//",
+      "-//ietf//dtd Html 3.2 final//",
+      "-//ietf//dtd Html 3.2//",
+      "-//ietf//dtd Html 3//",
+      "-//ietf//dtd Html level 0//",
+      "-//ietf//dtd Html level 1//",
+      "-//ietf//dtd Html level 2//",
+      "-//ietf//dtd Html level 3//",
+      "-//ietf//dtd Html strict level 0//",
+      "-//ietf//dtd Html strict level 1//",
+      "-//ietf//dtd Html strict level 2//",
+      "-//ietf//dtd Html strict level 3//",
+      "-//ietf//dtd Html strict//",
+      "-//ietf//dtd Html//",
       "-//metrius//dtd metrius presentational//",
-      "-//microsoft//dtd internet explorer 2.0 html strict//",
-      "-//microsoft//dtd internet explorer 2.0 html//",
+      "-//microsoft//dtd internet explorer 2.0 Html strict//",
+      "-//microsoft//dtd internet explorer 2.0 Html//",
       "-//microsoft//dtd internet explorer 2.0 tables//",
-      "-//microsoft//dtd internet explorer 3.0 html strict//",
-      "-//microsoft//dtd internet explorer 3.0 html//",
+      "-//microsoft//dtd internet explorer 3.0 Html strict//",
+      "-//microsoft//dtd internet explorer 3.0 Html//",
       "-//microsoft//dtd internet explorer 3.0 tables//",
-      "-//netscape comm. corp.//dtd html//",
-      "-//netscape comm. corp.//dtd strict html//",
-      "-//o'reilly and associates//dtd html 2.0//",
-      "-//o'reilly and associates//dtd html extended 1.0//",
-      "-//o'reilly and associates//dtd html extended relaxed 1.0//",
+      "-//netscape comm. corp.//dtd Html//",
+      "-//netscape comm. corp.//dtd strict Html//",
+      "-//o'reilly and associates//dtd Html 2.0//",
+      "-//o'reilly and associates//dtd Html extended 1.0//",
+      "-//o'reilly and associates//dtd Html extended relaxed 1.0//",
       "-//softquad software//dtd hotmetal pro 6.0::" +
-      "19990601::extensions to html 4.0//",
-      "-//softquad//dtd hotmetal pro 4.0::19971010::extensions to html 4.0//",
-      "-//spyglass//dtd html 2.0 extended//",
-      "-//sq//dtd html 2.0 hotmetal + extensions//",
-      "-//sun microsystems corp.//dtd hotjava html//",
-      "-//sun microsystems corp.//dtd hotjava strict html//",
-      "-//w3c//dtd html 3 1995-03-24//",
-      "-//w3c//dtd html 3.2 draft//",
-      "-//w3c//dtd html 3.2 final//",
-      "-//w3c//dtd html 3.2//",
-      "-//w3c//dtd html 3.2s draft//",
-      "-//w3c//dtd html 4.0 frameset//",
-      "-//w3c//dtd html 4.0 transitional//",
-      "-//w3c//dtd html experimental 19960712//",
-      "-//w3c//dtd html experimental 970421//",
-      "-//w3c//dtd w3 html//",
-      "-//w3o//dtd w3 html 3.0//",
-      "-//webtechs//dtd mozilla html 2.0//",
-      "-//webtechs//dtd mozilla html//"
+      "19990601::extensions to Html 4.0//",
+      "-//softquad//dtd hotmetal pro 4.0::19971010::extensions to Html 4.0//",
+      "-//spyglass//dtd Html 2.0 extended//",
+      "-//sq//dtd Html 2.0 hotmetal + extensions//",
+      "-//sun microsystems corp.//dtd hotjava Html//",
+      "-//sun microsystems corp.//dtd hotjava strict Html//",
+      "-//w3c//dtd Html 3 1995-03-24//",
+      "-//w3c//dtd Html 3.2 draft//",
+      "-//w3c//dtd Html 3.2 final//",
+      "-//w3c//dtd Html 3.2//",
+      "-//w3c//dtd Html 3.2s draft//",
+      "-//w3c//dtd Html 4.0 frameset//",
+      "-//w3c//dtd Html 4.0 transitional//",
+      "-//w3c//dtd Html experimental 19960712//",
+      "-//w3c//dtd Html experimental 970421//",
+      "-//w3c//dtd w3 Html//",
+      "-//w3o//dtd w3 Html 3.0//",
+      "-//webtechs//dtd mozilla Html 2.0//",
+      "-//webtechs//dtd mozilla Html//",
     };
 
     private ConditionalBufferInputStream inputStream;
@@ -536,7 +536,7 @@ namespace com.upokecenter.html {
 
     private string[] contentLanguage;
 
-    private static T removeAtIndex<T>(IList<T> array, int index) {
+    private static T RemoveAtIndex<T>(IList<T> array, int index) {
       T ret = array[index];
       array.RemoveAt(index);
       return ret;
@@ -561,7 +561,7 @@ namespace com.upokecenter.html {
         throw new ArgumentException();
       }
       if (address != null && address.Length > 0) {
-        URL url = URL.parse(address);
+        URL url = URL.Parse(address);
         if (url == null || url.getScheme().Length == 0) {
           throw new ArgumentException();
         }
@@ -569,7 +569,7 @@ namespace com.upokecenter.html {
       // TODO: Use a more sophisticated language parser here
       this.contentLanguage = new string[] { contentLanguage };
       this.address = address;
-      this.initialize();
+      this.Initialize();
       this.inputStream = new ConditionalBufferInputStream(source); // TODO: ???
       this.encoding = new EncodingConfidence(
         charset,
@@ -577,31 +577,33 @@ namespace com.upokecenter.html {
       // TODO: Use the following below
       // this.encoding = CharsetSniffer.sniffEncoding(this.inputStream,
       // charset);
-      this.inputStream.rewind();
+      this.inputStream.Rewind();
       ICharacterEncoding henc = new Html5Encoding(this.encoding);
-      this.charInput = new StackableCharacterInput(
-        Encodings.GetDecoderInput(henc, this.inputStream));
+      // TODO
+      //
+      // this.charInput = new StackableCharacterInput(
+      // Encodings.GetDecoderInput(henc, this.inputStream));
     }
 
-    private void addCommentNodeToCurrentNode(int valueToken) {
-      this.insertInCurrentNode(this.createCommentNode(valueToken));
+    private void AddCommentNodeToCurrentNode(int valueToken) {
+      this.InsertInCurrentNode(this.CreateCommentNode(valueToken));
     }
 
-    private void addCommentNodeToDocument(int valueToken) {
+    private void AddCommentNodeToDocument(int valueToken) {
       ((Document)this.valueDocument)
-              .appendChild(this.createCommentNode(valueToken));
+              .appendChild(this.CreateCommentNode(valueToken));
     }
 
-    private void addCommentNodeToFirst(int valueToken) {
+    private void AddCommentNodeToFirst(int valueToken) {
       ((Node)this.openElements[0])
-              .appendChild(this.createCommentNode(valueToken));
+              .appendChild(this.CreateCommentNode(valueToken));
     }
 
-    private Element addHtmlElement(StartTagToken tag) {
+    private Element AddHtmlElement(StartTagToken tag) {
       Element valueElement = Element.fromToken(tag);
-      IElement currentNode = this.getCurrentNode();
+      IElement currentNode = this.GetCurrentNode();
       if (currentNode != null) {
-        this.insertInCurrentNode(valueElement);
+        this.InsertInCurrentNode(valueElement);
       } else {
         this.valueDocument.appendChild(valueElement);
       }
@@ -609,43 +611,49 @@ namespace com.upokecenter.html {
       return valueElement;
     }
 
-    private Element addHtmlElementNoPush(StartTagToken tag) {
+    private Element AddHtmlElementNoPush(StartTagToken tag) {
       Element valueElement = Element.fromToken(tag);
-      IElement currentNode = this.getCurrentNode();
+      IElement currentNode = this.GetCurrentNode();
       if (currentNode != null) {
-        this.insertInCurrentNode(valueElement);
+        this.InsertInCurrentNode(valueElement);
       }
       return valueElement;
     }
 
-    private void adjustForeignAttributes(StartTagToken valueToken) {
-      IList<Attr> valueAttributes = valueToken.getAttributes();
-      foreach (var attr in valueAttributes) {
+    private void AdjustForeignAttributes(StartTagToken valueToken) {
+      IList<Attr> Attributes = valueToken.getAttributes();
+      foreach (var attr in Attributes) {
         string valueName = attr.getName();
-        if (valueName.Equals("xlink:actuate") ||
+        if (valueName.Equals("xlink:actuate", StringComparison.Ordinal) ||
 valueName.Equals(
-        "xlink:arcrole") ||
-valueName.Equals("xlink:href") ||
+        "xlink:arcrole",
+  StringComparison.Ordinal) ||
+valueName.Equals("xlink:href", StringComparison.Ordinal) ||
 valueName.Equals(
-  "xlink:role") ||
-valueName.Equals("xlink:show") ||
+  "xlink:role",
+  StringComparison.Ordinal) ||
+valueName.Equals("xlink:show", StringComparison.Ordinal) ||
 valueName.Equals(
-  "xlink:title") ||
-valueName.Equals("xlink:type")) {
+  "xlink:title",
+  StringComparison.Ordinal) ||
+valueName.Equals("xlink:type", StringComparison.Ordinal)) {
           attr.setNamespace(HtmlCommon.XLINK_NAMESPACE);
-        } else if (valueName.Equals("xml:base") ||
+        } else if (valueName.Equals("xml:base", StringComparison.Ordinal) ||
 valueName.Equals(
-     "xml:lang") ||
-valueName.Equals("xml:space")) {
+     "xml:lang",
+  StringComparison.Ordinal) ||
+valueName.Equals("xml:space", StringComparison.Ordinal)) {
           attr.setNamespace(HtmlCommon.XML_NAMESPACE);
-        } else if (valueName.Equals("xmlns") || valueName.Equals(
-     "xmlns:xlink")) {
+        } else if (valueName.Equals("xmlns", StringComparison.Ordinal) ||
+valueName.Equals(
+     "xmlns:xlink",
+  StringComparison.Ordinal)) {
           attr.setNamespace(HtmlCommon.XMLNS_NAMESPACE);
         }
       }
     }
 
-    private bool hasHtmlOpenElement(string name) {
+    private bool HasHtmlOpenElement(string name) {
       foreach (var e in this.openElements) {
         if (HtmlCommon.isHtmlElement(e, name)) {
           return true;
@@ -654,461 +662,512 @@ valueName.Equals("xml:space")) {
       return false;
     }
 
-    private void adjustMathMLAttributes(StartTagToken valueToken) {
-      IList<Attr> valueAttributes = valueToken.getAttributes();
-      foreach (var attr in valueAttributes) {
-        if (attr.getName().Equals("definitionurl")) {
-          attr.setName("definitionURL");
+    private void AdjustMathMLAttributes(StartTagToken valueToken) {
+      IList<Attr> Attributes = valueToken.getAttributes();
+      foreach (var attr in Attributes) {
+        if (attr.getName().Equals("definitionurl", StringComparison.Ordinal)) {
+          attr.SetName("definitionURL");
         }
       }
     }
 
-    private void adjustSvgAttributes(StartTagToken valueToken) {
-      IList<Attr> valueAttributes = valueToken.getAttributes();
-      foreach (var attr in valueAttributes) {
+    private void AdjustSvgAttributes(StartTagToken valueToken) {
+      IList<Attr> Attributes = valueToken.getAttributes();
+      foreach (var attr in Attributes) {
         string valueName = attr.getName();
-        if (valueName.Equals("attributename")) {
+        if (valueName.Equals("attributename", StringComparison.Ordinal)) {
           {
-            attr.setName("attributeName");
+            attr.SetName("attributeName");
           }
-        } else if (valueName.Equals("attributetype")) {
+        } else if (valueName.Equals("attributetype",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("attributeType");
+            attr.SetName("attributeType");
           }
-        } else if (valueName.Equals("basefrequency")) {
+        } else if (valueName.Equals("basefrequency",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("baseFrequency");
+            attr.SetName("baseFrequency");
           }
-        } else if (valueName.Equals("baseprofile")) {
+        } else if (valueName.Equals("baseprofile", StringComparison.Ordinal)) {
           {
-            attr.setName("baseProfile");
+            attr.SetName("baseProfile");
           }
-        } else if (valueName.Equals("calcmode")) {
+        } else if (valueName.Equals("calcmode", StringComparison.Ordinal)) {
           {
-            attr.setName("calcMode");
+            attr.SetName("calcMode");
           }
-        } else if (valueName.Equals("clippathunits")) {
+        } else if (valueName.Equals("clippathunits",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("clipPathUnits");
+            attr.SetName("clipPathUnits");
           }
-        } else if (valueName.Equals("diffuseconstant")) {
+        } else if (valueName.Equals("diffuseconstant",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("diffuseConstant");
+            attr.SetName("diffuseConstant");
           }
-        } else if (valueName.Equals("edgemode")) {
+        } else if (valueName.Equals("edgemode", StringComparison.Ordinal)) {
           {
-            attr.setName("edgeMode");
+            attr.SetName("edgeMode");
           }
-        } else if (valueName.Equals("filterunits")) {
+        } else if (valueName.Equals("filterunits", StringComparison.Ordinal)) {
           {
-            attr.setName("filterUnits");
+            attr.SetName("filterUnits");
           }
-        } else if (valueName.Equals("glyphref")) {
+        } else if (valueName.Equals("glyphref", StringComparison.Ordinal)) {
           {
-            attr.setName("glyphRef");
+            attr.SetName("glyphRef");
           }
-        } else if (valueName.Equals("gradienttransform")) {
-          attr.setName("gradientTransform");
-        } else if (valueName.Equals("gradientunits")) {
+        } else if (valueName.Equals("gradienttransform",
+  StringComparison.Ordinal)) {
+          attr.SetName("gradientTransform");
+        } else if (valueName.Equals("gradientunits",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("gradientUnits");
+            attr.SetName("gradientUnits");
           }
-        } else if (valueName.Equals("kernelmatrix")) {
+        } else if (valueName.Equals("kernelmatrix", StringComparison.Ordinal)) {
           {
-            attr.setName("kernelMatrix");
+            attr.SetName("kernelMatrix");
           }
-        } else if (valueName.Equals("kernelunitlength")) {
+        } else if (valueName.Equals("kernelunitlength",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("kernelUnitLength");
+            attr.SetName("kernelUnitLength");
           }
-        } else if (valueName.Equals("keypoints")) {
+        } else if (valueName.Equals("keypoints", StringComparison.Ordinal)) {
           {
-            attr.setName("keyPoints");
+            attr.SetName("keyPoints");
           }
-        } else if (valueName.Equals("keysplines")) {
+        } else if (valueName.Equals("keysplines", StringComparison.Ordinal)) {
           {
-            attr.setName("keySplines");
+            attr.SetName("keySplines");
           }
-        } else if (valueName.Equals("keytimes")) {
+        } else if (valueName.Equals("keytimes", StringComparison.Ordinal)) {
           {
-            attr.setName("keyTimes");
+            attr.SetName("keyTimes");
           }
-        } else if (valueName.Equals("lengthadjust")) {
+        } else if (valueName.Equals("lengthadjust", StringComparison.Ordinal)) {
           {
-            attr.setName("lengthAdjust");
+            attr.SetName("lengthAdjust");
           }
-        } else if (valueName.Equals("limitingconeangle")) {
-          attr.setName("limitingConeAngle");
-        } else if (valueName.Equals("markerheight")) {
+        } else if (valueName.Equals("limitingconeangle",
+  StringComparison.Ordinal)) {
+          attr.SetName("limitingConeAngle");
+        } else if (valueName.Equals("markerheight", StringComparison.Ordinal)) {
           {
-            attr.setName("markerHeight");
+            attr.SetName("markerHeight");
           }
-        } else if (valueName.Equals("markerunits")) {
+        } else if (valueName.Equals("markerunits", StringComparison.Ordinal)) {
           {
-            attr.setName("markerUnits");
+            attr.SetName("markerUnits");
           }
-        } else if (valueName.Equals("markerwidth")) {
+        } else if (valueName.Equals("markerwidth", StringComparison.Ordinal)) {
           {
-            attr.setName("markerWidth");
+            attr.SetName("markerWidth");
           }
-        } else if (valueName.Equals("maskcontentunits")) {
+        } else if (valueName.Equals("maskcontentunits",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("maskContentUnits");
+            attr.SetName("maskContentUnits");
           }
-        } else if (valueName.Equals("maskunits")) {
+        } else if (valueName.Equals("maskunits", StringComparison.Ordinal)) {
           {
-            attr.setName("maskUnits");
+            attr.SetName("maskUnits");
           }
-        } else if (valueName.Equals("numoctaves")) {
+        } else if (valueName.Equals("numoctaves", StringComparison.Ordinal)) {
           {
-            attr.setName("numOctaves");
+            attr.SetName("numOctaves");
           }
-        } else if (valueName.Equals("pathlength")) {
+        } else if (valueName.Equals("pathlength", StringComparison.Ordinal)) {
           {
-            attr.setName("pathLength");
+            attr.SetName("pathLength");
           }
-        } else if (valueName.Equals("patterncontentunits")) {
-          attr.setName("patternContentUnits");
-        } else if (valueName.Equals("patterntransform")) {
+        } else if (valueName.Equals("patterncontentunits",
+  StringComparison.Ordinal)) {
+          attr.SetName("patternContentUnits");
+        } else if (valueName.Equals("patterntransform",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("patternTransform");
+            attr.SetName("patternTransform");
           }
-        } else if (valueName.Equals("patternunits")) {
+        } else if (valueName.Equals("patternunits", StringComparison.Ordinal)) {
           {
-            attr.setName("patternUnits");
+            attr.SetName("patternUnits");
           }
-        } else if (valueName.Equals("pointsatx")) {
+        } else if (valueName.Equals("pointsatx", StringComparison.Ordinal)) {
           {
-            attr.setName("pointsAtX");
+            attr.SetName("pointsAtX");
           }
-        } else if (valueName.Equals("pointsaty")) {
+        } else if (valueName.Equals("pointsaty", StringComparison.Ordinal)) {
           {
-            attr.setName("pointsAtY");
+            attr.SetName("pointsAtY");
           }
-        } else if (valueName.Equals("pointsatz")) {
+        } else if (valueName.Equals("pointsatz", StringComparison.Ordinal)) {
           {
-            attr.setName("pointsAtZ");
+            attr.SetName("pointsAtZ");
           }
-        } else if (valueName.Equals("preservealpha")) {
+        } else if (valueName.Equals("preservealpha",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("preserveAlpha");
+            attr.SetName("preserveAlpha");
           }
-        } else if (valueName.Equals("preserveaspectratio")) {
-          attr.setName("preserveAspectRatio");
-        } else if (valueName.Equals("primitiveunits")) {
+        } else if (valueName.Equals("preserveaspectratio",
+  StringComparison.Ordinal)) {
+          attr.SetName("preserveAspectRatio");
+        } else if (valueName.Equals("primitiveunits",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("primitiveUnits");
+            attr.SetName("primitiveUnits");
           }
-        } else if (valueName.Equals("refx")) {
+        } else if (valueName.Equals("refx", StringComparison.Ordinal)) {
           {
-            attr.setName("refX");
+            attr.SetName("refX");
           }
-        } else if (valueName.Equals("refy")) {
+        } else if (valueName.Equals("refy", StringComparison.Ordinal)) {
           {
-            attr.setName("refY");
+            attr.SetName("refY");
           }
-        } else if (valueName.Equals("repeatcount")) {
+        } else if (valueName.Equals("repeatcount", StringComparison.Ordinal)) {
           {
-            attr.setName("repeatCount");
+            attr.SetName("repeatCount");
           }
-        } else if (valueName.Equals("repeatdur")) {
+        } else if (valueName.Equals("repeatdur", StringComparison.Ordinal)) {
           {
-            attr.setName("repeatDur");
+            attr.SetName("repeatDur");
           }
-        } else if (valueName.Equals("requiredextensions")) {
-          attr.setName("requiredExtensions");
-        } else if (valueName.Equals("requiredfeatures")) {
+        } else if (valueName.Equals("requiredextensions",
+  StringComparison.Ordinal)) {
+          attr.SetName("requiredExtensions");
+        } else if (valueName.Equals("requiredfeatures",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("requiredFeatures");
+            attr.SetName("requiredFeatures");
           }
-        } else if (valueName.Equals("specularconstant")) {
+        } else if (valueName.Equals("specularconstant",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("specularConstant");
+            attr.SetName("specularConstant");
           }
-        } else if (valueName.Equals("specularexponent")) {
+        } else if (valueName.Equals("specularexponent",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("specularExponent");
+            attr.SetName("specularExponent");
           }
-        } else if (valueName.Equals("spreadmethod")) {
+        } else if (valueName.Equals("spreadmethod", StringComparison.Ordinal)) {
           {
-            attr.setName("spreadMethod");
+            attr.SetName("spreadMethod");
           }
-        } else if (valueName.Equals("startoffset")) {
+        } else if (valueName.Equals("startoffset", StringComparison.Ordinal)) {
           {
-            attr.setName("startOffset");
+            attr.SetName("startOffset");
           }
-        } else if (valueName.Equals("stddeviation")) {
+        } else if (valueName.Equals("stddeviation", StringComparison.Ordinal)) {
           {
-            attr.setName("stdDeviation");
+            attr.SetName("stdDeviation");
           }
-        } else if (valueName.Equals("stitchtiles")) {
+        } else if (valueName.Equals("stitchtiles", StringComparison.Ordinal)) {
           {
-            attr.setName("stitchTiles");
+            attr.SetName("stitchTiles");
           }
-        } else if (valueName.Equals("surfacescale")) {
+        } else if (valueName.Equals("surfacescale", StringComparison.Ordinal)) {
           {
-            attr.setName("surfaceScale");
+            attr.SetName("surfaceScale");
           }
-        } else if (valueName.Equals("systemlanguage")) {
+        } else if (valueName.Equals("systemlanguage",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("systemLanguage");
+            attr.SetName("systemLanguage");
           }
-        } else if (valueName.Equals("tablevalues")) {
+        } else if (valueName.Equals("tablevalues", StringComparison.Ordinal)) {
           {
-            attr.setName("tableValues");
+            attr.SetName("tableValues");
           }
-        } else if (valueName.Equals("targetx")) {
+        } else if (valueName.Equals("targetx", StringComparison.Ordinal)) {
           {
-            attr.setName("targetX");
+            attr.SetName("targetX");
           }
-        } else if (valueName.Equals("targety")) {
+        } else if (valueName.Equals("targety", StringComparison.Ordinal)) {
           {
-            attr.setName("targetY");
+            attr.SetName("targetY");
           }
-        } else if (valueName.Equals("textlength")) {
+        } else if (valueName.Equals("textlength", StringComparison.Ordinal)) {
           {
-            attr.setName("textLength");
+            attr.SetName("textLength");
           }
-        } else if (valueName.Equals("viewbox")) {
+        } else if (valueName.Equals("viewbox", StringComparison.Ordinal)) {
           {
-            attr.setName("viewBox");
+            attr.SetName("viewBox");
           }
-        } else if (valueName.Equals("viewtarget")) {
+        } else if (valueName.Equals("viewtarget", StringComparison.Ordinal)) {
           {
-            attr.setName("viewTarget");
+            attr.SetName("viewTarget");
           }
-        } else if (valueName.Equals("xchannelselector")) {
+        } else if (valueName.Equals("xchannelselector",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("xChannelSelector");
+            attr.SetName("xChannelSelector");
           }
-        } else if (valueName.Equals("ychannelselector")) {
+        } else if (valueName.Equals("ychannelselector",
+  StringComparison.Ordinal)) {
           {
-            attr.setName("yChannelSelector");
+            attr.SetName("yChannelSelector");
           }
-        } else if (valueName.Equals("zoomandpan")) {
+        } else if (valueName.Equals("zoomandpan", StringComparison.Ordinal)) {
           {
-            attr.setName("zoomAndPan");
+            attr.SetName("zoomAndPan");
           }
         }
       }
     }
 
-    private bool applyEndTag(string valueName, InsertionMode? insMode) {
-      return this.applyInsertionMode(
-  this.getArtificialToken(TOKEN_END_TAG, valueName),
+    private bool ApplyEndTag(string valueName, InsertionMode? insMode) {
+      return this.ApplyInsertionMode(
+  this.GetArtificialToken(TOKEN_END_TAG, valueName),
   insMode);
     }
 
-    private bool applyForeignContext(int valueToken) {
+    private bool ApplyForeignContext(int valueToken) {
       if (valueToken == 0) {
-        this.parseError();
-        this.insertCharacter(this.getCurrentNode(), 0xfffd);
+        this.ParseError();
+        this.InsertCharacter(this.GetCurrentNode(), 0xfffd);
         return true;
       } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        this.insertCharacter(this.getCurrentNode(), valueToken);
+        this.InsertCharacter(this.GetCurrentNode(), valueToken);
         if (valueToken != 0x09 && valueToken != 0x0c && valueToken != 0x0a &&
             valueToken != 0x0d && valueToken != 0x20) {
           this.framesetOk = false;
         }
         return true;
       } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-        this.addCommentNodeToCurrentNode(valueToken);
+        this.AddCommentNodeToCurrentNode(valueToken);
         return true;
       } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-        this.parseError();
+        this.ParseError();
         return false;
       } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-        var tag = (StartTagToken)this.getToken(valueToken);
+        var tag = (StartTagToken)this.GetToken(valueToken);
         string valueName = tag.getName();
         var specialStartTag = false;
-        if (valueName.Equals("font") && (tag.getAttribute("color") != null ||
-          tag.getAttribute("size") !=
-                   null || tag.getAttribute("face") != null)) {
+        if (valueName.Equals("font", StringComparison.Ordinal) &&
+(tag.GetAttribute("color") != null ||
+          tag.GetAttribute("size") !=
+                   null || tag.GetAttribute("face") != null)) {
           specialStartTag = true;
-          this.parseError();
-        } else if (valueName.Equals("b") ||
-valueName.Equals("big") ||
-valueName.Equals("blockquote") ||
-valueName.Equals("body") ||
-valueName.Equals("br") ||
-valueName.Equals("center") ||
-valueName.Equals("code") ||
+          this.ParseError();
+        } else if (valueName.Equals("b", StringComparison.Ordinal) ||
+valueName.Equals("big", StringComparison.Ordinal) ||
+valueName.Equals("blockquote", StringComparison.Ordinal) ||
+valueName.Equals("body", StringComparison.Ordinal) ||
+valueName.Equals("br", StringComparison.Ordinal) ||
+valueName.Equals("center", StringComparison.Ordinal) ||
+valueName.Equals("code", StringComparison.Ordinal) ||
 valueName.Equals(
-    "dd") ||
-valueName.Equals("div") ||
-valueName.Equals("dl") ||
-valueName.Equals("dt") ||
-valueName.Equals("em") ||
-valueName.Equals("embed") ||
-valueName.Equals("h1") ||
-valueName.Equals("h2") ||
-valueName.Equals("h3") ||
-valueName.Equals("h4") ||
-valueName.Equals("h5") ||
-valueName.Equals("h6") ||
-valueName.Equals("head") ||
-valueName.Equals("hr") ||
-valueName.Equals("i") ||
-valueName.Equals("img") ||
-valueName.Equals("li") ||
-valueName.Equals("listing") ||
-valueName.Equals("meta") ||
+    "dd",
+  StringComparison.Ordinal) ||
+valueName.Equals("div", StringComparison.Ordinal) ||
+valueName.Equals("dl", StringComparison.Ordinal) ||
+valueName.Equals("dt", StringComparison.Ordinal) ||
+valueName.Equals("em", StringComparison.Ordinal) ||
+valueName.Equals("embed", StringComparison.Ordinal) ||
+valueName.Equals("h1", StringComparison.Ordinal) ||
+valueName.Equals("h2", StringComparison.Ordinal) ||
+valueName.Equals("h3", StringComparison.Ordinal) ||
+valueName.Equals("h4", StringComparison.Ordinal) ||
+valueName.Equals("h5", StringComparison.Ordinal) ||
+valueName.Equals("h6", StringComparison.Ordinal) ||
+valueName.Equals("head", StringComparison.Ordinal) ||
+valueName.Equals("hr", StringComparison.Ordinal) ||
+valueName.Equals("i", StringComparison.Ordinal) ||
+valueName.Equals("img", StringComparison.Ordinal) ||
+valueName.Equals("li", StringComparison.Ordinal) ||
+valueName.Equals("listing", StringComparison.Ordinal) ||
+valueName.Equals("meta", StringComparison.Ordinal) ||
 valueName.Equals(
-    "nobr") ||
-valueName.Equals("ol") ||
-valueName.Equals("p") ||
-valueName.Equals("pre") ||
-valueName.Equals("ruby") ||
-valueName.Equals("s") ||
-valueName.Equals("small") ||
-valueName.Equals("span") ||
-valueName.Equals("strong") ||
-valueName.Equals("strike") ||
-valueName.Equals("sub") ||
-valueName.Equals("sup") ||
+    "nobr",
+  StringComparison.Ordinal) ||
+valueName.Equals("ol", StringComparison.Ordinal) ||
+valueName.Equals("p", StringComparison.Ordinal) ||
+valueName.Equals("pre", StringComparison.Ordinal) ||
+valueName.Equals("ruby", StringComparison.Ordinal) ||
+valueName.Equals("s", StringComparison.Ordinal) ||
+valueName.Equals("small", StringComparison.Ordinal) ||
+valueName.Equals("span", StringComparison.Ordinal) ||
+valueName.Equals("strong", StringComparison.Ordinal) ||
+valueName.Equals("strike", StringComparison.Ordinal) ||
+valueName.Equals("sub", StringComparison.Ordinal) ||
+valueName.Equals("sup", StringComparison.Ordinal) ||
 valueName.Equals(
-    "table") ||
-valueName.Equals("tt") ||
-valueName.Equals("u") ||
-valueName.Equals("ul") ||
-valueName.Equals("var")) {
+    "table",
+  StringComparison.Ordinal) ||
+valueName.Equals("tt", StringComparison.Ordinal) ||
+valueName.Equals("u", StringComparison.Ordinal) ||
+valueName.Equals("ul", StringComparison.Ordinal) ||
+valueName.Equals("var", StringComparison.Ordinal)) {
           specialStartTag = true;
-          this.parseError();
+          this.ParseError();
         }
         if (specialStartTag && this.context == null) {
           while (true) {
-            this.popCurrentNode();
-            IElement node = this.getCurrentNode();
-            if (node.getNamespaceURI().Equals(HtmlCommon.HTML_NAMESPACE) ||
-                this.isMathMLTextIntegrationPoint(node) ||
-                this.isHtmlIntegrationPoint(node)) {
+            this.PopCurrentNode();
+            IElement node = this.GetCurrentNode();
+            if (node.getNamespaceURI().Equals(HtmlCommon.HTML_NAMESPACE,
+  StringComparison.Ordinal) ||
+                this.IsMathMLTextIntegrationPoint(node) ||
+                this.IsHtmlIntegrationPoint(node)) {
               break;
             }
           }
-          return this.applyInsertionMode(valueToken, null);
+          return this.ApplyInsertionMode(valueToken, null);
         }
         IElement adjustedCurrentNode = (this.context != null &&
             this.openElements.Count == 1) ?
-              this.context : this.getCurrentNode(); // adjusted current node
+              this.context : this.GetCurrentNode(); // adjusted current node
 
         string _namespace = adjustedCurrentNode.getNamespaceURI();
         var mathml = false;
-        if (HtmlCommon.SVG_NAMESPACE.Equals(_namespace)) {
-          if (valueName.Equals("altglyph")) {
-            tag.setName("altGlyph");
-          } else if (valueName.Equals("altglyphdef")) {
-            tag.setName("altGlyphDef");
-          } else if (valueName.Equals("altglyphitem")) {
-            tag.setName("altGlyphItem");
-          } else if (valueName.Equals("animatecolor")) {
-            tag.setName("animateColor");
-          } else if (valueName.Equals("animatemotion")) {
-            tag.setName("animateMotion");
-          } else if (valueName.Equals("animatetransform")) {
-            tag.setName("animateTransform");
-          } else if (valueName.Equals("clippath")) {
-            tag.setName("clipPath");
-          } else if (valueName.Equals("feblend")) {
-            tag.setName("feBlend");
-          } else if (valueName.Equals("fecolormatrix")) {
-            tag.setName("feColorMatrix");
-          } else if (valueName.Equals("fecomponenttransfer")) {
-            tag.setName("feComponentTransfer");
-          } else if (valueName.Equals("fecomposite")) {
-            tag.setName("feComposite");
-          } else if (valueName.Equals("feconvolvematrix")) {
-            tag.setName("feConvolveMatrix");
-          } else if (valueName.Equals("fediffuselighting")) {
-            tag.setName("feDiffuseLighting");
-          } else if (valueName.Equals("fedisplacementmap")) {
-            tag.setName("feDisplacementMap");
-          } else if (valueName.Equals("fedistantlight")) {
-            tag.setName("feDistantLight");
-          } else if (valueName.Equals("feflood")) {
-            tag.setName("feFlood");
-          } else if (valueName.Equals("fefunca")) {
-            tag.setName("feFuncA");
-          } else if (valueName.Equals("fefuncb")) {
-            tag.setName("feFuncB");
-          } else if (valueName.Equals("fefuncg")) {
-            tag.setName("feFuncG");
-          } else if (valueName.Equals("fefuncr")) {
-            tag.setName("feFuncR");
-          } else if (valueName.Equals("fegaussianblur")) {
-            tag.setName("feGaussianBlur");
-          } else if (valueName.Equals("feimage")) {
-            tag.setName("feImage");
-          } else if (valueName.Equals("femerge")) {
-            tag.setName("feMerge");
-          } else if (valueName.Equals("femergenode")) {
-            tag.setName("feMergeNode");
-          } else if (valueName.Equals("femorphology")) {
-            tag.setName("feMorphology");
-          } else if (valueName.Equals("feoffset")) {
-            tag.setName("feOffset");
-          } else if (valueName.Equals("fepointlight")) {
-            tag.setName("fePointLight");
-          } else if (valueName.Equals("fespecularlighting")) {
-            tag.setName("feSpecularLighting");
-          } else if (valueName.Equals("fespotlight")) {
-            tag.setName("feSpotLight");
-          } else if (valueName.Equals("fetile")) {
-            tag.setName("feTile");
-          } else if (valueName.Equals("feturbulence")) {
-            tag.setName("feTurbulence");
-          } else if (valueName.Equals("foreignobject")) {
-            tag.setName("foreignObject");
-          } else if (valueName.Equals("glyphref")) {
-            tag.setName("glyphRef");
-          } else if (valueName.Equals("lineargradient")) {
-            tag.setName("linearGradient");
-          } else if (valueName.Equals("radialgradient")) {
-            tag.setName("radialGradient");
-          } else if (valueName.Equals("textpath")) {
-            tag.setName("textPath");
+        if (HtmlCommon.SVG_NAMESPACE.Equals(_namespace,
+  StringComparison.Ordinal)) {
+          if (valueName.Equals("altglyph", StringComparison.Ordinal)) {
+            tag.SetName("altGlyph");
+          } else if (valueName.Equals("altglyphdef",
+  StringComparison.Ordinal)) {
+            tag.SetName("altGlyphDef");
+          } else if (valueName.Equals("altglyphitem",
+  StringComparison.Ordinal)) {
+            tag.SetName("altGlyphItem");
+          } else if (valueName.Equals("animatecolor",
+  StringComparison.Ordinal)) {
+            tag.SetName("animateColor");
+          } else if (valueName.Equals("animatemotion",
+  StringComparison.Ordinal)) {
+            tag.SetName("animateMotion");
+          } else if (valueName.Equals("animatetransform",
+  StringComparison.Ordinal)) {
+            tag.SetName("animateTransform");
+          } else if (valueName.Equals("clippath", StringComparison.Ordinal)) {
+            tag.SetName("clipPath");
+          } else if (valueName.Equals("feblend", StringComparison.Ordinal)) {
+            tag.SetName("feBlend");
+          } else if (valueName.Equals("fecolormatrix",
+  StringComparison.Ordinal)) {
+            tag.SetName("feColorMatrix");
+          } else if (valueName.Equals("fecomponenttransfer",
+  StringComparison.Ordinal)) {
+            tag.SetName("feComponentTransfer");
+          } else if (valueName.Equals("fecomposite",
+  StringComparison.Ordinal)) {
+            tag.SetName("feComposite");
+          } else if (valueName.Equals("feconvolvematrix",
+  StringComparison.Ordinal)) {
+            tag.SetName("feConvolveMatrix");
+          } else if (valueName.Equals("fediffuselighting",
+  StringComparison.Ordinal)) {
+            tag.SetName("feDiffuseLighting");
+          } else if (valueName.Equals("fedisplacementmap",
+  StringComparison.Ordinal)) {
+            tag.SetName("feDisplacementMap");
+          } else if (valueName.Equals("fedistantlight",
+  StringComparison.Ordinal)) {
+            tag.SetName("feDistantLight");
+          } else if (valueName.Equals("feflood", StringComparison.Ordinal)) {
+            tag.SetName("feFlood");
+          } else if (valueName.Equals("fefunca", StringComparison.Ordinal)) {
+            tag.SetName("feFuncA");
+          } else if (valueName.Equals("fefuncb", StringComparison.Ordinal)) {
+            tag.SetName("feFuncB");
+          } else if (valueName.Equals("fefuncg", StringComparison.Ordinal)) {
+            tag.SetName("feFuncG");
+          } else if (valueName.Equals("fefuncr", StringComparison.Ordinal)) {
+            tag.SetName("feFuncR");
+          } else if (valueName.Equals("fegaussianblur",
+  StringComparison.Ordinal)) {
+            tag.SetName("feGaussianBlur");
+          } else if (valueName.Equals("feimage", StringComparison.Ordinal)) {
+            tag.SetName("feImage");
+          } else if (valueName.Equals("femerge", StringComparison.Ordinal)) {
+            tag.SetName("feMerge");
+          } else if (valueName.Equals("femergenode",
+  StringComparison.Ordinal)) {
+            tag.SetName("feMergeNode");
+          } else if (valueName.Equals("femorphology",
+  StringComparison.Ordinal)) {
+            tag.SetName("feMorphology");
+          } else if (valueName.Equals("feoffset", StringComparison.Ordinal)) {
+            tag.SetName("feOffset");
+          } else if (valueName.Equals("fepointlight",
+  StringComparison.Ordinal)) {
+            tag.SetName("fePointLight");
+          } else if (valueName.Equals("fespecularlighting",
+  StringComparison.Ordinal)) {
+            tag.SetName("feSpecularLighting");
+          } else if (valueName.Equals("fespotlight",
+  StringComparison.Ordinal)) {
+            tag.SetName("feSpotLight");
+          } else if (valueName.Equals("fetile", StringComparison.Ordinal)) {
+            tag.SetName("feTile");
+          } else if (valueName.Equals("feturbulence",
+  StringComparison.Ordinal)) {
+            tag.SetName("feTurbulence");
+          } else if (valueName.Equals("foreignobject",
+  StringComparison.Ordinal)) {
+            tag.SetName("foreignObject");
+          } else if (valueName.Equals("glyphref", StringComparison.Ordinal)) {
+            tag.SetName("glyphRef");
+          } else if (valueName.Equals("lineargradient",
+  StringComparison.Ordinal)) {
+            tag.SetName("linearGradient");
+          } else if (valueName.Equals("radialgradient",
+  StringComparison.Ordinal)) {
+            tag.SetName("radialGradient");
+          } else if (valueName.Equals("textpath", StringComparison.Ordinal)) {
+            tag.SetName("textPath");
           }
-          this.adjustSvgAttributes(tag);
-        } else if (HtmlCommon.MATHML_NAMESPACE.Equals(_namespace)) {
-          this.adjustMathMLAttributes(tag);
+          this.AdjustSvgAttributes(tag);
+        } else if (HtmlCommon.MATHML_NAMESPACE.Equals(_namespace,
+  StringComparison.Ordinal)) {
+          this.AdjustMathMLAttributes(tag);
           mathml = true;
         }
-        this.adjustForeignAttributes(tag);
+        this.AdjustForeignAttributes(tag);
         // DebugUtility.Log("openel " + (Implode(openElements)));
         // DebugUtility.Log("Inserting " + tag + ", " + _namespace);
-        Element e = this.insertForeignElement(tag, _namespace);
-        if (mathml && tag.getName().Equals("annotation-xml")) {
-          string encoding = tag.getAttribute("encoding");
+        Element e = this.InsertForeignElement(tag, _namespace);
+        if (mathml && tag.getName().Equals("annotation-xml",
+  StringComparison.Ordinal)) {
+          string encoding = tag.GetAttribute("encoding");
           if (encoding != null) {
             encoding = DataUtilities.ToLowerCaseAscii(encoding);
-            if (encoding.Equals("text/html") ||
-                encoding.Equals("application/xhtml+xml")) {
+            if (encoding.Equals("text/Html", StringComparison.Ordinal) ||
+                encoding.Equals("application/xhtml+xml",
+  StringComparison.Ordinal)) {
               this.integrationElements.Add(e);
             }
           }
         }
-        if (tag.isSelfClosing()) {
-          if (valueName.Equals("script") &&
-                this.getCurrentNode().getNamespaceURI()
+        if (tag.IsSelfClosing()) {
+          if (valueName.Equals("script", StringComparison.Ordinal) &&
+                this.GetCurrentNode().getNamespaceURI()
                  .Equals(HtmlCommon.SVG_NAMESPACE)) {
-            tag.ackSelfClosing();
-            this.applyEndTag("script", null);
+            tag.AckSelfClosing();
+            this.ApplyEndTag("script", null);
           } else {
-            this.popCurrentNode();
-            tag.ackSelfClosing();
+            this.PopCurrentNode();
+            tag.AckSelfClosing();
           }
         }
         return true;
       } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-        var tag = (EndTagToken)this.getToken(valueToken);
+        var tag = (EndTagToken)this.GetToken(valueToken);
         string valueName = tag.getName();
-        if (valueName.Equals("script") &&
-            HtmlCommon.isSvgElement(this.getCurrentNode(), "script")) {
-          this.popCurrentNode();
+        if (valueName.Equals("script", StringComparison.Ordinal) &&
+            HtmlCommon.isSvgElement(this.GetCurrentNode(), "script")) {
+          this.PopCurrentNode();
         } else {
-          if
-(!DataUtilities.ToLowerCaseAscii(this.getCurrentNode().getLocalName())
+          if (!DataUtilities.ToLowerCaseAscii(this.GetCurrentNode().getLocalName())
                     .Equals(valueName)) {
-            this.parseError();
+            this.ParseError();
           }
           int originalSize = this.openElements.Count;
           for (int i1 = originalSize - 1; i1 >= 0; --i1) {
@@ -1117,15 +1176,16 @@ valueName.Equals("var")) {
             }
             IElement node = this.openElements[i1];
             if (i1 < originalSize - 1 &&
-                HtmlCommon.HTML_NAMESPACE.Equals(node.getNamespaceURI())) {
+                HtmlCommon.HTML_NAMESPACE.Equals(node.getNamespaceURI(),
+  StringComparison.Ordinal)) {
               this.noforeign = true;
-              return this.applyInsertionMode(valueToken, null);
+              return this.ApplyInsertionMode(valueToken, null);
             }
             string nodeName =
                  DataUtilities.ToLowerCaseAscii(node.getLocalName());
-            if (valueName.Equals(nodeName)) {
+            if (valueName.Equals(nodeName, StringComparison.Ordinal)) {
               while (true) {
-                IElement node2 = this.popCurrentNode();
+                IElement node2 = this.PopCurrentNode();
                 if (node2.Equals(node)) {
                   break;
                 }
@@ -1137,7 +1197,7 @@ valueName.Equals("var")) {
         return false;
       } else {
         return (valueToken == TOKEN_EOF) ?
-          this.applyInsertionMode(valueToken, null) :
+          this.ApplyInsertionMode(valueToken, null) :
             true;
       }
       throw new InvalidOperationException();
@@ -1160,15 +1220,15 @@ valueName.Equals("var")) {
     private const string Xhtml11 =
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
 
-    private bool applyInsertionMode(int token, InsertionMode? insMode) {
+    private bool ApplyInsertionMode(int token, InsertionMode? insMode) {
       /*DebugUtility.Log("[[" + String.Format("{0:X8}" , token) + " " +
-        this.getToken(token) + " " + (insMode == null ? this.insertionMode :
-         insMode) + " " + this.isForeignContext(token) + "(" +
+        this.GetToken(token) + " " + (insMode == null ? this.insertionMode :
+         insMode) + " " + this.IsForeignContext(token) + "(" +
          this.noforeign + ")");
        if (this.openElements.Count > 0) {
       // DebugUtility.Log(Implode(this.openElements));
-       }*/ if (!this.noforeign && this.isForeignContext(token)) {
-        return this.applyForeignContext(token);
+       }*/ if (!this.noforeign && this.IsForeignContext(token)) {
+        return this.ApplyForeignContext(token);
       }
       this.noforeign = false;
       insMode = insMode ?? this.insertionMode;
@@ -1180,39 +1240,43 @@ valueName.Equals("var")) {
               return false;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              var doctype = (DocTypeToken)this.getToken(token);
+              var doctype = (DocTypeToken)this.GetToken(token);
               string doctypeName = (doctype.Name == null) ? String.Empty :
                     doctype.Name.ToString();
               string doctypePublic = (doctype.ValuePublicID == null) ? null :
                 doctype.ValuePublicID.ToString();
               string doctypeSystem = (doctype.ValueSystemID == null) ? null :
                 doctype.ValueSystemID.ToString();
-              bool matchesHtml = "html".Equals(doctypeName);
+              bool matchesHtml = "Html".Equals(doctypeName,
+  StringComparison.Ordinal);
               bool hasSystemId = doctype.ValueSystemID != null;
               if (!matchesHtml || doctypePublic != null ||
               (doctypeSystem != null && !"about:legacy-compat"
                     .Equals(doctypeSystem))) {
                 string h4public = "-//W3C//DTD HTML 4.0//EN";
-                string html401public = "-//W3C//DTD HTML 4.01//EN"; ;
+                string html401public = "-//W3C//DTD HTML 4.01//EN";;
                 string xhtmlstrictpublic = "-//W3C//DTD XHTML 1.0 Strict//EN";
                 string html4system =
 "http://www.w3.org/TR/REC-html40/strict.dtd";
                 string html401system = "http://www.w3.org/TR/html4/strict.dtd";
-                bool html4 = matchesHtml && h4public.Equals(doctypePublic) &&
-                (doctypeSystem == null || html4system.Equals(doctypeSystem));
+                bool html4 = matchesHtml && h4public.Equals(doctypePublic,
+  StringComparison.Ordinal) &&
+                (doctypeSystem == null || html4system.Equals(doctypeSystem,
+  StringComparison.Ordinal));
                 bool html401 = matchesHtml &&
-                  html401public.Equals(doctypePublic) && (doctypeSystem ==
-                  null || html401system.Equals(doctypeSystem));
+                  html401public.Equals(doctypePublic,
+  StringComparison.Ordinal) && (doctypeSystem ==
+                  null || html401system.Equals(doctypeSystem,
+  StringComparison.Ordinal));
                 bool xhtml = matchesHtml &&
-xhtmlstrictpublic.Equals(doctypePublic) &&
-                  XhtmlStrict.Equals(doctypeSystem);
+xhtmlstrictpublic.Equals(doctypePublic, StringComparison.Ordinal) &&
+                  XhtmlStrict.Equals(doctypeSystem, StringComparison.Ordinal);
                 string xhtmlPublic = "-//W3C//DTD XHTML 1.1//EN";
                 bool xhtml11 = matchesHtml &&
-xhtmlPublic.Equals(doctypePublic) &&
-                  Xhtml11.Equals(doctypeSystem);
-                if (!html4 && !html401 &&
-                !xhtml && !xhtml11) {
-                  this.parseError();
+xhtmlPublic.Equals(doctypePublic, StringComparison.Ordinal) &&
+                  Xhtml11.Equals(doctypeSystem, StringComparison.Ordinal);
+                if (!html4 && !html401 && !xhtml && !xhtml11) {
+                  this.ParseError();
                 }
               }
               doctypePublic = doctypePublic ?? String.Empty;
@@ -1224,16 +1288,19 @@ xhtmlPublic.Equals(doctypePublic) &&
               this.valueDocument.Doctype = doctypeNode;
               this.valueDocument.appendChild(doctypeNode);
               string doctypePublicLC = null;
-              if (!"about:srcdoc".Equals(this.valueDocument.Address)) {
+              if (!"about:srcdoc".Equals(this.valueDocument.Address,
+  StringComparison.Ordinal)) {
                 if (!matchesHtml || doctype.ForceQuirks) {
                   this.valueDocument.setMode(DocumentMode.QuirksMode);
                 } else {
                   doctypePublicLC =
                     DataUtilities.ToLowerCaseAscii(doctypePublic);
-                  if ("html".Equals(doctypePublicLC) ||
-"-//w3o//dtd w3 html strict 3.0//en//"
+                  if ("Html".Equals(doctypePublicLC,
+  StringComparison.Ordinal) ||
+"-//w3o//dtd w3 Html strict 3.0//en//"
                     .Equals(doctypePublicLC) ||
-"-/w3c/dtd html 4.0 transitional/en".Equals(doctypePublicLC)
+"-/w3c/dtd Html 4.0 transitional/en".Equals(doctypePublicLC,
+  StringComparison.Ordinal)
 ) {
                     this.valueDocument.setMode(DocumentMode.QuirksMode);
                   } else if (doctypePublic.Length > 0) {
@@ -1251,15 +1318,14 @@ xhtmlPublic.Equals(doctypePublic) &&
                 if (this.valueDocument.getMode() != DocumentMode.QuirksMode) {
                   doctypePublicLC = doctypePublicLC ??
                     DataUtilities.ToLowerCaseAscii(doctypePublic);
-                  if
-     ("http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd"
+                  if ("http://www.ibm.Com/data/dtd/v11/ibmxhtml1-transitional.dtd"
                     .Equals(
                     DataUtilities.ToLowerCaseAscii(doctypeSystem)) ||
                 (!hasSystemId && doctypePublicLC.StartsWith(
-                  "-//w3c//dtd html 4.01 frameset//",
+                  "-//w3c//dtd Html 4.01 frameset//",
                   StringComparison.Ordinal)) || (!hasSystemId &&
   doctypePublicLC.StartsWith(
-    "-//w3c//dtd html 4.01 transitional//",
+    "-//w3c//dtd Html 4.01 transitional//",
     StringComparison.Ordinal))) {
                     this.valueDocument.setMode(DocumentMode.QuirksMode);
                   }
@@ -1275,10 +1341,10 @@ xhtmlPublic.Equals(doctypePublic) &&
       "-//w3c//dtd xhtml 1.0 transitional//",
       StringComparison.Ordinal) || (hasSystemId &&
                  doctypePublicLC.StartsWith(
-                   "-//w3c//dtd html 4.01 frameset//",
+                   "-//w3c//dtd Html 4.01 frameset//",
                    StringComparison.Ordinal)) || (hasSystemId &&
     doctypePublicLC.StartsWith(
-      "-//w3c//dtd html 4.01 transitional//",
+      "-//w3c//dtd Html 4.01 transitional//",
       StringComparison.Ordinal))) {
                     this.valueDocument.setMode(DocumentMode.LimitedQuirksMode);
                   }
@@ -1288,20 +1354,21 @@ xhtmlPublic.Equals(doctypePublic) &&
               return true;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToDocument(token);
+              this.AddCommentNodeToDocument(token);
 
               return true;
             }
-            if (!"about:srcdoc".Equals(this.valueDocument.Address)) {
-              this.parseError();
+            if (!"about:srcdoc".Equals(this.valueDocument.Address,
+  StringComparison.Ordinal)) {
+              this.ParseError();
               this.valueDocument.setMode(DocumentMode.QuirksMode);
             }
             this.insertionMode = InsertionMode.BeforeHtml;
-            return this.applyInsertionMode(token, null);
+            return this.ApplyInsertionMode(token, null);
           }
         case InsertionMode.BeforeHtml: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.parseError();
+              this.ParseError();
               return false;
             }
             if (token == 0x09 || token == 0x0a ||
@@ -1310,35 +1377,35 @@ xhtmlPublic.Equals(doctypePublic) &&
               return false;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToDocument(token);
+              this.AddCommentNodeToDocument(token);
 
               return true;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if ("html".Equals(valueName)) {
-                this.addHtmlElement(tag);
+              if ("Html".Equals(valueName, StringComparison.Ordinal)) {
+                this.AddHtmlElement(tag);
                 this.insertionMode = InsertionMode.BeforeHead;
                 return true;
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (TagToken)this.getToken(token);
+              var tag = (TagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (!"html".Equals(valueName) &&
-!"br".Equals(valueName) &&
-!"head".Equals(valueName) &&
-!"body".Equals(valueName)) {
-                this.parseError();
+              if (!"Html".Equals(valueName, StringComparison.Ordinal) &&
+!"br".Equals(valueName, StringComparison.Ordinal) &&
+!"head".Equals(valueName, StringComparison.Ordinal) &&
+!"body".Equals(valueName, StringComparison.Ordinal)) {
+                this.ParseError();
                 return false;
               }
             }
             var valueElement = new Element();
-            valueElement.setLocalName("html");
+            valueElement.setLocalName("Html");
             valueElement.setNamespace(HtmlCommon.HTML_NAMESPACE);
             this.valueDocument.appendChild(valueElement);
             this.openElements.Add(valueElement);
             this.insertionMode = InsertionMode.BeforeHead;
-            return this.applyInsertionMode(token, null);
+            return this.ApplyInsertionMode(token, null);
           }
         case InsertionMode.BeforeHead: {
             if (token == 0x09 || token == 0x0a ||
@@ -1347,116 +1414,118 @@ xhtmlPublic.Equals(doctypePublic) &&
               return false;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(token);
+              this.AddCommentNodeToCurrentNode(token);
               return true;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.parseError();
+              this.ParseError();
               return false;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if ("html".Equals(valueName)) {
-                this.applyInsertionMode(token, InsertionMode.InBody);
+              if ("Html".Equals(valueName, StringComparison.Ordinal)) {
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
                 return true;
-              } else if ("head".Equals(valueName)) {
-                Element valueElement = this.addHtmlElement(tag);
+              } else if ("head".Equals(valueName, StringComparison.Ordinal)) {
+                Element valueElement = this.AddHtmlElement(tag);
                 this.headElement = valueElement;
                 this.insertionMode = InsertionMode.InHead;
                 return true;
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (TagToken)this.getToken(token);
+              var tag = (TagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if ("head".Equals(valueName) ||
-"br".Equals(valueName) ||
-"body".Equals(valueName) ||
-"html".Equals(valueName)) {
-                this.applyStartTag("head", insMode);
-                return this.applyInsertionMode(token, null);
+              if ("head".Equals(valueName, StringComparison.Ordinal) ||
+"br".Equals(valueName, StringComparison.Ordinal) ||
+"body".Equals(valueName, StringComparison.Ordinal) ||
+"Html".Equals(valueName, StringComparison.Ordinal)) {
+                this.ApplyStartTag("head", insMode);
+                return this.ApplyInsertionMode(token, null);
               } else {
-                this.parseError();
+                this.ParseError();
                 return false;
               }
             }
-            this.applyStartTag("head", insMode);
-            return this.applyInsertionMode(token, null);
+            this.ApplyStartTag("head", insMode);
+            return this.ApplyInsertionMode(token, null);
           }
         case InsertionMode.InHead: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(token);
+              this.AddCommentNodeToCurrentNode(token);
               return true;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.parseError();
+              this.ParseError();
               return false;
             }
             if (token == 0x09 || token == 0x0a ||
               token == 0x0c || token == 0x0d || token ==
                   0x20) {
-              this.insertCharacter(this.getCurrentNode(), token);
+              this.InsertCharacter(this.GetCurrentNode(), token);
               return true;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if ("html".Equals(valueName)) {
-                this.applyInsertionMode(token, InsertionMode.InBody);
+              if ("Html".Equals(valueName, StringComparison.Ordinal)) {
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
                 return true;
-              } else if ("base".Equals(valueName) ||
-"bgsound".Equals(valueName) ||
-"basefont".Equals(valueName) ||
-"link".Equals(valueName)) {
-                Element e = this.addHtmlElementNoPush(tag);
-                if (this.baseurl == null && "base".Equals(valueName)) {
+              } else if ("base".Equals(valueName, StringComparison.Ordinal) ||
+"bgsound".Equals(valueName, StringComparison.Ordinal) ||
+"basefont".Equals(valueName, StringComparison.Ordinal) ||
+"link".Equals(valueName, StringComparison.Ordinal)) {
+                Element e = this.AddHtmlElementNoPush(tag);
+                if (this.baseurl == null && "base".Equals(valueName,
+  StringComparison.Ordinal)) {
                   // Get the valueDocument _base URL
-                  this.baseurl = e.getAttribute("href");
+                  this.baseurl = e.GetAttribute("href");
                 }
-                tag.ackSelfClosing();
+                tag.AckSelfClosing();
                 return true;
-              } else if ("meta".Equals(valueName)) {
-                Element valueElement = this.addHtmlElementNoPush(tag);
-                tag.ackSelfClosing();
+              } else if ("meta".Equals(valueName, StringComparison.Ordinal)) {
+                Element valueElement = this.AddHtmlElementNoPush(tag);
+                tag.AckSelfClosing();
                 if (this.encoding.getConfidence() ==
                     EncodingConfidence.Tentative) {
-                  string charset = valueElement.getAttribute("charset");
+                  string charset = valueElement.GetAttribute("charset");
                   if (charset != null) {
                     charset = Encodings.ResolveAlias(charset);
                     /* if (TextEncoding.isAsciiCompatible(charset) ||
 "utf-16be".Equals(charset) ||
 "utf-16le".Equals(charset)) {*/
-                    this.changeEncoding(charset);
+                    this.ChangeEncoding(charset);
                     if (this.encoding.getConfidence() ==
                     EncodingConfidence.Certain) {
-                      this.inputStream.disableBuffer();
+                      this.inputStream.DisableBuffer();
                     }
                     return true;
                     // }
                   }
                   string value = DataUtilities.ToLowerCaseAscii(
-                    valueElement.getAttribute("http-equiv"));
-                  if ("content-type".Equals(value)) {
-                    value = valueElement.getAttribute("content");
+                    valueElement.GetAttribute("http-equiv"));
+                  if ("content-type".Equals(value, StringComparison.Ordinal)) {
+                    value = valueElement.GetAttribute("content");
                     if (value != null) {
                       value = DataUtilities.ToLowerCaseAscii(value);
                       charset = CharsetSniffer.extractCharsetFromMeta(value);
                       if (true) {
                         // TODO
-                        this.changeEncoding(charset);
+                        this.ChangeEncoding(charset);
                         if (this.encoding.getConfidence() ==
                         EncodingConfidence.Certain) {
-                          this.inputStream.disableBuffer();
+                          this.inputStream.DisableBuffer();
                         }
                         return true;
                       }
                     }
-                  } else if ("content-language".Equals(value)) {
+                  } else if ("content-language".Equals(value,
+  StringComparison.Ordinal)) {
                     // HTML5 requires us to use this algorithm
-                    // to parse the Content-Language, rather than
+                    // to Parse the Content-Language, rather than
                     // use HTTP parsing (with HeaderParser.getLanguages)
                     // NOTE: this pragma is non-conforming
-                    value = valueElement.getAttribute("content");
+                    value = valueElement.GetAttribute("content");
                     if (!String.IsNullOrEmpty(value) && value.IndexOf(',') <
                     0) {
                       string[] data = StringUtility.SplitAtSpTabCrLfFf(value);
@@ -1470,170 +1539,177 @@ xhtmlPublic.Equals(doctypePublic) &&
                 }
                 if (this.encoding.getConfidence() ==
 EncodingConfidence.Certain) {
-                  this.inputStream.disableBuffer();
+                  this.inputStream.DisableBuffer();
                 }
                 return true;
-              } else if ("title".Equals(valueName)) {
-                this.addHtmlElement(tag);
+              } else if ("title".Equals(valueName, StringComparison.Ordinal)) {
+                this.AddHtmlElement(tag);
                 this.state = TokenizerState.RcData;
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
                 return true;
-              } else if ("noframes".Equals(valueName) ||
-                  "style".Equals(valueName)) {
-                this.addHtmlElement(tag);
+              } else if ("noframes".Equals(valueName,
+  StringComparison.Ordinal) ||
+                  "style".Equals(valueName, StringComparison.Ordinal)) {
+                this.AddHtmlElement(tag);
                 this.state = TokenizerState.RawText;
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
                 return true;
-              } else if ("noscript".Equals(valueName)) {
-                this.addHtmlElement(tag);
+              } else if ("noscript".Equals(valueName,
+  StringComparison.Ordinal)) {
+                this.AddHtmlElement(tag);
                 this.insertionMode = InsertionMode.InHeadNoscript;
                 return true;
-              } else if ("script".Equals(valueName)) {
-                this.addHtmlElement(tag);
+              } else if ("script".Equals(valueName, StringComparison.Ordinal)) {
+                this.AddHtmlElement(tag);
                 this.state = TokenizerState.ScriptData;
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
                 return true;
-              } else if ("template".Equals(valueName)) {
-                Element e = this.addHtmlElement(tag);
-                this.insertFormattingMarker(tag, e);
+              } else if ("template".Equals(valueName,
+  StringComparison.Ordinal)) {
+                Element e = this.AddHtmlElement(tag);
+                this.InsertFormattingMarker(tag, e);
                 this.framesetOk = false;
                 this.insertionMode = InsertionMode.InTemplate;
                 this.templateModes.Add(InsertionMode.InTemplate);
                 return true;
-              } else if ("head".Equals(valueName)) {
-                this.parseError();
+              } else if ("head".Equals(valueName, StringComparison.Ordinal)) {
+                this.ParseError();
                 return false;
               } else {
-                this.applyEndTag("head", insMode);
-                return this.applyInsertionMode(token, null);
+                this.ApplyEndTag("head", insMode);
+                return this.ApplyInsertionMode(token, null);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (TagToken)this.getToken(token);
+              var tag = (TagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if ("head".Equals(valueName)) {
+              if ("head".Equals(valueName, StringComparison.Ordinal)) {
                 this.openElements.RemoveAt(this.openElements.Count - 1);
                 this.insertionMode = InsertionMode.AfterHead;
                 return true;
-              } else if ("template".Equals(valueName)) {
-                if (!this.hasHtmlOpenElement("template")) {
-                  this.parseError();
+              } else if ("template".Equals(valueName,
+  StringComparison.Ordinal)) {
+                if (!this.HasHtmlOpenElement("template")) {
+                  this.ParseError();
                   return false;
                 }
-                this.generateImpliedEndTagsThoroughly();
-                IElement ie = this.getCurrentNode();
+                this.GenerateImpliedEndTagsThoroughly();
+                IElement ie = this.GetCurrentNode();
                 if (!HtmlCommon.isHtmlElement(ie, "template")) {
-                  this.parseError();
+                  this.ParseError();
                 }
                 this.PopUntilHtmlElementPopped("template");
-                this.clearFormattingToMarker();
+                this.ClearFormattingToMarker();
                 if (this.templateModes.Count > 0) {
                   this.templateModes.RemoveAt(this.templateModes.Count - 1);
                 }
-                this.resetInsertionMode();
+                this.ResetInsertionMode();
                 return true;
               } else if (!(
-                  "br".Equals(valueName) ||
-                  "body".Equals(valueName) || "html".Equals(valueName))) {
-                this.parseError();
+                  "br".Equals(valueName, StringComparison.Ordinal) ||
+                  "body".Equals(valueName, StringComparison.Ordinal) ||
+"Html".Equals(valueName, StringComparison.Ordinal))) {
+                this.ParseError();
                 return false;
               }
-              this.applyEndTag("head", insMode);
-              return this.applyInsertionMode(token, null);
+              this.ApplyEndTag("head", insMode);
+              return this.ApplyInsertionMode(token, null);
             } else {
-              this.applyEndTag("head", insMode);
-              return this.applyInsertionMode(token, null);
+              this.ApplyEndTag("head", insMode);
+              return this.ApplyInsertionMode(token, null);
             }
           }
         case InsertionMode.AfterHead: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               if (token == 0x20 || token == 0x09 || token == 0x0a ||
                     token == 0x0c || token == 0x0d) {
-                this.insertCharacter(
-     this.getCurrentNode(),
+                this.InsertCharacter(
+     this.GetCurrentNode(),
      token);
               } else {
-                this.applyStartTag("body", insMode);
+                this.ApplyStartTag("body", insMode);
                 this.framesetOk = true;
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.parseError();
+              this.ParseError();
               return false;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("html")) {
-                this.applyInsertionMode(token, InsertionMode.InBody);
+              if (valueName.Equals("Html", StringComparison.Ordinal)) {
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
                 return true;
-              } else if (valueName.Equals("body")) {
-                this.addHtmlElement(tag);
+              } else if (valueName.Equals("body", StringComparison.Ordinal)) {
+                this.AddHtmlElement(tag);
                 this.framesetOk = false;
                 this.insertionMode = InsertionMode.InBody;
                 return true;
-              } else if (valueName.Equals("frameset")) {
-                this.addHtmlElement(tag);
+              } else if (valueName.Equals("frameset",
+  StringComparison.Ordinal)) {
+                this.AddHtmlElement(tag);
                 this.insertionMode = InsertionMode.InFrameset;
                 return true;
-              } else if ("base".Equals(valueName) ||
+              } else if ("base".Equals(valueName, StringComparison.Ordinal) ||
 "bgsound"
                     .Equals(valueName) ||
-"basefont".Equals(valueName) ||
-"link".Equals(valueName) ||
-"noframes".Equals(valueName) ||
-"script".Equals(valueName) ||
-"template".Equals(valueName) ||
-"style".Equals(valueName) ||
-"title".Equals(valueName) ||
-"meta".Equals(valueName)) {
-                this.parseError();
+"basefont".Equals(valueName, StringComparison.Ordinal) ||
+"link".Equals(valueName, StringComparison.Ordinal) ||
+"noframes".Equals(valueName, StringComparison.Ordinal) ||
+"script".Equals(valueName, StringComparison.Ordinal) ||
+"template".Equals(valueName, StringComparison.Ordinal) ||
+"style".Equals(valueName, StringComparison.Ordinal) ||
+"title".Equals(valueName, StringComparison.Ordinal) ||
+"meta".Equals(valueName, StringComparison.Ordinal)) {
+                this.ParseError();
                 this.openElements.Add(this.headElement);
-                this.applyInsertionMode(token, InsertionMode.InHead);
+                this.ApplyInsertionMode(token, InsertionMode.InHead);
                 this.openElements.Remove(this.headElement);
                 return true;
-              } else if ("head".Equals(valueName)) {
-                this.parseError();
+              } else if ("head".Equals(valueName, StringComparison.Ordinal)) {
+                this.ParseError();
                 return false;
               } else {
-                this.applyStartTag("body", insMode);
+                this.ApplyStartTag("body", insMode);
                 this.framesetOk = true;
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("body") ||
-valueName.Equals("html") ||
-valueName.Equals("br")) {
-                this.applyStartTag("body", insMode);
+              if (valueName.Equals("body", StringComparison.Ordinal) ||
+valueName.Equals("Html", StringComparison.Ordinal) ||
+valueName.Equals("br", StringComparison.Ordinal)) {
+                this.ApplyStartTag("body", insMode);
                 this.framesetOk = true;
-                return this.applyInsertionMode(token, null);
-              } else if (valueName.Equals("template")) {
-                return this.applyInsertionMode(token, InsertionMode.InHead);
+                return this.ApplyInsertionMode(token, null);
+              } else if (valueName.Equals("template",
+  StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(token, InsertionMode.InHead);
               } else {
-                this.parseError();
+                this.ParseError();
                 return false;
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(token);
+              this.AddCommentNodeToCurrentNode(token);
 
               return true;
             } else if (token == TOKEN_EOF) {
-              this.applyStartTag("body", insMode);
+              this.ApplyStartTag("body", insMode);
               this.framesetOk = true;
-              return this.applyInsertionMode(token, null);
+              return this.ApplyInsertionMode(token, null);
             }
             return true;
           }
         case InsertionMode.Text: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               if (insMode != this.insertionMode) {
-                this.insertCharacter(this.getCurrentNode(), token);
+                this.InsertCharacter(this.GetCurrentNode(), token);
               } else {
                 Text textNode =
-                    this.getTextNodeToInsert(this.getCurrentNode());
+                    this.GetTextNodeToInsert(this.GetCurrentNode());
                 int ch = token;
                 if (textNode == null) {
                   throw new InvalidOperationException();
@@ -1649,7 +1725,7 @@ valueName.Equals("br")) {
 0xd800));
                     sb.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
                   }
-                  token = this.parserRead();
+                  token = this.ParserRead();
                   if ((token & TOKEN_TYPE_MASK) != TOKEN_CHARACTER) {
                     this.tokenQueue.Insert(0, token);
                     break;
@@ -1659,10 +1735,10 @@ valueName.Equals("br")) {
               }
               return true;
             } else if (token == TOKEN_EOF) {
-              this.parseError();
+              this.ParseError();
               this.openElements.RemoveAt(this.openElements.Count - 1);
               this.insertionMode = this.originalInsertionMode;
-              return this.applyInsertionMode(token, null);
+              return this.ApplyInsertionMode(token, null);
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
               this.openElements.RemoveAt(this.openElements.Count - 1);
               this.insertionMode = this.originalInsertionMode;
@@ -1673,39 +1749,40 @@ valueName.Equals("br")) {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE ||
                 (token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER ||
                 (token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              return this.applyInsertionMode(
+              return this.ApplyInsertionMode(
                 token,
                 InsertionMode.InBody);
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("base") ||
-valueName.Equals("title") ||
-valueName.Equals("template") ||
-valueName.Equals("basefont") ||
-valueName.Equals("bgsound") ||
-valueName.Equals("meta") ||
-valueName.Equals("link") ||
-valueName.Equals("noframes") ||
-valueName.Equals("style") ||
-valueName.Equals("script")) {
-                return this.applyInsertionMode(
+              if (valueName.Equals("base", StringComparison.Ordinal) ||
+valueName.Equals("title", StringComparison.Ordinal) ||
+valueName.Equals("template", StringComparison.Ordinal) ||
+valueName.Equals("basefont", StringComparison.Ordinal) ||
+valueName.Equals("bgsound", StringComparison.Ordinal) ||
+valueName.Equals("meta", StringComparison.Ordinal) ||
+valueName.Equals("link", StringComparison.Ordinal) ||
+valueName.Equals("noframes", StringComparison.Ordinal) ||
+valueName.Equals("style", StringComparison.Ordinal) ||
+valueName.Equals("script", StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InHead);
               }
               InsertionMode newMode = InsertionMode.InBody;
-              if (valueName.Equals("caption") ||
-valueName.Equals("tbody") ||
-valueName.Equals("thead") ||
-valueName.Equals("tfoot") ||
-valueName.Equals("colgroup")) {
+              if (valueName.Equals("caption", StringComparison.Ordinal) ||
+valueName.Equals("tbody", StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal) ||
+valueName.Equals("tfoot", StringComparison.Ordinal) ||
+valueName.Equals("colgroup", StringComparison.Ordinal)) {
                 newMode = InsertionMode.InTable;
-              } else if (valueName.Equals("col")) {
+              } else if (valueName.Equals("col", StringComparison.Ordinal)) {
                 newMode = InsertionMode.InColumnGroup;
-              } else if (valueName.Equals("tr")) {
+              } else if (valueName.Equals("tr", StringComparison.Ordinal)) {
                 newMode = InsertionMode.InTableBody;
-              } else if (valueName.Equals("td") || valueName.Equals("th")) {
+              } else if (valueName.Equals("td", StringComparison.Ordinal) ||
+valueName.Equals("th", StringComparison.Ordinal)) {
                 newMode = InsertionMode.InRow;
               }
               if (this.templateModes.Count > 0) {
@@ -1713,68 +1790,68 @@ valueName.Equals("colgroup")) {
               }
               this.templateModes.Add(newMode);
               this.insertionMode = newMode;
-              return this.applyInsertionMode(token, null);
+              return this.ApplyInsertionMode(token, null);
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("template")) {
-                return this.applyInsertionMode(
+              if (valueName.Equals("template", StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InHead);
               } else {
-                this.parseError();
+                this.ParseError();
                 return true;
               }
             }
             if (token == TOKEN_EOF) {
-              if (!this.hasHtmlOpenElement("template")) {
-                this.stopParsing();
+              if (!this.HasHtmlOpenElement("template")) {
+                this.StopParsing();
                 return true;
               } else {
-                this.parseError();
+                this.ParseError();
               }
               this.PopUntilHtmlElementPopped("template");
-              this.clearFormattingToMarker();
+              this.ClearFormattingToMarker();
               if (this.templateModes.Count > 0) {
                 this.templateModes.RemoveAt(this.templateModes.Count - 1);
               }
-              this.resetInsertionMode();
-              return this.applyInsertionMode(token, null);
+              this.ResetInsertionMode();
+              return this.ApplyInsertionMode(token, null);
             }
             return false;
           }
 
         case InsertionMode.InBody: {
             if (token == 0) {
-              this.parseError();
+              this.ParseError();
               return true;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(token);
+              this.AddCommentNodeToCurrentNode(token);
 
               return true;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.parseError();
+              this.ParseError();
               return true;
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               // DebugUtility.Log(String.Empty + ((char)token) + " " +
-              // (this.getCurrentNode().getTagName()));
+              // (this.GetCurrentNode().getTagName()));
               int ch = token;
               if (ch !=
                     0) {
-                this.reconstructFormatting();
+                this.ReconstructFormatting();
               }
-              Text textNode = this.getTextNodeToInsert(this.getCurrentNode());
+              Text textNode = this.GetTextNodeToInsert(this.GetCurrentNode());
               if (textNode == null) {
                 throw new InvalidOperationException();
               }
               while (true) {
                 // Read multiple characters at once
                 if (ch == 0) {
-                  this.parseError();
+                  this.ParseError();
                 } else {
                   StringBuilder sb = textNode.ValueText;
                   if (ch <= 0xffff) {
@@ -1796,19 +1873,19 @@ valueName.Equals("colgroup")) {
                 if (insMode != this.insertionMode) {
                   break;
                 }
-                token = this.parserRead();
+                token = this.ParserRead();
                 if ((token & TOKEN_TYPE_MASK) != TOKEN_CHARACTER) {
                   this.tokenQueue.Insert(0, token);
                   break;
                 }
                 // DebugUtility.Log("{0} {1}"
-                // , (char)token, getCurrentNode().getTagName());
+                // , (char)token, GetCurrentNode().getTagName());
                 ch = token;
               }
               return true;
             } else if (token == TOKEN_EOF) {
               if (this.templateModes.Count > 0) {
-                return this.applyInsertionMode(token, InsertionMode.InTemplate);
+                return this.ApplyInsertionMode(token, InsertionMode.InTemplate);
               } else {
                 foreach (var e in this.openElements) {
                   if (!HtmlCommon.isHtmlElement(e, "dd") &&
@@ -1824,50 +1901,51 @@ valueName.Equals("colgroup")) {
 !HtmlCommon.isHtmlElement(e, "tr") &&
 !HtmlCommon.isHtmlElement(e, "thead") &&
 !HtmlCommon.isHtmlElement(e, "body") &&
-!HtmlCommon.isHtmlElement(e, "html")) {
-                    this.parseError();
+!HtmlCommon.isHtmlElement(e, "Html")) {
+                    this.ParseError();
                   }
                 }
-                this.stopParsing();
+                this.StopParsing();
               }
             }
             if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
               // START TAGS
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if ("html".Equals(valueName)) {
-                this.parseError();
-                if (this.hasHtmlOpenElement("template")) {
+              if ("Html".Equals(valueName, StringComparison.Ordinal)) {
+                this.ParseError();
+                if (this.HasHtmlOpenElement("template")) {
                   return false;
                 }
                 ((Element)this.openElements[0]).mergeAttributes(tag);
                 return true;
-              } else if ("base".Equals(valueName) ||
-"template".Equals(valueName) ||
-"bgsound".Equals(valueName) ||
-"basefont".Equals(valueName) ||
-"link".Equals(valueName) ||
-"noframes".Equals(valueName) ||
-"script".Equals(valueName) ||
-"style".Equals(valueName) ||
-"title".Equals(valueName) ||
-"meta".Equals(valueName)) {
-                this.applyInsertionMode(token, InsertionMode.InHead);
+              } else if ("base".Equals(valueName, StringComparison.Ordinal) ||
+"template".Equals(valueName, StringComparison.Ordinal) ||
+"bgsound".Equals(valueName, StringComparison.Ordinal) ||
+"basefont".Equals(valueName, StringComparison.Ordinal) ||
+"link".Equals(valueName, StringComparison.Ordinal) ||
+"noframes".Equals(valueName, StringComparison.Ordinal) ||
+"script".Equals(valueName, StringComparison.Ordinal) ||
+"style".Equals(valueName, StringComparison.Ordinal) ||
+"title".Equals(valueName, StringComparison.Ordinal) ||
+"meta".Equals(valueName, StringComparison.Ordinal)) {
+                this.ApplyInsertionMode(token, InsertionMode.InHead);
                 return true;
-              } else if ("body".Equals(valueName)) {
-                this.parseError();
+              } else if ("body".Equals(valueName, StringComparison.Ordinal)) {
+                this.ParseError();
                 if (this.openElements.Count <= 1 ||
                     !HtmlCommon.isHtmlElement(this.openElements[1], "body")) {
                   return false;
                 }
-                if (this.hasHtmlOpenElement("template")) {
+                if (this.HasHtmlOpenElement("template")) {
                   return false;
                 }
                 this.framesetOk = false;
                 ((Element)this.openElements[1]).mergeAttributes(tag);
                 return true;
-              } else if ("frameset".Equals(valueName)) {
-                this.parseError();
+              } else if ("frameset".Equals(valueName,
+  StringComparison.Ordinal)) {
+                this.ParseError();
                 if (!this.framesetOk ||
                   this.openElements.Count <= 1 ||
                     !HtmlCommon.isHtmlElement(this.openElements[1], "body")) {
@@ -1878,254 +1956,261 @@ valueName.Equals("colgroup")) {
                   parent.removeChild((Node)this.openElements[1]);
                 }
                 while (this.openElements.Count > 1) {
-                  this.popCurrentNode();
+                  this.PopCurrentNode();
                 }
-                this.addHtmlElement(tag);
+                this.AddHtmlElement(tag);
                 this.insertionMode = InsertionMode.InFrameset;
                 return true;
-              } else if ("address".Equals(valueName) ||
-"article".Equals(valueName) ||
-"aside".Equals(valueName) ||
-"blockquote".Equals(valueName) ||
+              } else if ("address".Equals(valueName,
+  StringComparison.Ordinal) ||
+"article".Equals(valueName, StringComparison.Ordinal) ||
+"aside".Equals(valueName, StringComparison.Ordinal) ||
+"blockquote".Equals(valueName, StringComparison.Ordinal) ||
 "center"
                     .Equals(valueName) ||
-"details".Equals(valueName) ||
-"dialog".Equals(valueName) ||
-"dir".Equals(valueName) ||
-"div".Equals(valueName) ||
-"dl".Equals(valueName) ||
-"fieldset".Equals(valueName) ||
-"figcaption".Equals(valueName) ||
+"details".Equals(valueName, StringComparison.Ordinal) ||
+"dialog".Equals(valueName, StringComparison.Ordinal) ||
+"dir".Equals(valueName, StringComparison.Ordinal) ||
+"div".Equals(valueName, StringComparison.Ordinal) ||
+"dl".Equals(valueName, StringComparison.Ordinal) ||
+"fieldset".Equals(valueName, StringComparison.Ordinal) ||
+"figcaption".Equals(valueName, StringComparison.Ordinal) ||
 "figure"
                     .Equals(valueName) ||
-"footer".Equals(valueName) ||
-"header".Equals(valueName) ||
-"main".Equals(valueName) ||
-"nav".Equals(valueName) ||
-"ol".Equals(valueName) ||
-"p".Equals(valueName) ||
-"section".Equals(valueName) ||
-"summary".Equals(valueName) ||
-"ul".Equals(valueName)
+"footer".Equals(valueName, StringComparison.Ordinal) ||
+"header".Equals(valueName, StringComparison.Ordinal) ||
+"main".Equals(valueName, StringComparison.Ordinal) ||
+"nav".Equals(valueName, StringComparison.Ordinal) ||
+"ol".Equals(valueName, StringComparison.Ordinal) ||
+"p".Equals(valueName, StringComparison.Ordinal) ||
+"section".Equals(valueName, StringComparison.Ordinal) ||
+"summary".Equals(valueName, StringComparison.Ordinal) ||
+"ul".Equals(valueName, StringComparison.Ordinal)
 ) {
-                this.closeParagraph();
-                this.addHtmlElement(tag);
+                this.CloseParagraph();
+                this.AddHtmlElement(tag);
                 return true;
-              } else if ("h1".Equals(valueName) ||
-"h2".Equals(valueName) ||
-"h3".Equals(valueName) ||
-"h4".Equals(valueName) ||
-"h5".Equals(valueName) ||
-"h6".Equals(valueName)) {
-                this.closeParagraph();
-                IElement node = this.getCurrentNode();
+              } else if ("h1".Equals(valueName, StringComparison.Ordinal) ||
+"h2".Equals(valueName, StringComparison.Ordinal) ||
+"h3".Equals(valueName, StringComparison.Ordinal) ||
+"h4".Equals(valueName, StringComparison.Ordinal) ||
+"h5".Equals(valueName, StringComparison.Ordinal) ||
+"h6".Equals(valueName, StringComparison.Ordinal)) {
+                this.CloseParagraph();
+                IElement node = this.GetCurrentNode();
                 string name1 = node.getLocalName();
-                if ("h1".Equals(name1) ||
-"h2".Equals(name1) ||
-"h3".Equals(name1) ||
-"h4".Equals(name1) ||
-"h5".Equals(name1) ||
-"h6".Equals(name1)) {
-                  this.parseError();
+                if ("h1".Equals(name1, StringComparison.Ordinal) ||
+"h2".Equals(name1, StringComparison.Ordinal) ||
+"h3".Equals(name1, StringComparison.Ordinal) ||
+"h4".Equals(name1, StringComparison.Ordinal) ||
+"h5".Equals(name1, StringComparison.Ordinal) ||
+"h6".Equals(name1, StringComparison.Ordinal)) {
+                  this.ParseError();
                   this.openElements.RemoveAt(this.openElements.Count - 1);
                 }
-                this.addHtmlElement(tag);
+                this.AddHtmlElement(tag);
                 return true;
-              } else if ("pre".Equals(valueName) ||
-                  "listing".Equals(valueName)) {
-                this.closeParagraph();
-                this.addHtmlElement(tag);
-                this.skipLineFeed();
+              } else if ("pre".Equals(valueName, StringComparison.Ordinal) ||
+                  "listing".Equals(valueName, StringComparison.Ordinal)) {
+                this.CloseParagraph();
+                this.AddHtmlElement(tag);
+                this.SkipLineFeed();
                 this.framesetOk = false;
                 return true;
-              } else if ("form".Equals(valueName)) {
-                if (this.formElement != null && !this.hasHtmlOpenElement(
+              } else if ("form".Equals(valueName, StringComparison.Ordinal)) {
+                if (this.formElement != null && !this.HasHtmlOpenElement(
      "template")) {
-                  this.parseError();
+                  this.ParseError();
                   return false;
                 }
-                this.closeParagraph();
-                Element formElem = this.addHtmlElement(tag);
-                if (!this.hasHtmlOpenElement("template")) {
+                this.CloseParagraph();
+                Element formElem = this.AddHtmlElement(tag);
+                if (!this.HasHtmlOpenElement("template")) {
                   this.formElement = formElem;
                 }
                 return true;
-              } else if ("li".Equals(valueName)) {
+              } else if ("li".Equals(valueName, StringComparison.Ordinal)) {
                 this.framesetOk = false;
                 for (int i = this.openElements.Count - 1; i >= 0; --i) {
                   IElement node = this.openElements[i];
                   string nodeName = node.getLocalName();
                   if (HtmlCommon.isHtmlElement(node, "li")) {
-                    this.applyInsertionMode(
-                    this.getArtificialToken(TOKEN_END_TAG, "li"),
+                    this.ApplyInsertionMode(
+                    this.GetArtificialToken(TOKEN_END_TAG, "li"),
                     insMode);
                     break;
                   }
-                  if (this.isSpecialElement(node) &&
+                  if (this.IsSpecialElement(node) &&
 !"address"
                     .Equals(nodeName) &&
-!"div".Equals(nodeName) &&
-!"p".Equals(nodeName)) {
+!"div".Equals(nodeName, StringComparison.Ordinal) &&
+!"p".Equals(nodeName, StringComparison.Ordinal)) {
                     break;
                   }
                 }
-                this.closeParagraph();
-                this.addHtmlElement(tag);
+                this.CloseParagraph();
+                this.AddHtmlElement(tag);
                 return true;
-              } else if ("dd".Equals(valueName) || "dt".Equals(valueName)) {
+              } else if ("dd".Equals(valueName, StringComparison.Ordinal) ||
+"dt".Equals(valueName, StringComparison.Ordinal)) {
                 this.framesetOk = false;
                 for (int i = this.openElements.Count - 1; i >= 0; --i) {
                   IElement node = this.openElements[i];
                   string nodeName = node.getLocalName();
                   // DebugUtility.Log("looping through %s",nodeName);
-                  if (nodeName.Equals("dd") || nodeName.Equals("dt")) {
-                    this.applyEndTag(nodeName, insMode);
+                  if (nodeName.Equals("dd", StringComparison.Ordinal) ||
+nodeName.Equals("dt", StringComparison.Ordinal)) {
+                    this.ApplyEndTag(nodeName, insMode);
                     break;
                   }
-                  if (this.isSpecialElement(node) &&
-!"address".Equals(nodeName) &&
-!"div".Equals(nodeName) &&
-!"p".Equals(nodeName)) {
+                  if (this.IsSpecialElement(node) &&
+!"address".Equals(nodeName, StringComparison.Ordinal) &&
+!"div".Equals(nodeName, StringComparison.Ordinal) &&
+!"p".Equals(nodeName, StringComparison.Ordinal)) {
                     break;
                   }
                 }
-                this.closeParagraph();
-                this.addHtmlElement(tag);
+                this.CloseParagraph();
+                this.AddHtmlElement(tag);
                 return true;
-              } else if ("plaintext".Equals(valueName)) {
-                this.closeParagraph();
-                this.addHtmlElement(tag);
+              } else if ("plaintext".Equals(valueName,
+  StringComparison.Ordinal)) {
+                this.CloseParagraph();
+                this.AddHtmlElement(tag);
                 this.state = TokenizerState.PlainText;
                 return true;
-              } else if ("button".Equals(valueName)) {
-                if (this.hasHtmlElementInScope("button")) {
-                  this.parseError();
-                  this.applyEndTag("button", insMode);
-                  return this.applyInsertionMode(token, null);
+              } else if ("button".Equals(valueName, StringComparison.Ordinal)) {
+                if (this.HasHtmlElementInScope("button")) {
+                  this.ParseError();
+                  this.ApplyEndTag("button", insMode);
+                  return this.ApplyInsertionMode(token, null);
                 }
-                this.reconstructFormatting();
-                this.addHtmlElement(tag);
+                this.ReconstructFormatting();
+                this.AddHtmlElement(tag);
                 this.framesetOk = false;
                 return true;
-              } else if ("a".Equals(valueName)) {
+              } else if ("a".Equals(valueName, StringComparison.Ordinal)) {
                 while (true) {
                   IElement node = null;
                   for (int i = this.formattingElements.Count - 1; i >= 0; --i) {
                     FormattingElement fe = this.formattingElements[i];
-                    if (fe.isMarker()) {
+                    if (fe.IsMarker()) {
                       break;
                     }
-                    if (fe.Element.getLocalName().Equals("a")) {
+                    if (fe.Element.getLocalName().Equals("a",
+  StringComparison.Ordinal)) {
                       node = fe.Element;
                       break;
                     }
                   }
                   if (node != null) {
-                    this.parseError();
-                    this.applyEndTag("a", insMode);
-                    this.removeFormattingElement(node);
+                    this.ParseError();
+                    this.ApplyEndTag("a", insMode);
+                    this.RemoveFormattingElement(node);
                     this.openElements.Remove(node);
                   } else {
                     break;
                   }
                 }
-                this.reconstructFormatting();
-                this.pushFormattingElement(tag);
-              } else if ("b".Equals(valueName) ||
-"big".Equals(valueName) ||
-"code".Equals(valueName) ||
-"em".Equals(valueName) ||
-"font".Equals(valueName) ||
-"i".Equals(valueName) ||
-"s".Equals(valueName) ||
-"small".Equals(valueName) ||
-"strike".Equals(valueName) ||
-"strong".Equals(valueName) ||
-"tt".Equals(valueName) ||
-"u".Equals(valueName)) {
-                this.reconstructFormatting();
-                this.pushFormattingElement(tag);
-              } else if ("nobr".Equals(valueName)) {
-                this.reconstructFormatting();
-                if (this.hasHtmlElementInScope("nobr")) {
-                  this.parseError();
-                  this.applyEndTag("nobr", insMode);
-                  this.reconstructFormatting();
+                this.ReconstructFormatting();
+                this.PushFormattingElement(tag);
+              } else if ("b".Equals(valueName, StringComparison.Ordinal) ||
+"big".Equals(valueName, StringComparison.Ordinal) ||
+"code".Equals(valueName, StringComparison.Ordinal) ||
+"em".Equals(valueName, StringComparison.Ordinal) ||
+"font".Equals(valueName, StringComparison.Ordinal) ||
+"i".Equals(valueName, StringComparison.Ordinal) ||
+"s".Equals(valueName, StringComparison.Ordinal) ||
+"small".Equals(valueName, StringComparison.Ordinal) ||
+"strike".Equals(valueName, StringComparison.Ordinal) ||
+"strong".Equals(valueName, StringComparison.Ordinal) ||
+"tt".Equals(valueName, StringComparison.Ordinal) ||
+"u".Equals(valueName, StringComparison.Ordinal)) {
+                this.ReconstructFormatting();
+                this.PushFormattingElement(tag);
+              } else if ("nobr".Equals(valueName, StringComparison.Ordinal)) {
+                this.ReconstructFormatting();
+                if (this.HasHtmlElementInScope("nobr")) {
+                  this.ParseError();
+                  this.ApplyEndTag("nobr", insMode);
+                  this.ReconstructFormatting();
                 }
-                this.pushFormattingElement(tag);
-              } else if ("table".Equals(valueName)) {
+                this.PushFormattingElement(tag);
+              } else if ("table".Equals(valueName, StringComparison.Ordinal)) {
                 if (this.valueDocument.getMode() != DocumentMode.QuirksMode) {
-                  this.closeParagraph();
+                  this.CloseParagraph();
                 }
-                this.addHtmlElement(tag);
+                this.AddHtmlElement(tag);
                 this.framesetOk = false;
                 this.insertionMode = InsertionMode.InTable;
                 return true;
-              } else if ("area".Equals(valueName) ||
-"br".Equals(valueName) ||
-"embed".Equals(valueName) ||
-"img".Equals(valueName) ||
-"keygen".Equals(valueName) ||
-"wbr".Equals(valueName)
+              } else if ("area".Equals(valueName, StringComparison.Ordinal) ||
+"br".Equals(valueName, StringComparison.Ordinal) ||
+"embed".Equals(valueName, StringComparison.Ordinal) ||
+"img".Equals(valueName, StringComparison.Ordinal) ||
+"keygen".Equals(valueName, StringComparison.Ordinal) ||
+"wbr".Equals(valueName, StringComparison.Ordinal)
 ) {
-                this.reconstructFormatting();
-                this.addHtmlElementNoPush(tag);
-                tag.ackSelfClosing();
+                this.ReconstructFormatting();
+                this.AddHtmlElementNoPush(tag);
+                tag.AckSelfClosing();
                 this.framesetOk = false;
-              } else if ("input".Equals(valueName)) {
-                this.reconstructFormatting();
-                this.inputElement = this.addHtmlElementNoPush(tag);
-                tag.ackSelfClosing();
-                string attr = this.inputElement.getAttribute("type");
+              } else if ("input".Equals(valueName, StringComparison.Ordinal)) {
+                this.ReconstructFormatting();
+                this.inputElement = this.AddHtmlElementNoPush(tag);
+                tag.AckSelfClosing();
+                string attr = this.inputElement.GetAttribute("type");
                 if (attr == null || !"hidden"
                     .Equals(DataUtilities.ToLowerCaseAscii(attr))) {
                   this.framesetOk = false;
                 }
-              } else if ("param".Equals(valueName) ||
+              } else if ("param".Equals(valueName, StringComparison.Ordinal) ||
 "source"
                     .Equals(valueName) ||
-"track".Equals(valueName)
+"track".Equals(valueName, StringComparison.Ordinal)
 ) {
-                this.addHtmlElementNoPush(tag);
-                tag.ackSelfClosing();
-              } else if ("hr".Equals(valueName)) {
-                this.closeParagraph();
-                this.addHtmlElementNoPush(tag);
-                tag.ackSelfClosing();
+                this.AddHtmlElementNoPush(tag);
+                tag.AckSelfClosing();
+              } else if ("hr".Equals(valueName, StringComparison.Ordinal)) {
+                this.CloseParagraph();
+                this.AddHtmlElementNoPush(tag);
+                tag.AckSelfClosing();
                 this.framesetOk = false;
-              } else if ("image".Equals(valueName)) {
-                this.parseError();
-                tag.setName("img");
-                return this.applyInsertionMode(token, null);
-              } else if ("textarea".Equals(valueName)) {
-                this.addHtmlElement(tag);
-                this.skipLineFeed();
+              } else if ("image".Equals(valueName, StringComparison.Ordinal)) {
+                this.ParseError();
+                tag.SetName("img");
+                return this.ApplyInsertionMode(token, null);
+              } else if ("textarea".Equals(valueName,
+  StringComparison.Ordinal)) {
+                this.AddHtmlElement(tag);
+                this.SkipLineFeed();
                 this.state = TokenizerState.RcData;
                 this.originalInsertionMode = this.insertionMode;
                 this.framesetOk = false;
                 this.insertionMode = InsertionMode.Text;
-              } else if ("xmp".Equals(valueName)) {
-                this.closeParagraph();
-                this.reconstructFormatting();
+              } else if ("xmp".Equals(valueName, StringComparison.Ordinal)) {
+                this.CloseParagraph();
+                this.ReconstructFormatting();
                 this.framesetOk = false;
-                this.addHtmlElement(tag);
+                this.AddHtmlElement(tag);
                 this.state = TokenizerState.RawText;
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
-              } else if ("iframe".Equals(valueName)) {
+              } else if ("iframe".Equals(valueName, StringComparison.Ordinal)) {
                 this.framesetOk = false;
-                this.addHtmlElement(tag);
+                this.AddHtmlElement(tag);
                 this.state = TokenizerState.RawText;
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
-              } else if ("noembed".Equals(valueName)) {
-                this.addHtmlElement(tag);
+              } else if ("noembed".Equals(valueName,
+  StringComparison.Ordinal)) {
+                this.AddHtmlElement(tag);
                 this.state = TokenizerState.RawText;
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.Text;
-              } else if ("select".Equals(valueName)) {
-                this.reconstructFormatting();
-                this.addHtmlElement(tag);
+              } else if ("select".Equals(valueName, StringComparison.Ordinal)) {
+                this.ReconstructFormatting();
+                this.AddHtmlElement(tag);
                 this.framesetOk = false;
                 this.insertionMode = (this.insertionMode ==
 InsertionMode.InTable ||
@@ -2134,149 +2219,158 @@ InsertionMode.InTable ||
                          this.insertionMode == InsertionMode.InRow ||
                          this.insertionMode == InsertionMode.InCell) ?
                          InsertionMode.InSelectInTable : InsertionMode.InSelect;
-              } else if ("option".Equals(valueName) || "optgroup"
+                       } else if ("option".Equals(valueName,
+  StringComparison.Ordinal) || "optgroup"
                     .Equals(valueName)) {
-                if (this.getCurrentNode().getLocalName().Equals(
-    "option")) {
-                  this.applyEndTag("option", insMode);
+                if (this.GetCurrentNode().getLocalName().Equals(
+                  "option",
+                  StringComparison.Ordinal)) {
+                  this.ApplyEndTag("option", insMode);
                 }
-                this.reconstructFormatting();
-                this.addHtmlElement(tag);
-              } else if ("rp".Equals(valueName) || "rt".Equals(valueName)) {
-                if (this.hasHtmlElementInScope("ruby")) {
-                  this.generateImpliedEndTagsExcept("rtc");
-                  if (!this.getCurrentNode().getLocalName().Equals(
-     "ruby") && !this.getCurrentNode().getLocalName().Equals(
-     "rtc")) {
-                    this.parseError();
+                this.ReconstructFormatting();
+                this.AddHtmlElement(tag);
+              } else if ("rp".Equals(valueName, StringComparison.Ordinal) ||
+"rt".Equals(valueName, StringComparison.Ordinal)) {
+                if (this.HasHtmlElementInScope("ruby")) {
+                  this.GenerateImpliedEndTagsExcept("rtc");
+                  if (!this.GetCurrentNode().getLocalName().Equals(
+                    "ruby",
+                    StringComparison.Ordinal) &&
+!this.GetCurrentNode().getLocalName().Equals(
+     "rtc",
+  StringComparison.Ordinal)) {
+                    this.ParseError();
                   }
                 }
-                this.addHtmlElement(tag);
-              } else if ("rb".Equals(valueName) || "rtc".Equals(valueName)) {
-                if (this.hasHtmlElementInScope("ruby")) {
-                  this.generateImpliedEndTags();
-                  if (!this.getCurrentNode().getLocalName().Equals(
-     "ruby")) {
-                    this.parseError();
+                this.AddHtmlElement(tag);
+              } else if ("rb".Equals(valueName, StringComparison.Ordinal) ||
+"rtc".Equals(valueName, StringComparison.Ordinal)) {
+                if (this.HasHtmlElementInScope("ruby")) {
+                  this.GenerateImpliedEndTags();
+                  if (!this.GetCurrentNode().getLocalName().Equals(
+                    "ruby",
+                    StringComparison.Ordinal)) {
+                    this.ParseError();
                   }
                 }
-                this.addHtmlElement(tag);
-              } else if ("applet".Equals(valueName) ||
+                this.AddHtmlElement(tag);
+              } else if ("applet".Equals(valueName, StringComparison.Ordinal) ||
 "marquee"
                     .Equals(valueName) ||
-"object".Equals(valueName)) {
-                this.reconstructFormatting();
-                Element e = this.addHtmlElement(tag);
-                this.insertFormattingMarker(tag, e);
+"object".Equals(valueName, StringComparison.Ordinal)) {
+                this.ReconstructFormatting();
+                Element e = this.AddHtmlElement(tag);
+                this.InsertFormattingMarker(tag, e);
                 this.framesetOk = false;
-              } else if ("math".Equals(valueName)) {
-                this.reconstructFormatting();
-                this.adjustMathMLAttributes(tag);
-                this.adjustForeignAttributes(tag);
-                this.insertForeignElement(
+              } else if ("math".Equals(valueName, StringComparison.Ordinal)) {
+                this.ReconstructFormatting();
+                this.AdjustMathMLAttributes(tag);
+                this.AdjustForeignAttributes(tag);
+                this.InsertForeignElement(
                   tag,
                   HtmlCommon.MATHML_NAMESPACE);
-                if (tag.isSelfClosing()) {
-                  tag.ackSelfClosing();
-                  this.popCurrentNode();
+                if (tag.IsSelfClosing()) {
+                  tag.AckSelfClosing();
+                  this.PopCurrentNode();
                 } else {
                   // this.hasForeignContent = true;
                 }
-              } else if ("svg".Equals(valueName)) {
-                this.reconstructFormatting();
-                this.adjustSvgAttributes(tag);
-                this.adjustForeignAttributes(tag);
-                this.insertForeignElement(tag, HtmlCommon.SVG_NAMESPACE);
-                if (tag.isSelfClosing()) {
-                  tag.ackSelfClosing();
-                  this.popCurrentNode();
+              } else if ("svg".Equals(valueName, StringComparison.Ordinal)) {
+                this.ReconstructFormatting();
+                this.AdjustSvgAttributes(tag);
+                this.AdjustForeignAttributes(tag);
+                this.InsertForeignElement(tag, HtmlCommon.SVG_NAMESPACE);
+                if (tag.IsSelfClosing()) {
+                  tag.AckSelfClosing();
+                  this.PopCurrentNode();
                 } else {
                   // this.hasForeignContent = true;
                 }
-              } else if ("caption".Equals(valueName) ||
-"col".Equals(valueName) ||
-"colgroup".Equals(valueName) ||
-"frame".Equals(valueName) ||
-"head".Equals(valueName) ||
-"tbody".Equals(valueName) ||
-"td".Equals(valueName) ||
-"tfoot".Equals(valueName) ||
-"th".Equals(valueName) ||
-"thead".Equals(valueName) ||
-"tr".Equals(valueName)
+              } else if ("caption".Equals(valueName,
+  StringComparison.Ordinal) ||
+"col".Equals(valueName, StringComparison.Ordinal) ||
+"colgroup".Equals(valueName, StringComparison.Ordinal) ||
+"frame".Equals(valueName, StringComparison.Ordinal) ||
+"head".Equals(valueName, StringComparison.Ordinal) ||
+"tbody".Equals(valueName, StringComparison.Ordinal) ||
+"td".Equals(valueName, StringComparison.Ordinal) ||
+"tfoot".Equals(valueName, StringComparison.Ordinal) ||
+"th".Equals(valueName, StringComparison.Ordinal) ||
+"thead".Equals(valueName, StringComparison.Ordinal) ||
+"tr".Equals(valueName, StringComparison.Ordinal)
 ) {
-                this.parseError();
+                this.ParseError();
                 return false;
               } else {
                 // DebugUtility.Log("ordinary: " + tag);
-                this.reconstructFormatting();
-                this.addHtmlElement(tag);
+                this.ReconstructFormatting();
+                this.AddHtmlElement(tag);
               }
               return true;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
               // END TAGS
               // NOTE: Have all cases
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("template")) {
-                this.applyInsertionMode(token, InsertionMode.InHead);
+              if (valueName.Equals("template", StringComparison.Ordinal)) {
+                this.ApplyInsertionMode(token, InsertionMode.InHead);
                 return true;
               }
-              if (valueName.Equals("body")) {
-                if (!this.hasHtmlElementInScope("body")) {
-                  this.parseError();
+              if (valueName.Equals("body", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInScope("body")) {
+                  this.ParseError();
                   return false;
                 }
                 foreach (var e in this.openElements) {
                   string name2 = e.getLocalName();
-                  if (!"dd".Equals(name2) &&
-!"dt".Equals(name2) &&
-!"li".Equals(name2) &&
-!"option".Equals(name2) &&
-!"optgroup".Equals(name2) &&
-!"p".Equals(name2) &&
-!"rb".Equals(name2) &&
-!"tbody".Equals(name2) &&
-!"td".Equals(name2) &&
-!"tfoot".Equals(name2) &&
-!"th".Equals(name2) &&
-!"tr".Equals(name2) &&
-!"thead".Equals(name2) &&
-!"body".Equals(name2) &&
-!"html".Equals(name2)) {
-                    this.parseError();
+                  if (!"dd".Equals(name2, StringComparison.Ordinal) &&
+!"dt".Equals(name2, StringComparison.Ordinal) &&
+!"li".Equals(name2, StringComparison.Ordinal) &&
+!"option".Equals(name2, StringComparison.Ordinal) &&
+!"optgroup".Equals(name2, StringComparison.Ordinal) &&
+!"p".Equals(name2, StringComparison.Ordinal) &&
+!"rb".Equals(name2, StringComparison.Ordinal) &&
+!"tbody".Equals(name2, StringComparison.Ordinal) &&
+!"td".Equals(name2, StringComparison.Ordinal) &&
+!"tfoot".Equals(name2, StringComparison.Ordinal) &&
+!"th".Equals(name2, StringComparison.Ordinal) &&
+!"tr".Equals(name2, StringComparison.Ordinal) &&
+!"thead".Equals(name2, StringComparison.Ordinal) &&
+!"body".Equals(name2, StringComparison.Ordinal) &&
+!"Html".Equals(name2, StringComparison.Ordinal)) {
+                    this.ParseError();
                     // token not ignored here
                   }
                 }
                 this.insertionMode = InsertionMode.AfterBody;
-              } else if (valueName.Equals("a") ||
-valueName.Equals("b") ||
-valueName.Equals("big") ||
-valueName.Equals("code") ||
-valueName.Equals("em") ||
-valueName.Equals("b") ||
-valueName.Equals("font") ||
-valueName.Equals("i") ||
-valueName.Equals("nobr") ||
-valueName.Equals("s") ||
-valueName.Equals("small") ||
-valueName.Equals("strike") ||
-valueName.Equals("strong") ||
-valueName.Equals("tt") ||
-valueName.Equals("u")) {
+              } else if (valueName.Equals("a", StringComparison.Ordinal) ||
+valueName.Equals("b", StringComparison.Ordinal) ||
+valueName.Equals("big", StringComparison.Ordinal) ||
+valueName.Equals("code", StringComparison.Ordinal) ||
+valueName.Equals("em", StringComparison.Ordinal) ||
+valueName.Equals("b", StringComparison.Ordinal) ||
+valueName.Equals("font", StringComparison.Ordinal) ||
+valueName.Equals("i", StringComparison.Ordinal) ||
+valueName.Equals("nobr", StringComparison.Ordinal) ||
+valueName.Equals("s", StringComparison.Ordinal) ||
+valueName.Equals("small", StringComparison.Ordinal) ||
+valueName.Equals("strike", StringComparison.Ordinal) ||
+valueName.Equals("strong", StringComparison.Ordinal) ||
+valueName.Equals("tt", StringComparison.Ordinal) ||
+valueName.Equals("u", StringComparison.Ordinal)) {
                 if (
     HtmlCommon.isHtmlElement(
-  this.getCurrentNode(),
+  this.GetCurrentNode(),
   valueName)) {
                   var found = false;
                   for (int j = this.formattingElements.Count - 1; j >= 0; --j) {
                     FormattingElement fe = this.formattingElements[j];
-                    if (this.getCurrentNode().Equals(fe.Element)) {
+                    if (this.GetCurrentNode().Equals(fe.Element)) {
                       found = true;
                     }
                   }
                   if (!found) {
-                    this.popCurrentNode();
+                    this.PopCurrentNode();
                     return true;
                   }
                 }
@@ -2287,10 +2381,11 @@ valueName.Equals("u")) {
                   FormattingElement formatting = null;
                   for (int j = this.formattingElements.Count - 1; j >= 0; --j) {
                     FormattingElement fe = this.formattingElements[j];
-                    if (fe.isMarker()) {
+                    if (fe.IsMarker()) {
                       break;
                     }
-                    if (fe.Element.getLocalName().Equals(valueName)) {
+                    if (fe.Element.getLocalName().Equals(valueName,
+  StringComparison.Ordinal)) {
                       formatting = fe;
                       break;
                     }
@@ -2302,19 +2397,19 @@ valueName.Equals("u")) {
                     k >= 0; --k) {
                       IElement node = this.openElements[k];
                       if (HtmlCommon.isHtmlElement(node, valueName)) {
-                        this.generateImpliedEndTagsExcept(valueName);
-                        if (!node.Equals(this.getCurrentNode())) {
-                          this.parseError();
+                        this.GenerateImpliedEndTagsExcept(valueName);
+                        if (!node.Equals(this.GetCurrentNode())) {
+                          this.ParseError();
                         }
                         while (true) {
-                          IElement node2 = this.popCurrentNode();
+                          IElement node2 = this.PopCurrentNode();
                           if (node2.Equals(node)) {
                             break;
                           }
                         }
                         break;
-                      } else if (this.isSpecialElement(node)) {
-                        this.parseError();
+                      } else if (this.IsSpecialElement(node)) {
+                        this.ParseError();
                         return false;
                       }
                     }
@@ -2325,7 +2420,7 @@ valueName.Equals("u")) {
                   // DebugUtility.Log("Formatting Element: // " +
                   // formatting.Element);
                   if (formattingElementPos < 0) { // not found
-                    this.parseError();
+                    this.ParseError();
                     // DebugUtility.Log("Not in stack of open elements");
                     this.formattingElements.Remove(formatting);
                     return true;
@@ -2335,13 +2430,12 @@ valueName.Equals("u")) {
                   // DebugUtility.Log("Formatting elements:");
                   // DebugUtility.Log(Implode(formattingElements));
                   if
-     (!this.hasHtmlElementInScope(formatting.Element)) {
-                    this.parseError();
+     (!this.HasHtmlElementInScope(formatting.Element)) {
+                    this.ParseError();
                     return true;
                   }
-                  if
-       (!formatting.Element.Equals(this.getCurrentNode())) {
-                    this.parseError();
+                  if (!formatting.Element.Equals(this.GetCurrentNode())) {
+                    this.ParseError();
                   }
                   IElement furthestBlock = null;
                   var furthestBlockPos = -1;
@@ -2349,8 +2443,8 @@ valueName.Equals("u")) {
        j < this.openElements.Count; ++j) {
                     IElement e = this.openElements[j];
                     // DebugUtility.Log("is special: // " + (// e) + "// " +
-                    // (this.isSpecialElement(e)));
-                    if (this.isSpecialElement(e)) {
+                    // (this.IsSpecialElement(e)));
+                    if (this.IsSpecialElement(e)) {
                       furthestBlock = e;
                       furthestBlockPos = j;
                       break;
@@ -2361,7 +2455,7 @@ valueName.Equals("u")) {
                     // Pop up to and including the
                     // formatting element
                     while (this.openElements.Count > formattingElementPos) {
-                      this.popCurrentNode();
+                      this.PopCurrentNode();
                     }
                     this.formattingElements.Remove(formatting);
                     // DebugUtility.Log("Open elements now [" + i + "]:");
@@ -2386,7 +2480,7 @@ this.openElements[formattingElementPos -
                   for (int j = 0; ; j = Math.Min(j + 1, 4)) {
                     myNode = superiorNode;
                     FormattingElement nodeFE =
-                    this.getFormattingElement(myNode);
+                    this.GetFormattingElement(myNode);
                     // DebugUtility.Log("j="+j);
                     // DebugUtility.Log("nodeFE="+nodeFE);
                     if (nodeFE == null) {
@@ -2427,7 +2521,8 @@ this.openElements[this.openElements.IndexOf(myNode) -
                     // apply here
                     if (lastNode.getParentNode() != null) {
                       ((
-                        Node)lastNode.getParentNode()).removeChild((Node)lastNode);
+                        Node)lastNode.getParentNode())
+.removeChild((Node)lastNode);
                     }
                     myNode.appendChild(lastNode);
                     // DebugUtility.Log("lastNode now: "+myNode);
@@ -2442,13 +2537,15 @@ HtmlCommon.isHtmlElement(commonAncestor, "tfoot")
 ) {
                     if (lastNode.getParentNode() != null) {
                       ((
-                        Node)lastNode.getParentNode()).removeChild((Node)lastNode);
+                        Node)lastNode.getParentNode())
+.removeChild((Node)lastNode);
                     }
-                    this.fosterParent(lastNode);
+                    this.FosterParent(lastNode);
                   } else {
                     if (lastNode.getParentNode() != null) {
                       ((
-                        Node)lastNode.getParentNode()).removeChild((Node)lastNode);
+                        Node)lastNode.getParentNode())
+.removeChild((Node)lastNode);
                     }
                     commonAncestor.appendChild(lastNode);
                   }
@@ -2484,121 +2581,127 @@ HtmlCommon.isHtmlElement(commonAncestor, "tfoot")
                 }
                 // DebugUtility.Log("format after="
                 // +this.openElements[0].getOwnerDocument());
-              } else if ("applet".Equals(valueName) ||
-"marquee".Equals(valueName) ||
-"object".Equals(valueName)) {
-                if (!this.hasHtmlElementInScope(valueName)) {
-                  this.parseError();
+              } else if ("applet".Equals(valueName, StringComparison.Ordinal) ||
+"marquee".Equals(valueName, StringComparison.Ordinal) ||
+"object".Equals(valueName, StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInScope(valueName)) {
+                  this.ParseError();
                   return false;
                 } else {
-                  this.generateImpliedEndTags();
-                  if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
-                    this.parseError();
+                  this.GenerateImpliedEndTags();
+                  if (!this.GetCurrentNode().getLocalName().Equals(valueName,
+  StringComparison.Ordinal)) {
+                    this.ParseError();
                   }
                   this.PopUntilHtmlElementPopped(valueName);
-                  this.clearFormattingToMarker();
+                  this.ClearFormattingToMarker();
                 }
-              } else if (valueName.Equals("html")) {
-                return this.applyEndTag("body", insMode) ?
-                  this.applyInsertionMode(token, null) : false;
-              } else if ("address".Equals(valueName) ||
-"article".Equals(valueName) ||
-"aside".Equals(valueName) ||
-"blockquote".Equals(valueName) ||
+              } else if (valueName.Equals("Html", StringComparison.Ordinal)) {
+                return this.ApplyEndTag("body", insMode) ?
+                  this.ApplyInsertionMode(token, null) : false;
+                } else if ("address".Equals(valueName,
+  StringComparison.Ordinal) ||
+"article".Equals(valueName, StringComparison.Ordinal) ||
+"aside".Equals(valueName, StringComparison.Ordinal) ||
+"blockquote".Equals(valueName, StringComparison.Ordinal) ||
 "button"
                     .Equals(valueName) ||
-"center".Equals(valueName) ||
-"details".Equals(valueName) ||
-"dialog".Equals(valueName) ||
-"dir".Equals(valueName) ||
-"div".Equals(valueName) ||
-"dl".Equals(valueName) ||
-"fieldset".Equals(valueName) ||
+"center".Equals(valueName, StringComparison.Ordinal) ||
+"details".Equals(valueName, StringComparison.Ordinal) ||
+"dialog".Equals(valueName, StringComparison.Ordinal) ||
+"dir".Equals(valueName, StringComparison.Ordinal) ||
+"div".Equals(valueName, StringComparison.Ordinal) ||
+"dl".Equals(valueName, StringComparison.Ordinal) ||
+"fieldset".Equals(valueName, StringComparison.Ordinal) ||
 "figcaption"
                     .Equals(valueName) ||
-"figure".Equals(valueName) ||
-"footer".Equals(valueName) ||
-"header".Equals(valueName) ||
-"listing".Equals(valueName) ||
-"main".Equals(valueName) ||
-"nav".Equals(valueName) ||
-"ol".Equals(valueName) ||
-"pre".Equals(valueName) ||
-"section".Equals(valueName) ||
-"summary".Equals(valueName) ||
-"ul".Equals(valueName)) {
-                if (!this.hasHtmlElementInScope(valueName)) {
-                  this.parseError();
+"figure".Equals(valueName, StringComparison.Ordinal) ||
+"footer".Equals(valueName, StringComparison.Ordinal) ||
+"header".Equals(valueName, StringComparison.Ordinal) ||
+"listing".Equals(valueName, StringComparison.Ordinal) ||
+"main".Equals(valueName, StringComparison.Ordinal) ||
+"nav".Equals(valueName, StringComparison.Ordinal) ||
+"ol".Equals(valueName, StringComparison.Ordinal) ||
+"pre".Equals(valueName, StringComparison.Ordinal) ||
+"section".Equals(valueName, StringComparison.Ordinal) ||
+"summary".Equals(valueName, StringComparison.Ordinal) ||
+"ul".Equals(valueName, StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInScope(valueName)) {
+                  this.ParseError();
                   return true;
                 } else {
-                  this.generateImpliedEndTags();
-                  if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
-                    this.parseError();
+                  this.GenerateImpliedEndTags();
+                  if (!this.GetCurrentNode().getLocalName().Equals(valueName,
+  StringComparison.Ordinal)) {
+                    this.ParseError();
                   }
                   this.PopUntilHtmlElementPopped(valueName);
                 }
-              } else if (valueName.Equals("form")) {
-                if (this.hasHtmlOpenElement("template")) {
-                  if (!this.hasHtmlElementInScope("form")) {
-                    this.parseError();
+              } else if (valueName.Equals("form", StringComparison.Ordinal)) {
+                if (this.HasHtmlOpenElement("template")) {
+                  if (!this.HasHtmlElementInScope("form")) {
+                    this.ParseError();
                     return false;
                   }
-                  this.generateImpliedEndTags();
-                  if (!HtmlCommon.isHtmlElement(this.getCurrentNode(), "form"
+                  this.GenerateImpliedEndTags();
+                  if (!HtmlCommon.isHtmlElement(this.GetCurrentNode(), "form"
 )) {
-                    this.parseError();
+                    this.ParseError();
                   }
                   this.PopUntilHtmlElementPopped("form");
                 } else {
                   IElement node = this.formElement;
                   this.formElement = null;
-                  if (node == null || !this.hasHtmlElementInScope(node)) {
-                    this.parseError();
+                  if (node == null || !this.HasHtmlElementInScope(node)) {
+                    this.ParseError();
                     return false;
                   }
-                  this.generateImpliedEndTags();
-                  if (this.getCurrentNode() != node) {
-                    this.parseError();
+                  this.GenerateImpliedEndTags();
+                  if (this.GetCurrentNode() != node) {
+                    this.ParseError();
                   }
                   this.openElements.Remove(node);
                 }
-              } else if (valueName.Equals("p")) {
-                if (!this.hasHtmlElementInButtonScope(valueName)) {
-                  this.parseError();
-                  this.applyStartTag("p", insMode);
-                  return this.applyInsertionMode(token, null);
+              } else if (valueName.Equals("p", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInButtonScope(valueName)) {
+                  this.ParseError();
+                  this.ApplyStartTag("p", insMode);
+                  return this.ApplyInsertionMode(token, null);
                 }
-                this.generateImpliedEndTagsExcept(valueName);
-                if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
-                  this.parseError();
-                }
-                this.PopUntilHtmlElementPopped(valueName);
-              } else if (valueName.Equals("li")) {
-                if (!this.hasHtmlElementInListItemScope(valueName)) {
-                  this.parseError();
-                  return false;
-                }
-                this.generateImpliedEndTagsExcept(valueName);
-                if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
-                  this.parseError();
+                this.GenerateImpliedEndTagsExcept(valueName);
+                if (!this.GetCurrentNode().getLocalName().Equals(valueName,
+  StringComparison.Ordinal)) {
+                  this.ParseError();
                 }
                 this.PopUntilHtmlElementPopped(valueName);
-              } else if (valueName.Equals("h1") ||
-valueName.Equals("h2") ||
-valueName.Equals("h3") ||
-valueName.Equals("h4") ||
-valueName.Equals("h5") ||
-valueName.Equals("h6")) {
-                if (!this.hasHtmlHeaderElementInScope()) {
-                  this.parseError();
+              } else if (valueName.Equals("li", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInListItemScope(valueName)) {
+                  this.ParseError();
                   return false;
                 }
-                this.generateImpliedEndTags();
-                if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
-                  this.parseError();
+                this.GenerateImpliedEndTagsExcept(valueName);
+                if (!this.GetCurrentNode().getLocalName().Equals(valueName,
+  StringComparison.Ordinal)) {
+                  this.ParseError();
+                }
+                this.PopUntilHtmlElementPopped(valueName);
+              } else if (valueName.Equals("h1", StringComparison.Ordinal) ||
+valueName.Equals("h2", StringComparison.Ordinal) ||
+valueName.Equals("h3", StringComparison.Ordinal) ||
+valueName.Equals("h4", StringComparison.Ordinal) ||
+valueName.Equals("h5", StringComparison.Ordinal) ||
+valueName.Equals("h6", StringComparison.Ordinal)) {
+                if (!this.HasHtmlHeaderElementInScope()) {
+                  this.ParseError();
+                  return false;
+                }
+                this.GenerateImpliedEndTags();
+                if (!this.GetCurrentNode().getLocalName().Equals(valueName,
+  StringComparison.Ordinal)) {
+                  this.ParseError();
                 }
                 while (true) {
-                  IElement node = this.popCurrentNode();
+                  IElement node = this.PopCurrentNode();
                   if (HtmlCommon.isHtmlElement(node, "h1") ||
 HtmlCommon.isHtmlElement(node, "h2") ||
 HtmlCommon.isHtmlElement(node, "h3") ||
@@ -2609,38 +2712,39 @@ HtmlCommon.isHtmlElement(node, "h6")) {
                   }
                 }
                 return true;
-              } else if (valueName.Equals("dd") || valueName.Equals("dt")) {
-                if (!this.hasHtmlElementInScope(valueName)) {
-                  this.parseError();
+              } else if (valueName.Equals("dd", StringComparison.Ordinal) ||
+valueName.Equals("dt", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInScope(valueName)) {
+                  this.ParseError();
                   return false;
                 }
-                this.generateImpliedEndTagsExcept(valueName);
-                if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
-                  this.parseError();
+                this.GenerateImpliedEndTagsExcept(valueName);
+                if (!this.GetCurrentNode().getLocalName().Equals(valueName,
+  StringComparison.Ordinal)) {
+                  this.ParseError();
                 }
                 this.PopUntilHtmlElementPopped(valueName);
-              } else if ("br".Equals(valueName)) {
-                this.parseError();
-                this.applyStartTag("br", insMode);
+              } else if ("br".Equals(valueName, StringComparison.Ordinal)) {
+                this.ParseError();
+                this.ApplyStartTag("br", insMode);
                 return false;
               } else {
                 for (int i = this.openElements.Count - 1; i >= 0; --i) {
                   IElement node = this.openElements[i];
                   if (HtmlCommon.isHtmlElement(node, valueName)) {
-                    this.generateImpliedEndTagsExcept(valueName);
-                    if
-     (!node.Equals(this.getCurrentNode())) {
-                      this.parseError();
+                    this.GenerateImpliedEndTagsExcept(valueName);
+                    if (!node.Equals(this.GetCurrentNode())) {
+                      this.ParseError();
                     }
                     while (true) {
-                      IElement node2 = this.popCurrentNode();
+                      IElement node2 = this.PopCurrentNode();
                       if (node2.Equals(node)) {
                         break;
                       }
                     }
                     break;
-                  } else if (this.isSpecialElement(node)) {
-                    this.parseError();
+                  } else if (this.IsSpecialElement(node)) {
+                    this.ParseError();
                     return false;
                   }
                 }
@@ -2652,76 +2756,80 @@ HtmlCommon.isHtmlElement(node, "h6")) {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               if (token == 0x09 || token == 0x0a || token == 0x0c ||
                     token == 0x0d || token == 0x20) {
-                return this.applyInsertionMode(
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InBody);
               } else {
-                this.parseError();
-                this.popCurrentNode();
+                this.ParseError();
+                this.PopCurrentNode();
                 this.insertionMode = InsertionMode.InHead;
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.parseError();
+              this.ParseError();
               return false;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("html")) {
-                return this.applyInsertionMode(
+              if (valueName.Equals("Html", StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InBody);
-              } else if (valueName.Equals("basefont") ||
+              } else if (valueName.Equals("basefont",
+  StringComparison.Ordinal) ||
 valueName.Equals(
-          "bgsound") ||
-valueName.Equals("link") ||
-valueName.Equals("meta") ||
-valueName.Equals("noframes") ||
-valueName.Equals("style")
+          "bgsound",
+  StringComparison.Ordinal) ||
+valueName.Equals("link", StringComparison.Ordinal) ||
+valueName.Equals("meta", StringComparison.Ordinal) ||
+valueName.Equals("noframes", StringComparison.Ordinal) ||
+valueName.Equals("style", StringComparison.Ordinal)
 ) {
-                return this.applyInsertionMode(
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InHead);
-              } else if (valueName.Equals("head") || valueName.Equals(
-       "noscript")) {
-                this.parseError();
+              } else if (valueName.Equals("head", StringComparison.Ordinal) ||
+valueName.Equals(
+       "noscript",
+  StringComparison.Ordinal)) {
+                this.ParseError();
                 return true;
               } else {
-                this.parseError();
-                this.popCurrentNode();
+                this.ParseError();
+                this.PopCurrentNode();
                 this.insertionMode = InsertionMode.InHead;
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("noscript")) {
-                this.popCurrentNode();
+              if (valueName.Equals("noscript", StringComparison.Ordinal)) {
+                this.PopCurrentNode();
                 this.insertionMode = InsertionMode.InHead;
-              } else if (valueName.Equals("br")) {
-                this.parseError();
-                this.popCurrentNode();
+              } else if (valueName.Equals("br", StringComparison.Ordinal)) {
+                this.ParseError();
+                this.PopCurrentNode();
                 this.insertionMode = InsertionMode.InHead;
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               } else {
-                this.parseError();
+                this.ParseError();
                 return true;
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              return this.applyInsertionMode(
+              return this.ApplyInsertionMode(
                 token,
                 InsertionMode.InHead);
             } else if (token == TOKEN_EOF) {
-              this.parseError();
-              this.popCurrentNode();
+              this.ParseError();
+              this.PopCurrentNode();
               this.insertionMode = InsertionMode.InHead;
-              return this.applyInsertionMode(token, null);
+              return this.ApplyInsertionMode(token, null);
             }
             return true;
           }
         case InsertionMode.InTable: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              IElement currentNode = this.getCurrentNode();
+              IElement currentNode = this.GetCurrentNode();
               if (HtmlCommon.isHtmlElement(currentNode, "table") ||
 HtmlCommon.isHtmlElement(currentNode, "tbody") ||
 HtmlCommon.isHtmlElement(currentNode, "tfoot") ||
@@ -2732,153 +2840,158 @@ HtmlCommon.isHtmlElement(currentNode, "tr")) {
                   this.pendingTableCharacters.Length);
                 this.originalInsertionMode = this.insertionMode;
                 this.insertionMode = InsertionMode.InTableText;
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               } else {
                 // NOTE: Foster parenting rules don't apply here, since
                 // the current node isn't table, tbody, tfoot, thead, or
                 // tr and won't change while In Body is being applied
-                this.parseError();
-                return this.applyInsertionMode(
+                this.ParseError();
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InBody);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.parseError();
+              this.ParseError();
               return false;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("table")) {
-                this.parseError();
-                return this.applyEndTag("table", insMode) ?
-                  this.applyInsertionMode(token, null) : false;
-              } else if (valueName.Equals("caption")) {
+              if (valueName.Equals("table", StringComparison.Ordinal)) {
+                this.ParseError();
+                return this.ApplyEndTag("table", insMode) ?
+                  this.ApplyInsertionMode(token, null) : false;
+                } else if (valueName.Equals("caption",
+  StringComparison.Ordinal)) {
                 while (true) {
-                  IElement node = this.getCurrentNode();
+                  IElement node = this.GetCurrentNode();
                   if (node == null || HtmlCommon.isHtmlElement(node, "table") ||
-                  HtmlCommon.isHtmlElement(node, "html") ||
+                  HtmlCommon.isHtmlElement(node, "Html") ||
                   HtmlCommon.isHtmlElement(node, "template")) {
                     break;
                   }
-                  this.popCurrentNode();
+                  this.PopCurrentNode();
                 }
-                this.insertFormattingMarker(
+                this.InsertFormattingMarker(
         tag,
-        this.addHtmlElement(tag));
+        this.AddHtmlElement(tag));
                 this.insertionMode = InsertionMode.InCaption;
                 return true;
-              } else if (valueName.Equals("colgroup")) {
+              } else if (valueName.Equals("colgroup",
+  StringComparison.Ordinal)) {
                 while (true) {
-                  IElement node = this.getCurrentNode();
+                  IElement node = this.GetCurrentNode();
                   if (node == null || HtmlCommon.isHtmlElement(node, "table") ||
-                  HtmlCommon.isHtmlElement(node, "html") ||
+                  HtmlCommon.isHtmlElement(node, "Html") ||
                   HtmlCommon.isHtmlElement(node, "template")) {
                     break;
                   }
-                  this.popCurrentNode();
+                  this.PopCurrentNode();
                 }
-                this.addHtmlElement(tag);
+                this.AddHtmlElement(tag);
                 this.insertionMode = InsertionMode.InColumnGroup;
                 return true;
-              } else if (valueName.Equals("col")) {
-                this.applyStartTag("colgroup", insMode);
-                return this.applyInsertionMode(token, null);
-              } else if (valueName.Equals("tbody") ||
+              } else if (valueName.Equals("col", StringComparison.Ordinal)) {
+                this.ApplyStartTag("colgroup", insMode);
+                return this.ApplyInsertionMode(token, null);
+              } else if (valueName.Equals("tbody", StringComparison.Ordinal) ||
 valueName.Equals(
-     "tfoot") ||
-valueName.Equals("thead")) {
+     "tfoot",
+  StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal)) {
                 while (true) {
-                  IElement node = this.getCurrentNode();
+                  IElement node = this.GetCurrentNode();
                   if (node == null || HtmlCommon.isHtmlElement(node, "table") ||
-                  HtmlCommon.isHtmlElement(node, "html") ||
+                  HtmlCommon.isHtmlElement(node, "Html") ||
                   HtmlCommon.isHtmlElement(node, "template")) {
                     break;
                   }
-                  this.popCurrentNode();
+                  this.PopCurrentNode();
                 }
-                this.addHtmlElement(tag);
+                this.AddHtmlElement(tag);
                 this.insertionMode = InsertionMode.InTableBody;
-              } else if (valueName.Equals("td") ||
-valueName.Equals("th") ||
-valueName.Equals("tr")) {
-                this.applyStartTag("tbody", insMode);
-                return this.applyInsertionMode(token, null);
-              } else if (valueName.Equals("style") ||
-valueName.Equals("script") ||
-valueName.Equals("template")) {
-                return this.applyInsertionMode(token, InsertionMode.InHead);
-              } else if (valueName.Equals("input")) {
-                string attr = tag.getAttribute("type");
+              } else if (valueName.Equals("td", StringComparison.Ordinal) ||
+valueName.Equals("th", StringComparison.Ordinal) ||
+valueName.Equals("tr", StringComparison.Ordinal)) {
+                this.ApplyStartTag("tbody", insMode);
+                return this.ApplyInsertionMode(token, null);
+              } else if (valueName.Equals("style", StringComparison.Ordinal) ||
+valueName.Equals("script", StringComparison.Ordinal) ||
+valueName.Equals("template", StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(token, InsertionMode.InHead);
+              } else if (valueName.Equals("input", StringComparison.Ordinal)) {
+                string attr = tag.GetAttribute("type");
                 if (attr == null || !"hidden"
                     .Equals(DataUtilities.ToLowerCaseAscii(attr))) {
-                  this.parseError();
+                  this.ParseError();
                   this.doFosterParent = true;
-                  this.applyInsertionMode(
+                  this.ApplyInsertionMode(
                     token,
                     InsertionMode.InBody);
                   this.doFosterParent = false;
                 } else {
-                  this.parseError();
-                  this.addHtmlElementNoPush(tag);
-                  tag.ackSelfClosing();
+                  this.ParseError();
+                  this.AddHtmlElementNoPush(tag);
+                  tag.AckSelfClosing();
                 }
-              } else if (valueName.Equals("form")) {
-                this.parseError();
+              } else if (valueName.Equals("form", StringComparison.Ordinal)) {
+                this.ParseError();
                 if (this.formElement != null) {
                   return false;
                 }
-                this.formElement = this.addHtmlElementNoPush(tag);
+                this.formElement = this.AddHtmlElementNoPush(tag);
               } else {
-                this.parseError();
+                this.ParseError();
                 this.doFosterParent = true;
-                this.applyInsertionMode(token, InsertionMode.InBody);
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
                 this.doFosterParent = false;
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("table")) {
-                if (!this.hasHtmlElementInTableScope(valueName)) {
-                  this.parseError();
+              if (valueName.Equals("table", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInTableScope(valueName)) {
+                  this.ParseError();
                   return false;
                 } else {
                   this.PopUntilHtmlElementPopped(valueName);
-                  this.resetInsertionMode();
+                  this.ResetInsertionMode();
                 }
-              } else if (valueName.Equals("body") ||
+              } else if (valueName.Equals("body", StringComparison.Ordinal) ||
 valueName.Equals(
-      "caption") ||
-valueName.Equals("col") ||
-valueName.Equals("colgroup") ||
-valueName.Equals("html") ||
-valueName.Equals("tbody") ||
-valueName.Equals("td") ||
-valueName.Equals("tfoot") ||
-valueName.Equals("th") ||
-valueName.Equals("thead") ||
-valueName.Equals("tr")) {
-                this.parseError();
+      "caption",
+  StringComparison.Ordinal) ||
+valueName.Equals("col", StringComparison.Ordinal) ||
+valueName.Equals("colgroup", StringComparison.Ordinal) ||
+valueName.Equals("Html", StringComparison.Ordinal) ||
+valueName.Equals("tbody", StringComparison.Ordinal) ||
+valueName.Equals("td", StringComparison.Ordinal) ||
+valueName.Equals("tfoot", StringComparison.Ordinal) ||
+valueName.Equals("th", StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal) ||
+valueName.Equals("tr", StringComparison.Ordinal)) {
+                this.ParseError();
                 return false;
-              } else if (valueName.Equals("template")) {
-                return this.applyInsertionMode(token, InsertionMode.InHead);
+              } else if (valueName.Equals("template",
+  StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(token, InsertionMode.InHead);
               } else {
                 this.doFosterParent = true;
-                this.applyInsertionMode(token, InsertionMode.InBody);
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
                 this.doFosterParent = false;
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(token);
+              this.AddCommentNodeToCurrentNode(token);
               return true;
             } else {
               return (token == TOKEN_EOF) ?
-                this.applyInsertionMode(token, InsertionMode.InBody) : true;
+                this.ApplyInsertionMode(token, InsertionMode.InBody) : true;
             }
             return true;
           }
         case InsertionMode.InTableText: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               if (token == 0) {
-                this.parseError();
+                this.ParseError();
                 return false;
               } else {
                 if (token <= 0xffff) {
@@ -2906,94 +3019,95 @@ valueName.Equals("tr")) {
               }
               if (nonspace) {
                 // See 'anything else' for 'in table'
-                this.parseError();
+                this.ParseError();
                 this.doFosterParent = true;
                 for (int i = 0; i < str.Length; ++i) {
                   int c = DataUtilities.CodePointAt(str, i);
                   if (c >= 0x10000) {
                     ++c;
                   }
-                  this.applyInsertionMode(c, InsertionMode.InBody);
+                  this.ApplyInsertionMode(c, InsertionMode.InBody);
                 }
                 this.doFosterParent = false;
               } else {
-                this.insertString(
-    this.getCurrentNode(),
+                this.InsertString(
+    this.GetCurrentNode(),
     this.pendingTableCharacters.ToString());
               }
               this.insertionMode = this.originalInsertionMode;
-              return this.applyInsertionMode(token, null);
+              return this.ApplyInsertionMode(token, null);
             }
             return true;
           }
         case InsertionMode.InCaption: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("caption") ||
-valueName.Equals("col") ||
-valueName.Equals("colgroup") ||
-valueName.Equals("tbody") ||
-valueName.Equals("thead") ||
-valueName.Equals("td") ||
-valueName.Equals("tfoot") ||
-valueName.Equals("th") ||
-valueName.Equals("tr")) {
-                if (!this.hasHtmlElementInTableScope("caption")) {
-                  this.parseError();
+              if (valueName.Equals("caption", StringComparison.Ordinal) ||
+valueName.Equals("col", StringComparison.Ordinal) ||
+valueName.Equals("colgroup", StringComparison.Ordinal) ||
+valueName.Equals("tbody", StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal) ||
+valueName.Equals("td", StringComparison.Ordinal) ||
+valueName.Equals("tfoot", StringComparison.Ordinal) ||
+valueName.Equals("th", StringComparison.Ordinal) ||
+valueName.Equals("tr", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInTableScope("caption")) {
+                  this.ParseError();
                   return false;
                 }
-                this.generateImpliedEndTags();
-                if (!HtmlCommon.isHtmlElement(this.getCurrentNode(), "caption"
+                this.GenerateImpliedEndTags();
+                if (!HtmlCommon.isHtmlElement(this.GetCurrentNode(), "caption"
 )) {
-                  this.parseError();
+                  this.ParseError();
                 }
                 this.PopUntilHtmlElementPopped("caption");
-                this.clearFormattingToMarker();
+                this.ClearFormattingToMarker();
                 this.insertionMode = InsertionMode.InTable;
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               } else {
-                return this.applyInsertionMode(
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InBody);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("caption") || valueName.Equals("table")) {
-                if (!this.hasHtmlElementInTableScope(valueName)) {
-                  this.parseError();
+              if (valueName.Equals("caption", StringComparison.Ordinal) ||
+valueName.Equals("table", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInTableScope(valueName)) {
+                  this.ParseError();
                   return false;
                 }
-                this.generateImpliedEndTags();
-                if (!HtmlCommon.isHtmlElement(this.getCurrentNode(), "caption"
+                this.GenerateImpliedEndTags();
+                if (!HtmlCommon.isHtmlElement(this.GetCurrentNode(), "caption"
 )) {
-                  this.parseError();
+                  this.ParseError();
                 }
                 this.PopUntilHtmlElementPopped("caption");
-                this.clearFormattingToMarker();
+                this.ClearFormattingToMarker();
                 this.insertionMode = InsertionMode.InTable;
-                if (valueName.Equals("table")) {
-                  return this.applyInsertionMode(token, null);
+                if (valueName.Equals("table", StringComparison.Ordinal)) {
+                  return this.ApplyInsertionMode(token, null);
                 }
-              } else if (valueName.Equals("body") ||
-valueName.Equals("col") ||
-valueName.Equals("colgroup") ||
-valueName.Equals("tbody") ||
-valueName.Equals("thead") ||
-valueName.Equals("td") ||
-valueName.Equals("tfoot") ||
-valueName.Equals("th") ||
-valueName.Equals("tr") ||
-valueName.Equals("html")) {
-                this.parseError();
+              } else if (valueName.Equals("body", StringComparison.Ordinal) ||
+valueName.Equals("col", StringComparison.Ordinal) ||
+valueName.Equals("colgroup", StringComparison.Ordinal) ||
+valueName.Equals("tbody", StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal) ||
+valueName.Equals("td", StringComparison.Ordinal) ||
+valueName.Equals("tfoot", StringComparison.Ordinal) ||
+valueName.Equals("th", StringComparison.Ordinal) ||
+valueName.Equals("tr", StringComparison.Ordinal) ||
+valueName.Equals("Html", StringComparison.Ordinal)) {
+                this.ParseError();
               } else {
-                return this.applyInsertionMode(
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InBody);
               }
             } else {
-              return this.applyInsertionMode(
+              return this.ApplyInsertionMode(
                 token,
                 InsertionMode.InBody);
             }
@@ -3003,184 +3117,188 @@ valueName.Equals("html")) {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER &&
               (token == 0x20 || token == 0x0c || token ==
                 0x0a || token == 0x0d || token == 0x09)) {
-              this.insertCharacter(
-   this.getCurrentNode(),
+              this.InsertCharacter(
+   this.GetCurrentNode(),
    token);
               return true;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.parseError();
+              this.ParseError();
               return true;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(token);
+              this.AddCommentNodeToCurrentNode(token);
               return true;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("html")) {
-                return this.applyInsertionMode(
+              if (valueName.Equals("Html", StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InBody);
-              } else if (valueName.Equals("col")) {
-                this.addHtmlElementNoPush(tag);
-                tag.ackSelfClosing();
+              } else if (valueName.Equals("col", StringComparison.Ordinal)) {
+                this.AddHtmlElementNoPush(tag);
+                tag.AckSelfClosing();
                 return true;
-              } else if (valueName.Equals("template")) {
-                return this.applyInsertionMode(
+              } else if (valueName.Equals("template",
+  StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InHead);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("colgroup")) {
-                if (!HtmlCommon.isHtmlElement(this.getCurrentNode(), "colgroup"
+              if (valueName.Equals("colgroup", StringComparison.Ordinal)) {
+                if (!HtmlCommon.isHtmlElement(this.GetCurrentNode(), "colgroup"
 )) {
-                  this.parseError();
+                  this.ParseError();
                   return false;
                 }
-                this.popCurrentNode();
+                this.PopCurrentNode();
                 this.insertionMode = InsertionMode.InTable;
                 return true;
-              } else if (valueName.Equals("col")) {
-                this.parseError();
+              } else if (valueName.Equals("col", StringComparison.Ordinal)) {
+                this.ParseError();
                 return true;
-              } else if (valueName.Equals("template")) {
-                return this.applyInsertionMode(
+              } else if (valueName.Equals("template",
+  StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InHead);
               }
             } else if (token == TOKEN_EOF) {
-              return this.applyInsertionMode(token, InsertionMode.InBody);
+              return this.ApplyInsertionMode(token, InsertionMode.InBody);
             }
-            if (!HtmlCommon.isHtmlElement(this.getCurrentNode(), "colgroup")) {
-              this.parseError();
+            if (!HtmlCommon.isHtmlElement(this.GetCurrentNode(), "colgroup")) {
+              this.ParseError();
               return false;
             }
-            this.popCurrentNode();
+            this.PopCurrentNode();
             this.insertionMode = InsertionMode.InTable;
-            return this.applyInsertionMode(token, null);
+            return this.ApplyInsertionMode(token, null);
           }
         case InsertionMode.InTableBody: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("tr")) {
+              if (valueName.Equals("tr", StringComparison.Ordinal)) {
                 while (true) {
-                  IElement node = this.getCurrentNode();
+                  IElement node = this.GetCurrentNode();
                   if (node == null || HtmlCommon.isHtmlElement(node, "tbody") ||
                     HtmlCommon.isHtmlElement(node, "tfoot") ||
                     HtmlCommon.isHtmlElement(node, "thead") ||
                     HtmlCommon.isHtmlElement(node, "template") ||
-                    HtmlCommon.isHtmlElement(node, "html")) {
+                    HtmlCommon.isHtmlElement(node, "Html")) {
                     break;
                   }
-                  this.popCurrentNode();
+                  this.PopCurrentNode();
                 }
-                this.addHtmlElement(tag);
+                this.AddHtmlElement(tag);
                 this.insertionMode = InsertionMode.InRow;
-              } else if (valueName.Equals("th") || valueName.Equals("td")) {
-                this.parseError();
-                this.applyStartTag("tr", insMode);
-                return this.applyInsertionMode(token, null);
-              } else if (valueName.Equals("caption") ||
-valueName.Equals("col") ||
-valueName.Equals("colgroup") ||
-valueName.Equals("tbody") ||
-valueName.Equals("tfoot") ||
-valueName.Equals("thead")) {
-                if (!this.hasHtmlElementInTableScope("tbody") &&
-!this.hasHtmlElementInTableScope("thead") &&
-!this.hasHtmlElementInTableScope("tfoot")
+              } else if (valueName.Equals("th", StringComparison.Ordinal) ||
+valueName.Equals("td", StringComparison.Ordinal)) {
+                this.ParseError();
+                this.ApplyStartTag("tr", insMode);
+                return this.ApplyInsertionMode(token, null);
+              } else if (valueName.Equals("caption",
+  StringComparison.Ordinal) ||
+valueName.Equals("col", StringComparison.Ordinal) ||
+valueName.Equals("colgroup", StringComparison.Ordinal) ||
+valueName.Equals("tbody", StringComparison.Ordinal) ||
+valueName.Equals("tfoot", StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInTableScope("tbody") &&
+!this.HasHtmlElementInTableScope("thead") &&
+!this.HasHtmlElementInTableScope("tfoot")
 ) {
-                  this.parseError();
+                  this.ParseError();
                   return false;
                 }
                 while (true) {
-                  IElement node = this.getCurrentNode();
+                  IElement node = this.GetCurrentNode();
                   if (node == null ||
                     HtmlCommon.isHtmlElement(node, "tbody") ||
                     HtmlCommon.isHtmlElement(node, "tfoot") ||
                     HtmlCommon.isHtmlElement(node, "thead") ||
                     HtmlCommon.isHtmlElement(node, "template") ||
-                    HtmlCommon.isHtmlElement(node, "html")) {
+                    HtmlCommon.isHtmlElement(node, "Html")) {
                     break;
                   }
-                  this.popCurrentNode();
+                  this.PopCurrentNode();
                 }
-                this.applyEndTag(
-             this.getCurrentNode().getLocalName(),
+                this.ApplyEndTag(
+             this.GetCurrentNode().getLocalName(),
              insMode);
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               } else {
-                return this.applyInsertionMode(
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InTable);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("tbody") ||
-valueName.Equals("tfoot") ||
-valueName.Equals("thead")) {
-                if (!this.hasHtmlElementInTableScope(valueName)) {
-                  this.parseError();
+              if (valueName.Equals("tbody", StringComparison.Ordinal) ||
+valueName.Equals("tfoot", StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInTableScope(valueName)) {
+                  this.ParseError();
                   return false;
                 }
                 while (true) {
-                  IElement node = this.getCurrentNode();
+                  IElement node = this.GetCurrentNode();
                   if (node == null ||
                     HtmlCommon.isHtmlElement(node, "tbody") ||
                     HtmlCommon.isHtmlElement(node, "tfoot") ||
                     HtmlCommon.isHtmlElement(node, "thead") ||
                     HtmlCommon.isHtmlElement(node, "template") ||
-                    HtmlCommon.isHtmlElement(node, "html")) {
+                    HtmlCommon.isHtmlElement(node, "Html")) {
                     break;
                   }
-                  this.popCurrentNode();
+                  this.PopCurrentNode();
                 }
-                this.popCurrentNode();
+                this.PopCurrentNode();
                 this.insertionMode = InsertionMode.InTable;
-              } else if (valueName.Equals("table")) {
-                if (!this.hasHtmlElementInTableScope("tbody") &&
-!this.hasHtmlElementInTableScope("thead") &&
-!this.hasHtmlElementInTableScope("tfoot")
+              } else if (valueName.Equals("table", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInTableScope("tbody") &&
+!this.HasHtmlElementInTableScope("thead") &&
+!this.HasHtmlElementInTableScope("tfoot")
 ) {
-                  this.parseError();
+                  this.ParseError();
                   return false;
                 }
                 while (true) {
-                  IElement node = this.getCurrentNode();
+                  IElement node = this.GetCurrentNode();
                   if (node == null ||
                     HtmlCommon.isHtmlElement(node, "tbody") ||
                     HtmlCommon.isHtmlElement(node, "tfoot") ||
                     HtmlCommon.isHtmlElement(node, "thead") ||
                     HtmlCommon.isHtmlElement(node, "template") ||
-                    HtmlCommon.isHtmlElement(node, "html")) {
+                    HtmlCommon.isHtmlElement(node, "Html")) {
                     break;
                   }
-                  this.popCurrentNode();
+                  this.PopCurrentNode();
                 }
-                this.applyEndTag(
-             this.getCurrentNode().getLocalName(),
+                this.ApplyEndTag(
+             this.GetCurrentNode().getLocalName(),
              insMode);
-                return this.applyInsertionMode(token, null);
-              } else if (valueName.Equals("body") ||
-valueName.Equals("caption") ||
-valueName.Equals("col") ||
-valueName.Equals("colgroup") ||
-valueName.Equals("html") ||
-valueName.Equals("td") ||
-valueName.Equals("th") ||
-valueName.Equals("tr")) {
-                this.parseError();
+                return this.ApplyInsertionMode(token, null);
+              } else if (valueName.Equals("body", StringComparison.Ordinal) ||
+valueName.Equals("caption", StringComparison.Ordinal) ||
+valueName.Equals("col", StringComparison.Ordinal) ||
+valueName.Equals("colgroup", StringComparison.Ordinal) ||
+valueName.Equals("Html", StringComparison.Ordinal) ||
+valueName.Equals("td", StringComparison.Ordinal) ||
+valueName.Equals("th", StringComparison.Ordinal) ||
+valueName.Equals("tr", StringComparison.Ordinal)) {
+                this.ParseError();
                 return false;
               } else {
-                return this.applyInsertionMode(
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InTable);
               }
             } else {
-              return this.applyInsertionMode(
+              return this.ApplyInsertionMode(
                 token,
                 InsertionMode.InTable);
             }
@@ -3188,314 +3306,337 @@ valueName.Equals("tr")) {
           }
         case InsertionMode.InRow: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              this.applyInsertionMode(token, InsertionMode.InTable);
+              this.ApplyInsertionMode(token, InsertionMode.InTable);
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.applyInsertionMode(token, InsertionMode.InTable);
+              this.ApplyInsertionMode(token, InsertionMode.InTable);
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("th") || valueName.Equals("td")) {
-                while (!HtmlCommon.isHtmlElement(this.getCurrentNode(), "tr") &&
-!HtmlCommon.isHtmlElement(this.getCurrentNode(), "html") &&
-!HtmlCommon.isHtmlElement(this.getCurrentNode(), "template")) {
-                  this.popCurrentNode();
+              if (valueName.Equals("th", StringComparison.Ordinal) ||
+valueName.Equals("td", StringComparison.Ordinal)) {
+                while (!HtmlCommon.isHtmlElement(this.GetCurrentNode(), "tr") &&
+!HtmlCommon.isHtmlElement(this.GetCurrentNode(), "Html") &&
+!HtmlCommon.isHtmlElement(this.GetCurrentNode(), "template")) {
+                  this.PopCurrentNode();
                 }
                 this.insertionMode = InsertionMode.InCell;
-                this.insertFormattingMarker(
+                this.InsertFormattingMarker(
         tag,
-        this.addHtmlElement(tag));
-              } else if (valueName.Equals("caption") ||
+        this.AddHtmlElement(tag));
+              } else if (valueName.Equals("caption",
+  StringComparison.Ordinal) ||
 valueName.Equals(
-     "col") ||
-valueName.Equals("colgroup") ||
-valueName.Equals("tbody") ||
-valueName.Equals("tfoot") ||
-valueName.Equals("thead") ||
-valueName.Equals("tr")) {
-                if (this.applyEndTag("tr", insMode)) {
-                  return this.applyInsertionMode(token, null);
+     "col",
+  StringComparison.Ordinal) ||
+valueName.Equals("colgroup", StringComparison.Ordinal) ||
+valueName.Equals("tbody", StringComparison.Ordinal) ||
+valueName.Equals("tfoot", StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal) ||
+valueName.Equals("tr", StringComparison.Ordinal)) {
+                if (this.ApplyEndTag("tr", insMode)) {
+                  return this.ApplyInsertionMode(token, null);
                 }
               } else {
-                this.applyInsertionMode(token, InsertionMode.InTable);
+                this.ApplyInsertionMode(token, InsertionMode.InTable);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("tr")) {
-                if (!this.hasHtmlElementInTableScope(valueName)) {
-                  this.parseError();
+              if (valueName.Equals("tr", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInTableScope(valueName)) {
+                  this.ParseError();
                   return false;
                 }
-                while (!HtmlCommon.isHtmlElement(this.getCurrentNode(), "tr") &&
-!HtmlCommon.isHtmlElement(this.getCurrentNode(), "html") &&
-!HtmlCommon.isHtmlElement(this.getCurrentNode(), "template")) {
-                  this.popCurrentNode();
+                while (!HtmlCommon.isHtmlElement(this.GetCurrentNode(), "tr") &&
+!HtmlCommon.isHtmlElement(this.GetCurrentNode(), "Html") &&
+!HtmlCommon.isHtmlElement(this.GetCurrentNode(), "template")) {
+                  this.PopCurrentNode();
                 }
-                this.popCurrentNode();
+                this.PopCurrentNode();
                 this.insertionMode = InsertionMode.InTableBody;
-              } else if (valueName.Equals("tbody") ||
+              } else if (valueName.Equals("tbody", StringComparison.Ordinal) ||
 valueName.Equals(
-     "tfoot") ||
-valueName.Equals("thead")) {
-                if (!this.hasHtmlElementInTableScope(valueName)) {
-                  this.parseError();
+     "tfoot",
+  StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInTableScope(valueName)) {
+                  this.ParseError();
                   return false;
                 }
-                this.applyEndTag("tr", insMode);
-                return this.applyInsertionMode(token, null);
-              } else if (valueName.Equals("caption") ||
-valueName.Equals("col") ||
-valueName.Equals("colgroup") ||
-valueName.Equals("html") ||
-valueName.Equals("body") ||
-valueName.Equals("td") ||
-valueName.Equals("th")) {
-                this.parseError();
+                this.ApplyEndTag("tr", insMode);
+                return this.ApplyInsertionMode(token, null);
+              } else if (valueName.Equals("caption",
+  StringComparison.Ordinal) ||
+valueName.Equals("col", StringComparison.Ordinal) ||
+valueName.Equals("colgroup", StringComparison.Ordinal) ||
+valueName.Equals("Html", StringComparison.Ordinal) ||
+valueName.Equals("body", StringComparison.Ordinal) ||
+valueName.Equals("td", StringComparison.Ordinal) ||
+valueName.Equals("th", StringComparison.Ordinal)) {
+                this.ParseError();
               } else {
-                this.applyInsertionMode(token, InsertionMode.InTable);
+                this.ApplyInsertionMode(token, InsertionMode.InTable);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.applyInsertionMode(token, InsertionMode.InTable);
+              this.ApplyInsertionMode(token, InsertionMode.InTable);
             } else if (token == TOKEN_EOF) {
-              this.applyInsertionMode(token, InsertionMode.InTable);
+              this.ApplyInsertionMode(token, InsertionMode.InTable);
             }
             return true;
           }
         case InsertionMode.InCell: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              this.applyInsertionMode(token, InsertionMode.InBody);
+              this.ApplyInsertionMode(token, InsertionMode.InBody);
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.applyInsertionMode(token, InsertionMode.InBody);
+              this.ApplyInsertionMode(token, InsertionMode.InBody);
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("caption") ||
-valueName.Equals("col") ||
-valueName.Equals("colgroup") ||
-valueName.Equals("tbody") ||
-valueName.Equals("td") ||
-valueName.Equals("tfoot") ||
-valueName.Equals("th") ||
-valueName.Equals("thead") ||
-valueName.Equals("tr")) {
-                if (!this.hasHtmlElementInTableScope("td") &&
-                    !this.hasHtmlElementInTableScope("th")) {
-                  this.parseError();
+              if (valueName.Equals("caption", StringComparison.Ordinal) ||
+valueName.Equals("col", StringComparison.Ordinal) ||
+valueName.Equals("colgroup", StringComparison.Ordinal) ||
+valueName.Equals("tbody", StringComparison.Ordinal) ||
+valueName.Equals("td", StringComparison.Ordinal) ||
+valueName.Equals("tfoot", StringComparison.Ordinal) ||
+valueName.Equals("th", StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal) ||
+valueName.Equals("tr", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInTableScope("td") &&
+                    !this.HasHtmlElementInTableScope("th")) {
+                  this.ParseError();
                   return false;
                 }
-                this.applyEndTag(
-    this.hasHtmlElementInTableScope("td") ? "td" : "th",
+                this.ApplyEndTag(
+    this.HasHtmlElementInTableScope("td") ? "td" : "th",
     insMode);
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               } else {
-                this.applyInsertionMode(token, InsertionMode.InBody);
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("td") || valueName.Equals("th")) {
-                if (!this.hasHtmlElementInTableScope(valueName)) {
-                  this.parseError();
+              if (valueName.Equals("td", StringComparison.Ordinal) ||
+valueName.Equals("th", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInTableScope(valueName)) {
+                  this.ParseError();
                   return false;
                 }
-                this.generateImpliedEndTags();
-                if (!this.getCurrentNode().getLocalName().Equals(valueName)) {
-                  this.parseError();
+                this.GenerateImpliedEndTags();
+                if (!this.GetCurrentNode().getLocalName().Equals(valueName,
+  StringComparison.Ordinal)) {
+                  this.ParseError();
                 }
                 this.PopUntilHtmlElementPopped(valueName);
-                this.clearFormattingToMarker();
+                this.ClearFormattingToMarker();
                 this.insertionMode = InsertionMode.InRow;
-              } else if (valueName.Equals("caption") ||
+              } else if (valueName.Equals("caption",
+  StringComparison.Ordinal) ||
 valueName.Equals(
-     "col") ||
-valueName.Equals("colgroup") ||
-valueName.Equals("body") ||
-valueName.Equals("html")) {
-                this.parseError();
+     "col",
+  StringComparison.Ordinal) ||
+valueName.Equals("colgroup", StringComparison.Ordinal) ||
+valueName.Equals("body", StringComparison.Ordinal) ||
+valueName.Equals("Html", StringComparison.Ordinal)) {
+                this.ParseError();
                 return false;
-              } else if (valueName.Equals("table") ||
-valueName.Equals("tbody") ||
-valueName.Equals("tfoot") ||
-valueName.Equals("thead") ||
-valueName.Equals("tr")) {
-                if (!this.hasHtmlElementInTableScope(valueName)) {
-                  this.parseError();
+              } else if (valueName.Equals("table", StringComparison.Ordinal) ||
+valueName.Equals("tbody", StringComparison.Ordinal) ||
+valueName.Equals("tfoot", StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal) ||
+valueName.Equals("tr", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInTableScope(valueName)) {
+                  this.ParseError();
                   return false;
                 }
-                this.applyEndTag(
-    this.hasHtmlElementInTableScope("td") ? "td" : "th",
+                this.ApplyEndTag(
+    this.HasHtmlElementInTableScope("td") ? "td" : "th",
     insMode);
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               } else {
-                this.applyInsertionMode(token, InsertionMode.InBody);
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.applyInsertionMode(token, InsertionMode.InBody);
+              this.ApplyInsertionMode(token, InsertionMode.InBody);
             } else if (token == TOKEN_EOF) {
-              this.applyInsertionMode(token, InsertionMode.InBody);
+              this.ApplyInsertionMode(token, InsertionMode.InBody);
             }
             return true;
           }
         case InsertionMode.InSelect: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               if (token == 0) {
-                this.parseError(); return false;
+                this.ParseError();
+                return false;
               } else {
-                this.insertCharacter(
-     this.getCurrentNode(),
+                this.InsertCharacter(
+     this.GetCurrentNode(),
      token);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.parseError(); return false;
+              this.ParseError();
+              return false;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("html")) {
-                this.applyInsertionMode(token, InsertionMode.InBody);
-              } else if (valueName.Equals("option")) {
-                if (this.getCurrentNode().getLocalName().Equals(
-    "option")) {
-                  this.applyEndTag("option", insMode);
+              if (valueName.Equals("Html", StringComparison.Ordinal)) {
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
+              } else if (valueName.Equals("option", StringComparison.Ordinal)) {
+                if (this.GetCurrentNode().getLocalName().Equals(
+                  "option",
+                  StringComparison.Ordinal)) {
+                  this.ApplyEndTag("option", insMode);
                 }
-                this.addHtmlElement(tag);
-              } else if (valueName.Equals("optgroup")) {
-                if (this.getCurrentNode().getLocalName().Equals(
-    "option")) {
-                  this.applyEndTag("option", insMode);
+                this.AddHtmlElement(tag);
+              } else if (valueName.Equals("optgroup",
+  StringComparison.Ordinal)) {
+                if (this.GetCurrentNode().getLocalName().Equals(
+                  "option",
+                  StringComparison.Ordinal)) {
+                  this.ApplyEndTag("option", insMode);
                 }
-                if (this.getCurrentNode().getLocalName().Equals(
-      "optgroup")) {
-                  this.applyEndTag("optgroup", insMode);
+                if (this.GetCurrentNode().getLocalName().Equals(
+                  "optgroup",
+                  StringComparison.Ordinal)) {
+                  this.ApplyEndTag("optgroup", insMode);
                 }
-                this.addHtmlElement(tag);
-              } else if (valueName.Equals("select")) {
-                this.parseError();
-                return this.applyEndTag("select", insMode);
-              } else if (valueName.Equals("input") ||
+                this.AddHtmlElement(tag);
+              } else if (valueName.Equals("select", StringComparison.Ordinal)) {
+                this.ParseError();
+                return this.ApplyEndTag("select", insMode);
+              } else if (valueName.Equals("input", StringComparison.Ordinal) ||
 valueName.Equals(
-      "keygen") ||
-valueName.Equals("textarea")) {
-                this.parseError();
-                if (!this.hasHtmlElementInSelectScope("select")) {
+      "keygen",
+  StringComparison.Ordinal) ||
+valueName.Equals("textarea", StringComparison.Ordinal)) {
+                this.ParseError();
+                if (!this.HasHtmlElementInSelectScope("select")) {
                   return false;
                 }
-                this.applyEndTag("select", insMode);
-                return this.applyInsertionMode(token, null);
-              } else if (valueName.Equals("script") || valueName.Equals(
-         "template")) {
-                return this.applyInsertionMode(
+                this.ApplyEndTag("select", insMode);
+                return this.ApplyInsertionMode(token, null);
+              } else if (valueName.Equals("script",
+  StringComparison.Ordinal) || valueName.Equals(
+         "template",
+  StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InHead);
               } else {
-                this.parseError(); return false;
+                this.ParseError();
+                return false;
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("optgroup")) {
-                if (this.getCurrentNode().getLocalName().Equals(
-    "option") && this.openElements.Count >= 2 &&
+              if (valueName.Equals("optgroup", StringComparison.Ordinal)) {
+                if (this.GetCurrentNode().getLocalName().Equals(
+                  "option",
+                  StringComparison.Ordinal) && this.openElements.Count >= 2 &&
             this.openElements[this.openElements.Count -
                    2].getLocalName().Equals(
           "optgroup")) {
-                  this.applyEndTag("option", insMode);
+                  this.ApplyEndTag("option", insMode);
                 }
-                if (this.getCurrentNode().getLocalName().Equals(
-      "optgroup")) {
-                  this.popCurrentNode();
+                if (this.GetCurrentNode().getLocalName().Equals(
+                  "optgroup",
+                  StringComparison.Ordinal)) {
+                  this.PopCurrentNode();
                 } else {
-                  this.parseError();
+                  this.ParseError();
                   return false;
                 }
-              } else if (valueName.Equals("option")) {
-                if (this.getCurrentNode().getLocalName().Equals(
-    "option")) {
-                  this.popCurrentNode();
+              } else if (valueName.Equals("option", StringComparison.Ordinal)) {
+                if (this.GetCurrentNode().getLocalName().Equals(
+                  "option",
+                  StringComparison.Ordinal)) {
+                  this.PopCurrentNode();
                 } else {
-                  this.parseError();
+                  this.ParseError();
                   return false;
                 }
-              } else if (valueName.Equals("select")) {
-                if (!this.hasHtmlElementInScope(valueName)) {
-                  this.parseError();
+              } else if (valueName.Equals("select", StringComparison.Ordinal)) {
+                if (!this.HasHtmlElementInScope(valueName)) {
+                  this.ParseError();
                   return false;
                 }
                 this.PopUntilHtmlElementPopped(valueName);
-                this.resetInsertionMode();
-              } else if (valueName.Equals("template")) {
-                return this.applyInsertionMode(
+                this.ResetInsertionMode();
+              } else if (valueName.Equals("template",
+  StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InHead);
               } else {
-                this.parseError();
+                this.ParseError();
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(token);
+              this.AddCommentNodeToCurrentNode(token);
             } else if (token == TOKEN_EOF) {
-              return this.applyInsertionMode(
+              return this.ApplyInsertionMode(
                 token,
                 InsertionMode.InBody);
             } else {
-              this.parseError();
+              this.ParseError();
             }
             return true;
           }
         case InsertionMode.InSelectInTable: {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-              return this.applyInsertionMode(
+              return this.ApplyInsertionMode(
                 token,
                 InsertionMode.InSelect);
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              return this.applyInsertionMode(
+              return this.ApplyInsertionMode(
                 token,
                 InsertionMode.InSelect);
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("caption") ||
-valueName.Equals("table") ||
-valueName.Equals("tbody") ||
-valueName.Equals("tfoot") ||
-valueName.Equals("thead") ||
-valueName.Equals("tr") ||
-valueName.Equals("td") ||
-valueName.Equals("th")) {
-                this.parseError();
+              if (valueName.Equals("caption", StringComparison.Ordinal) ||
+valueName.Equals("table", StringComparison.Ordinal) ||
+valueName.Equals("tbody", StringComparison.Ordinal) ||
+valueName.Equals("tfoot", StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal) ||
+valueName.Equals("tr", StringComparison.Ordinal) ||
+valueName.Equals("td", StringComparison.Ordinal) ||
+valueName.Equals("th", StringComparison.Ordinal)) {
+                this.ParseError();
                 this.PopUntilHtmlElementPopped("select");
-                this.resetInsertionMode();
-                return this.applyInsertionMode(token, null);
+                this.ResetInsertionMode();
+                return this.ApplyInsertionMode(token, null);
               }
-              return this.applyInsertionMode(
+              return this.ApplyInsertionMode(
                 token,
                 InsertionMode.InSelect);
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("caption") ||
-valueName.Equals("table") ||
-valueName.Equals("tbody") ||
-valueName.Equals("tfoot") ||
-valueName.Equals("thead") ||
-valueName.Equals("tr") ||
-valueName.Equals("td") ||
-valueName.Equals("th")) {
-                this.parseError();
-                if (!this.hasHtmlElementInTableScope(valueName)) {
+              if (valueName.Equals("caption", StringComparison.Ordinal) ||
+valueName.Equals("table", StringComparison.Ordinal) ||
+valueName.Equals("tbody", StringComparison.Ordinal) ||
+valueName.Equals("tfoot", StringComparison.Ordinal) ||
+valueName.Equals("thead", StringComparison.Ordinal) ||
+valueName.Equals("tr", StringComparison.Ordinal) ||
+valueName.Equals("td", StringComparison.Ordinal) ||
+valueName.Equals("th", StringComparison.Ordinal)) {
+                this.ParseError();
+                if (!this.HasHtmlElementInTableScope(valueName)) {
                   return false;
                 }
-                this.applyEndTag("select", insMode);
-                return this.applyInsertionMode(token, null);
+                this.ApplyEndTag("select", insMode);
+                return this.ApplyInsertionMode(token, null);
               }
-              return this.applyInsertionMode(
+              return this.ApplyInsertionMode(
                 token,
                 InsertionMode.InSelect);
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              return this.applyInsertionMode(
+              return this.ApplyInsertionMode(
                 token,
                 InsertionMode.InSelect);
             } else {
               return (token == TOKEN_EOF) ?
-     this.applyInsertionMode(token, InsertionMode.InSelect) :
+     this.ApplyInsertionMode(token, InsertionMode.InSelect) :
                   true;
             }
           }
@@ -3503,43 +3644,43 @@ valueName.Equals("th")) {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               if (token == 0x09 || token == 0x0a || token ==
                 0x0c || token == 0x0d || token == 0x20) {
-                this.applyInsertionMode(token, InsertionMode.InBody);
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
               } else {
-                this.parseError();
+                this.ParseError();
                 this.insertionMode = InsertionMode.InBody;
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.parseError();
+              this.ParseError();
               return true;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("html")) {
-                this.applyInsertionMode(token, InsertionMode.InBody);
+              if (valueName.Equals("Html", StringComparison.Ordinal)) {
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
               } else {
-                this.parseError();
+                this.ParseError();
                 this.insertionMode = InsertionMode.InBody;
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("html")) {
+              if (valueName.Equals("Html", StringComparison.Ordinal)) {
                 if (this.context != null) {
-                  this.parseError();
+                  this.ParseError();
                   return false;
                 }
                 this.insertionMode = InsertionMode.AfterAfterBody;
               } else {
-                this.parseError();
+                this.ParseError();
                 this.insertionMode = InsertionMode.InBody;
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToFirst(token);
+              this.AddCommentNodeToFirst(token);
             } else if (token == TOKEN_EOF) {
-              this.stopParsing();
+              this.StopParsing();
 
               return true;
             }
@@ -3549,56 +3690,59 @@ valueName.Equals("th")) {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               if (token == 0x09 || token == 0x0a || token == 0x0c ||
                     token == 0x0d || token == 0x20) {
-                this.insertCharacter(
-     this.getCurrentNode(),
+                this.InsertCharacter(
+     this.GetCurrentNode(),
      token);
               } else {
-                this.parseError();
+                this.ParseError();
                 return false;
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.parseError();
+              this.ParseError();
               return false;
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("html")) {
-                this.applyInsertionMode(token, InsertionMode.InBody);
-              } else if (valueName.Equals("frameset")) {
-                this.addHtmlElement(tag);
-              } else if (valueName.Equals("frame")) {
-                this.addHtmlElementNoPush(tag);
-                tag.ackSelfClosing();
-              } else if (valueName.Equals("noframes")) {
-                this.applyInsertionMode(token, InsertionMode.InHead);
+              if (valueName.Equals("Html", StringComparison.Ordinal)) {
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
+              } else if (valueName.Equals("frameset",
+  StringComparison.Ordinal)) {
+                this.AddHtmlElement(tag);
+              } else if (valueName.Equals("frame", StringComparison.Ordinal)) {
+                this.AddHtmlElementNoPush(tag);
+                tag.AckSelfClosing();
+              } else if (valueName.Equals("noframes",
+  StringComparison.Ordinal)) {
+                this.ApplyInsertionMode(token, InsertionMode.InHead);
               } else {
-                this.parseError();
+                this.ParseError();
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              if (this.getCurrentNode().getLocalName().Equals("html")) {
-                this.parseError();
+              if (this.GetCurrentNode().getLocalName().Equals("Html",
+  StringComparison.Ordinal)) {
+                this.ParseError();
                 return false;
               }
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("frameset")) {
-                this.popCurrentNode();
+              if (valueName.Equals("frameset", StringComparison.Ordinal)) {
+                this.PopCurrentNode();
                 if (this.context == null &&
-           !HtmlCommon.isHtmlElement(this.getCurrentNode(), "frameset"
+           !HtmlCommon.isHtmlElement(this.GetCurrentNode(), "frameset"
 )) {
                   this.insertionMode = InsertionMode.AfterFrameset;
                 }
               } else {
-                this.parseError();
+                this.ParseError();
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(token);
+              this.AddCommentNodeToCurrentNode(token);
             } else if (token == TOKEN_EOF) {
-              if (!HtmlCommon.isHtmlElement(this.getCurrentNode(), "html"
+              if (!HtmlCommon.isHtmlElement(this.GetCurrentNode(), "Html"
 )) {
-                this.parseError();
+                this.ParseError();
               }
-              this.stopParsing();
+              this.StopParsing();
             }
             return true;
           }
@@ -3606,40 +3750,41 @@ valueName.Equals("th")) {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               if (token == 0x09 || token == 0x0a || token ==
                 0x0c || token == 0x0d || token == 0x20) {
-                this.insertCharacter(
-     this.getCurrentNode(),
+                this.InsertCharacter(
+     this.GetCurrentNode(),
      token);
               } else {
-                this.parseError();
+                this.ParseError();
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.parseError();
+              this.ParseError();
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("html")) {
-                return this.applyInsertionMode(
+              if (valueName.Equals("Html", StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InBody);
-              } else if (valueName.Equals("noframes")) {
-                return this.applyInsertionMode(
+              } else if (valueName.Equals("noframes",
+  StringComparison.Ordinal)) {
+                return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InHead);
               } else {
-                this.parseError();
+                this.ParseError();
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              var tag = (EndTagToken)this.getToken(token);
+              var tag = (EndTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("html")) {
+              if (valueName.Equals("Html", StringComparison.Ordinal)) {
                 this.insertionMode = InsertionMode.AfterAfterFrameset;
               } else {
-                this.parseError();
+                this.ParseError();
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToCurrentNode(token);
+              this.AddCommentNodeToCurrentNode(token);
             } else if (token == TOKEN_EOF) {
-              this.stopParsing();
+              this.StopParsing();
             }
             return true;
           }
@@ -3647,32 +3792,32 @@ valueName.Equals("th")) {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               if (token == 0x09 || token == 0x0a || token ==
                 0x0c || token == 0x0d || token == 0x20) {
-                this.applyInsertionMode(token, InsertionMode.InBody);
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
               } else {
-                this.parseError();
+                this.ParseError();
                 this.insertionMode = InsertionMode.InBody;
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.applyInsertionMode(token, InsertionMode.InBody);
+              this.ApplyInsertionMode(token, InsertionMode.InBody);
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if (valueName.Equals("html")) {
-                this.applyInsertionMode(token, InsertionMode.InBody);
+              if (valueName.Equals("Html", StringComparison.Ordinal)) {
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
               } else {
-                this.parseError();
+                this.ParseError();
                 this.insertionMode = InsertionMode.InBody;
-                return this.applyInsertionMode(token, null);
+                return this.ApplyInsertionMode(token, null);
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              this.parseError();
+              this.ParseError();
               this.insertionMode = InsertionMode.InBody;
-              return this.applyInsertionMode(token, null);
+              return this.ApplyInsertionMode(token, null);
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToDocument(token);
+              this.AddCommentNodeToDocument(token);
             } else if (token == TOKEN_EOF) {
-              this.stopParsing();
+              this.StopParsing();
             }
             return true;
           }
@@ -3680,28 +3825,29 @@ valueName.Equals("th")) {
             if ((token & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
               if (token == 0x09 || token == 0x0a || token ==
                 0x0c || token == 0x0d || token == 0x20) {
-                this.applyInsertionMode(token, InsertionMode.InBody);
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
               } else {
-                this.parseError();
+                this.ParseError();
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-              this.applyInsertionMode(token, InsertionMode.InBody);
+              this.ApplyInsertionMode(token, InsertionMode.InBody);
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-              var tag = (StartTagToken)this.getToken(token);
+              var tag = (StartTagToken)this.GetToken(token);
               string valueName = tag.getName();
-              if ("html".Equals(valueName)) {
-                this.applyInsertionMode(token, InsertionMode.InBody);
-              } else if ("noframes".Equals(valueName)) {
-                this.applyInsertionMode(token, InsertionMode.InHead);
+              if ("Html".Equals(valueName, StringComparison.Ordinal)) {
+                this.ApplyInsertionMode(token, InsertionMode.InBody);
+              } else if ("noframes".Equals(valueName,
+  StringComparison.Ordinal)) {
+                this.ApplyInsertionMode(token, InsertionMode.InHead);
               } else {
-                this.parseError();
+                this.ParseError();
               }
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-              this.parseError();
+              this.ParseError();
             } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-              this.addCommentNodeToDocument(token);
+              this.AddCommentNodeToDocument(token);
             } else if (token == TOKEN_EOF) {
-              this.stopParsing();
+              this.StopParsing();
             }
             return true;
           }
@@ -3709,101 +3855,102 @@ valueName.Equals("th")) {
       }
     }
 
-    private bool applyStartTag(string valueName, InsertionMode? insMode) {
-      return this.applyInsertionMode(
-  this.getArtificialToken(TOKEN_START_TAG, valueName),
+    private bool ApplyStartTag(string valueName, InsertionMode? insMode) {
+      return this.ApplyInsertionMode(
+  this.GetArtificialToken(TOKEN_START_TAG, valueName),
   insMode);
     }
 
-    private void changeEncoding(string charset) {
+    private void ChangeEncoding(string charset) {
       string currentEncoding = this.encoding.getEncoding();
-      if (currentEncoding.Equals("utf-16le") ||
-          currentEncoding.Equals("utf-16be")) {
+      if (currentEncoding.Equals("utf-16le", StringComparison.Ordinal) ||
+          currentEncoding.Equals("utf-16be", StringComparison.Ordinal)) {
         this.encoding = new
              EncodingConfidence(currentEncoding, EncodingConfidence.Certain);
         return;
       }
-      if (charset.Equals("utf-16le")) {
+      if (charset.Equals("utf-16le", StringComparison.Ordinal)) {
         charset = "utf-8";
-      } else if (charset.Equals("utf-16be")) {
+      } else if (charset.Equals("utf-16be", StringComparison.Ordinal)) {
         charset = "utf-8";
       }
-      if (charset.Equals(currentEncoding)) {
+      if (charset.Equals(currentEncoding, StringComparison.Ordinal)) {
         this.encoding = new
              EncodingConfidence(currentEncoding, EncodingConfidence.Certain);
         return;
       }
       // Reinitialize all parser state
-      this.initialize();
+      this.Initialize();
       // Rewind the input stream and set the new encoding
-      this.inputStream.rewind();
+      this.inputStream.Rewind();
       this.encoding = new EncodingConfidence(
         charset,
         EncodingConfidence.Certain);
       ICharacterEncoding henc = new Html5Encoding(this.encoding);
-      this.charInput = new StackableCharacterInput(
-        Encodings.GetDecoderInput(henc, this.inputStream));
+      // TODO
+      // this.charInput = new StackableCharacterInput(
+      // Encodings.GetDecoderInput(henc, this.inputStream));
     }
 
-    private void clearFormattingToMarker() {
+    private void ClearFormattingToMarker() {
       while (this.formattingElements.Count > 0) {
         FormattingElement
-  fe = removeAtIndex(
+  fe = RemoveAtIndex(
     this.formattingElements,
     this.formattingElements.Count - 1);
-        if (fe.isMarker()) {
+        if (fe.IsMarker()) {
           break;
         }
       }
     }
 
     private void PopUntilHtmlElementPopped(string name) {
-      while (!HtmlCommon.isHtmlElement(this.getCurrentNode(), name)) {
-        this.popCurrentNode();
+      while (!HtmlCommon.isHtmlElement(this.GetCurrentNode(), name)) {
+        this.PopCurrentNode();
       }
-      this.popCurrentNode();
+      this.PopCurrentNode();
     }
 
-    private void closeParagraph() {
-      if (this.hasHtmlElementInButtonScope("p")) {
-        this.generateImpliedEndTagsExcept("p");
-        IElement node = this.getCurrentNode();
+    private void CloseParagraph() {
+      if (this.HasHtmlElementInButtonScope("p")) {
+        this.GenerateImpliedEndTagsExcept("p");
+        IElement node = this.GetCurrentNode();
         if (!HtmlCommon.isHtmlElement(node, "p")) {
-          this.parseError();
+          this.ParseError();
         }
         this.PopUntilHtmlElementPopped("p");
       }
     }
 
-    private Comment createCommentNode(int valueToken) {
-      var comment = (CommentToken)this.getToken(valueToken);
+    private Comment CreateCommentNode(int valueToken) {
+      var comment = (CommentToken)this.GetToken(valueToken);
       var node = new Comment();
       StringBuilder cv = comment.CommentValue;
       node.setData(cv.ToString());
       return node;
     }
 
-    private int emitCurrentTag() {
-      int ret = this.tokens.Count | this.currentTag.getType();
-      this.addToken(this.currentTag);
-      if (this.currentTag.getType() == TOKEN_START_TAG) {
+    private int EmitCurrentTag() {
+      int ret = this.tokens.Count | this.currentTag.GetType();
+      this.AddToken(this.currentTag);
+      if (this.currentTag.GetType() == TOKEN_START_TAG) {
         this.lastStartTag = this.currentTag;
       } else {
         if (this.currentTag.getAttributes().Count > 0 ||
-            this.currentTag.isSelfClosing()) {
-          this.parseError();
+            this.currentTag.IsSelfClosing()) {
+          this.ParseError();
         }
       }
       this.currentTag = null;
       return ret;
     }
 
-    private void fosterParent(INode valueElement) {
+    private void FosterParent(INode valueElement) {
       if (this.openElements.Count == 0) {
         return;
       }
       // DebugUtility.Log("Foster Parenting: " + valueElement);
-      INode fosterParent = this.openElements[0];
+      INode FosterParent = this.openElements[0];
       var lastTemplate = -1;
       var lastTable = -1;
       IElement e;
@@ -3820,13 +3967,13 @@ valueName.Equals("th")) {
         }
       }
       if (lastTemplate >= 0 && (lastTable < 0 || lastTemplate > lastTable)) {
-        fosterParent = this.openElements[lastTemplate];
-        ((Node)fosterParent).appendChild(valueElement);
+        FosterParent = this.openElements[lastTemplate];
+        ((Node)FosterParent).appendChild(valueElement);
         return;
       }
       if (lastTable < 0) {
-        fosterParent = this.openElements[0];
-        ((Node)fosterParent).appendChild(valueElement);
+        FosterParent = this.openElements[0];
+        ((Node)FosterParent).appendChild(valueElement);
         return;
       }
       e = this.openElements[lastTable];
@@ -3838,18 +3985,18 @@ valueName.Equals("th")) {
           // This usually won't happen
           throw new InvalidOperationException();
         }
-        // append to the element before this table
-        fosterParent = this.openElements[lastTable - 1];
-        ((Node)fosterParent).appendChild(valueElement);
+        // Append to the element before this table
+        FosterParent = this.openElements[lastTable - 1];
+        ((Node)FosterParent).appendChild(valueElement);
       } else {
         // Parent of the table, insert before the table
         parent.insertBefore((Node)valueElement, (Node)e);
       }
     }
 
-    private void generateImpliedEndTags() {
+    private void GenerateImpliedEndTags() {
       while (true) {
-        IElement node = this.getCurrentNode();
+        IElement node = this.GetCurrentNode();
         if (HtmlCommon.isHtmlElement(node, "dd") ||
 HtmlCommon.isHtmlElement(node, "dt") ||
 HtmlCommon.isHtmlElement(node, "li") ||
@@ -3860,16 +4007,16 @@ HtmlCommon.isHtmlElement(node, "rp") ||
 HtmlCommon.isHtmlElement(node, "rt") ||
 HtmlCommon.isHtmlElement(node, "rb") ||
 HtmlCommon.isHtmlElement(node, "rtc")) {
-          this.popCurrentNode();
+          this.PopCurrentNode();
         } else {
           break;
         }
       }
     }
 
-    private void generateImpliedEndTagsThoroughly() {
+    private void GenerateImpliedEndTagsThoroughly() {
       while (true) {
-        IElement node = this.getCurrentNode();
+        IElement node = this.GetCurrentNode();
         if (HtmlCommon.isHtmlElement(node, "dd") ||
 HtmlCommon.isHtmlElement(node, "dd") ||
 HtmlCommon.isHtmlElement(node, "dt") ||
@@ -3889,16 +4036,16 @@ HtmlCommon.isHtmlElement(node, "tr") ||
 HtmlCommon.isHtmlElement(node, "rt") ||
 HtmlCommon.isHtmlElement(node, "rb") ||
 HtmlCommon.isHtmlElement(node, "rtc")) {
-          this.popCurrentNode();
+          this.PopCurrentNode();
         } else {
           break;
         }
       }
     }
 
-    private void generateImpliedEndTagsExcept(string _string) {
+    private void GenerateImpliedEndTagsExcept(string _string) {
       while (true) {
-        IElement node = this.getCurrentNode();
+        IElement node = this.GetCurrentNode();
         if (HtmlCommon.isHtmlElement(node, _string)) {
           break;
         }
@@ -3916,52 +4063,52 @@ HtmlCommon.isHtmlElement(
   node,
   "rp") ||
 HtmlCommon.isHtmlElement(node, "rt")) {
-          this.popCurrentNode();
+          this.PopCurrentNode();
         } else {
           break;
         }
       }
     }
 
-    private int getArtificialToken(int type, string valueName) {
+    private int GetArtificialToken(int type, string valueName) {
       if (type == TOKEN_END_TAG) {
         var valueToken = new EndTagToken(valueName);
         int ret = this.tokens.Count | type;
-        this.addToken(valueToken);
+        this.AddToken(valueToken);
         return ret;
       }
       if (type == TOKEN_START_TAG) {
         var valueToken = new StartTagToken(valueName);
         int ret = this.tokens.Count | type;
-        this.addToken(valueToken);
+        this.AddToken(valueToken);
         return ret;
       }
       throw new ArgumentException();
     }
 
-    private IElement getCurrentNode() {
+    private IElement GetCurrentNode() {
       return (this.openElements.Count == 0) ? null :
             this.openElements[this.openElements.Count - 1];
     }
 
-    private FormattingElement getFormattingElement(IElement node) {
+    private FormattingElement GetFormattingElement(IElement node) {
       foreach (var fe in this.formattingElements) {
-        if (!fe.isMarker() && node.Equals(fe.Element)) {
+        if (!fe.IsMarker() && node.Equals(fe.Element)) {
           return fe;
         }
       }
       return null;
     }
 
-    private Text getFosterParentedTextNode() {
+    private Text GetFosterParentedTextNode() {
       if (this.openElements.Count == 0) {
         return null;
       }
-      INode fosterParent = this.openElements[0];
+      INode FosterParent = this.openElements[0];
       IList<INode> childNodes;
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
-        if (e.getLocalName().Equals("table")) {
+        if (e.getLocalName().Equals("table", StringComparison.Ordinal)) {
           var parent = (Node)e.getParentNode();
           bool isElement = parent != null && parent.getNodeType() ==
             NodeType.ELEMENT_NODE;
@@ -3970,8 +4117,8 @@ HtmlCommon.isHtmlElement(node, "rt")) {
               // This usually won't happen
               throw new InvalidOperationException();
             }
-            // append to the valueElement before this table
-            fosterParent = this.openElements[i - 1];
+            // Append to the valueElement before this table
+            FosterParent = this.openElements[i - 1];
             break;
           } else {
             // Parent of the table, insert before the table
@@ -3995,27 +4142,27 @@ HtmlCommon.isHtmlElement(node, "rt")) {
           }
         }
       }
-      childNodes = fosterParent.getChildNodes();
+      childNodes = FosterParent.getChildNodes();
       INode lastChild = (childNodes.Count == 0) ? null :
           childNodes[childNodes.Count - 1];
       if (lastChild == null || lastChild.getNodeType() != NodeType.TEXT_NODE) {
         var textNode = new Text();
-        fosterParent.appendChild(textNode);
+        FosterParent.appendChild(textNode);
         return textNode;
       } else {
         return (Text)lastChild;
       }
     }
 
-    private Text getTextNodeToInsert(INode node) {
-      if (this.doFosterParent && node.Equals(this.getCurrentNode())) {
+    private Text GetTextNodeToInsert(INode node) {
+      if (this.doFosterParent && node.Equals(this.GetCurrentNode())) {
         string valueName = ((IElement)node).getLocalName();
-        if ("table".Equals(valueName) ||
-"tbody".Equals(valueName) ||
-"tfoot".Equals(valueName) ||
-"thead".Equals(valueName) ||
-"tr".Equals(valueName)) {
-          return this.getFosterParentedTextNode();
+        if ("table".Equals(valueName, StringComparison.Ordinal) ||
+"tbody".Equals(valueName, StringComparison.Ordinal) ||
+"tfoot".Equals(valueName, StringComparison.Ordinal) ||
+"thead".Equals(valueName, StringComparison.Ordinal) ||
+"tr".Equals(valueName, StringComparison.Ordinal)) {
+          return this.GetFosterParentedTextNode();
         }
       }
       IList<INode> childNodes = ((INode)node).getChildNodes();
@@ -4030,7 +4177,7 @@ HtmlCommon.isHtmlElement(node, "rt")) {
       }
     }
 
-    internal IToken getToken(int valueToken) {
+    internal IToken GetToken(int valueToken) {
       if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER ||
           (valueToken & TOKEN_TYPE_MASK) == TOKEN_EOF) {
         return null;
@@ -4039,10 +4186,10 @@ HtmlCommon.isHtmlElement(node, "rt")) {
       }
     }
 
-    private bool hasHtmlElementInButtonScope(string valueName) {
+    private bool HasHtmlElementInButtonScope(string valueName) {
       var found = false;
       foreach (var e in this.openElements) {
-        if (e.getLocalName().Equals(valueName)) {
+        if (e.getLocalName().Equals(valueName, StringComparison.Ordinal)) {
           found = true;
         }
       }
@@ -4053,37 +4200,40 @@ HtmlCommon.isHtmlElement(node, "rt")) {
         IElement e = this.openElements[i];
         string _namespace = e.getNamespaceURI();
         string thisName = e.getLocalName();
-        if (HtmlCommon.HTML_NAMESPACE.Equals(_namespace)) {
-          if (thisName.Equals(valueName)) {
+        if (HtmlCommon.HTML_NAMESPACE.Equals(_namespace,
+  StringComparison.Ordinal)) {
+          if (thisName.Equals(valueName, StringComparison.Ordinal)) {
             return true;
           }
-          if (thisName.Equals("applet") ||
-thisName.Equals("caption") ||
-thisName.Equals("html") ||
-thisName.Equals("table") ||
-thisName.Equals("td") ||
-thisName.Equals("th") ||
-thisName.Equals("marquee") ||
-thisName.Equals("object") ||
-thisName.Equals("button")) {
+          if (thisName.Equals("applet", StringComparison.Ordinal) ||
+thisName.Equals("caption", StringComparison.Ordinal) ||
+thisName.Equals("Html", StringComparison.Ordinal) ||
+thisName.Equals("table", StringComparison.Ordinal) ||
+thisName.Equals("td", StringComparison.Ordinal) ||
+thisName.Equals("th", StringComparison.Ordinal) ||
+thisName.Equals("marquee", StringComparison.Ordinal) ||
+thisName.Equals("object", StringComparison.Ordinal) ||
+thisName.Equals("button", StringComparison.Ordinal)) {
             // DebugUtility.Log("not in scope: %s",thisName);
             return false;
           }
         }
-        if (HtmlCommon.MATHML_NAMESPACE.Equals(_namespace)) {
-          if (thisName.Equals("mi") ||
-thisName.Equals("mo") ||
-thisName.Equals("mn") ||
-thisName.Equals("ms") ||
-thisName.Equals("mtext") ||
-thisName.Equals("annotation-xml")) {
+        if (HtmlCommon.MATHML_NAMESPACE.Equals(_namespace,
+  StringComparison.Ordinal)) {
+          if (thisName.Equals("mi", StringComparison.Ordinal) ||
+thisName.Equals("mo", StringComparison.Ordinal) ||
+thisName.Equals("mn", StringComparison.Ordinal) ||
+thisName.Equals("ms", StringComparison.Ordinal) ||
+thisName.Equals("mtext", StringComparison.Ordinal) ||
+thisName.Equals("annotation-xml", StringComparison.Ordinal)) {
             return false;
           }
         }
-        if (HtmlCommon.SVG_NAMESPACE.Equals(_namespace)) {
-          if (thisName.Equals("foreignObject") ||
-thisName.Equals("desc") ||
-thisName.Equals("title")) {
+        if (HtmlCommon.SVG_NAMESPACE.Equals(_namespace,
+  StringComparison.Ordinal)) {
+          if (thisName.Equals("foreignObject", StringComparison.Ordinal) ||
+thisName.Equals("desc", StringComparison.Ordinal) ||
+thisName.Equals("title", StringComparison.Ordinal)) {
             return false;
           }
         }
@@ -4091,7 +4241,7 @@ thisName.Equals("title")) {
       return false;
     }
 
-    private bool hasHtmlElementInListItemScope(string valueName) {
+    private bool HasHtmlElementInListItemScope(string valueName) {
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
         if (HtmlCommon.isHtmlElement(e, valueName)) {
@@ -4099,7 +4249,7 @@ thisName.Equals("title")) {
         }
         if (HtmlCommon.isHtmlElement(e, "applet") ||
 HtmlCommon.isHtmlElement(e, "caption") ||
-HtmlCommon.isHtmlElement(e, "html") ||
+HtmlCommon.isHtmlElement(e, "Html") ||
 HtmlCommon.isHtmlElement(e, "table") ||
 HtmlCommon.isHtmlElement(e, "td") ||
 HtmlCommon.isHtmlElement(e, "th") ||
@@ -4127,7 +4277,7 @@ HtmlCommon.isSvgElement(
       return false;
     }
 
-    private bool hasHtmlElementInScope(IElement node) {
+    private bool HasHtmlElementInScope(IElement node) {
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
         if (e == node) {
@@ -4135,7 +4285,7 @@ HtmlCommon.isSvgElement(
         }
         if (HtmlCommon.isHtmlElement(e, "applet") ||
 HtmlCommon.isHtmlElement(e, "caption") ||
-HtmlCommon.isHtmlElement(e, "html") ||
+HtmlCommon.isHtmlElement(e, "Html") ||
 HtmlCommon.isHtmlElement(e, "table") ||
 HtmlCommon.isHtmlElement(e, "td") ||
 HtmlCommon.isHtmlElement(e, "th") ||
@@ -4161,7 +4311,7 @@ HtmlCommon.isSvgElement(
       return false;
     }
 
-    private bool hasHtmlElementInScope(string valueName) {
+    private bool HasHtmlElementInScope(string valueName) {
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
         if (HtmlCommon.isHtmlElement(e, valueName)) {
@@ -4169,7 +4319,7 @@ HtmlCommon.isSvgElement(
         }
         if (HtmlCommon.isHtmlElement(e, "applet") ||
 HtmlCommon.isHtmlElement(e, "caption") ||
-HtmlCommon.isHtmlElement(e, "html") ||
+HtmlCommon.isHtmlElement(e, "Html") ||
 HtmlCommon.isHtmlElement(e, "table") ||
 HtmlCommon.isHtmlElement(e, "td") ||
 HtmlCommon.isHtmlElement(e, "th") ||
@@ -4195,7 +4345,7 @@ HtmlCommon.isSvgElement(
       return false;
     }
 
-    private bool hasHtmlElementInSelectScope(string valueName) {
+    private bool HasHtmlElementInSelectScope(string valueName) {
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
         if (HtmlCommon.isHtmlElement(e, valueName)) {
@@ -4209,13 +4359,13 @@ HtmlCommon.isSvgElement(
       return false;
     }
 
-    private bool hasHtmlElementInTableScope(string valueName) {
+    private bool HasHtmlElementInTableScope(string valueName) {
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
         if (HtmlCommon.isHtmlElement(e, valueName)) {
           return true;
         }
-        if (HtmlCommon.isHtmlElement(e, "html") ||
+        if (HtmlCommon.isHtmlElement(e, "Html") ||
           HtmlCommon.isHtmlElement(e, "table")) {
           return false;
         }
@@ -4223,7 +4373,7 @@ HtmlCommon.isSvgElement(
       return false;
     }
 
-    private bool hasHtmlHeaderElementInScope() {
+    private bool HasHtmlHeaderElementInScope() {
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
         if (HtmlCommon.isHtmlElement(e, "h1") ||
@@ -4236,7 +4386,7 @@ HtmlCommon.isHtmlElement(e, "h6")) {
         }
         if (HtmlCommon.isHtmlElement(e, "applet") ||
 HtmlCommon.isHtmlElement(e, "caption") ||
-HtmlCommon.isHtmlElement(e, "html") ||
+HtmlCommon.isHtmlElement(e, "Html") ||
 HtmlCommon.isHtmlElement(e, "table") ||
 HtmlCommon.isHtmlElement(e, "td") ||
 HtmlCommon.isHtmlElement(e, "th") ||
@@ -4257,7 +4407,7 @@ HtmlCommon.isSvgElement(e, "title")) {
       return false;
     }
 
-    private void initialize() {
+    private void Initialize() {
       this.noforeign = false;
       this.templateModes.Clear();
       this.valueDocument = new Document();
@@ -4293,8 +4443,8 @@ HtmlCommon.isSvgElement(e, "title")) {
       this.pendingTableCharacters.Remove(0, this.pendingTableCharacters.Length);
     }
 
-    private void insertCharacter(INode node, int ch) {
-      Text textNode = this.getTextNodeToInsert(node);
+    private void InsertCharacter(INode node, int ch) {
+      Text textNode = this.GetTextNodeToInsert(node);
       if (textNode != null) {
         StringBuilder builder = textNode.ValueText;
         if (ch <= 0xffff) {
@@ -4306,23 +4456,25 @@ HtmlCommon.isSvgElement(e, "title")) {
       }
     }
 
-    private Element insertForeignElement(StartTagToken tag, string _namespace) {
+    private Element InsertForeignElement(StartTagToken tag, string _namespace) {
       Element valueElement = Element.fromToken(tag, _namespace);
-      string xmlns = valueElement.getAttributeNS(
+      string xmlns = valueElement.GetAttributeNS(
         HtmlCommon.XMLNS_NAMESPACE,
         "xmlns");
-      string xlink = valueElement.getAttributeNS(
+      string xlink = valueElement.GetAttributeNS(
         HtmlCommon.XMLNS_NAMESPACE,
         "xlink");
-      if (xmlns != null && !xmlns.Equals(_namespace)) {
-        this.parseError();
+      if (xmlns != null && !xmlns.Equals(_namespace,
+  StringComparison.Ordinal)) {
+        this.ParseError();
       }
-      if (xlink != null && !xlink.Equals(HtmlCommon.XLINK_NAMESPACE)) {
-        this.parseError();
+      if (xlink != null && !xlink.Equals(HtmlCommon.XLINK_NAMESPACE,
+  StringComparison.Ordinal)) {
+        this.ParseError();
       }
-      IElement currentNode = this.getCurrentNode();
+      IElement currentNode = this.GetCurrentNode();
       if (currentNode != null) {
-        this.insertInCurrentNode(valueElement);
+        this.InsertInCurrentNode(valueElement);
       } else {
         this.valueDocument.appendChild(valueElement);
       }
@@ -4330,26 +4482,26 @@ HtmlCommon.isSvgElement(e, "title")) {
       return valueElement;
     }
 
-    private void insertFormattingMarker(
+    private void InsertFormattingMarker(
       StartTagToken tag,
-      Element addHtmlElement) {
+      Element AddHtmlElement) {
       var fe = new FormattingElement();
       fe.ValueMarker = true;
-      fe.Element = addHtmlElement;
+      fe.Element = AddHtmlElement;
       fe.Token = tag;
       this.formattingElements.Add(fe);
     }
 
-    private void insertInCurrentNode(Node valueElement) {
-      IElement node = this.getCurrentNode();
+    private void InsertInCurrentNode(Node valueElement) {
+      IElement node = this.GetCurrentNode();
       if (this.doFosterParent) {
         string valueName = node.getLocalName();
-        if ("table".Equals(valueName) ||
-"tbody".Equals(valueName) ||
-"tfoot".Equals(valueName) ||
-"thead".Equals(valueName) ||
-"tr".Equals(valueName)) {
-          this.fosterParent(valueElement);
+        if ("table".Equals(valueName, StringComparison.Ordinal) ||
+"tbody".Equals(valueName, StringComparison.Ordinal) ||
+"tfoot".Equals(valueName, StringComparison.Ordinal) ||
+"thead".Equals(valueName, StringComparison.Ordinal) ||
+"tr".Equals(valueName, StringComparison.Ordinal)) {
+          this.FosterParent(valueElement);
         } else {
           node.appendChild(valueElement);
         }
@@ -4358,41 +4510,43 @@ HtmlCommon.isSvgElement(e, "title")) {
       }
     }
 
-    private void insertString(INode node, string str) {
-      Text textNode = this.getTextNodeToInsert(node);
+    private void InsertString(INode node, string str) {
+      Text textNode = this.GetTextNodeToInsert(node);
       if (textNode != null) {
         textNode.ValueText.Append(str);
       }
     }
 
-    private bool isAppropriateEndTag() {
+    private bool IsAppropriateEndTag() {
       if (this.lastStartTag == null || this.currentEndTag == null) {
         return false;
       }
       // DebugUtility.Log("lastStartTag=%s",lastStartTag.getName());
       // DebugUtility.Log("currentEndTag=%s",currentEndTag.getName());
-      return this.currentEndTag.getName().Equals(this.lastStartTag.getName());
+      return
+this.currentEndTag.getName().Equals(this.lastStartTag.getName(),
+  StringComparison.Ordinal);
     }
 
     private bool checkErrorVar;
 
-    public HtmlParser checkError(bool ce) {
+    public HtmlParser CheckError(bool ce) {
       this.checkErrorVar = ce;
       return this;
     }
 
-    private void parseError() {
+    private void ParseError() {
       this.error = true;
       if (this.checkErrorVar) {
         throw new InvalidOperationException();
       }
     }
 
-    public bool isError() {
+    public bool IsError() {
       return this.error;
     }
 
-    private bool isForeignContext(int valueToken) {
+    private bool IsForeignContext(int valueToken) {
       if (valueToken == TOKEN_EOF) {
         return false;
       }
@@ -4401,59 +4555,69 @@ HtmlCommon.isSvgElement(e, "title")) {
       }
       IElement valueElement = (this.context != null &&
           this.openElements.Count == 1) ?
-            this.context : this.getCurrentNode(); // adjusted current node
+            this.context : this.GetCurrentNode(); // adjusted current node
       if (valueElement == null) {
         return false;
       }
-      if (valueElement.getNamespaceURI().Equals(HtmlCommon.HTML_NAMESPACE)) {
+      if (valueElement.getNamespaceURI().Equals(HtmlCommon.HTML_NAMESPACE,
+  StringComparison.Ordinal)) {
         return false;
       }
       if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-        var tag = (StartTagToken)this.getToken(valueToken);
+        var tag = (StartTagToken)this.GetToken(valueToken);
         string valueName = valueElement.getLocalName();
         // DebugUtility.Log("start tag " +valueName+","
         // +valueElement.getNamespaceURI()+"," +tag);
-        if (this.isMathMLTextIntegrationPoint(valueElement)) {
+        if (this.IsMathMLTextIntegrationPoint(valueElement)) {
           string tokenName = tag.getName();
-          if (!"mglyph".Equals(tokenName) &&
-              !"malignmark".Equals(tokenName)) {
+          if (!"mglyph".Equals(tokenName, StringComparison.Ordinal) &&
+              !"malignmark".Equals(tokenName, StringComparison.Ordinal)) {
             return false;
           }
         }
         bool annotationSVG =
-          HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI()) &&
-            valueName.Equals("annotation-xml") && "svg"
+          HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI(),
+  StringComparison.Ordinal) &&
+            valueName.Equals("annotation-xml", StringComparison.Ordinal) &&
+"svg"
             .Equals(tag.getName());
-        return !annotationSVG && !this.isHtmlIntegrationPoint(valueElement);
+        return !annotationSVG && !this.IsHtmlIntegrationPoint(valueElement);
       } else if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_CHARACTER) {
-        return !this.isMathMLTextIntegrationPoint(valueElement) &&
-          !this.isHtmlIntegrationPoint(valueElement);
-      } else {
+        return !this.IsMathMLTextIntegrationPoint(valueElement) &&
+          !this.IsHtmlIntegrationPoint(valueElement);
+        } else {
         return true;
       }
     }
 
-    private bool isHtmlIntegrationPoint(IElement valueElement) {
+    private bool IsHtmlIntegrationPoint(IElement valueElement) {
       if (this.integrationElements.Contains(valueElement)) {
         return true;
       }
       string valueName = valueElement.getLocalName();
-      return HtmlCommon.SVG_NAMESPACE.Equals(valueElement.getNamespaceURI())&&
+      return HtmlCommon.SVG_NAMESPACE.Equals(valueElement.getNamespaceURI(),
+  StringComparison.Ordinal) &&
 (
-                          valueName.Equals("foreignObject") || valueName.Equals(
-                          "desc") || valueName.Equals("title"));
+                          valueName.Equals("foreignObject",
+  StringComparison.Ordinal) || valueName.Equals(
+                          "desc",
+  StringComparison.Ordinal) ||
+valueName.Equals("title", StringComparison.Ordinal));
     }
 
-    private bool isMathMLTextIntegrationPoint(IElement valueElement) {
+    private bool IsMathMLTextIntegrationPoint(IElement valueElement) {
       string valueName = valueElement.getLocalName();
       return
-HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI()) && (
-                          valueName.Equals("mi") || valueName.Equals("mo") ||
-                          valueName.Equals("mn") || valueName.Equals("ms") ||
-                          valueName.Equals("mtext"));
+HtmlCommon.MATHML_NAMESPACE.Equals(valueElement.getNamespaceURI(),
+  StringComparison.Ordinal) && (
+                          valueName.Equals("mi", StringComparison.Ordinal) ||
+valueName.Equals("mo", StringComparison.Ordinal) ||
+                          valueName.Equals("mn", StringComparison.Ordinal) ||
+valueName.Equals("ms", StringComparison.Ordinal) ||
+                          valueName.Equals("mtext", StringComparison.Ordinal));
     }
 
-    private bool isSpecialElement(IElement node) {
+    private bool IsSpecialElement(IElement node) {
       if (HtmlCommon.isHtmlElement(node, "address") ||
 HtmlCommon.isHtmlElement(node, "applet") ||
 HtmlCommon.isHtmlElement(node, "area") ||
@@ -4493,7 +4657,7 @@ HtmlCommon.isHtmlElement(node, "h6") ||
 HtmlCommon.isHtmlElement(node, "head") ||
 HtmlCommon.isHtmlElement(node, "header") ||
 HtmlCommon.isHtmlElement(node, "hr") ||
-HtmlCommon.isHtmlElement(node, "html") ||
+HtmlCommon.isHtmlElement(node, "Html") ||
 HtmlCommon.isHtmlElement(node, "iframe") ||
 HtmlCommon.isHtmlElement(node, "img") ||
 HtmlCommon.isHtmlElement(node, "input") ||
@@ -4552,7 +4716,7 @@ HtmlCommon.isMathMLElement(
   node,
   "title")) ? true : false;
     }
-    internal string nodesToDebugString(IList<Node>
+    internal string NodesToDebugString(IList<Node>
 nodes) {
       var builder = new StringBuilder();
       foreach (var node in nodes) {
@@ -4572,15 +4736,15 @@ nodes) {
       return builder.ToString();
     }
 
-    public IDocument parse() {
+    public IDocument Parse() {
       while (true) {
-        int valueToken = this.parserRead();
-        this.applyInsertionMode(valueToken, null);
+        int valueToken = this.ParserRead();
+        this.ApplyInsertionMode(valueToken, null);
         if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-          var tag = (StartTagToken)this.getToken(valueToken);
+          var tag = (StartTagToken)this.GetToken(valueToken);
           // DebugUtility.Log(tag);
-          if (!tag.isAckSelfClosing()) {
-            this.parseError();
+          if (!tag.IsAckSelfClosing()) {
+            this.ParseError();
           }
         }
         // DebugUtility.Log("valueToken=%08X, insertionMode=%s, error=%s"
@@ -4592,13 +4756,13 @@ nodes) {
       return this.valueDocument;
     }
 
-    private int parseCharacterReference(int allowedCharacter) {
-      int markStart = this.charInput.setSoftMark();
+    private int ParseCharacterReference(int allowedCharacter) {
+      int markStart = this.charInput.SetSoftMark();
       int c1 = this.charInput.ReadChar();
       if (c1 < 0 || c1 == 0x09 || c1 == 0x0a || c1 == 0x0c ||
           c1 == 0x20 || c1 == 0x3c || c1 == 0x26 || (allowedCharacter >= 0 &&
             c1 == allowedCharacter)) {
-        this.charInput.setMarkPosition(markStart);
+        this.charInput.SetMarkPosition(markStart);
         return 0x26; // emit ampersand
       } else if (c1 == 0x23) {
         c1 = this.charInput.ReadChar();
@@ -4610,7 +4774,7 @@ nodes) {
             int c = this.charInput.ReadChar();
             if (c != '0') {
               if (c >= 0) {
-                this.charInput.moveBack(1);
+                this.charInput.MoveBack(1);
               }
               break;
             }
@@ -4637,24 +4801,25 @@ nodes) {
             } else {
               if (number >= 0) {
                 // move back character (except if it's EOF)
-                this.charInput.moveBack(1);
+                this.charInput.MoveBack(1);
               }
               break;
             }
             if (value > 0x10ffff) {
-              value = 0x110000; overflow = true;
+              value = 0x110000;
+              overflow = true;
             }
           }
         } else {
           if (c1 > 0) {
-            this.charInput.moveBack(1);
+            this.charInput.MoveBack(1);
           }
           // Digits
           while (true) { // skip zeros
             int c = this.charInput.ReadChar();
             if (c != '0') {
               if (c >= 0) {
-                this.charInput.moveBack(1);
+                this.charInput.MoveBack(1);
               }
               break;
             }
@@ -4671,54 +4836,55 @@ nodes) {
             } else {
               if (number >= 0) {
                 // move back character (except if it's EOF)
-                this.charInput.moveBack(1);
+                this.charInput.MoveBack(1);
               }
               break;
             }
             if (value > 0x10ffff) {
-              value = 0x110000; overflow = true;
+              value = 0x110000;
+              overflow = true;
             }
           }
         }
         if (!haveHex) {
-          // No digits: parse error
-          this.parseError();
-          this.charInput.setMarkPosition(markStart);
+          // No digits: Parse error
+          this.ParseError();
+          this.charInput.SetMarkPosition(markStart);
           return 0x26; // emit ampersand
         }
         c1 = this.charInput.ReadChar();
         if (c1 != 0x3b) { // semicolon
-          this.parseError();
+          this.ParseError();
           if (c1 >= 0) {
-            this.charInput.moveBack(1); // parse error
+            this.charInput.MoveBack(1); // Parse error
           }
         }
         if (value > 0x10ffff || ((value & 0xf800) == 0xd800)) {
-          this.parseError();
-          value = 0xfffd; // parse error
+          this.ParseError();
+          value = 0xfffd; // Parse error
         } else if (value >= 0x80 && value < 0xa0) {
-          this.parseError();
-          // parse error
+          this.ParseError();
+          // Parse error
           var replacements = new int[] {
             0x20ac, 0x81, 0x201a, 0x192,
             0x201e, 0x2026, 0x2020, 0x2021, 0x2c6, 0x2030, 0x160, 0x2039, 0x152, 0x8d,
             0x17d, 0x8f, 0x90, 0x2018, 0x2019, 0x201c, 0x201d, 0x2022, 0x2013, 0x2014,
-            0x2dc, 0x2122, 0x161, 0x203a, 0x153, 0x9d, 0x17e, 0x178
+            0x2dc, 0x2122, 0x161, 0x203a, 0x153, 0x9d, 0x17e, 0x178,
           };
           value = replacements[value - 0x80];
         } else if (value == 0x0d) {
-          // parse error
-          this.parseError();
+          // Parse error
+          this.ParseError();
         } else if (value == 0x00) {
-          // parse error
-          this.parseError();
+          // Parse error
+          this.ParseError();
           value = 0xfffd;
         }
         if (value == 0x08 || value == 0x0b ||
             (value & 0xfffe) == 0xfffe || (value >= 0x0e && value <= 0x1f) ||
             value == 0x7f || (value >= 0xfdd0 && value <= 0xfdef)) {
-          // parse error
-          this.parseError();
+          // Parse error
+          this.ParseError();
         }
         return value;
       } else if ((c1 >= 'A' && c1 <= 'Z') || (c1 >= 'a' && c1 <= 'z') ||
@@ -4731,21 +4897,21 @@ nodes) {
 ) {
             return '>';
           }
-          this.charInput.setMarkPosition(markStart + 1);
+          this.charInput.SetMarkPosition(markStart + 1);
         } else if (c1 == 'l') {
           if (this.charInput.ReadChar() == 't' && this.charInput.ReadChar() ==
                ';'
 ) {
             return '<';
           }
-          this.charInput.setMarkPosition(markStart + 1);
+          this.charInput.SetMarkPosition(markStart + 1);
         } else if (c1 == 'a') {
           if (this.charInput.ReadChar() == 'm' && this.charInput.ReadChar()
 == 'p' &&
                   this.charInput.ReadChar() == ';') {
             return '&';
           }
-          this.charInput.setMarkPosition(markStart + 1);
+          this.charInput.SetMarkPosition(markStart + 1);
         } else if (c1 == 'n') {
           if (this.charInput.ReadChar() == 'b' && this.charInput.ReadChar() ==
                's' &&
@@ -4754,7 +4920,7 @@ nodes) {
 ) {
             return 0xa0;
           }
-          this.charInput.setMarkPosition(markStart + 1);
+          this.charInput.SetMarkPosition(markStart + 1);
         }
         var count = 0;
         for (int index = 0; index < HtmlEntities.Entities.Length; ++index) {
@@ -4790,7 +4956,7 @@ nodes) {
               // Move back the difference between the
               // number of bytes actually read and
               // this entity's length
-              this.charInput.moveBack(count - (entity.Length - 1));
+              this.charInput.MoveBack(count - (entity.Length - 1));
               // DebugUtility.Log("lastchar=%c",entity[entity.Length-1]);
               if (allowedCharacter >= 0 && entity[entity.Length - 1] != ';') {
                 // Get the next character after the entity
@@ -4798,21 +4964,21 @@ nodes) {
                 if (ch2 == '=' || (ch2 >= 'A' && ch2 <= 'Z') ||
                   (ch2 >= 'a' && ch2 <= 'z') || (ch2 >= '0' && ch2 <= '9')) {
                   if (ch2 == '=') {
-                    this.parseError();
+                    this.ParseError();
                   }
-                  this.charInput.setMarkPosition(markStart);
+                  this.charInput.SetMarkPosition(markStart);
                   return 0x26; // return ampersand rather than entity
                 } else {
                   if (ch2 >= 0) {
-                    this.charInput.moveBack(1);
+                    this.charInput.MoveBack(1);
                   }
                   if (entity[entity.Length - 1] != ';') {
-                    this.parseError();
+                    this.ParseError();
                   }
                 }
               } else {
                 if (entity[entity.Length - 1] != ';') {
-                  this.parseError();
+                  this.ParseError();
                 }
               }
               return HtmlEntities.EntityValues[index];
@@ -4820,31 +4986,31 @@ nodes) {
           }
         }
         // no match
-        this.charInput.setMarkPosition(markStart);
+        this.charInput.SetMarkPosition(markStart);
         while (true) {
           int ch2 = this.charInput.ReadChar();
           if (ch2 == ';') {
-            this.parseError();
+            this.ParseError();
             break;
           } else if (!((ch2 >= 'A' && ch2 <= 'Z') || (ch2 >= 'a' && ch2 <= 'z'
 ) || (ch2 >= '0' && ch2 <= '9'))) {
             break;
           }
         }
-        this.charInput.setMarkPosition(markStart);
+        this.charInput.SetMarkPosition(markStart);
         return 0x26;
       } else {
         // not a character reference
-        this.charInput.setMarkPosition(markStart);
+        this.charInput.SetMarkPosition(markStart);
         return 0x26; // emit ampersand
       }
     }
 
-    public IList<INode> parseFragment(IElement context) {
+    public IList<INode> ParseFragment(IElement context) {
       if (context == null) {
         throw new ArgumentException();
       }
-      this.initialize();
+      this.Initialize();
       this.valueDocument = new Document();
       INode ownerDocument = context;
       INode lastForm = null;
@@ -4885,7 +5051,7 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
         this.state = TokenizerState.PlainText;
       }
       var valueElement = new Element();
-      valueElement.setLocalName("html");
+      valueElement.setLocalName("Html");
       valueElement.setNamespace(HtmlCommon.HTML_NAMESPACE);
       this.valueDocument.appendChild(valueElement);
       this.done = false;
@@ -4895,50 +5061,50 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
         this.templateModes.Add(InsertionMode.InTemplate);
       }
       this.context = context;
-      this.resetInsertionMode();
+      this.ResetInsertionMode();
       this.formElement = (lastForm == null) ? null : ((Element)lastForm);
       if (this.encoding.getConfidence() != EncodingConfidence.Irrelevant) {
         this.encoding = new EncodingConfidence(
   this.encoding.getEncoding(),
   EncodingConfidence.Irrelevant);
       }
-      this.parse();
+      this.Parse();
       return new List<INode>(valueElement.getChildNodes());
     }
 
-    public IList<INode> parseFragment(string contextName) {
+    public IList<INode> ParseFragment(string contextName) {
       var valueElement = new Element();
       valueElement.setLocalName(contextName);
       valueElement.setNamespace(HtmlCommon.HTML_NAMESPACE);
-      return this.parseFragment(valueElement);
+      return this.ParseFragment(valueElement);
     }
 
-    public IList<string[]> parseTokens(string s, string lst) {
-      this.initialize();
+    public IList<string[]> ParseTokens(string s, string lst) {
+      this.Initialize();
       var ret = new List<string[]>();
       var characters = new StringBuilder();
       if (lst != null) {
         this.lastStartTag = new StartTagToken(lst);
       }
-      if (s.Equals("PLAINTEXT state")) {
+      if (s.Equals("PLAINTEXT state", StringComparison.Ordinal)) {
         this.state = TokenizerState.PlainText;
       }
-      if (s.Equals("RCDATA state")) {
+      if (s.Equals("RCDATA state", StringComparison.Ordinal)) {
         this.state = TokenizerState.RcData;
       }
-      if (s.Equals("RAWTEXT state")) {
+      if (s.Equals("RAWTEXT state", StringComparison.Ordinal)) {
         this.state = TokenizerState.RawText;
       }
-      if (s.Equals("Script data state")) {
+      if (s.Equals("Script data state", StringComparison.Ordinal)) {
         this.state = TokenizerState.ScriptData;
       }
-      if (s.Equals("CDATA section state")) {
+      if (s.Equals("CDATA section state", StringComparison.Ordinal)) {
         this.state = TokenizerState.CData;
       }
       // DebugUtility.Log("tok state="+this.state+ ","+s);
       // DebugUtility.Log("" + (this.lastStartTag));
       while (true) {
-        int valueToken = this.parserRead();
+        int valueToken = this.ParserRead();
         if ((valueToken & TOKEN_TYPE_MASK) != TOKEN_CHARACTER) {
           if (characters.Length > 0) {
             ret.Add(new string[] { "Character", characters.ToString() });
@@ -4961,10 +5127,10 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
           break;
         }
         if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
-          var tag = (StartTagToken)this.getToken(valueToken);
+          var tag = (StartTagToken)this.GetToken(valueToken);
           IList<Attr> attributes = tag.getAttributes();
           var stlen = 2 + (attributes.Count * 2);
-          if (tag.isSelfClosing()) {
+          if (tag.IsSelfClosing()) {
             ++stlen;
           }
           var tagarray = new string[stlen];
@@ -4976,30 +5142,30 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
             tagarray[index + 1] = attribute.getValue();
             index += 2;
           }
-          if (tag.isSelfClosing()) {
+          if (tag.IsSelfClosing()) {
             tagarray[index] = "true";
           }
           ret.Add(tagarray);
           continue;
         }
         if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
-          var tag = (EndTagToken)this.getToken(valueToken);
+          var tag = (EndTagToken)this.GetToken(valueToken);
           ret.Add(new string[] { "EndTag", tag.getName() });
           continue;
         }
         if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
-          var tag = (DocTypeToken)this.getToken(valueToken);
+          var tag = (DocTypeToken)this.GetToken(valueToken);
           ret.Add(new string[] {
             "DOCTYPE",
             (tag.Name == null ? null : tag.Name.ToString()),
             (tag.ValuePublicID == null ? null : tag.ValuePublicID.ToString()),
             (tag.ValueSystemID == null ? null : tag.ValueSystemID.ToString()),
-            tag.ForceQuirks ? "false" : "true"
+            tag.ForceQuirks ? "false" : "true",
           });
           continue;
         }
         if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
-          var tag = (CommentToken)this.getToken(valueToken);
+          var tag = (CommentToken)this.GetToken(valueToken);
           StringBuilder cv = tag.CommentValue;
           ret.Add(new string[] { "Comment", cv.ToString() });
           continue;
@@ -5009,19 +5175,19 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
       return ret;
     }
 
-    internal int parserRead() {
-      int valueToken = this.parserReadInternal();
+    internal int ParserRead() {
+      int valueToken = this.ParserReadInternal();
       // DebugUtility.Log("valueToken=%08X [%c]",valueToken,valueToken&0xFF);
       if (valueToken <= -2) {
-        this.parseError();
+        this.ParseError();
         return 0xfffd;
       }
       return valueToken;
     }
 
-    private int parserReadInternal() {
+    private int ParserReadInternal() {
       if (this.tokenQueue.Count > 0) {
-        return removeAtIndex(this.tokenQueue, 0);
+        return RemoveAtIndex(this.tokenQueue, 0);
       }
       while (true) {
         // DebugUtility.Log("" + state);
@@ -5031,9 +5197,9 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
             if (c == 0x26) {
               this.state = TokenizerState.CharacterRefInData;
             } else if (c == 0x3c) {
-              state = TokenizerState.TagOpen;
+              this.state = TokenizerState.TagOpen;
             } else if (c == 0) {
-              error = true;
+              this.error = true;
               return c;
             } else if (c < 0) {
               return TOKEN_EOF;
@@ -5042,13 +5208,13 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
               // Keep reading characters to
               // reduce the need to re-call
               // this method
-              int mark = charInput.setSoftMark();
+              int mark = this.charInput.SetSoftMark();
               for (int i = 0; i < 100; ++i) {
-                c = charInput.ReadChar();
+                c = this.charInput.ReadChar();
                 if (c > 0 && c != 0x26 && c != 0x3c) {
-                  tokenQueue.Add(c);
+                  this.tokenQueue.Add(c);
                 } else {
-                  charInput.setMarkPosition(mark + i);
+                  this.charInput.SetMarkPosition(mark + i);
                   break;
                 }
               }
@@ -5057,7 +5223,7 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
             break;
           case TokenizerState.CharacterRefInData: {
               this.state = TokenizerState.Data;
-              int charref = this.parseCharacterReference(-1);
+              int charref = this.ParseCharacterReference(-1);
               if (charref < 0) {
                 // more than one character in this reference
                 int index = Math.Abs(charref + 1);
@@ -5069,7 +5235,7 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
             }
           case TokenizerState.CharacterRefInRcData: {
               this.state = TokenizerState.RcData;
-              int charref = this.parseCharacterReference(-1);
+              int charref = this.ParseCharacterReference(-1);
               if (charref < 0) {
                 // more than one character in this reference
                 int index = Math.Abs(charref + 1);
@@ -5084,9 +5250,9 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
             if (c1 == 0x26) {
               this.state = TokenizerState.CharacterRefInRcData;
             } else if (c1 == 0x3c) {
-              state = TokenizerState.RcDataLessThan;
+              this.state = TokenizerState.RcDataLessThan;
             } else if (c1 == 0) {
-              error = true;
+              this.error = true;
               return 0xfffd;
             } else if (c1 < 0) {
               return TOKEN_EOF;
@@ -5101,18 +5267,18 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
                 this.state = (this.state == TokenizerState.RawText) ?
                     TokenizerState.RawTextLessThan :
                     TokenizerState.ScriptDataLessThan;
-              } else if (c11 == 0) {
-                this.parseError();
-                return 0xfffd;
-              } else if (c11 < 0) {
-                return TOKEN_EOF;
+                  } else if (c11 == 0) {
+                    this.ParseError();
+                    return 0xfffd;
+                  } else if (c11 < 0) {
+                    return TOKEN_EOF;
               } else {
                 return c11;
               }
               break;
             }
           case TokenizerState.ScriptDataLessThan: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int c11 = this.charInput.ReadChar();
               if (c11 == 0x2f) {
                 this.tempBuilder.Remove(0, this.tempBuilder.Length);
@@ -5124,7 +5290,7 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
               } else {
                 this.state = TokenizerState.ScriptData;
                 if (c11 >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
                 return 0x3c;
               }
@@ -5132,7 +5298,7 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
             }
           case TokenizerState.ScriptDataEndTagOpen:
           case TokenizerState.ScriptDataEscapedEndTagOpen: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               if (ch >= 'A' && ch <= 'Z') {
                 var valueToken = new EndTagToken((char)(ch + 0x20));
@@ -5150,11 +5316,11 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
 TokenizerState.ScriptDataEndTagOpen) ?
                        TokenizerState.ScriptDataEndTagName :
                        TokenizerState.ScriptDataEscapedEndTagName;
-              } else if (ch >= 'a' && ch <= 'z') {
-                var valueToken = new EndTagToken((char)ch);
-                if (ch <= 0xffff) {
-                  this.tempBuilder.Append((char)ch);
-                } else if (ch <= 0x10ffff) {
+                     } else if (ch >= 'a' && ch <= 'z') {
+                       var valueToken = new EndTagToken((char)ch);
+                       if (ch <= 0xffff) {
+                         this.tempBuilder.Append((char)ch);
+                       } else if (ch <= 0x10ffff) {
                   this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
 0x3ff) | 0xd800));
                   this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) |
@@ -5166,13 +5332,13 @@ TokenizerState.ScriptDataEndTagOpen) ?
 TokenizerState.ScriptDataEndTagOpen) ?
                        TokenizerState.ScriptDataEndTagName :
                        TokenizerState.ScriptDataEscapedEndTagName;
-              } else {
+                     } else {
                 this.state = (this.state ==
                     TokenizerState.ScriptDataEndTagOpen) ?
                  TokenizerState.ScriptData : TokenizerState.ScriptDataEscaped;
                 this.tokenQueue.Add(0x2f);
                 if (ch >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
                 return 0x3c;
               }
@@ -5180,21 +5346,21 @@ TokenizerState.ScriptDataEndTagOpen) ?
             }
           case TokenizerState.ScriptDataEndTagName:
           case TokenizerState.ScriptDataEscapedEndTagName: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               if ((ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) &&
-                  this.isAppropriateEndTag()) {
+                  this.IsAppropriateEndTag()) {
                 this.state = TokenizerState.BeforeAttributeName;
-              } else if (ch == 0x2f && this.isAppropriateEndTag()) {
+              } else if (ch == 0x2f && this.IsAppropriateEndTag()) {
                 this.state = TokenizerState.SelfClosingStartTag;
-              } else if (ch == 0x3e && this.isAppropriateEndTag()) {
+              } else if (ch == 0x3e && this.IsAppropriateEndTag()) {
                 this.state = TokenizerState.Data;
-                return this.emitCurrentTag();
+                return this.EmitCurrentTag();
               } else if (ch >= 'A' && ch <= 'Z') {
-                this.currentTag.appendChar((char)(ch + 0x20));
+                this.currentTag.AppendChar((char)(ch + 0x20));
                 this.tempBuilder.Append((char)ch);
               } else if (ch >= 'a' && ch <= 'z') {
-                this.currentTag.appendChar((char)ch);
+                this.currentTag.AppendChar((char)ch);
                 this.tempBuilder.Append((char)ch);
               } else {
                 this.state = (this.state ==
@@ -5210,19 +5376,20 @@ TokenizerState.ScriptDataEndTagOpen) ?
                   this.tokenQueue.Add(c2);
                 }
                 if (ch >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
                 return '<';
               }
               break;
             }
           case TokenizerState.ScriptDataDoubleEscapeStart: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20 ||
                   ch == 0x2f || ch == 0x3e) {
                 string bufferString = this.tempBuilder.ToString();
-                this.state = bufferString.Equals("script") ?
+                this.state = bufferString.Equals("script",
+  StringComparison.Ordinal) ?
                   TokenizerState.ScriptDataDoubleEscaped :
                   TokenizerState.ScriptDataEscaped;
                 return ch;
@@ -5249,18 +5416,19 @@ TokenizerState.ScriptDataEndTagOpen) ?
               } else {
                 this.state = TokenizerState.ScriptDataEscaped;
                 if (ch >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
               }
               break;
             }
           case TokenizerState.ScriptDataDoubleEscapeEnd: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20 ||
                   ch == 0x2f || ch == 0x3e) {
                 string bufferString = this.tempBuilder.ToString();
-                this.state = bufferString.Equals("script") ?
+                this.state = bufferString.Equals("script",
+  StringComparison.Ordinal) ?
                   TokenizerState.ScriptDataEscaped :
                   TokenizerState.ScriptDataDoubleEscaped;
                 return ch;
@@ -5287,14 +5455,14 @@ TokenizerState.ScriptDataEndTagOpen) ?
               } else {
                 this.state = TokenizerState.ScriptDataDoubleEscaped;
                 if (ch >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
               }
               break;
             }
           case TokenizerState.ScriptDataEscapeStart:
           case TokenizerState.ScriptDataEscapeStartDash: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               if (ch == 0x2d) {
                 this.state = (this.state ==
@@ -5304,7 +5472,7 @@ TokenizerState.ScriptDataEndTagOpen) ?
                 return '-';
               } else {
                 if (ch >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
                 this.state = TokenizerState.ScriptData;
               }
@@ -5318,10 +5486,10 @@ TokenizerState.ScriptDataEndTagOpen) ?
               } else if (ch == 0x3c) {
                 this.state = TokenizerState.ScriptDataEscapedLessThan;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 return 0xfffd;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
                 return ch;
@@ -5337,10 +5505,10 @@ TokenizerState.ScriptDataEndTagOpen) ?
                 this.state = TokenizerState.ScriptDataDoubleEscapedLessThan;
                 return '<';
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 return 0xfffd;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
                 return ch;
@@ -5355,11 +5523,11 @@ TokenizerState.ScriptDataEndTagOpen) ?
               } else if (ch == 0x3c) {
                 this.state = TokenizerState.ScriptDataEscapedLessThan;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.ScriptDataEscaped;
                 return 0xfffd;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
                 this.state = TokenizerState.ScriptDataEscaped;
@@ -5376,11 +5544,11 @@ TokenizerState.ScriptDataEndTagOpen) ?
                 this.state = TokenizerState.ScriptDataDoubleEscapedLessThan;
                 return '<';
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.ScriptDataDoubleEscaped;
                 return 0xfffd;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
                 this.state = TokenizerState.ScriptDataDoubleEscaped;
@@ -5398,11 +5566,11 @@ TokenizerState.ScriptDataEndTagOpen) ?
                 this.state = TokenizerState.ScriptData;
                 return '>';
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.ScriptDataEscaped;
                 return 0xfffd;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
                 this.state = TokenizerState.ScriptDataEscaped;
@@ -5421,11 +5589,11 @@ TokenizerState.ScriptDataEndTagOpen) ?
                 this.state = TokenizerState.ScriptData;
                 return '>';
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.ScriptDataDoubleEscaped;
                 return 0xfffd;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
                 this.state = TokenizerState.ScriptDataDoubleEscaped;
@@ -5434,7 +5602,7 @@ TokenizerState.ScriptDataEndTagOpen) ?
               break;
             }
           case TokenizerState.ScriptDataDoubleEscapedLessThan: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               if (ch == 0x2f) {
                 this.tempBuilder.Remove(0, this.tempBuilder.Length);
@@ -5443,13 +5611,13 @@ TokenizerState.ScriptDataEndTagOpen) ?
               } else {
                 this.state = TokenizerState.ScriptDataDoubleEscaped;
                 if (ch >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
               }
               break;
             }
           case TokenizerState.ScriptDataEscapedLessThan: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               if (ch == 0x2f) {
                 this.tempBuilder.Remove(0, this.tempBuilder.Length);
@@ -5469,7 +5637,7 @@ TokenizerState.ScriptDataEndTagOpen) ?
               } else {
                 this.state = TokenizerState.ScriptDataEscaped;
                 if (ch >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
                 return 0x3c;
               }
@@ -5478,7 +5646,7 @@ TokenizerState.ScriptDataEndTagOpen) ?
           case TokenizerState.PlainText: {
               int c11 = this.charInput.ReadChar();
               if (c11 == 0) {
-                this.parseError();
+                this.ParseError();
                 return 0xfffd;
               } else if (c11 < 0) {
                 return TOKEN_EOF;
@@ -5487,7 +5655,7 @@ TokenizerState.ScriptDataEndTagOpen) ?
               }
             }
           case TokenizerState.TagOpen: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int c11 = this.charInput.ReadChar();
               // DebugUtility.Log("In tagopen " + ((char)c11));
               if (c11 == 0x21) {
@@ -5503,14 +5671,14 @@ TokenizerState.ScriptDataEndTagOpen) ?
                 this.currentTag = valueToken;
                 this.state = TokenizerState.TagName;
               } else if (c11 == 0x3f) {
-                this.parseError();
+                this.ParseError();
                 this.bogusCommentCharacter = c11;
                 this.state = TokenizerState.BogusComment;
               } else {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
                 if (c11 >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
                 return '<';
               }
@@ -5529,15 +5697,15 @@ TokenizerState.ScriptDataEndTagOpen) ?
                 this.currentTag = valueToken;
                 this.state = TokenizerState.TagName;
               } else if (ch == 0x3e) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
                 this.tokenQueue.Add(0x2f); // solidus
                 return 0x3c; // Less than
               } else {
-                this.parseError();
+                this.ParseError();
                 this.bogusCommentCharacter = ch;
                 this.state = TokenizerState.BogusComment;
               }
@@ -5545,7 +5713,7 @@ TokenizerState.ScriptDataEndTagOpen) ?
             }
           case TokenizerState.RcDataEndTagOpen:
           case TokenizerState.RawTextEndTagOpen: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               if (ch >= 'A' && ch <= 'Z') {
                 TagToken valueToken = new EndTagToken((char)(ch + 0x20));
@@ -5562,11 +5730,11 @@ TokenizerState.ScriptDataEndTagOpen) ?
                 this.state = (this.state == TokenizerState.RcDataEndTagOpen) ?
                     TokenizerState.RcDataEndTagName :
                     TokenizerState.RawTextEndTagName;
-              } else if (ch >= 'a' && ch <= 'z') {
-                TagToken valueToken = new EndTagToken((char)ch);
-                if (ch <= 0xffff) {
-                  this.tempBuilder.Append((char)ch);
-                } else if (ch <= 0x10ffff) {
+                  } else if (ch >= 'a' && ch <= 'z') {
+                    TagToken valueToken = new EndTagToken((char)ch);
+                    if (ch <= 0xffff) {
+                      this.tempBuilder.Append((char)ch);
+                    } else if (ch <= 0x10ffff) {
                   this.tempBuilder.Append((char)((((ch - 0x10000) >> 10) &
 0x3ff) | 0xd800));
                   this.tempBuilder.Append((char)(((ch - 0x10000) & 0x3ff) |
@@ -5574,12 +5742,13 @@ TokenizerState.ScriptDataEndTagOpen) ?
                 }
                 this.currentEndTag = valueToken;
                 this.currentTag = valueToken;
-                this.state = (this.state == TokenizerState.RcDataEndTagOpen) ?
+                this.state = (
+                  this.state == TokenizerState.RcDataEndTagOpen) ?
                     TokenizerState.RcDataEndTagName :
                     TokenizerState.RawTextEndTagName;
-              } else {
+                  } else {
                 if (ch >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
                 this.state = TokenizerState.RcData;
                 this.tokenQueue.Add(0x2f); // solidus
@@ -5589,18 +5758,18 @@ TokenizerState.ScriptDataEndTagOpen) ?
             }
           case TokenizerState.RcDataEndTagName:
           case TokenizerState.RawTextEndTagName: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               if ((ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) &&
-                    this.isAppropriateEndTag()) {
+                    this.IsAppropriateEndTag()) {
                 this.state = TokenizerState.BeforeAttributeName;
-              } else if (ch == 0x2f && this.isAppropriateEndTag()) {
+              } else if (ch == 0x2f && this.IsAppropriateEndTag()) {
                 this.state = TokenizerState.SelfClosingStartTag;
-              } else if (ch == 0x3e && this.isAppropriateEndTag()) {
+              } else if (ch == 0x3e && this.IsAppropriateEndTag()) {
                 this.state = TokenizerState.Data;
-                return this.emitCurrentTag();
+                return this.EmitCurrentTag();
               } else if (ch >= 'A' && ch <= 'Z') {
-                this.currentTag.append(ch + 0x20);
+                this.currentTag.Append(ch + 0x20);
                 if (ch + 0x20 <= 0xffff) {
                   this.tempBuilder.Append((char)(ch + 0x20));
                 } else if (ch + 0x20 <= 0x10ffff) {
@@ -5610,7 +5779,7 @@ TokenizerState.ScriptDataEndTagOpen) ?
 0x3ff) | 0xdc00));
                 }
               } else if (ch >= 'a' && ch <= 'z') {
-                this.currentTag.append(ch);
+                this.currentTag.Append(ch);
                 if (ch <= 0xffff) {
                   this.tempBuilder.Append((char)ch);
                 } else if (ch <= 0x10ffff) {
@@ -5621,7 +5790,7 @@ TokenizerState.ScriptDataEndTagOpen) ?
                 }
               } else {
                 if (ch >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
                 this.state = (this.state == TokenizerState.RcDataEndTagName) ?
                     TokenizerState.RcData : TokenizerState.RawText;
@@ -5646,24 +5815,24 @@ TokenizerState.ScriptDataEndTagOpen) ?
                 this.state = TokenizerState.SelfClosingStartTag;
               } else if (ch == 0x3e) {
                 this.state = TokenizerState.Data;
-                return this.emitCurrentTag();
+                return this.EmitCurrentTag();
               } else if (ch >= 'A' && ch <= 'Z') {
-                this.currentAttribute = this.currentTag.addAttribute((char)(ch +
+                this.currentAttribute = this.currentTag.AddAttribute((char)(ch +
                     0x20));
                 this.state = TokenizerState.AttributeName;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.currentAttribute =
-this.currentTag.addAttribute((char)0xfffd);
+this.currentTag.AddAttribute((char)0xfffd);
                 this.state = TokenizerState.AttributeName;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
                 if (ch == 0x22 || ch == 0x27 || ch == 0x3c || ch == 0x3d) {
-                  this.parseError();
+                  this.ParseError();
                 }
-                this.currentAttribute = this.currentTag.addAttribute(ch);
+                this.currentAttribute = this.currentTag.AddAttribute(ch);
                 this.state = TokenizerState.AttributeName;
               }
               break;
@@ -5671,39 +5840,39 @@ this.currentTag.addAttribute((char)0xfffd);
           case TokenizerState.AttributeName: {
               int ch = this.charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
-                if (!this.currentTag.checkAttributeName()) {
-                  this.parseError();
+                if (!this.currentTag.CheckAttributeName()) {
+                  this.ParseError();
                 }
                 this.state = TokenizerState.AfterAttributeName;
               } else if (ch == 0x2f) {
-                if (!this.currentTag.checkAttributeName()) {
-                  this.parseError();
+                if (!this.currentTag.CheckAttributeName()) {
+                  this.ParseError();
                 }
                 this.state = TokenizerState.SelfClosingStartTag;
               } else if (ch == 0x3d) {
-                if (!this.currentTag.checkAttributeName()) {
-                  this.parseError();
+                if (!this.currentTag.CheckAttributeName()) {
+                  this.ParseError();
                 }
                 this.state = TokenizerState.BeforeAttributeValue;
               } else if (ch == 0x3e) {
-                if (!this.currentTag.checkAttributeName()) {
-                  this.parseError();
+                if (!this.currentTag.CheckAttributeName()) {
+                  this.ParseError();
                 }
                 this.state = TokenizerState.Data;
-                return this.emitCurrentTag();
+                return this.EmitCurrentTag();
               } else if (ch >= 'A' && ch <= 'Z') {
                 this.currentAttribute.appendToName(ch + 0x20);
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.currentAttribute.appendToName(0xfffd);
               } else if (ch < 0) {
-                this.parseError();
-                if (!this.currentTag.checkAttributeName()) {
-                  this.parseError();
+                this.ParseError();
+                if (!this.currentTag.CheckAttributeName()) {
+                  this.ParseError();
                 }
                 this.state = TokenizerState.Data;
               } else if (ch == 0x22 || ch == 0x27 || ch == 0x3c) {
-                this.parseError();
+                this.ParseError();
                 this.currentAttribute.appendToName(ch);
               } else {
                 this.currentAttribute.appendToName(ch);
@@ -5721,30 +5890,30 @@ this.currentTag.addAttribute((char)0xfffd);
                 this.state = TokenizerState.BeforeAttributeValue;
               } else if (ch == '>') {
                 this.state = TokenizerState.Data;
-                return this.emitCurrentTag();
+                return this.EmitCurrentTag();
               } else if (ch >= 'A' && ch <= 'Z') {
-                this.currentAttribute = this.currentTag.addAttribute((char)(ch +
+                this.currentAttribute = this.currentTag.AddAttribute((char)(ch +
                     0x20));
                 this.state = TokenizerState.AttributeName;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.currentAttribute =
-this.currentTag.addAttribute((char)0xfffd);
+this.currentTag.AddAttribute((char)0xfffd);
                 this.state = TokenizerState.AttributeName;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
                 if (ch == 0x22 || ch == 0x27 || ch == 0x3c) {
-                  this.parseError();
+                  this.ParseError();
                 }
-                this.currentAttribute = this.currentTag.addAttribute(ch);
+                this.currentAttribute = this.currentTag.AddAttribute(ch);
                 this.state = TokenizerState.AttributeName;
               }
               break;
             }
           case TokenizerState.BeforeAttributeValue: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               while (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 ch = this.charInput.ReadChar();
@@ -5752,24 +5921,24 @@ this.currentTag.addAttribute((char)0xfffd);
               if (ch == 0x22) {
                 this.state = TokenizerState.AttributeValueDoubleQuoted;
               } else if (ch == 0x26) {
-                this.charInput.moveBack(1);
+                this.charInput.MoveBack(1);
                 this.state = TokenizerState.AttributeValueUnquoted;
               } else if (ch == 0x27) {
                 this.state = TokenizerState.AttributeValueSingleQuoted;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.currentAttribute.appendToValue(0xfffd);
                 this.state = TokenizerState.AttributeValueUnquoted;
               } else if (ch == 0x3e) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
-                return this.emitCurrentTag();
+                return this.EmitCurrentTag();
               } else if (ch == 0x3c || ch == 0x3d || ch == 0x60) {
-                this.parseError();
+                this.ParseError();
                 this.currentAttribute.appendToValue(ch);
                 this.state = TokenizerState.AttributeValueUnquoted;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
                 this.currentAttribute.appendToValue(ch);
@@ -5786,17 +5955,17 @@ this.currentTag.addAttribute((char)0xfffd);
                 this.lastState = this.state;
                 this.state = TokenizerState.CharacterRefInAttributeValue;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.currentAttribute.appendToValue(0xfffd);
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
                 this.currentAttribute.appendToValue(ch);
                 // Keep reading characters to
                 // reduce the need to re-call
                 // this method
-                int mark = this.charInput.setSoftMark();
+                int mark = this.charInput.SetSoftMark();
                 for (int i = 0; i < 100; ++i) {
                   ch = this.charInput.ReadChar();
                   if (ch > 0 && ch != 0x26 && ch != 0x22) {
@@ -5806,7 +5975,7 @@ this.currentTag.addAttribute((char)0xfffd);
                     this.state = TokenizerState.AfterAttributeValueQuoted;
                     break;
                   } else {
-                    this.charInput.setMarkPosition(mark + i);
+                    this.charInput.SetMarkPosition(mark + i);
                     break;
                   }
                 }
@@ -5822,17 +5991,17 @@ this.currentTag.addAttribute((char)0xfffd);
                 this.lastState = this.state;
                 this.state = TokenizerState.CharacterRefInAttributeValue;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.currentAttribute.appendToValue(0xfffd);
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
                 this.currentAttribute.appendToValue(ch);
                 // Keep reading characters to
                 // reduce the need to re-call
                 // this method
-                int mark = this.charInput.setSoftMark();
+                int mark = this.charInput.SetSoftMark();
                 for (int i = 0; i < 100; ++i) {
                   ch = this.charInput.ReadChar();
                   if (ch > 0 && ch != 0x26 && ch != 0x27) {
@@ -5842,7 +6011,7 @@ this.currentTag.addAttribute((char)0xfffd);
                     this.state = TokenizerState.AfterAttributeValueQuoted;
                     break;
                   } else {
-                    this.charInput.setMarkPosition(mark + i);
+                    this.charInput.SetMarkPosition(mark + i);
                     break;
                   }
                 }
@@ -5860,24 +6029,24 @@ this.currentTag.addAttribute((char)0xfffd);
               } else if (ch == 0x3e) {
                 this.currentAttribute.commitValue();
                 this.state = TokenizerState.Data;
-                return this.emitCurrentTag();
+                return this.EmitCurrentTag();
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.currentAttribute.appendToValue(0xfffd);
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
                 if (ch == 0x22 || ch == 0x27 || ch == 0x3c || ch == 0x3d || ch
                 == 0x60) {
-                  this.parseError();
+                  this.ParseError();
                 }
                 this.currentAttribute.appendToValue(ch);
               }
               break;
             }
           case TokenizerState.AfterAttributeValueQuoted: {
-              int mark = this.charInput.setSoftMark();
+              int mark = this.charInput.SetSoftMark();
               int ch = this.charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 this.state = TokenizerState.BeforeAttributeName;
@@ -5885,36 +6054,36 @@ this.currentTag.addAttribute((char)0xfffd);
                 this.state = TokenizerState.SelfClosingStartTag;
               } else if (ch == 0x3e) {
                 this.state = TokenizerState.Data;
-                return this.emitCurrentTag();
+                return this.EmitCurrentTag();
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.BeforeAttributeName;
-                this.charInput.setMarkPosition(mark);
+                this.charInput.SetMarkPosition(mark);
               }
               break;
             }
           case TokenizerState.SelfClosingStartTag: {
-              int mark = this.charInput.setSoftMark();
+              int mark = this.charInput.SetSoftMark();
               int ch = this.charInput.ReadChar();
               if (ch == 0x3e) {
-                this.currentTag.setSelfClosing(true);
+                this.currentTag.SetSelfClosing(true);
                 this.state = TokenizerState.Data;
-                return this.emitCurrentTag();
+                return this.EmitCurrentTag();
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.BeforeAttributeName;
-                this.charInput.setMarkPosition(mark);
+                this.charInput.SetMarkPosition(mark);
               }
               break;
             }
           case TokenizerState.MarkupDeclarationOpen: {
-              int mark = this.charInput.setSoftMark();
+              int mark = this.charInput.SetSoftMark();
               int ch = this.charInput.ReadChar();
               if (ch == '-' && this.charInput.ReadChar() == '-') {
                 var valueToken = new CommentToken();
@@ -5938,15 +6107,15 @@ this.charInput.ReadChar()
                   this.charInput.ReadChar() == 'T' &&
           this.charInput.ReadChar() == 'A' && this.charInput.ReadChar() ==
 '[' &&
-              this.getCurrentNode() != null &&
-                      !HtmlCommon.HTML_NAMESPACE.Equals(this.getCurrentNode()
+              this.GetCurrentNode() != null &&
+                      !HtmlCommon.HTML_NAMESPACE.Equals(this.GetCurrentNode()
                       .getNamespaceURI())) {
                   this.state = TokenizerState.CData;
                   break;
                 }
               }
-              this.parseError();
-              this.charInput.setMarkPosition(mark);
+              this.ParseError();
+              this.charInput.SetMarkPosition(mark);
               this.bogusCommentCharacter = -1;
               this.state = TokenizerState.BogusComment;
               break;
@@ -5956,17 +6125,17 @@ this.charInput.ReadChar()
               if (ch == '-') {
                 this.state = TokenizerState.CommentStartDash;
               } else if (ch == 0) {
-                this.parseError();
-                this.lastComment.appendChar((char)0xfffd);
+                this.ParseError();
+                this.lastComment.AppendChar((char)0xfffd);
                 this.state = TokenizerState.Comment;
               } else if (ch == 0x3e || ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.lastComment.getType();
-                this.addToken(this.lastComment);
+                int ret = this.tokens.Count | this.lastComment.GetType();
+                this.AddToken(this.lastComment);
                 return ret;
               } else {
-                this.lastComment.appendChar(ch);
+                this.lastComment.AppendChar(ch);
                 this.state = TokenizerState.Comment;
               }
               break;
@@ -5976,19 +6145,19 @@ this.charInput.ReadChar()
               if (ch == '-') {
                 this.state = TokenizerState.CommentEnd;
               } else if (ch == 0) {
-                this.parseError();
-                this.lastComment.appendChar('-');
-                this.lastComment.appendChar(0xfffd);
+                this.ParseError();
+                this.lastComment.AppendChar('-');
+                this.lastComment.AppendChar(0xfffd);
                 this.state = TokenizerState.Comment;
               } else if (ch == 0x3e || ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.lastComment.getType();
-                this.addToken(this.lastComment);
+                int ret = this.tokens.Count | this.lastComment.GetType();
+                this.AddToken(this.lastComment);
                 return ret;
               } else {
-                this.lastComment.appendChar('-');
-                this.lastComment.appendChar(ch);
+                this.lastComment.AppendChar('-');
+                this.lastComment.AppendChar(ch);
                 this.state = TokenizerState.Comment;
               }
               break;
@@ -5998,16 +6167,16 @@ this.charInput.ReadChar()
               if (ch == '-') {
                 this.state = TokenizerState.CommentEndDash;
               } else if (ch == 0) {
-                this.parseError();
-                this.lastComment.appendChar(0xfffd);
+                this.ParseError();
+                this.lastComment.AppendChar(0xfffd);
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.lastComment.getType();
-                this.addToken(this.lastComment);
+                int ret = this.tokens.Count | this.lastComment.GetType();
+                this.AddToken(this.lastComment);
                 return ret;
               } else {
-                this.lastComment.appendChar(ch);
+                this.lastComment.AppendChar(ch);
               }
               break;
             }
@@ -6016,18 +6185,18 @@ this.charInput.ReadChar()
               if (ch == '-') {
                 this.state = TokenizerState.CommentEnd;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.lastComment.Append("-\ufffd");
                 this.state = TokenizerState.Comment;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.lastComment.getType();
-                this.addToken(this.lastComment);
+                int ret = this.tokens.Count | this.lastComment.GetType();
+                this.AddToken(this.lastComment);
                 return ret;
               } else {
-                this.lastComment.appendChar('-');
-                this.lastComment.appendChar(ch);
+                this.lastComment.AppendChar('-');
+                this.lastComment.AppendChar(ch);
                 this.state = TokenizerState.Comment;
               }
               break;
@@ -6036,30 +6205,30 @@ this.charInput.ReadChar()
               int ch = this.charInput.ReadChar();
               if (ch == 0x3e) {
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.lastComment.getType();
-                this.addToken(this.lastComment);
+                int ret = this.tokens.Count | this.lastComment.GetType();
+                this.AddToken(this.lastComment);
                 return ret;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.lastComment.Append("--\ufffd");
                 this.state = TokenizerState.Comment;
               } else if (ch == 0x21) { // --!>
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.CommentEndBang;
               } else if (ch == 0x2d) {
-                this.parseError();
-                this.lastComment.appendChar('-');
+                this.ParseError();
+                this.lastComment.AppendChar('-');
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.lastComment.getType();
-                this.addToken(this.lastComment);
+                int ret = this.tokens.Count | this.lastComment.GetType();
+                this.AddToken(this.lastComment);
                 return ret;
               } else {
-                this.parseError();
-                this.lastComment.appendChar('-');
-                this.lastComment.appendChar('-');
-                this.lastComment.appendChar(ch);
+                this.ParseError();
+                this.lastComment.AppendChar('-');
+                this.lastComment.AppendChar('-');
+                this.lastComment.AppendChar(ch);
                 this.state = TokenizerState.Comment;
               }
               break;
@@ -6068,26 +6237,26 @@ this.charInput.ReadChar()
               int ch = this.charInput.ReadChar();
               if (ch == 0x3e) {
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.lastComment.getType();
-                this.addToken(this.lastComment);
+                int ret = this.tokens.Count | this.lastComment.GetType();
+                this.AddToken(this.lastComment);
                 return ret;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.lastComment.Append("--!\ufffd");
                 this.state = TokenizerState.Comment;
               } else if (ch == 0x2d) {
                 this.lastComment.Append("--!");
                 this.state = TokenizerState.CommentEndDash;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.lastComment.getType();
-                this.addToken(this.lastComment);
+                int ret = this.tokens.Count | this.lastComment.GetType();
+                this.AddToken(this.lastComment);
                 return ret;
               } else {
-                this.parseError();
+                this.ParseError();
                 this.lastComment.Append("--!");
-                this.lastComment.appendChar(ch);
+                this.lastComment.AppendChar(ch);
                 this.state = TokenizerState.Comment;
               }
               break;
@@ -6100,7 +6269,7 @@ this.charInput.ReadChar()
               if (this.lastState == TokenizerState.AttributeValueSingleQuoted) {
                 allowed = '\'';
               }
-              int ch = this.parseCharacterReference(allowed);
+              int ch = this.ParseCharacterReference(allowed);
               if (ch < 0) {
                 // more than one character in this reference
                 int index = Math.Abs(ch + 1);
@@ -6125,22 +6294,22 @@ this.charInput.ReadChar()
                 this.state = TokenizerState.SelfClosingStartTag;
               } else if (ch == 0x3e) {
                 this.state = TokenizerState.Data;
-                return this.emitCurrentTag();
+                return this.EmitCurrentTag();
               } else if (ch >= 'A' && ch <= 'Z') {
-                this.currentTag.appendChar((char)(ch + 0x20));
+                this.currentTag.AppendChar((char)(ch + 0x20));
               } else if (ch == 0) {
-                this.parseError();
-                this.currentTag.appendChar((char)0xfffd);
+                this.ParseError();
+                this.currentTag.AppendChar((char)0xfffd);
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
               } else {
-                this.currentTag.append(ch);
+                this.currentTag.Append(ch);
               }
               break;
             }
           case TokenizerState.RawTextLessThan: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               if (ch == 0x2f) {
                 this.tempBuilder.Remove(0, this.tempBuilder.Length);
@@ -6148,7 +6317,7 @@ this.charInput.ReadChar()
               } else {
                 this.state = TokenizerState.RawText;
                 if (ch >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
                 return 0x3c;
               }
@@ -6159,7 +6328,7 @@ this.charInput.ReadChar()
               if (this.bogusCommentCharacter >= 0) {
                 var bogusChar = this.bogusCommentCharacter == 0 ? 0xfffd :
                   this.bogusCommentCharacter;
-                comment.appendChar(bogusChar);
+                comment.AppendChar(bogusChar);
               }
               while (true) {
                 int ch = this.charInput.ReadChar();
@@ -6169,29 +6338,29 @@ this.charInput.ReadChar()
                 if (ch == 0) {
                   ch = 0xfffd;
                 }
-                comment.appendChar(ch);
+                comment.AppendChar(ch);
               }
-              int ret = this.tokens.Count | comment.getType();
-              this.addToken(comment);
+              int ret = this.tokens.Count | comment.GetType();
+              this.AddToken(comment);
               this.state = TokenizerState.Data;
               return ret;
             }
           case TokenizerState.DocType: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               if (ch == 0x09 || ch == 0x0a || ch == 0x0c || ch == 0x20) {
                 this.state = TokenizerState.BeforeDocTypeName;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
                 var valueToken = new DocTypeToken();
                 valueToken.ForceQuirks = true;
-                int ret = this.tokens.Count | valueToken.getType();
-                this.addToken(valueToken);
+                int ret = this.tokens.Count | valueToken.GetType();
+                this.AddToken(valueToken);
                 return ret;
               } else {
-                this.parseError();
-                this.charInput.moveBack(1);
+                this.ParseError();
+                this.charInput.MoveBack(1);
                 this.state = TokenizerState.BeforeDocTypeName;
               }
               break;
@@ -6214,17 +6383,17 @@ this.charInput.ReadChar()
                 }
                 this.state = TokenizerState.DocTypeName;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken = new DocTypeToken();
                 this.docTypeToken.Name.Append((char)0xfffd);
                 this.state = TokenizerState.DocTypeName;
               } else if (ch == 0x3e || ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.Data;
                 var valueToken = new DocTypeToken();
                 valueToken.ForceQuirks = true;
-                int ret = this.tokens.Count | valueToken.getType();
-                this.addToken(valueToken);
+                int ret = this.tokens.Count | valueToken.GetType();
+                this.AddToken(valueToken);
                 return ret;
               } else {
                 this.docTypeToken = new DocTypeToken();
@@ -6246,8 +6415,8 @@ this.charInput.ReadChar()
                 this.state = TokenizerState.AfterDocTypeName;
               } else if (ch == 0x3e) {
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               } else if (ch >= 'A' && ch <= 'Z') {
                 if (ch + 0x20 <= 0xffff) {
@@ -6261,14 +6430,14 @@ this.charInput.ReadChar()
                     0x10000) & 0x3ff) | 0xdc00));
                 }
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.Name.Append((char)0xfffd);
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ForceQuirks = true;
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               } else {
                 if (ch <= 0xffff) {
@@ -6288,19 +6457,19 @@ this.charInput.ReadChar()
                 break;
               } else if (ch == 0x3e) {
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ForceQuirks = true;
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               } else {
                 var ch2 = 0;
-                int pos = this.charInput.setSoftMark();
+                int pos = this.charInput.SetSoftMark();
                 if (ch == 'P' || ch == 'p') {
                   if (((ch2 = this.charInput.ReadChar()) == 'u' || ch2 == 'U'
 ) && ((ch2 = this.charInput.ReadChar()) == 'b' || ch2 == 'B') &&
@@ -6310,8 +6479,8 @@ this.charInput.ReadChar()
 ) {
                     this.state = TokenizerState.AfterDocTypePublic;
                   } else {
-                    this.parseError();
-                    this.charInput.setMarkPosition(pos);
+                    this.ParseError();
+                    this.charInput.SetMarkPosition(pos);
                     this.docTypeToken.ForceQuirks = true;
                     this.state = TokenizerState.BogusDocType;
                   }
@@ -6324,14 +6493,14 @@ this.charInput.ReadChar()
 ) {
                     this.state = TokenizerState.AfterDocTypeSystem;
                   } else {
-                    this.parseError();
-                    this.charInput.setMarkPosition(pos);
+                    this.ParseError();
+                    this.charInput.SetMarkPosition(pos);
                     this.docTypeToken.ForceQuirks = true;
                     this.state = TokenizerState.BogusDocType;
                   }
                 } else {
-                  this.parseError();
-                  this.charInput.setMarkPosition(pos);
+                  this.ParseError();
+                  this.charInput.SetMarkPosition(pos);
                   this.docTypeToken.ForceQuirks = true;
                   this.state = TokenizerState.BogusDocType;
                 }
@@ -6347,23 +6516,23 @@ this.charInput.ReadChar()
                 }
               } else if (ch == 0x22) {
                 if (this.state == TokenizerState.AfterDocTypePublic) {
-                  this.parseError();
+                  this.ParseError();
                 }
                 this.state = TokenizerState.DocTypePublicIDDoubleQuoted;
               } else if (ch == 0x27) {
                 if (this.state == TokenizerState.AfterDocTypePublic) {
-                  this.parseError();
+                  this.ParseError();
                 }
                 this.state = TokenizerState.DocTypePublicIDSingleQuoted;
               } else if (ch == 0x3e || ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ForceQuirks = true;
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               } else {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ForceQuirks = true;
                 this.state = TokenizerState.BogusDocType;
               }
@@ -6378,23 +6547,23 @@ this.charInput.ReadChar()
                 }
               } else if (ch == 0x22) {
                 if (this.state == TokenizerState.AfterDocTypeSystem) {
-                  this.parseError();
+                  this.ParseError();
                 }
                 this.state = TokenizerState.DocTypeSystemIDDoubleQuoted;
               } else if (ch == 0x27) {
                 if (this.state == TokenizerState.AfterDocTypeSystem) {
-                  this.parseError();
+                  this.ParseError();
                 }
                 this.state = TokenizerState.DocTypeSystemIDSingleQuoted;
               } else if (ch == 0x3e || ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ForceQuirks = true;
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               } else {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ForceQuirks = true;
                 this.state = TokenizerState.BogusDocType;
               }
@@ -6408,14 +6577,14 @@ this.charInput.ReadChar()
                     0x22 : 0x27)) {
                 this.state = TokenizerState.AfterDocTypePublicID;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ValuePublicID.Append((char)0xfffd);
               } else if (ch == 0x3e || ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ForceQuirks = true;
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               } else {
                 if (ch <= 0xffff) {
@@ -6438,14 +6607,14 @@ this.charInput.ReadChar()
                     0x22 : 0x27)) {
                 this.state = TokenizerState.AfterDocTypeSystemID;
               } else if (ch == 0) {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ValueSystemID.Append((char)0xfffd);
               } else if (ch == 0x3e || ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ForceQuirks = true;
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               } else {
                 if (ch <= 0xffff) {
@@ -6469,28 +6638,28 @@ this.charInput.ReadChar()
                 }
               } else if (ch == 0x3e) {
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               } else if (ch == 0x22) {
                 if (this.state == TokenizerState.AfterDocTypePublicID) {
-                  this.parseError();
+                  this.ParseError();
                 }
                 this.state = TokenizerState.DocTypeSystemIDDoubleQuoted;
               } else if (ch == 0x27) {
                 if (this.state == TokenizerState.AfterDocTypePublicID) {
-                  this.parseError();
+                  this.ParseError();
                 }
                 this.state = TokenizerState.DocTypeSystemIDSingleQuoted;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ForceQuirks = true;
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               } else {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ForceQuirks = true;
                 this.state = TokenizerState.BogusDocType;
               }
@@ -6502,18 +6671,18 @@ this.charInput.ReadChar()
                 break;
               } else if (ch == 0x3e) {
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               } else if (ch < 0) {
-                this.parseError();
+                this.ParseError();
                 this.docTypeToken.ForceQuirks = true;
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               } else {
-                this.parseError();
+                this.ParseError();
                 this.state = TokenizerState.BogusDocType;
               }
               break;
@@ -6522,8 +6691,8 @@ this.charInput.ReadChar()
               int ch = this.charInput.ReadChar();
               if (ch == 0x3e || ch < 0) {
                 this.state = TokenizerState.Data;
-                int ret = this.tokens.Count | this.docTypeToken.getType();
-                this.addToken(this.docTypeToken);
+                int ret = this.tokens.Count | this.docTypeToken.GetType();
+                this.AddToken(this.docTypeToken);
                 return ret;
               }
               break;
@@ -6592,7 +6761,7 @@ this.charInput.ReadChar()
               break;
             }
           case TokenizerState.RcDataLessThan: {
-              this.charInput.setHardMark();
+              this.charInput.SetHardMark();
               int ch = this.charInput.ReadChar();
               if (ch == 0x2f) {
                 this.tempBuilder.Remove(0, this.tempBuilder.Length);
@@ -6600,7 +6769,7 @@ this.charInput.ReadChar()
               } else {
                 this.state = TokenizerState.RcData;
                 if (ch >= 0) {
-                  this.charInput.moveBack(1);
+                  this.charInput.MoveBack(1);
                 }
                 return 0x3c;
               }
@@ -6611,23 +6780,25 @@ this.charInput.ReadChar()
       }
     }
 
-    private IElement popCurrentNode() {
+    private IElement PopCurrentNode() {
       return (this.openElements.Count > 0) ?
-        removeAtIndex(this.openElements, this.openElements.Count - 1) : null;
+        RemoveAtIndex(this.openElements, this.openElements.Count - 1) : null;
     }
 
-    private void pushFormattingElement(StartTagToken tag) {
-      Element valueElement = this.addHtmlElement(tag);
+    private void PushFormattingElement(StartTagToken tag) {
+      Element valueElement = this.AddHtmlElement(tag);
       var matchingElements = 0;
       var lastMatchingElement = -1;
       string valueName = valueElement.getLocalName();
       for (int i = this.formattingElements.Count - 1; i >= 0; --i) {
         FormattingElement fe = this.formattingElements[i];
-        if (fe.isMarker()) {
+        if (fe.IsMarker()) {
           break;
         }
-        if (fe.Element.getLocalName().Equals(valueName) &&
-  fe.Element.getNamespaceURI().Equals(valueElement.getNamespaceURI())) {
+        if (fe.Element.getLocalName().Equals(valueName,
+  StringComparison.Ordinal) &&
+  fe.Element.getNamespaceURI().Equals(valueElement.getNamespaceURI(),
+  StringComparison.Ordinal)) {
           IList<IAttr> attribs = fe.Element.getAttributes();
           IList<IAttr> myAttribs = valueElement.getAttributes();
           if (attribs.Count == myAttribs.Count) {
@@ -6636,10 +6807,11 @@ this.charInput.ReadChar()
               string name1 = myAttribs[j].getName();
               string _namespace = myAttribs[j].getNamespaceURI();
               string value = myAttribs[j].getValue();
-              string otherValue = fe.Element.getAttributeNS(
+              string otherValue = fe.Element.GetAttributeNS(
                 _namespace,
                 name1);
-              if (otherValue == null || !otherValue.Equals(value)) {
+              if (otherValue == null || !otherValue.Equals(value,
+  StringComparison.Ordinal)) {
                 match = false;
               }
             }
@@ -6660,7 +6832,7 @@ this.charInput.ReadChar()
       this.formattingElements.Add(fe2);
     }
 
-    private void reconstructFormatting() {
+    private void ReconstructFormatting() {
       if (this.formattingElements.Count == 0) {
         return;
       }
@@ -6668,14 +6840,14 @@ this.charInput.ReadChar()
       // DebugUtility.Log(formattingElements);
       FormattingElement fe =
         this.formattingElements[this.formattingElements.Count - 1];
-      if (fe.isMarker() || this.openElements.Contains(fe.Element)) {
+      if (fe.IsMarker() || this.openElements.Contains(fe.Element)) {
         return;
       }
       int i = this.formattingElements.Count - 1;
       while (i > 0) {
         fe = this.formattingElements[i - 1];
         --i;
-        if (!fe.isMarker() && !this.openElements.Contains(fe.Element)) {
+        if (!fe.IsMarker() && !this.openElements.Contains(fe.Element)) {
           continue;
         }
         ++i;
@@ -6683,16 +6855,16 @@ this.charInput.ReadChar()
       }
       for (int j = i; j < this.formattingElements.Count; ++j) {
         fe = this.formattingElements[j];
-        Element valueElement = this.addHtmlElement(fe.Token);
+        Element valueElement = this.AddHtmlElement(fe.Token);
         fe.Element = valueElement;
         fe.ValueMarker = false;
       }
     }
 
-    private void removeFormattingElement(IElement valueAElement) {
+    private void RemoveFormattingElement(IElement valueAElement) {
       FormattingElement f = null;
       foreach (var fe in this.formattingElements) {
-        if (!fe.isMarker() && valueAElement.Equals(fe.Element)) {
+        if (!fe.IsMarker() && valueAElement.Equals(fe.Element)) {
           f = fe;
           break;
         }
@@ -6702,7 +6874,7 @@ this.charInput.ReadChar()
       }
     }
 
-    private void resetInsertionMode() {
+    private void ResetInsertionMode() {
       var last = false;
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
@@ -6755,7 +6927,7 @@ this.charInput.ReadChar()
           this.insertionMode = InsertionMode.InFrameset;
           break;
         }
-        if (HtmlCommon.isHtmlElement(e, "html")) {
+        if (HtmlCommon.isHtmlElement(e, "Html")) {
           this.insertionMode = (this.headElement == null) ?
                 InsertionMode.BeforeHead : InsertionMode.AfterHead;
           break;
@@ -6782,29 +6954,29 @@ HtmlCommon.isHtmlElement(e, "tfoot")) {
       }
     }
 
-    internal void setCData() {
+    internal void SetCData() {
       this.state = TokenizerState.CData;
     }
 
-    internal void setPlainText() {
+    internal void SetPlainText() {
       this.state = TokenizerState.PlainText;
     }
 
-    internal void setRawText() {
+    internal void SetRawText() {
       this.state = TokenizerState.RawText;
     }
 
-    internal void setRcData() {
+    internal void SetRcData() {
       this.state = TokenizerState.RcData;
     }
 
-    private void skipLineFeed() {
-      int mark = this.charInput.setSoftMark();
+    private void SkipLineFeed() {
+      int mark = this.charInput.SetSoftMark();
       int nextToken = this.charInput.ReadChar();
       if (nextToken == 0x0a) {
         return; // ignore the valueToken if it's 0x0A
       } else if (nextToken == 0x26) { // start of character reference
-        int charref = this.parseCharacterReference(-1);
+        int charref = this.ParseCharacterReference(-1);
         if (charref < 0) {
           // more than one character in this reference
           int index = Math.Abs(charref + 1);
@@ -6817,11 +6989,11 @@ HtmlCommon.isHtmlElement(e, "tfoot")) {
         }
       } else {
         // anything else; reset the input stream
-        this.charInput.setMarkPosition(mark);
+        this.charInput.SetMarkPosition(mark);
       }
     }
 
-    private void stopParsing() {
+    private void StopParsing() {
       this.done = true;
       if (String.IsNullOrEmpty(this.valueDocument.DefaultLanguage)) {
         if (this.contentLanguage.Length == 1) {

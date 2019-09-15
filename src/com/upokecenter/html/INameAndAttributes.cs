@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
   internal interface INameAndAttributes {
-    string getName();
+    string GetName();
 
-    IList<Attr> getAttributes();
+    IList<Attr> GetAttributes();
   }
 }

@@ -27,9 +27,8 @@ THE SOFTWARE.
 using System;
 using System.IO;
 
-namespace com.upokecenter.net {
+namespace Com.Upokecenter.Net {
     /// <summary>Not documented yet.</summary>
-  ///
 public class NoConnectionException : IOException {
 }
 }

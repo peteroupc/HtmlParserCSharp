@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Com.Upokecenter.Html;
+using Com.Upokecenter.util;
 using PeterO;
-using com.upokecenter.html;
-using com.upokecenter.util;
 
-namespace com.upokecenter.html.data {
+namespace Com.Upokecenter.Html.Data {
     /// <summary>Implements Exclusive XML Canonicalization as specified at:
     /// http://www.w3.org/TR/xml-exc-c14n/.</summary>
-  ///
 sealed class ExclusiveCanonicalXML {
   private sealed class AttrComparer : IComparer<IAttr> {
     public int Compare(IAttr arg0, IAttr arg1) {
@@ -82,14 +81,14 @@ sealed class ExclusiveCanonicalXML {
   private static readonly IComparer<IAttr> ValueAttrNamespaceComparer = new
     NamespaceAttrComparer();
 
-  public static string canonicalize(
+  public static string Canonicalize(
       INode node,
       bool includeRoot,
       IDictionary<string, string> prefixList) {
-    return canonicalize(node, includeRoot, prefixList, false);
+    return Canonicalize(node, includeRoot, prefixList, false);
   }
 
-  public static string canonicalize(
+  public static string Canonicalize(
       INode node,
       bool includeRoot,
       IDictionary<string, string> prefixList,
@@ -98,12 +97,12 @@ sealed class ExclusiveCanonicalXML {
       throw new ArgumentNullException(nameof(node));
     }
     var builder = new StringBuilder();
-IList<IDictionary<string, string>> stack = new
+    IList<IDictionary<string, string>> stack = new
       List<IDictionary<string, string>>();
     prefixList = prefixList ?? (new Dictionary<string, string>());
-      foreach (var valuePrefix in prefixList.Keys) {
+    foreach (var valuePrefix in prefixList.Keys) {
         string nsvalue = prefixList[valuePrefix];
-        checkNamespacePrefix(valuePrefix, nsvalue);
+        CheckNamespacePrefix(valuePrefix, nsvalue);
     }
     Dictionary<string, string> item = new Dictionary<string, string>();
     stack.Add(item);
@@ -112,23 +111,23 @@ IList<IDictionary<string, string>> stack = new
       foreach (var child in node.getChildNodes()) {
         if (child is IElement) {
           beforeElement = false;
-          canonicalize(child, builder, stack, prefixList, true, withComments);
+          Canonicalize(child, builder, stack, prefixList, true, withComments);
         } else if (withComments || child.getNodeType() !=
           NodeType.COMMENT_NODE) {
-          canonicalizeOutsideElement(child, builder, beforeElement);
+          CanonicalizeOutsideElement(child, builder, beforeElement);
         }
       }
     } else if (includeRoot) {
-      canonicalize(node, builder, stack, prefixList, true, withComments);
+      Canonicalize(node, builder, stack, prefixList, true, withComments);
     } else {
       foreach (var child in node.getChildNodes()) {
-        canonicalize(child, builder, stack, prefixList, true, withComments);
+        Canonicalize(child, builder, stack, prefixList, true, withComments);
       }
     }
     return builder.ToString();
   }
 
-  private static void canonicalize(
+  private static void Canonicalize(
       INode node,
       StringBuilder builder,
       IList<IDictionary<string, string>> namespaceStack,
@@ -145,15 +144,15 @@ IList<IDictionary<string, string>> stack = new
     } else if (nodeType == NodeType.PROCESSING_INSTRUCTION_NODE) {
       builder.Append("<?");
       builder.Append(((IProcessingInstruction)node).getTarget());
-      string data = ((IProcessingInstruction)node).getData();
-      if (data.Length > 0) {
+      string Data = ((IProcessingInstruction)node).getData();
+      if (Data.Length > 0) {
         builder.Append(' ');
-        builder.Append(data);
+        builder.Append(Data);
       }
       builder.Append("?>");
     } else if (nodeType == NodeType.ELEMENT_NODE) {
       var e = (IElement)node;
-  IDictionary<string, string>
+      IDictionary<string, string>
         valueNsRendered = namespaceStack[namespaceStack.Count - 1];
       var copied = false;
       builder.Append('<');
@@ -163,28 +162,28 @@ IList<IDictionary<string, string>> stack = new
       }
       builder.Append(e.getLocalName());
       var attrs = new List<IAttr>();
-      ISet<string> declaredNames = null;
+      HashSet<string> declaredNames = null;
       if (addPrefixes && prefixList.Count > 0) {
         declaredNames = new HashSet<string>();
       }
       foreach (var attr in e.getAttributes()) {
         string valueName = attr.getName();
         string nsvalue = null;
-        if ("xmlns".Equals(valueName)) {
+        if ("xmlns".Equals(valueName, StringComparison.Ordinal)) {
           attrs.Add(attr); // add default namespace
-            if (declaredNames != null) {
-              declaredNames.Add(String.Empty);
-            }
+          if (declaredNames != null) {
+            declaredNames.Add(String.Empty);
+          }
           nsvalue = attr.getValue();
-          checkNamespacePrefix(String.Empty, nsvalue);
+          CheckNamespacePrefix(String.Empty, nsvalue);
         } else if (valueName.StartsWith("xmlns:", StringComparison.Ordinal) &&
           valueName.Length > 6) {
           attrs.Add(attr); // add valuePrefix namespace
-            if (declaredNames != null) {
-              declaredNames.Add(attr.getLocalName());
-            }
+          if (declaredNames != null) {
+            declaredNames.Add(attr.getLocalName());
+          }
           nsvalue = attr.getValue();
-          checkNamespacePrefix(attr.getLocalName(), nsvalue);
+          CheckNamespacePrefix(attr.getLocalName(), nsvalue);
         }
       }
       if (declaredNames != null) {
@@ -218,25 +217,29 @@ IList<IDictionary<string, string>> stack = new
           //);
 
           // changed condition for Exclusive XML Canonicalization
-          renderNamespace = (isVisiblyUtilized(e, String.Empty) ||
+          renderNamespace = (IsVisiblyUtilized(e, String.Empty) ||
               prefixList.ContainsKey(String.Empty)) &&
                 valueNsRendered.ContainsKey(String.Empty);
               } else {
           string renderedValue = valueNsRendered[valuePrefix];
-       renderNamespace = renderedValue == null || !renderedValue.Equals(value);
+          renderNamespace = renderedValue == null || !renderedValue.Equals(
+            value,
+            StringComparison.Ordinal);
           // added condition for Exclusive XML Canonicalization
-     renderNamespace = renderNamespace && (isVisiblyUtilized(e, valuePrefix) ||
+          renderNamespace = renderNamespace && (
+            IsVisiblyUtilized(e, valuePrefix) ||
             prefixList.ContainsKey(valuePrefix));
         }
         if (renderNamespace) {
-          renderAttribute(
+          RenderAttribute(
             builder,
             isEmpty ? null : "xmlns",
             isEmpty ? "xmlns" : valuePrefix,
             value);
           if (!copied) {
             copied = true;
-    valueNsRendered = new Dictionary<string, string>(valueNsRendered);
+            valueNsRendered = new Dictionary<string, string>(
+              valueNsRendered);
           }
           valueNsRendered.Add(valuePrefix, value);
         }
@@ -246,7 +249,7 @@ IList<IDictionary<string, string>> stack = new
       // All other attributes
       foreach (var attr in e.getAttributes()) {
         string valueName = attr.getName();
-        if (!("xmlns".Equals(valueName) ||
+        if (!("xmlns".Equals(valueName, StringComparison.Ordinal) ||
        (valueName.StartsWith("xmlns:", StringComparison.Ordinal) &&
               valueName.Length > 6))) {
           // non-_namespace node
@@ -255,7 +258,7 @@ IList<IDictionary<string, string>> stack = new
       }
       attrs.Sort(ValueAttrComparer);
       foreach (var attr in attrs) {
-        renderAttribute(
+        RenderAttribute(
   builder,
   attr.getPrefix(),
   attr.getLocalName(),
@@ -263,7 +266,7 @@ IList<IDictionary<string, string>> stack = new
       }
       builder.Append('>');
       foreach (var child in node.getChildNodes()) {
-        canonicalize(child, builder, namespaceStack, prefixList, false,
+        Canonicalize(child, builder, namespaceStack, prefixList, false,
   withComments);
       }
       namespaceStack.RemoveAt(namespaceStack.Count - 1);
@@ -293,7 +296,7 @@ IList<IDictionary<string, string>> stack = new
     }
   }
 
-  private static void canonicalizeOutsideElement(
+  private static void CanonicalizeOutsideElement(
     INode node,
     StringBuilder builder,
     bool beforeDocument) {
@@ -314,10 +317,10 @@ IList<IDictionary<string, string>> stack = new
       }
       builder.Append("<?");
       builder.Append(((IProcessingInstruction)node).getTarget());
-      string data = ((IProcessingInstruction)node).getData();
-      if (data.Length > 0) {
+      string Data = ((IProcessingInstruction)node).getData();
+      if (Data.Length > 0) {
         builder.Append(' ');
-        builder.Append(data);
+        builder.Append(Data);
       }
       builder.Append("?>");
       if (beforeDocument) {
@@ -326,19 +329,22 @@ IList<IDictionary<string, string>> stack = new
     }
   }
 
-  private static void checkNamespacePrefix(string valuePrefix, string nsvalue) {
-    if (valuePrefix.Equals("xmlns")) {
+  private static void CheckNamespacePrefix(string valuePrefix, string nsvalue) {
+    if (valuePrefix.Equals("xmlns", StringComparison.Ordinal)) {
  throw new ArgumentException("'xmlns' _namespace declared");
 }
-    if (valuePrefix.Equals("xml") && !"http://www.w3.org/XML/1998/namespace"
+    if (valuePrefix.Equals("xml", StringComparison.Ordinal) &&
+!"http://www.w3.org/XML/1998/namespace"
       .Equals(nsvalue)) {
  throw new ArgumentException("'xml' bound to wrong namespace valueName");
 }
-    if (!"xml" .Equals(valuePrefix) && "http://www.w3.org/XML/1998/namespace"
+    if (!"xml".Equals(valuePrefix, StringComparison.Ordinal) &&
+"http://www.w3.org/XML/1998/namespace"
       .Equals(nsvalue)) {
  throw new ArgumentException("'xml' bound to wrong namespace valueName");
 }
-    if ("http://www.w3.org/2000/xmlns/".Equals(nsvalue)) {
+    if ("http://www.w3.org/2000/xmlns/".Equals(nsvalue,
+  StringComparison.Ordinal)) {
  throw new
    ArgumentException("'valuePrefix' bound to xmlns namespace valueName");
 }
@@ -346,15 +352,15 @@ IList<IDictionary<string, string>> stack = new
       if (!URIUtility.HasSchemeForURI(nsvalue)) {
  throw new ArgumentException(nsvalue + " is not a valid namespace URI.");
 }
-    } else if (!String.Empty.Equals(valuePrefix)) {
+    } else if (!String.Empty.Equals(valuePrefix, StringComparison.Ordinal)) {
  throw new ArgumentException("can't undeclare a valuePrefix");
 }
   }
 
-  private static bool isVisiblyUtilized(IElement element, string s) {
+  private static bool IsVisiblyUtilized(IElement element, string s) {
     string valuePrefix = element.getPrefix();
     valuePrefix = valuePrefix ?? String.Empty;
-    if (s.Equals(valuePrefix)) {
+    if (s.Equals(valuePrefix, StringComparison.Ordinal)) {
       return true;
     }
     if (s.Length > 0) {
@@ -363,7 +369,7 @@ IList<IDictionary<string, string>> stack = new
         if (valuePrefix == null) {
           continue;
         }
-        if (s.Equals(valuePrefix)) {
+        if (s.Equals(valuePrefix, StringComparison.Ordinal)) {
           return true;
         }
       }
@@ -371,7 +377,7 @@ IList<IDictionary<string, string>> stack = new
     return false;
   }
 
-  private static void renderAttribute(
+  private static void RenderAttribute(
     StringBuilder builder,
     string valuePrefix,
     string valueName,

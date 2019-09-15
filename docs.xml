@@ -199,10 +199,9 @@
 <doc name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader)">
 
             <summary>Parses an HTML document from an input stream, using
-            "about:blank" as its address. @param stream an input stream @ if an
+            "about:blank" as its address. @ if an
             I/O error occurs.</summary>
-            <param name='stream'>The parameter <paramref name='stream'/> is a
-            IReader object.</param>
+            <param name='stream'>An input stream.</param>
             <returns>An IDocument object.</returns>
 
 </doc>
@@ -251,22 +250,18 @@
 <doc name="M:com.upokecenter.html.HtmlDocument.parseStream(PeterO.IReader,System.String,System.String,System.String,System.Boolean)">
 
             <summary>* Parses an HTML document from an input stream, using the
-            given URL as its address. @param stream an input stream
-            representing an HTML document. @param address an absolute URL
-            representing an address. @param contentType Desired MIME media type
-            of the document, including the charset parameter, if any. Examples:
-            "text/html" or "application/xhtml+xml; charset=utf-8". @param
-            contentLang Language tag from the Content-Language header @return
-            an IDocument representing the HTML document. @ if an I/O error
+            given URL as its address. @ if an I/O error
             occurs @ if the given address is not an absolute URL.</summary>
-            <param name='stream'>The parameter <paramref name='stream'/> is a
-            IReader object.</param>
-            <param name='address'>The parameter <paramref name='address'/> is a
-            text string.</param>
-            <param name='contentType'>The parameter <paramref name='contentType'/> is a text string.</param>
-            <param name='contentLang'>The parameter <paramref name='contentLang'/> is a text string.</param>
+            <param name='stream'>An input stream
+            representing an HTML document.</param>
+            <param name='address'>An absolute URL
+            representing an address.</param>
+            <param name='contentType'>Desired MIME media type
+            of the document, including the charset parameter, if any. Examples:
+            "text/html" or "application/xhtml+xml; charset=utf-8".</param>
+            <param name='contentLang'>Language tag from the Content-Language header.</param>
             <param name='checkError'>Either <c>true</c> or <c>false</c>.</param>
-            <returns>An IDocument object.</returns>
+            <returns>An IDocument representing the HTML document.</returns>
             <exception cref='ArgumentNullException'>The parameter <paramref name='stream'/> or <paramref name='address'/> or <paramref name='contentType'/> is null.</exception>
 
 </doc>
@@ -327,8 +322,7 @@
 </doc>
 <doc name="M:com.upokecenter.html.IDocument.getCharset">
 
-            <summary>Gets the character encoding used in this document. @return
-            A character encoding name.</summary>
+            <summary>Gets the character encoding used in this document.</summary>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
@@ -355,8 +349,8 @@
 <doc name="M:com.upokecenter.html.IDocument.getElementsByTagName(System.String)">
 
             <summary>Gets all descendents, both direct and indirect, that have
-            the specified tag name, using ASCII case-insensitive matching.
-            @param _string A tag name.</summary>
+            the specified tag name, using a basic case-insensitive comparison.  (Two strings are equal in such a comparison, if they match after converting the basic upper-case letters A to Z (U+0041 to U+005A) in both strings to basic lower-case letters.)
+            @param string A tag name.</summary>
             <param name='_string'>The parameter <paramref name='_string'/> is a
             text string.</param>
             <returns>The return value is not documented yet.</returns>
@@ -364,8 +358,7 @@
 </doc>
 <doc name="M:com.upokecenter.html.IDocument.getURL">
 
-            <summary>Gets the document's address @return An absolute
-            URL.</summary>
+            <summary>Gets the document's address</summary>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
@@ -401,11 +394,9 @@
 </doc>
 <doc name="M:com.upokecenter.html.IElement.getAttribute(System.String)">
 
-            <summary>Gets an attribute declared on this element. @param name an
-            attribute name. @return the attribute's value, or null if the
-            attribute doesn't exist.</summary>
-            <param name='name'>The parameter <paramref name='name'/> is a text
-            string.</param>
+            <summary>Gets an attribute declared on this element.</summary>
+            <param name='name'>An
+            attribute name.</param>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
@@ -413,9 +404,7 @@
 
             <summary>Gets an attribute of this element, with the given
             _namespace name and local name. @param _namespace the attribute's
-            _namespace name. @param name the attribute's local name. @return
-            the attribute's value, or null if the attribute doesn't
-            exist.</summary>
+            _namespace name. @param name the attribute's local name.</summary>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
@@ -439,35 +428,27 @@
 <doc name="M:com.upokecenter.html.IElement.getElementsByTagName(System.String)">
 
             <summary>Gets all descendents, both direct and indirect, that have
-            the specified tag name, using ASCII case-insensitive matching.
-            @param tagName A tag name.</summary>
-            <param name='tagName'>The parameter <paramref name='tagName'/> is a
-            text string.</param>
+            the specified tag name, using a basic case-insensitive comparison.  (Two strings are equal in such a comparison, if they match after converting the basic upper-case letters A to Z (U+0041 to U+005A) in both strings to basic lower-case letters.)</summary>
+            <param name='tagName'>A tag name.</param>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
 <doc name="M:com.upokecenter.html.IElement.getId">
 
-            <summary>Gets the value of the id attribute on this element.
-            @return the value of the id attribute, or null if it doesn't
-            exist.</summary>
+            <summary>Gets the value of the id attribute on this element.</summary>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
 <doc name="M:com.upokecenter.html.IElement.getInnerHTML">
 
-            <summary>Gets a serialized form of this HTML element. @return a
-            _string consisting of the serialized form of this element's
-            children, in HTML.</summary>
+            <summary>Gets a serialized form of this HTML element.</summary>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
 <doc name="M:com.upokecenter.html.IElement.getLocalName">
 
             <summary>Gets the element's local name. For elements with no
-            _namespace, this will equal the element's tag name. @return the
-            element's local name. This method doesn't convert it to uppercase
-            even for HTML elements, unlike getTagName.</summary>
+            _namespace, this will equal the element's tag name.</summary>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
@@ -486,15 +467,13 @@
 </doc>
 <doc name="M:com.upokecenter.html.IElement.getTagName">
 
-            <summary>Gets the name of the element as used on its HTML tags.
-            @return the element's tag name. For HTML elements, an uppercase
-            version of the name will be returned.</summary>
+            <summary>Gets the name of the element as used on its HTML tags.</summary>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
 <doc name="T:com.upokecenter.html.INode">
 
-            <summary>Represents a node in the document _object model (DOM). All
+            <summary>Represents a node in the document object model (DOM). All
             DOM objects implement this interface.</summary>
 
 </doc>
@@ -514,8 +493,7 @@
 </doc>
 <doc name="M:com.upokecenter.html.INode.getChildNodes">
 
-            <summary>Gets the direct children of this node. @return A list of
-            the direct children of this node.</summary>
+            <summary>Gets the direct children of this node.</summary>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
@@ -535,30 +513,25 @@
 </doc>
 <doc name="M:com.upokecenter.html.INode.getNodeType">
 
-            <summary>Returns the type of node represented by this _object.
-            @return A node type integer; see NodeType.</summary>
+            <summary>Returns the type of node represented by this object.</summary>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
 <doc name="M:com.upokecenter.html.INode.getOwnerDocument">
 
-            <summary>Gets the document that owns this node. @return the owner
-            document, or null if this is a document _object.</summary>
+            <summary>Gets the document that owns this node.</summary>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
 <doc name="M:com.upokecenter.html.INode.getParentNode">
 
-            <summary>Gets the parent node of this node. @return the parent
-            node, or null if this is the root node.</summary>
+            <summary>Gets the parent node of this node.</summary>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
 <doc name="M:com.upokecenter.html.INode.getTextContent">
 
-            <summary>Gets all the text found within this element. @return All
-            the concatenated text, except comments, for Element nodes; or the
-            text of Comment nodes; or null otherwise.</summary>
+            <summary>Gets all the text found within this element.</summary>
             <returns>The return value is not documented yet.</returns>
 
 </doc>
@@ -659,26 +632,24 @@
 <doc name="M:com.upokecenter.html.data.Microformats.getMicroformatsJSON(com.upokecenter.html.IDocument)">
 
             <summary>Scans an HTML document for Microformats.org metadata. The
-            resulting _object will contain an "items" property, an array of all
+            resulting object will contain an "items" property, an array of all
             Microformats items. Each item will have a "type" and "properties"
-            properties. @param root the document to scan. @return a JSON
-            _object containing Microformats metadata.</summary>
-            <param name='root'>The parameter <paramref name='root'/> is
-            a.upokecenter.html.IDocument object.</param>
-            <returns>A CBORObject object.</returns>
+            properties.</summary>
+            <param name='root'>The document to scan.</param>
+            <returns>A JSON
+            object containing Microformats metadata.</returns>
             <exception cref='ArgumentNullException'>The parameter <paramref name='root'/> is null.</exception>
 
 </doc>
 <doc name="M:com.upokecenter.html.data.Microformats.getMicroformatsJSON(com.upokecenter.html.IElement)">
 
             <summary>Scans an HTML element for Microformats.org metadata. The
-            resulting _object will contain an "items" property, an array of all
+            resulting object will contain an "items" property, an array of all
             Microformats items. Each item will have a "type" and "properties"
-            properties. @param root the element to scan. @return a JSON _object
-            containing Microformats metadata.</summary>
-            <param name='root'>The parameter <paramref name='root'/> is
-            a.upokecenter.html.IElement object.</param>
-            <returns>A CBORObject object.</returns>
+            properties.</summary>
+            <param name='root'>The element to scan.</param>
+            <returns>A JSON object
+            containing Microformats metadata.</returns>
             <exception cref='ArgumentNullException'>The parameter <paramref name='root'/> is null.</exception>
 
 </doc>
@@ -710,31 +681,23 @@
 
 </doc>
 <doc name="M:com.upokecenter.html.data.RDFInternal.replaceBlankNodes(System.Collections.Generic.ISet{PeterO.Rdf.RDFTriple},System.Collections.Generic.IDictionary{System.String,PeterO.Rdf.RDFTerm})">
-
-            <summary>Replaces certain blank nodes with blank nodes whose names
+<summary>Replaces certain blank nodes with blank nodes whose names
             meet the N-Triples requirements.</summary>
             <param name='triples'>A set of RDF triples.</param>
             <param name='bnodeLabels'>A mapping of blank node names already
             allocated. This method will modify this object as needed to
             allocate new blank nodes.</param>
-
 </doc>
 <doc name="T:com.upokecenter.html.data.RDFa">
-
-            <summary>Not documented yet.</summary>
-
+<summary>Not documented yet.</summary>
 </doc>
 <doc name="M:com.upokecenter.html.data.RDFa.#ctor(com.upokecenter.html.IDocument)">
-
-            <param name='document'>The parameter <paramref name='document'/> is
+<param name='document'>The parameter <paramref name='document'/> is
             an IDocument object.</param>
-
 </doc>
 <doc name="M:com.upokecenter.html.data.RDFa.Parse">
-
-            <summary>Not documented yet.</summary>
+<summary>Not documented yet.</summary>
             <returns>An ISet(RDFTriple) object.</returns>
-
 </doc>
 <doc name="T:com.upokecenter.io.ConditionalBufferInputStream">
 
@@ -969,7 +932,7 @@
             note: For the response to be cacheable, the entire stream must be
             read to the end. @param url URL of the resource. This may not be
             the same as the URL that the resource actually resolves to. For
-            that, call the getUrl() method of the _headers_ _object. @param
+            that, call the getUrl() method of the _headers_ object. @param
             stream Input stream for the response body. The listener must not
             close the stream. @param headers Contains the headers returned by
             the response. @.</summary>
@@ -1111,30 +1074,26 @@
 </doc>
 <doc name="M:com.upokecenter.util.StringUtility.SplitAtSpTabCrLf(System.String)">
 
-            <summary>Splits a _string separated by space characters other than
+            <summary>Splits a string separated by space characters other than
             form feed. This method acts as though it strips leading and
-            trailing space characters from the _string before splitting it. The
-            space characters used here are U+0009, U+000A, U+000D, and U+0020.
-            @param s a _string. Can be null. @return an array of all items
-            separated by spaces. If _string is null or empty, returns an empty
-            array.</summary>
-            <param name='s'>The parameter <paramref name='s'/> is a text
-            string.</param>
-            <returns>A string[] object.</returns>
+            trailing space characters from the string before splitting it. The
+            space characters used here are U+0009, U+000A, U+000D, and U+0020.</summary>
+            <param name='s'>A string. Can be null.</param>
+            <returns>An array of all items
+            separated by spaces. If string is null or empty, returns an empty
+            array.</returns>
 
 </doc>
 <doc name="M:com.upokecenter.util.StringUtility.SplitAtSpTabCrLfFf(System.String)">
 
-            <summary>Splits a _string separated by space characters. This
+            <summary>Splits a string separated by space characters. This
             method acts as though it strips leading and trailing space
-            characters from the _string before splitting it. The space
-            characters are U+0009, U+000A, U+000C, U+000D, and U+0020. @param s
-            a _string. Can be null. @return an array of all items separated by
-            spaces. If _string is null or empty, returns an empty
-            array.</summary>
-            <param name='s'>The parameter <paramref name='s'/> is a text
-            string.</param>
-            <returns>A string[] object.</returns>
+            characters from the string before splitting it. The space
+            characters are U+0009, U+000A, U+000C, U+000D, and U+0020.</summary>
+            <param name='s'>A string. Can be null.</param>
+            <returns>An array of all items separated by
+            spaces. If string is null or empty, returns an empty
+            array.</returns>
 
 </doc>
 <doc name="M:com.upokecenter.util.StringUtility.isNullOrSpaces(System.String)">
@@ -1147,19 +1106,18 @@
 </doc>
 <doc name="M:com.upokecenter.util.StringUtility.splitAt(System.String,System.String)">
 
-            <summary>Splits a _string by a delimiter. If the _string ends with
-            the delimiter, the result will end with an empty _string. If the
-            _string begins with the delimiter, the result will start with an
-            empty _string. If the delimiter is null or empty, exception. @param
-            s a _string to split. @param delimiter a _string to signal where
-            each substring begins and ends. @return An array containing strings
-            that are split by the delimiter. If s is null or empty, returns an
-            array whose sole element is the empty _string.</summary>
+            <summary>Splits a string by a delimiter. If the string ends with
+            the delimiter, the result will end with an empty string. If the
+            string begins with the delimiter, the result will start with an
+            empty string. If the delimiter is null or empty, exception. @param
+            s a string to split.</summary>
             <param name='str'>The parameter <paramref name='str'/> is a text
             string.</param>
-            <param name='delimiter'>The parameter <paramref name='delimiter'/>
-            is a text string.</param>
-            <returns>A string[] object.</returns>
+            <param name='delimiter'>A string to signal where
+            each substring begins and ends.</param>
+            <returns>An array containing strings
+            that are split by the delimiter. If s is null or empty, returns an
+            array whose sole element is the empty string.</returns>
             <exception cref='ArgumentNullException'>The parameter <paramref name='delimiter'/> is null.</exception>
             <exception cref='ArgumentException'>Delimiter is empty.</exception>
 
@@ -1218,14 +1176,12 @@
 <doc name="M:com.upokecenter.util.SunriseSunset.getCurrentDayState(System.Double,System.Double)">
 
             <summary>Gets a value indicating whether it's currently day or
-            night at the given geographic location. @param lat @param lon a
-            geographic longitude, in degrees. West coordinates are negative.
-            @return A day state value.</summary>
+            night at the given geographic location.</summary>
             <param name='lat'>A geographic latitude, in degrees. South
             coordinates are negative.</param>
-            <param name='lon'>The parameter <paramref name='lon'/> is a Double
-            object.</param>
-            <returns>A DayState object.</returns>
+            <param name='lon'>A
+            geographic longitude, in degrees. West coordinates are negative.</param>
+            <returns>A day state value.</returns>
 
 </doc>
 <doc name="T:com.upokecenter.util.URIUtility">
@@ -1299,45 +1255,35 @@
     </summary>
 </doc>
 <doc name="F:com.upokecenter.util.URIUtility.ParseMode.IRILenient">
-
-            <summary>The rules only check for the appropriate delimiters when
+<summary>The rules only check for the appropriate delimiters when
             splitting the path, without checking if all the characters in each
             component are valid. Even with this mode, strings with unpaired
             surrogate code points are considered invalid.</summary>
-
 </doc>
 <doc name="F:com.upokecenter.util.URIUtility.ParseMode.IRIStrict">
-
-            <summary>The rules follow the syntax for parsing IRIs. In
+<summary>The rules follow the syntax for parsing IRIs. In
             particular, many code points outside the Basic Latin range (U+0000
             to U+007F) are allowed. Strings with unpaired surrogate code points
             are considered invalid.</summary>
-
 </doc>
 <doc name="F:com.upokecenter.util.URIUtility.ParseMode.IRISurrogateLenient">
-
-            <summary>The rules only check for the appropriate delimiters when
+<summary>The rules only check for the appropriate delimiters when
             splitting the path, without checking if all the characters in each
             component are valid. Unpaired surrogate code points are treated as
             though they were replacement characters instead for the purposes of
             these rules, so that strings with those code points are not
             considered invalid strings.</summary>
-
 </doc>
 <doc name="F:com.upokecenter.util.URIUtility.ParseMode.URILenient">
-
-            <summary>The rules only check for the appropriate delimiters when
+<summary>The rules only check for the appropriate delimiters when
             splitting the path, without checking if all the characters in each
             component are valid. Code points outside the Basic Latin range
             (U+0000 to U+007F) are not allowed.</summary>
-
 </doc>
 <doc name="F:com.upokecenter.util.URIUtility.ParseMode.URIStrict">
-
-            <summary>The rules follow the syntax for parsing IRIs, except that
+<summary>The rules follow the syntax for parsing IRIs, except that
             code points outside the Basic Latin range (U+0000 to U+007F) are
             not allowed.</summary>
-
 </doc>
 <doc name="M:com.upokecenter.util.URIUtility.PercentDecode(System.String)">
 <summary>Decodes percent-encoding (of the form "%XX" where X is a hexadecimal
@@ -1566,7 +1512,7 @@
 </doc>
 <doc name="T:com.upokecenter.util.URL">
 
-            <summary>A URL _object under the WHATWG's URL specification. See
+            <summary>A URL object under the WHATWG's URL specification. See
             http://url.spec.whatwg.org/.</summary>
 
 </doc>

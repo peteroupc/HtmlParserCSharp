@@ -27,7 +27,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
 internal sealed class DocumentType : Node, IDocumentType {
     public DocumentType(string name, string pub, string sys)
     : base(NodeType.DOCUMENT_TYPE_NODE) {

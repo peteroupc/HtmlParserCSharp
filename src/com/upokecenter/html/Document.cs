@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Com.Upokecenter.util;
 using PeterO;
-using com.upokecenter.util;
 /*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
@@ -30,13 +30,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
 internal class Document : Node, IDocument {
     internal DocumentType Doctype { get; set; }
 
     internal string Encoding { get; set; }
 
-  private DocumentMode docmode = DocumentMode.NoQuirksMode;
+private DocumentMode docmode = DocumentMode.NoQuirksMode;
 
     internal string DefaultLanguage { get; set; }
 
@@ -45,19 +45,19 @@ internal class Document : Node, IDocument {
     internal Document() : base(NodeType.DOCUMENT_NODE) {
   }
 
-  private void collectElements(INode c, string s, IList<IElement> nodes) {
+private void CollectElements(INode c, string s, IList<IElement> nodes) {
     if (c.getNodeType() == NodeType.ELEMENT_NODE) {
       var e = (IElement)c;
-      if (s == null || e.getLocalName().Equals(s)) {
+      if (s == null || e.getLocalName().Equals(s, StringComparison.Ordinal)) {
         nodes.Add(e);
       }
     }
     foreach (var node in c.getChildNodes()) {
-      this.collectElements(node, s, nodes);
+      this.CollectElements(node, s, nodes);
     }
   }
 
-  private void collectElementsHtml(
+private void CollectElementsHtml(
   INode c,
   string s,
   string valueSLowercase,
@@ -66,117 +66,118 @@ internal class Document : Node, IDocument {
       var e = (IElement)c;
       if (s == null) {
         nodes.Add(e);
-      } else if (HtmlCommon.HTML_NAMESPACE.Equals(e.getNamespaceURI()) &&
-          e.getLocalName().Equals(valueSLowercase)) {
+      } else if (HtmlCommon.HTML_NAMESPACE.Equals(e.getNamespaceURI(),
+  StringComparison.Ordinal) &&
+          e.getLocalName().Equals(valueSLowercase, StringComparison.Ordinal)) {
         nodes.Add(e);
-      } else if (e.getLocalName().Equals(s)) {
+      } else if (e.getLocalName().Equals(s, StringComparison.Ordinal)) {
         nodes.Add(e);
       }
     }
     foreach (var node in c.getChildNodes()) {
-      this.collectElements(node, s, nodes);
+      this.CollectElements(node, s, nodes);
     }
   }
 
-  public string getCharset() {
+public string getCharset() {
     return (this.Encoding == null) ? "utf-8" : this.Encoding;
   }
 
-  public IDocumentType getDoctype() {
+public IDocumentType getDoctype() {
     return this.Doctype;
   }
 
-  public IElement getDocumentElement() {
+public IElement getDocumentElement() {
     foreach (var node in this.getChildNodes()) {
       if (node is IElement) {
- return (IElement)node;
-}
-    }
-    return null;
-  }
-
-  public IElement getElementById(string id) {
-    if (id == null) {
- throw new ArgumentException();
-}
-    foreach (var node in this.getChildNodes()) {
-      if (node is IElement) {
-        if (id.Equals(((IElement)node).getId())) {
- return (IElement)node;
-}
-        IElement element = ((IElement)node).getElementById(id);
-        if (element != null) {
- return element;
-}
+        return (IElement)node;
       }
     }
     return null;
   }
 
-  public IList<IElement> getElementsByTagName(string tagName) {
-    if (tagName == null) {
- throw new ArgumentException();
+public IElement getElementById(string id) {
+    if (id == null) {
+      throw new ArgumentException();
+    }
+    foreach (var node in this.getChildNodes()) {
+      if (node is IElement) {
+        if (id.Equals(((IElement)node).getId(), StringComparison.Ordinal)) {
+ return (IElement)node;
 }
-    if (tagName.Equals("*")) {
+        IElement element = ((IElement)node).getElementById(id);
+        if (element != null) {
+          return element;
+        }
+      }
+    }
+    return null;
+  }
+
+public IList<IElement> getElementsByTagName(string tagName) {
+    if (tagName == null) {
+      throw new ArgumentException();
+    }
+    if (tagName.Equals("*", StringComparison.Ordinal)) {
       tagName = null;
     }
     IList<IElement> ret = new List<IElement>();
-    if (this.isHtmlDocument()) {
-      this.collectElementsHtml(
+    if (this.IsHtmlDocument()) {
+      this.CollectElementsHtml(
   this,
   tagName,
   DataUtilities.ToLowerCaseAscii(tagName),
   ret);
     } else {
-      this.collectElements(this, tagName, ret);
+      this.CollectElements(this, tagName, ret);
     }
     return ret;
   }
 
-  public override string getLanguage() {
+public override string getLanguage() {
     return (this.DefaultLanguage == null) ? String.Empty :
       this.DefaultLanguage;
   }
 
-  internal DocumentMode getMode() {
+internal DocumentMode GetMode() {
     return this.docmode;
   }
 
-  public override string getNodeName() {
+public override string getNodeName() {
     return "#document";
   }
 
-  public override IDocument getOwnerDocument() {
+public override IDocument getOwnerDocument() {
     return null;
   }
 
-  public string getURL() {
+public string getURL() {
     return this.Address;
   }
 
-  internal bool isHtmlDocument() {
+internal bool IsHtmlDocument() {
     return true;
   }
 
-  internal void setMode(DocumentMode mode) {
+internal void SetMode(DocumentMode mode) {
     this.docmode = mode;
   }
 
     public override string ToString() {
-      return this.toDebugString();
+      return this.ToDebugString();
     }
 
-    internal override string toDebugString() {
-return toDebugString(this.getChildNodes());
+    internal override string ToDebugString() {
+return ToDebugString(this.getChildNodes());
 }
 
-    internal static string toDebugString(IList<INode> nodes) {
+    internal static string ToDebugString(IList<INode> nodes) {
     var builder = new StringBuilder();
     foreach (var node in nodes) {
-        string str = ((Node)node).toDebugString();
-      if (str == null) {
-        continue;
-      }
+        string str = ((Node)node).ToDebugString();
+        if (str == null) {
+          continue;
+        }
       string[] strarray = StringUtility.splitAt(str, "\n");
       int len = strarray.Length;
       if (len > 0 && strarray[len - 1].Length == 0) {

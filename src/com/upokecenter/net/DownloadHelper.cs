@@ -66,7 +66,6 @@ public sealed class DownloadHelper {
     /// <param name='callback'>The parameter <paramref name='callback'/> is
     /// not documented yet.</param>
     /// <returns>A T object.</returns>
-  ///
   public static T downloadUrl<T>(
       string urlString,
       IResponseListener<T> callback) {
@@ -97,7 +96,6 @@ public sealed class DownloadHelper {
     /// <param name='handleErrorResponses'>The parameter <paramref
     /// name='handleErrorResponses'/> is not documented yet.</param>
     /// <returns>A T object.</returns>
-  ///
   public static T downloadUrl<T>(
       string urlString,
       IResponseListener<T> callback,

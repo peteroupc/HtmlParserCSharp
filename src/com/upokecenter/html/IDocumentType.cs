@@ -27,25 +27,21 @@ THE SOFTWARE.
 
 using System;
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
     /// <summary>Represents the HTML "!DOCTYPE" tag.</summary>
-  ///
 public interface IDocumentType : INode {
     /// <summary>Gets the name of this document type. For HTML documents,
-    /// this should be "html".</summary>
+    /// this should be "Html".</summary>
     /// <returns>The return value is not documented yet.</returns>
-  ///
-   string getName();
+   string GetName();
 
     /// <summary>Gets the identifier of this document type.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  ///
-   string getPublicId();
+   string GetPublicId();
 
     /// <summary>Gets the system identifier of this document
     /// type.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  ///
-   string getSystemId();
+   string GetSystemId();
 }
 }

@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
 internal class Attr : IAttr {
   private StringBuilder valueName;
   private StringBuilder value;
@@ -39,8 +39,8 @@ internal class Attr : IAttr {
   { this.valueName.Append((char)ch);
 }
   } else if (ch <= 0x10ffff) {
-    valueName.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) | 0xd800));
-valueName.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
+    this.valueName.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) | 0xd800));
+    this.valueName.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
 }
   }
 
@@ -49,7 +49,7 @@ valueName.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
     this.valueString = value;
   }
 
-  internal void appendToName(int ch) {
+  internal void AppendToName(int ch) {
     if (this.valueNameString != null) {
       throw new InvalidOperationException();
     }
@@ -57,12 +57,12 @@ valueName.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
   { this.valueName.Append((char)ch);
 }
   } else if (ch <= 0x10ffff) {
-    valueName.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) | 0xd800));
-valueName.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
+    this.valueName.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) | 0xd800));
+    this.valueName.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
 }
   }
 
-  internal void appendToValue(int ch) {
+  internal void AppendToValue(int ch) {
     if (this.valueString != null) {
       throw new InvalidOperationException();
     }
@@ -70,12 +70,12 @@ valueName.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
   { this.value.Append((char)ch);
 }
   } else if (ch <= 0x10ffff) {
-    value.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) | 0xd800));
-value.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
+    this.value.Append((char)((((ch - 0x10000) >> 10) & 0x3ff) | 0xd800));
+    this.value.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
 }
   }
 
-  internal void commitValue() {
+  internal void CommitValue() {
     if (this.value == null) {
       throw new InvalidOperationException();
     }
@@ -84,7 +84,7 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
   }
 
   /* (non-Javadoc)
-   * @see com.upokecenter.html.IAttr#getLocalName()
+   * @see Com.Upokecenter.Html.IAttr#getLocalName()
    */
   public string getLocalName() {
   return (this.value_namespace == null) ? this.getName() :
@@ -92,7 +92,7 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
   }
 
   /* (non-Javadoc)
-   * @see com.upokecenter.html.IAttr#getName()
+   * @see Com.Upokecenter.Html.IAttr#getName()
    */
   public string getName() {
     return (this.valueNameString != null) ? this.valueNameString :
@@ -100,38 +100,40 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
   }
 
   /* (non-Javadoc)
-   * @see com.upokecenter.html.IAttr#getNamespaceURI()
+   * @see Com.Upokecenter.Html.IAttr#getNamespaceURI()
    */
   public string getNamespaceURI() {
     return this.value_namespace;
   }
 
   /* (non-Javadoc)
-   * @see com.upokecenter.html.IAttr#getPrefix()
+   * @see Com.Upokecenter.Html.IAttr#getPrefix()
    */
   public string getPrefix() {
     return this.valuePrefix;
   }
   /* (non-Javadoc)
-   * @see com.upokecenter.html.IAttr#getValue()
+   * @see Com.Upokecenter.Html.IAttr#getValue()
    */
   public string getValue() {
   return (this.valueString != null) ? this.valueString :
       this.value.ToString();
   }
 
-    internal bool isAttribute(string attrName, string value_namespace) {
+internal bool IsAttribute(string attrName, string value_namespace) {
     string thisname = this.getLocalName();
-  bool match = attrName == null ? thisname == null : attrName.Equals(thisname);
+    bool match = attrName == null ? thisname == null : attrName.Equals(
+      thisname,
+      StringComparison.Ordinal);
     if (!match) {
       return false;
     }
     match = value_namespace == null ? this.value_namespace == null :
-      value_namespace.Equals(this.value_namespace);
+      value_namespace.Equals(this.value_namespace, StringComparison.Ordinal);
     return match;
   }
 
-  internal void setName(string value2) {
+  internal void SetName(string value2) {
     if (value2 == null) {
       throw new ArgumentException();
     }
@@ -139,7 +141,7 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
     this.valueName = null;
   }
 
-  internal void setNamespace(string value) {
+  internal void SetNamespace(string value) {
     if (value == null) {
       throw new ArgumentException();
     }
@@ -147,7 +149,7 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
     this.valueNameString = this.getName();
     int io = this.valueNameString.IndexOf(':');
     if (io >= 1) {
-      this.valuePrefix = this.valueNameString.Substring(0, (io)-0);
+      this.valuePrefix = this.valueNameString.Substring(0, io - 0);
       this.valueLocalName = this.valueNameString.Substring(io + 1);
     } else {
       this.valuePrefix = String.Empty;
@@ -155,16 +157,15 @@ value.Append((char)(((ch - 0x10000) & 0x3ff) | 0xdc00));
     }
   }
 
-    /// <summary>NOTE: Set after setNamespace, or it may be overwritten
+    /// <summary>NOTE: Set after SetNamespace, or it may be overwritten
     /// @param attrprefix.</summary>
     /// <param name='attrprefix'>The parameter <paramref
     /// name='attrprefix'/> is a text string.</param>
-  ///
-  public void setPrefix(string attrprefix) {
+  public void SetPrefix(string attrprefix) {
     this.valuePrefix = attrprefix;
   }
 
-  internal void setValue(string value2) {
+  internal void SetValue(string value2) {
     if (value2 == null) {
       throw new ArgumentException();
     }

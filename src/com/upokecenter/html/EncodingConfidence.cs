@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 using System;
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
 sealed class EncodingConfidence {
   private int valueConfidence;
   private string valueEncoding;
@@ -56,11 +56,11 @@ sealed class EncodingConfidence {
     this.valueConfidence = c;
   }
 
-  public int getConfidence() {
+  public int GetConfidence() {
     return this.valueConfidence;
   }
 
-  public string getEncoding() {
+  public string GetEncoding() {
     return this.valueEncoding;
   }
 

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using com.upokecenter.util;
+using Com.Upokecenter.util;
 /*
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.io/
@@ -29,7 +29,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 THE SOFTWARE.
 */
 
-namespace com.upokecenter.html {
+namespace Com.Upokecenter.Html {
 internal class Node : INode {
   private IList<INode> childNodes;
   private INode parentNode = null;
@@ -46,24 +46,27 @@ internal class Node : INode {
 
   public void appendChild(INode node) {
     if (node == this) {
- throw new ArgumentException();
-}
-      ((Node)node).parentNode = this;
-      ((Node)node).ownerDocument = (this is IDocument) ? (IDocument)this :
+      throw new ArgumentException();
+    }
+((Node)node).parentNode = this;
+((Node)node).ownerDocument = (this is IDocument) ? (IDocument)this :
       this.ownerDocument;
     this.childNodes.Add(node);
   }
 
-  private void fragmentSerializeInner(
+  private void FragmentSerializeInner(
     INode current,
     StringBuilder builder) {
     if (current.getNodeType() == NodeType.ELEMENT_NODE) {
       var e = (IElement)current;
       string tagname = e.getTagName();
       string namespaceURI = e.getNamespaceURI();
-      if (HtmlCommon.HTML_NAMESPACE.Equals(namespaceURI) ||
-          HtmlCommon.SVG_NAMESPACE.Equals(namespaceURI) ||
-          HtmlCommon.MATHML_NAMESPACE.Equals(namespaceURI)) {
+      if (HtmlCommon.HTML_NAMESPACE.Equals(namespaceURI,
+  StringComparison.Ordinal) ||
+          HtmlCommon.SVG_NAMESPACE.Equals(namespaceURI,
+  StringComparison.Ordinal) ||
+          HtmlCommon.MATHML_NAMESPACE.Equals(namespaceURI,
+  StringComparison.Ordinal)) {
         tagname = e.getLocalName();
       }
       builder.Append('<');
@@ -73,16 +76,19 @@ internal class Node : INode {
         builder.Append(' ');
         if (namespaceURI == null || namespaceURI.Length == 0) {
           builder.Append(attr.getLocalName());
-        } else if (namespaceURI.Equals(HtmlCommon.XML_NAMESPACE)) {
+        } else if (namespaceURI.Equals(HtmlCommon.XML_NAMESPACE,
+  StringComparison.Ordinal)) {
           builder.Append("xml:");
           builder.Append(attr.getLocalName());
         } else if (namespaceURI.Equals(
-            "http://www.w3.org/2000/xmlns/")) {
-          if (!"xmlns".Equals(attr.getLocalName())) {
+          "http://www.w3.org/2000/xmlns/",
+          StringComparison.Ordinal)) {
+          if (!"xmlns".Equals(attr.getLocalName(), StringComparison.Ordinal)) {
             builder.Append("xmlns:");
           }
           builder.Append(attr.getLocalName());
-        } else if (namespaceURI.Equals(HtmlCommon.XLINK_NAMESPACE)) {
+        } else if (namespaceURI.Equals(HtmlCommon.XLINK_NAMESPACE,
+  StringComparison.Ordinal)) {
           builder.Append("xlink:");
           builder.Append(attr.getLocalName());
         } else {
@@ -105,32 +111,33 @@ internal class Node : INode {
         builder.Append('"');
       }
       builder.Append('>');
-      if (HtmlCommon.HTML_NAMESPACE.Equals(namespaceURI)) {
+      if (HtmlCommon.HTML_NAMESPACE.Equals(namespaceURI,
+  StringComparison.Ordinal)) {
         string localName = e.getLocalName();
-        if ("area".Equals(localName) ||
-"base".Equals(localName) ||
-"basefont".Equals(localName) ||
-"bgsound".Equals(localName) ||
-"br".Equals(localName) ||
-"col".Equals(localName) ||
-"embed".Equals(localName) ||
-"frame".Equals(localName) ||
-"hr".Equals(localName) ||
-"img".Equals(localName) ||
-"input".Equals(localName) ||
-"keygen".Equals(localName) ||
-"link".Equals(localName) ||
-"menuitem".Equals(localName) ||
-"meta".Equals(localName) ||
-"param".Equals(localName) ||
-"source".Equals(localName) ||
-"track".Equals(localName) ||
-"wbr".Equals(localName)) {
- return;
-}
-        if ("pre".Equals(localName) ||
-"textarea".Equals(localName) ||
-"listing".Equals(localName)) {
+        if ("area".Equals(localName, StringComparison.Ordinal) ||
+"base".Equals(localName, StringComparison.Ordinal) ||
+"basefont".Equals(localName, StringComparison.Ordinal) ||
+"bgsound".Equals(localName, StringComparison.Ordinal) ||
+"br".Equals(localName, StringComparison.Ordinal) ||
+"col".Equals(localName, StringComparison.Ordinal) ||
+"embed".Equals(localName, StringComparison.Ordinal) ||
+"frame".Equals(localName, StringComparison.Ordinal) ||
+"hr".Equals(localName, StringComparison.Ordinal) ||
+"img".Equals(localName, StringComparison.Ordinal) ||
+"input".Equals(localName, StringComparison.Ordinal) ||
+"keygen".Equals(localName, StringComparison.Ordinal) ||
+"link".Equals(localName, StringComparison.Ordinal) ||
+"menuitem".Equals(localName, StringComparison.Ordinal) ||
+"meta".Equals(localName, StringComparison.Ordinal) ||
+"param".Equals(localName, StringComparison.Ordinal) ||
+"source".Equals(localName, StringComparison.Ordinal) ||
+"track".Equals(localName, StringComparison.Ordinal) ||
+"wbr".Equals(localName, StringComparison.Ordinal)) {
+          return;
+        }
+        if ("pre".Equals(localName, StringComparison.Ordinal) ||
+"textarea".Equals(localName, StringComparison.Ordinal) ||
+"listing".Equals(localName, StringComparison.Ordinal)) {
           foreach (var node in e.getChildNodes()) {
             if (node.getNodeType() == NodeType.TEXT_NODE &&
                 ((IText)node).getData().Length > 0 &&
@@ -142,7 +149,7 @@ internal class Node : INode {
       }
       // Recurse
       foreach (var child in e.getChildNodes()) {
-        this.fragmentSerializeInner(child, builder);
+        this.FragmentSerializeInner(child, builder);
       }
       builder.Append("</");
       builder.Append(tagname);
@@ -150,16 +157,17 @@ internal class Node : INode {
     } else if (current.getNodeType() == NodeType.TEXT_NODE) {
       INode parent = current.getParentNode();
       if (parent is IElement &&
-HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
+HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI(),
+  StringComparison.Ordinal)) {
         string localName = ((IElement)parent).getLocalName();
-        if ("script".Equals(localName) ||
-"style".Equals(localName) ||
-"script".Equals(localName) ||
-"xmp".Equals(localName) ||
-"iframe".Equals(localName) ||
-"noembed".Equals(localName) ||
-"noframes".Equals(localName) ||
-"plaintext".Equals(localName)) {
+        if ("script".Equals(localName, StringComparison.Ordinal) ||
+"style".Equals(localName, StringComparison.Ordinal) ||
+"script".Equals(localName, StringComparison.Ordinal) ||
+"xmp".Equals(localName, StringComparison.Ordinal) ||
+"iframe".Equals(localName, StringComparison.Ordinal) ||
+"noembed".Equals(localName, StringComparison.Ordinal) ||
+"noframes".Equals(localName, StringComparison.Ordinal) ||
+"plaintext".Equals(localName, StringComparison.Ordinal)) {
           builder.Append(((IText)current).getData());
         } else {
           string value = ((IText)current).getData();
@@ -206,8 +214,8 @@ HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
 }
     } else {
       if (parent == null) {
- return this.baseURI;
-} else {
+        return this.baseURI;
+      } else {
         URL ret = URL.parse(this.baseURI, URL.parse(parent.getBaseURI()));
         return (ret == null) ? parent.getBaseURI() : ret.ToString();
       }
@@ -218,14 +226,14 @@ HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
     return new List<INode>(this.childNodes);
   }
 
-  internal IList<INode> getChildNodesInternal() {
+  internal IList<INode> GetChildNodesInternal() {
     return this.childNodes;
   }
 
-  protected internal string getInnerHtmlInternal() {
+  protected internal string GetInnerHtmlInternal() {
     var builder = new StringBuilder();
     foreach (var child in this.getChildNodes()) {
-      this.fragmentSerializeInner(child, builder);
+      this.FragmentSerializeInner(child, builder);
     }
     return builder.ToString();
   }
@@ -260,19 +268,19 @@ HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
     return null;
   }
 
-  public void insertBefore(Node child, Node sibling) {
+  public void InsertBefore(Node child, Node sibling) {
     if (sibling == null) {
       this.appendChild(child);
       return;
     }
     if (this.childNodes.Count == 0) {
- throw new InvalidOperationException();
-}
+      throw new InvalidOperationException();
+    }
     int childNodesSize = this.childNodes.Count;
     for (int j = 0; j < childNodesSize; ++j) {
       if (this.childNodes[j].Equals(sibling)) {
         child.parentNode = this;
-    child.ownerDocument = (child is IDocument) ? (IDocument)this :
+        child.ownerDocument = (child is IDocument) ? (IDocument)this :
           this.ownerDocument;
         this.childNodes.Insert(j, child);
         return;
@@ -283,10 +291,10 @@ HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
 
   public void removeChild(INode node) {
       ((Node)node).parentNode = null;
-    this.childNodes.Remove(node);
+      this.childNodes.Remove(node);
   }
 
-  internal void setBaseURI(string value) {
+  internal void SetBaseURI(string value) {
     INode parent = this.getParentNode();
     if (parent == null) {
       this.baseURI = value;
@@ -296,11 +304,11 @@ HtmlCommon.HTML_NAMESPACE.Equals(((IElement)parent).getNamespaceURI())) {
     }
   }
 
-  internal void setOwnerDocument(IDocument document) {
+  internal void SetOwnerDocument(IDocument document) {
     this.ownerDocument = document;
   }
 
-  internal virtual string toDebugString() {
+  internal virtual string ToDebugString() {
     return null;
   }
 

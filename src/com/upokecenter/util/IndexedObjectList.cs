@@ -9,10 +9,9 @@ at: http://peteroupc.github.io/
 using System;
 using System.Collections.Generic;
 
-namespace com.upokecenter.util {
+namespace Com.Upokecenter.Util {
     /// <summary>Not documented yet.</summary>
     /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
-  ///
 public sealed class IndexedObjectList<T> {
   private IList<T> strongrefs = new List<T>();
   private IList<WeakReference> weakrefs = new List<WeakReference>();
@@ -26,8 +25,7 @@ public sealed class IndexedObjectList<T> {
     /// <param name='index'>The parameter <paramref name='index'/> is a
     /// 32-bit signed integer.</param>
     /// <returns>A T object.</returns>
-  ///
-  public T receiveObject(int index) {
+  public T ReceiveObject(int index) {
     if (index < 0) {
       return default(T);
     }
@@ -51,8 +49,7 @@ public sealed class IndexedObjectList<T> {
     /// <param name='value'>The parameter <paramref name='value'/> is a `0
     /// object.</param>
     /// <returns>A 32-bit signed integer.</returns>
-  ///
-  public int sendObject(T value) {
+  public int SendObject(T value) {
     if (value == null) {
  return -1; // Special case for null
 }

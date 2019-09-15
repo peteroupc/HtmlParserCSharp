@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Com.Upokecenter.Html;
+using Com.Upokecenter.util;
 using PeterO;
 using PeterO.Cbor;
-using com.upokecenter.html;
-using com.upokecenter.util;
 
-namespace com.upokecenter.html.data {
+namespace Com.Upokecenter.Html.Data {
     /// <summary>Not documented yet.</summary>
-  ///
   public sealed class Microformats {
     private static IDictionary<string, string[]> complexLegacyMap = new
       Dictionary<string, string[]>();
@@ -19,7 +18,7 @@ namespace com.upokecenter.html.data {
       complexLegacyMap.Add("adr", new string[] { "p-adr", "h-adr" });
       strarr = new string[] {
         "p-affiliation",
-        "h-card"
+        "h-card",
       };
       complexLegacyMap.Add(
         "affiliation",
@@ -28,14 +27,14 @@ namespace com.upokecenter.html.data {
       complexLegacyMap.Add("contact", new string[] { "p-contact", "h-card" });
       strarr = new string[] {
         "p-education",
-        "h-event"
+        "h-event",
       };
       complexLegacyMap.Add(
         "education",
         strarr);
       strarr = new string[] {
         "p-experience",
-        "h-event"
+        "h-event",
       };
       complexLegacyMap.Add(
         "experience",
@@ -45,7 +44,7 @@ namespace com.upokecenter.html.data {
       strarr = new string[] {
         "p-location",
         "h-card",
-        "h-adr"
+        "h-adr",
       };
       complexLegacyMap.Add(
         "location",
@@ -53,7 +52,7 @@ namespace com.upokecenter.html.data {
       strarr = new string[] {
         "p-item",
         "h-item",
-        "u-photo"
+        "u-photo",
       };
       complexLegacyMap.Add(
         "photo",
@@ -94,23 +93,23 @@ namespace com.upokecenter.html.data {
       "p-street-address", "summary", "p-name", "tel", "p-tel", "tz",
       "p-tz", "uid", "u-uid", "updated", "dt-updated", "url", "p-url",
       "vcard", "h-card", "vevent", "h-event", "votes", "p-votes",
-      "worst", "p-worst", "yield", "p-yield"
+      "worst", "p-worst", "yield", "p-yield",
     };
 
     private static readonly IDictionary<string, string>
-      ValueLegacyLabelsMap = createLegacyLabelsMap();
+      ValueLegacyLabelsMap = CreateLegacyLabelsMap();
 
     private static readonly int[] ValueNormalDays = {
       0, 31, 28, 31, 30, 31, 30, 31, 31, 30,
-      31, 30, 31
+      31, 30, 31,
     };
 
     private static readonly int[] ValueLeapDays = {
       0, 31, 29, 31, 30, 31, 30, 31, 31, 30,
-      31, 30, 31
+      31, 30, 31,
     };
 
-    private static void accumulateValue(
+    private static void AccumulateValue(
       CBORObject obj,
       string key,
       Object value) {
@@ -124,20 +123,20 @@ namespace com.upokecenter.html.data {
       arr.Add(value);
     }
 
-    private static void append2d(StringBuilder builder, int value) {
+    private static void Append2d(StringBuilder builder, int value) {
       value = Math.Abs(value);
       builder.Append((char)('0' + ((value / 10) % 10)));
       builder.Append((char)('0' + (value % 10)));
     }
 
-    private static void append3d(StringBuilder builder, int value) {
+    private static void Append3d(StringBuilder builder, int value) {
       value = Math.Abs(value);
       builder.Append((char)('0' + ((value / 100) % 10)));
       builder.Append((char)('0' + ((value / 10) % 10)));
       builder.Append((char)('0' + (value % 10)));
     }
 
-    private static void append4d(StringBuilder builder, int value) {
+    private static void Append4d(StringBuilder builder, int value) {
       value = Math.Abs(value);
       builder.Append((char)('0' + ((value / 1000) % 10)));
       builder.Append((char)('0' + ((value / 100) % 10)));
@@ -145,7 +144,7 @@ namespace com.upokecenter.html.data {
       builder.Append((char)('0' + (value % 10)));
     }
 
-    private static void copyComponents(
+    private static void CopyComponents(
       int[] src,
       int[] components,
       bool useDate,
@@ -183,11 +182,11 @@ namespace com.upokecenter.html.data {
       }
     }
 
-    private static CBORObject copyJson(CBORObject obj) {
+    private static CBORObject CopyJson(CBORObject obj) {
       return CBORObject.FromJSONString(obj.ToJSONString());
     }
 
-    private static IDictionary<string, string> createLegacyLabelsMap() {
+    private static IDictionary<string, string> CreateLegacyLabelsMap() {
       IDictionary<string, string> map = new Dictionary<string, string>();
       for (int i = 0; i < ValueLegacyLabels.Length; i += 2) {
         map.Add(ValueLegacyLabels[i], ValueLegacyLabels[i + 1]);
@@ -195,11 +194,11 @@ namespace com.upokecenter.html.data {
       return map;
     }
 
-    private static string elementName(IElement element) {
+    private static string ElementName(IElement element) {
       return DataUtilities.ToLowerCaseAscii(element.getLocalName());
     }
 
-    private static IList<IElement> getChildElements(INode e) {
+    private static IList<IElement> GetChildElements(INode e) {
       IList<IElement> elements = new List<IElement>();
       foreach (var child in e.getChildNodes()) {
         if (child is IElement) {
@@ -209,10 +208,10 @@ namespace com.upokecenter.html.data {
       return elements;
     }
 
-    private static string[] getClassNames(IElement element) {
+    private static string[] GetClassNames(IElement element) {
       string[] ret = StringUtility.SplitAtSpTabCrLfFf(element.getAttribute(
         "class"));
-      string[] rel = parseLegacyRel(element.getAttribute("rel"));
+      string[] rel = ParseLegacyRel(element.getAttribute("rel"));
       if (ret.Length == 0 && rel.Length == 0) {
         return ret;
       }
@@ -235,15 +234,15 @@ namespace com.upokecenter.html.data {
         }
       }
       if (retList.Count >= 2) {
-        ISet<string> stringSet = new HashSet<string>(retList);
-        retList = new List<string>(stringSet);
+        var stringSet = new HashSet<string>(retList);
+        retList = new List<string>((ICollection<string>)stringSet);
       }
       return retList.ToArray();
     }
 
     private static readonly string[] DatePatterns = new string[] {
       "%Y-%M-%d",
-      "%Y-%D"
+      "%Y-%D",
     };
 
     private static readonly string[] TimePatterns = new string[] {
@@ -252,11 +251,11 @@ namespace com.upokecenter.html.data {
       "%H:%m:%s%Z:%z",
       "%H:%m:%s%Z%z", "%H:%m:%s%G",
       "%H:%m%Z:%z", "%H:%m%Z%z",
-      "%H:%m%G"
+      "%H:%m%G",
     };
 
-    private static string getDTValue(IElement root, int[] source) {
-      IList<IElement> valueElements = getValueClasses(root);
+    private static string GetDTValue(IElement root, int[] source) {
+      IList<IElement> valueElements = GetValueClasses(root);
       bool haveDate = false, haveTime = false, haveTimeZone = false;
       var components = new int[] {
         Int32.MinValue,
@@ -266,19 +265,19 @@ namespace com.upokecenter.html.data {
         Int32.MinValue,
         Int32.MinValue,
         Int32.MinValue,
-        Int32.MinValue
+        Int32.MinValue,
       };
       if (source != null) {
-        copyComponents(source, components, true, true, true);
+        CopyComponents(source, components, true, true, true);
       }
       if (valueElements.Count == 0) {
         // No value elements, get the text content
-        return getDTValueContent(root);
+        return GetDTValueContent(root);
       }
       foreach (var valueElement in valueElements) {
-        string text = getDTValueContent(valueElement);
+        string text = GetDTValueContent(valueElement);
         if (
-  matchDateTimePattern(
+  MatchDateTimePattern(
     text, // check date or date + time
     DatePatterns,
     TimePatterns,
@@ -297,20 +296,20 @@ namespace com.upokecenter.html.data {
             haveTimeZone = true;
           }
         } else if (
-  matchDateTimePattern(
+  MatchDateTimePattern(
   text, // check time-only formats
-            null,
-            new string[] {
-              "%H:%m:%s", "%H:%m",
-              "%H:%m:%s%Z:%z",
-              "%H:%m:%s%Z%z", "%H:%m:%s%G",
-              "%H:%m%Z:%z", "%H:%m%Z%z",
-              "%H:%m%G"
-            },
- components,
- false,
- !haveTime,
- !haveTimeZone)) {
+  null,
+  new string[] {
+    "%H:%m:%s", "%H:%m",
+    "%H:%m:%s%Z:%z",
+    "%H:%m:%s%Z%z", "%H:%m:%s%G",
+    "%H:%m%Z:%z", "%H:%m%Z%z",
+    "%H:%m%G",
+  },
+            components,
+            false,
+            !haveTime,
+            !haveTimeZone)) {
           // check if components are defined
           if (components[3] != Int32.MinValue) {
             haveTime = true;
@@ -319,16 +318,16 @@ namespace com.upokecenter.html.data {
             haveTimeZone = true;
           }
         } else if (
-  matchDateTimePattern(
+  MatchDateTimePattern(
   text,
-            null,
- new string[] {
-   "%Z:%z",
-   "%Z%z",
-   "%Z",
-   "%G"
- },
-         components,
+  null,
+  new string[] {
+    "%Z:%z",
+    "%Z%z",
+    "%Z",
+    "%G",
+  },
+ components,
  false,
  false,
  !haveTimeZone)) { // check timezone
@@ -337,16 +336,16 @@ namespace com.upokecenter.html.data {
             haveTimeZone = true;
           }
         } else if (
-  matchDateTimePattern(
+  MatchDateTimePattern(
   DataUtilities.ToLowerCaseAscii(text),
-            null,
- new string[] {
-   "%h:%m:%sa.m.",
-   // AM clock values
-   "%h:%m:%sam", "%h:%ma.m.", "%h:%mam",
-   "%ha.m.", "%ham"
- },
-          components,
+  null,
+  new string[] {
+    "%h:%m:%sa.m.",
+    // AM clock values
+    "%h:%m:%sam", "%h:%ma.m.", "%h:%mam",
+    "%ha.m.", "%ham",
+  },
+ components,
  false,
  !haveTime,
  false)) { // check AM time formats
@@ -358,15 +357,15 @@ namespace com.upokecenter.html.data {
             }
           }
         } else if (
-  matchDateTimePattern(
+  MatchDateTimePattern(
   DataUtilities.ToLowerCaseAscii(text),
-            null,
- new string[] {
-   "%h:%m:%sp.m.",
-   // PM clock values
-   "%h:%m:%spm", "%h:%mp.m.", "%h:%mpm", "%hp.m.", "%hpm"
- },
-          components,
+  null,
+  new string[] {
+    "%h:%m:%sp.m.",
+    // PM clock values
+    "%h:%m:%spm", "%h:%mp.m.", "%h:%mpm", "%hp.m.", "%hpm",
+  },
+ components,
  false,
  !haveTime,
  false)) { // check PM time formats
@@ -380,42 +379,43 @@ namespace com.upokecenter.html.data {
         }
       }
       return (components[0] != Int32.MinValue) ?
-          toDateTimeString(components) : getDTValueContent(root);
+          ToDateTimeString(components) : GetDTValueContent(root);
     }
 
-    private static string getDTValueContent(IElement valueElement) {
-      string elname = elementName(valueElement);
+    private static string GetDTValueContent(IElement valueElement) {
+      string elname = ElementName(valueElement);
       string text = String.Empty;
-      if (hasClassName(valueElement, "value-title")) {
-        return valueOrEmpty(valueElement.getAttribute("title"));
-      } else if (elname.Equals("img") || elname.Equals("area")) {
+      if (HasClassName(valueElement, "value-title")) {
+        return OrEmpty(valueElement.getAttribute("title"));
+      } else if (elname.Equals("img", StringComparison.Ordinal) ||
+elname.Equals("area", StringComparison.Ordinal)) {
         string s = valueElement.getAttribute("alt");
         text = (s == null) ? String.Empty : s;
-      } else if (elname.Equals("data")) {
+      } else if (elname.Equals("Data", StringComparison.Ordinal)) {
         string s = valueElement.getAttribute("value");
-        text = (s == null) ? getTrimmedTextContent(valueElement) : s;
-      } else if (elname.Equals("abbr")) {
+        text = (s == null) ? GetTrimmedTextContent(valueElement) : s;
+      } else if (elname.Equals("abbr", StringComparison.Ordinal)) {
         string s = valueElement.getAttribute("title");
-        text = (s == null) ? getTrimmedTextContent(valueElement) : s;
-      } else if (elname.Equals("del") ||
-elname.Equals("ins") ||
-elname.Equals("time")) {
+        text = (s == null) ? GetTrimmedTextContent(valueElement) : s;
+      } else if (elname.Equals("del", StringComparison.Ordinal) ||
+elname.Equals("ins", StringComparison.Ordinal) ||
+elname.Equals("time", StringComparison.Ordinal)) {
         string s = valueElement.getAttribute("datetime");
         if (StringUtility.isNullOrSpaces(s)) {
           s = valueElement.getAttribute("title");
         }
-        text = (s == null) ? getTrimmedTextContent(valueElement) : s;
+        text = (s == null) ? GetTrimmedTextContent(valueElement) : s;
       } else {
-        text = getTrimmedTextContent(valueElement);
+        text = GetTrimmedTextContent(valueElement);
       }
       return text;
     }
 
-    private static string getEValue(IElement root) {
+    private static string GetEValue(IElement root) {
       return root.getInnerHTML();
     }
 
-    private static IElement getFirstChildElement(INode e) {
+    private static IElement GetFirstChildElement(INode e) {
       foreach (var child in e.getChildNodes()) {
         if (child is IElement) {
           return (IElement)child;
@@ -424,22 +424,22 @@ elname.Equals("time")) {
       return null;
     }
 
-    private static string getHref(IElement node) {
+    private static string GetHref(IElement node) {
       string name = DataUtilities.ToLowerCaseAscii(node.getLocalName());
       string href = String.Empty;
-      if ("a".Equals(name) ||
-"link".Equals(name) ||
-"area".Equals(name)) {
+      if ("a".Equals(name, StringComparison.Ordinal) ||
+"link".Equals(name, StringComparison.Ordinal) ||
+"area".Equals(name, StringComparison.Ordinal)) {
         href = node.getAttribute("href");
-      } else if ("object".Equals(name)) {
-        href = node.getAttribute("data");
-      } else if ("img".Equals(name) ||
-"source".Equals(name) ||
-"track".Equals(name) ||
-"iframe".Equals(name) ||
-"audio".Equals(name) ||
-"video".Equals(name) ||
-"embed".Equals(name)) {
+      } else if ("object".Equals(name, StringComparison.Ordinal)) {
+        href = node.getAttribute("Data");
+      } else if ("img".Equals(name, StringComparison.Ordinal) ||
+"source".Equals(name, StringComparison.Ordinal) ||
+"track".Equals(name, StringComparison.Ordinal) ||
+"iframe".Equals(name, StringComparison.Ordinal) ||
+"audio".Equals(name, StringComparison.Ordinal) ||
+"video".Equals(name, StringComparison.Ordinal) ||
+"embed".Equals(name, StringComparison.Ordinal)) {
         href = node.getAttribute("src");
       } else {
         return null;
@@ -451,7 +451,7 @@ elname.Equals("time")) {
       return String.IsNullOrEmpty(href) ? String.Empty : href;
     }
 
-    private static int[] getLastKnownTime(CBORObject obj) {
+    private static int[] GetLastKnownTime(CBORObject obj) {
       if (obj.ContainsKey("start")) {
         CBORObject arr = obj["start"];
         // DebugUtility.Log("start %s",arr);
@@ -465,22 +465,22 @@ elname.Equals("time")) {
             Int32.MinValue,
             Int32.MinValue,
             Int32.MinValue,
-            Int32.MinValue
+            Int32.MinValue,
           };
           if (
-  matchDateTimePattern(
+  MatchDateTimePattern(
   (string)result,
-              new string[] { "%Y-%M-%d", "%Y-%D" },
-              new string[] {
-                "%H:%m:%s", "%H:%m",
-                "%H:%m:%s%Z:%z",
-                "%H:%m:%s%Z%z", "%H:%m:%s%G",
-                "%H:%m%Z:%z", "%H:%m%Z%z", "%H:%m%G"
-              },
+  new string[] { "%Y-%M-%d", "%Y-%D" },
+  new string[] {
+    "%H:%m:%s", "%H:%m",
+    "%H:%m:%s%Z:%z",
+    "%H:%m:%s%Z%z", "%H:%m:%s%G",
+    "%H:%m%Z:%z", "%H:%m%Z%z", "%H:%m%G",
+  },
               components,
- true,
- true,
- true)) {
+              true,
+              true,
+              true)) {
             // reset the time components
             components[3] = Int32.MinValue;
             components[4] = Int32.MinValue;
@@ -498,46 +498,40 @@ elname.Equals("time")) {
     }
 
     /// <summary>Scans an HTML document for Microformats.org metadata. The
-    /// resulting _object will contain an "items" property, an array of all
+    /// resulting object will contain an "items" property, an array of all
     /// Microformats items. Each item will have a "type" and "properties"
-    /// properties. @param root the document to scan. @return a JSON
-    /// _object containing Microformats metadata.</summary>
-    /// <param name='root'>The parameter <paramref name='root'/> is
-    /// a.upokecenter.html.IDocument object.</param>
-    /// <returns>A CBORObject object.</returns>
+    /// properties.</summary>
+    /// <param name='root'>The document to scan.</param>
+    /// <returns>A JSON object containing Microformats metadata.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
-  ///
-    public static CBORObject getMicroformatsJSON(IDocument root) {
+    public static CBORObject GetMicroformatsJSON(IDocument root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
       }
-      return getMicroformatsJSON(root.getDocumentElement());
+      return GetMicroformatsJSON(root.getDocumentElement());
     }
 
     /// <summary>Scans an HTML element for Microformats.org metadata. The
-    /// resulting _object will contain an "items" property, an array of all
+    /// resulting object will contain an "items" property, an array of all
     /// Microformats items. Each item will have a "type" and "properties"
-    /// properties. @param root the element to scan. @return a JSON _object
-    /// containing Microformats metadata.</summary>
-    /// <param name='root'>The parameter <paramref name='root'/> is
-    /// a.upokecenter.html.IElement object.</param>
-    /// <returns>A CBORObject object.</returns>
+    /// properties.</summary>
+    /// <param name='root'>The element to scan.</param>
+    /// <returns>A JSON object containing Microformats metadata.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
-  ///
-    public static CBORObject getMicroformatsJSON(IElement root) {
+    public static CBORObject GetMicroformatsJSON(IElement root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
       }
       var obj = CBORObject.NewMap();
       var items = CBORObject.NewArray();
-      propertyWalk(root, null, items);
+      PropertyWalk(root, null, items);
       obj.Add("items", items);
       return obj;
     }
 
-    private static int[] getMonthAndDay(int year, int day) {
+    private static int[] GetMonthAndDay(int year, int day) {
 #if DEBUG
       if (!(day >= 0)) {
         throw new InvalidOperationException("doesn't satisfy day>= 0");
@@ -579,53 +573,53 @@ elname.Equals("time")) {
       return new int[] { month, day };
     }
 
-    private static string getPValue(IElement root) {
+    private static string GetPValue(IElement root) {
       if (root.getAttribute("title") != null) {
         return root.getAttribute("title");
       }
       return (DataUtilities.ToLowerCaseAscii(root.getLocalName()).Equals(
-     "img") && !StringUtility.isNullOrSpaces(root.getAttribute("alt"))) ?
-               root.getAttribute("alt") : getValueContent(root, false);
+        "img",
+        StringComparison.Ordinal) &&
+!StringUtility.isNullOrSpaces(root.getAttribute("alt"))) ?
+               root.getAttribute("alt") : GetValueContent(root, false);
     }
 
     /// <summary>Not documented yet.</summary>
     /// <param name='root'>The parameter <paramref name='root'/> is
-    /// a.upokecenter.html.IDocument object.</param>
+    /// a.Upokecenter.Html.IDocument object.</param>
     /// <returns>A CBORObject object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
-  ///
-    public static CBORObject getRelJSON(IDocument root) {
+    public static CBORObject GetRelJSON(IDocument root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
       }
-      return getRelJSON(root.getDocumentElement());
+      return GetRelJSON(root.getDocumentElement());
     }
 
     /// <summary>Not documented yet.</summary>
     /// <param name='root'>The parameter <paramref name='root'/> is
-    /// a.upokecenter.html.IElement object.</param>
+    /// a.Upokecenter.Html.IElement object.</param>
     /// <returns>A CBORObject object.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='root'/> is null.</exception>
-  ///
-    public static CBORObject getRelJSON(IElement root) {
+    public static CBORObject GetRelJSON(IElement root) {
       if (root == null) {
         throw new ArgumentNullException(nameof(root));
       }
       var obj = CBORObject.NewMap();
       var items = CBORObject.NewArray();
       var item = CBORObject.NewMap();
-      accumulateValue(item, "type", "rel");
+      AccumulateValue(item, "type", "rel");
       var props = CBORObject.NewMap();
-      relWalk(root, props);
+      RelWalk(root, props);
       item.Add("properties", props);
       items.Add(item);
       obj.Add("items", items);
       return obj;
     }
 
-    private static string[] getRelNames(IElement element) {
+    private static string[] GetRelNames(IElement element) {
       string[] ret = StringUtility.SplitAtSpTabCrLfFf(
           DataUtilities.ToLowerCaseAscii(element.getAttribute("rel")));
       if (ret.Length == 0) {
@@ -636,8 +630,8 @@ elname.Equals("time")) {
         retList.Add(element2);
       }
       if (retList.Count >= 2) {
-        ISet<string> stringSet = new HashSet<string>(retList);
-        retList = new List<string>(stringSet);
+        var stringSet = new HashSet<string>(retList);
+        retList = new List<string>((ICollection<string>)stringSet);
       }
       return retList.ToArray();
     }
@@ -685,7 +679,7 @@ elname.Equals("time")) {
       return sb.ToString();
     }
 
-    private static string getTrimmedTextContent(IElement element) {
+    private static string GetTrimmedTextContent(IElement element) {
       return TrimAndCollapseSpaces(element.getTextContent());
     }
 
@@ -694,11 +688,10 @@ elname.Equals("time")) {
     /// otherwise from the element's text.</summary>
     /// <param name='e'>An HTML element.</param>
     /// <returns>A URL, or the empty _string if none was found.</returns>
-  ///
-    private static string getUValue(IElement e) {
-      string url = getHref(e);
+    private static string GetUValue(IElement e) {
+      string url = GetHref(e);
       if (String.IsNullOrEmpty(url)) {
-        url = getTrimmedTextContent(e);
+        url = GetTrimmedTextContent(e);
         if (URIUtility.IsValidIRI(url)) {
           return url;
         } else {
@@ -708,24 +701,24 @@ elname.Equals("time")) {
       return url;
     }
 
-    private static IList<IElement> getValueClasses(IElement root) {
+    private static IList<IElement> GetValueClasses(IElement root) {
       IList<IElement> elements = new List<IElement>();
-      foreach (var element in getChildElements(root)) {
-        getValueClassInner(element, elements);
+      foreach (var element in GetChildElements(root)) {
+        GetValueClassInner(element, elements);
       }
       return elements;
     }
 
-    private static void getValueClassInner(
+    private static void GetValueClassInner(
   IElement root,
   IList<IElement> elements) {
-      string[] cls = getClassNames(root);
+      string[] cls = GetClassNames(root);
       // Check if this is a value
       foreach (var c in cls) {
-        if (c.Equals("value")) {
+        if (c.Equals("value", StringComparison.Ordinal)) {
           elements.Add(root);
           return;
-        } else if (c.Equals("value-title")) {
+        } else if (c.Equals("value-title", StringComparison.Ordinal)) {
           elements.Add(root);
           return;
         }
@@ -740,20 +733,20 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
           return;
         }
       }
-      foreach (var element in getChildElements(root)) {
-        getValueClassInner(element, elements);
+      foreach (var element in GetChildElements(root)) {
+        GetValueClassInner(element, elements);
       }
     }
 
-    private static string getValueContent(IElement root, bool dt) {
-      IList<IElement> elements = getValueClasses(root);
+    private static string GetValueContent(IElement root, bool dt) {
+      IList<IElement> elements = GetValueClasses(root);
       if (elements.Count == 0) {
         // No value elements, get the text content
-        return getValueElementContent(root);
+        return GetValueElementContent(root);
       } else if (elements.Count == 1) {
         // One value element
         IElement valueElement = elements[0];
-        return getValueElementContent(valueElement);
+        return GetValueElementContent(valueElement);
       } else {
         var builder = new StringBuilder();
         var first = true;
@@ -762,47 +755,51 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
             builder.Append(' ');
           }
           first = false;
-          builder.Append(getValueElementContent(element));
+          builder.Append(GetValueElementContent(element));
         }
         return builder.ToString();
       }
     }
 
-    private static string getValueElementContent(IElement valueElement) {
-      if (hasClassName(valueElement, "value-title")) {
+    private static string GetValueElementContent(IElement valueElement) {
+      if (HasClassName(valueElement, "value-title")) {
         // If element has the value-title class, use
         // the title instead
-        return valueOrEmpty(valueElement.getAttribute("title"));
-      } else if (elementName(valueElement).Equals("img") ||
-            elementName(valueElement).Equals("area")) {
+        return OrEmpty(valueElement.getAttribute("title"));
+      } else if (ElementName(valueElement).Equals("img",
+  StringComparison.Ordinal) ||
+            ElementName(valueElement).Equals("area",
+  StringComparison.Ordinal)) {
         string s = valueElement.getAttribute("alt");
         return (s == null) ? String.Empty : s;
-      } else if (elementName(valueElement).Equals("data")) {
+      } else if (ElementName(valueElement).Equals("Data",
+  StringComparison.Ordinal)) {
         string s = valueElement.getAttribute("value");
-        return (s == null) ? getTrimmedTextContent(valueElement) : s;
-      } else if (elementName(valueElement).Equals("abbr")) {
+        return (s == null) ? GetTrimmedTextContent(valueElement) : s;
+      } else if (ElementName(valueElement).Equals("abbr",
+  StringComparison.Ordinal)) {
         string s = valueElement.getAttribute("title");
-        return (s == null) ? getTrimmedTextContent(valueElement) : s;
+        return (s == null) ? GetTrimmedTextContent(valueElement) : s;
       } else {
-        return getTrimmedTextContent(valueElement);
+        return GetTrimmedTextContent(valueElement);
       }
     }
 
-    private static bool hasClassName(IElement e, string className) {
+    private static bool HasClassName(IElement e, string className) {
       string attr = e.getAttribute("class");
       if (attr == null || attr.Length < className.Length) {
         return false;
       }
       string[] cls = StringUtility.SplitAtSpTabCrLfFf(attr);
       foreach (var c in cls) {
-        if (c.Equals(className)) {
+        if (c.Equals(className, StringComparison.Ordinal)) {
           return true;
         }
       }
       return false;
     }
 
-    private static bool hasSingleChildElementNamed(INode e, string name) {
+    private static bool HasSingleChildElementNamed(INode e, string name) {
       var seen = false;
       foreach (var child in e.getChildNodes()) {
         if (child is IElement) {
@@ -819,32 +816,34 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
       return seen;
     }
 
-    private static bool implyForLink(
+    private static bool ImplyForLink(
       IElement root,
       CBORObject subProperties) {
-      if (DataUtilities.ToLowerCaseAscii(root.getLocalName()).Equals("a") &&
+      if (DataUtilities.ToLowerCaseAscii(root.getLocalName()).Equals("a",
+  StringComparison.Ordinal) &&
           root.getAttribute("href") != null) {
         // get the link's URL
-        setValueIfAbsent(subProperties, "url", getUValue(root));
-        IList<IElement> elements = getChildElements(root);
+        SetValueIfAbsent(subProperties, "url", GetUValue(root));
+        IList<IElement> elements = GetChildElements(root);
         if (elements.Count == 1 &&
        DataUtilities.ToLowerCaseAscii(elements[0].getLocalName()).Equals(
-    "img")) {
+         "img",
+         StringComparison.Ordinal)) {
           // try to get the ALT/TITLE
           // from the image
-          string valuePValue = getPValue(elements[0]);
+          string valuePValue = GetPValue(elements[0]);
           if (StringUtility.isNullOrSpaces(valuePValue)) {
-            valuePValue = getPValue(root); // if empty, get text from link
+            valuePValue = GetPValue(root); // if empty, get text from link
                                             // instead
           }
-          setValueIfAbsent(subProperties, "name", valuePValue);
+          SetValueIfAbsent(subProperties, "name", valuePValue);
           // get the SRC of the image
-          setValueIfAbsent(subProperties, "photo", getUValue(elements[0]));
+          SetValueIfAbsent(subProperties, "photo", GetUValue(elements[0]));
         } else {
           // get the text content
-          string pvalue = getPValue(root);
+          string pvalue = GetPValue(root);
           if (!StringUtility.isNullOrSpaces(pvalue)) {
-            setValueIfAbsent(subProperties, "name", pvalue);
+            SetValueIfAbsent(subProperties, "name", pvalue);
           }
         }
         return true;
@@ -852,7 +851,7 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
       return false;
     }
 
-    private static int isDatePattern(
+    private static int IsDatePattern(
       string value,
       int index,
       string pattern,
@@ -1032,7 +1031,7 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
       // Special case: day of year
       if (components[2] != Int32.MinValue && components[0] != Int32.MinValue &&
           components[1] == Int32.MinValue) {
-        int[] monthDay = getMonthAndDay(components[0], components[2]);
+        int[] monthDay = GetMonthAndDay(components[0], components[2]);
         // DebugUtility.Log("monthday %d->%d %d"
         // , components[2], monthDay[0], monthDay[1]);
         if (monthDay == null) {
@@ -1055,7 +1054,7 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
       return valueIndex;
     }
 
-    private static bool matchDateTimePattern(
+    private static bool MatchDateTimePattern(
       string value,
       string[] datePatterns,
       string[] timePatterns,
@@ -1076,11 +1075,11 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
         // match the date patterns, if any
         foreach (var pattern in datePatterns) {
           // reset components
-          int endIndex = isDatePattern(value, index, pattern, c);
+          int endIndex = IsDatePattern(value, index, pattern, c);
           if (endIndex >= 0) {
             // copy any matching components
             if (endIndex >= value.Length) {
-              copyComponents(
+              CopyComponents(
                 c,
                 components,
                 useDate,
@@ -1108,16 +1107,16 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
       // match the time pattern
       foreach (var pattern in timePatterns) {
         // reset components
-        int endIndex = isDatePattern(value, index, pattern, c2);
+        int endIndex = IsDatePattern(value, index, pattern, c2);
         if (endIndex == value.Length) {
           // copy any matching components
-          copyComponents(
+          CopyComponents(
             c,
             components,
             useDate,
             useTime,
             useTimezone);
-          copyComponents(
+          CopyComponents(
             c2,
             components,
             useDate,
@@ -1129,7 +1128,7 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
       return false;
     }
 
-    private static string[] parseLegacyRel(string str) {
+    private static string[] ParseLegacyRel(string str) {
       string[] ret = StringUtility.SplitAtSpTabCrLfFf(
           DataUtilities.ToLowerCaseAscii(str));
       if (ret.Length == 0) {
@@ -1140,15 +1139,17 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
       var hasSelf = false;
       var hasBookmark = false;
       foreach (var element in ret) {
-        if (!hasTag && "tag".Equals(element)) {
+        if (!hasTag && "tag".Equals(element, StringComparison.Ordinal)) {
           relList.Add("p-category");
           hasTag = true;
-        } else if (!hasSelf && "self".Equals(element)) {
+        } else if (!hasSelf && "self".Equals(element,
+  StringComparison.Ordinal)) {
           if (hasBookmark) {
             relList.Add("u-url");
           }
           hasSelf = true;
-        } else if (!hasBookmark && "bookmark".Equals(element)) {
+        } else if (!hasBookmark && "bookmark".Equals(element,
+  StringComparison.Ordinal)) {
           if (hasSelf) {
             relList.Add("u-url");
           }
@@ -1158,11 +1159,11 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
       return relList.ToArray();
     }
 
-    private static void propertyWalk(
+    private static void PropertyWalk(
       IElement root,
       CBORObject properties,
       CBORObject children) {
-      string[] className = getClassNames(root);
+      string[] className = GetClassNames(root);
       if (className.Length > 0) {
         IList<string> types = new List<string>();
         var hasProperties = false;
@@ -1188,25 +1189,25 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
           // root
           foreach (var cls in className) {
             if (cls.StartsWith("p-", StringComparison.Ordinal)) {
-              string value = getPValue(root);
+              string value = GetPValue(root);
               if (!StringUtility.isNullOrSpaces(value)) {
-                accumulateValue(properties, cls.Substring(2), value);
+                AccumulateValue(properties, cls.Substring(2), value);
               }
             } else if (cls.StartsWith("u-", StringComparison.Ordinal)) {
-              accumulateValue(
+              AccumulateValue(
   properties,
   cls.Substring(2),
-  getUValue(root));
+  GetUValue(root));
 } else if (cls.StartsWith("dt-", StringComparison.Ordinal)) {
-              accumulateValue(
+              AccumulateValue(
   properties,
   cls.Substring(3),
-  getDTValue(root, getLastKnownTime(properties)));
+  GetDTValue(root, GetLastKnownTime(properties)));
 } else if (cls.StartsWith("e-", StringComparison.Ordinal)) {
-              accumulateValue(
+              AccumulateValue(
   properties,
   cls.Substring(2),
-  getEValue(root));
+  GetEValue(root));
             }
           }
         } else if (types.Count > 0) {
@@ -1222,7 +1223,7 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
           var subChildren = CBORObject.NewArray();
           foreach (var child in root.getChildNodes()) {
             if (child is IElement) {
-              propertyWalk(
+              PropertyWalk(
   (IElement)child,
   subProperties,
   subChildren);
@@ -1234,30 +1235,31 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
           if (types.Count > 0) {
             // we imply missing properties here
             // Imply p-name and p-url
-            if (!implyForLink(root, subProperties)) {
-              if (hasSingleChildElementNamed(root, "a")) {
-                implyForLink(getFirstChildElement(root), subProperties);
+            if (!ImplyForLink(root, subProperties)) {
+              if (HasSingleChildElementNamed(root, "a")) {
+                ImplyForLink(GetFirstChildElement(root), subProperties);
               } else {
-                string pvalue = getPValue(root);
+                string pvalue = GetPValue(root);
                 if (!StringUtility.isNullOrSpaces(pvalue)) {
-                  setValueIfAbsent(subProperties, "name", pvalue);
+                  SetValueIfAbsent(subProperties, "name", pvalue);
                 }
               }
             }
             // Also imply u-photo
             if (DataUtilities.ToLowerCaseAscii(root.getLocalName()).Equals(
-      "img") && root.getAttribute("src") != null) {
-              setValueIfAbsent(subProperties, "photo", getUValue(root));
+              "img",
+              StringComparison.Ordinal) && root.getAttribute("src") != null) {
+              SetValueIfAbsent(subProperties, "photo", GetUValue(root));
             }
             if (!subProperties.ContainsKey("photo")) {
               IList<IElement> images = root.getElementsByTagName("img");
               // If there is only one descendant image, imply
               // u-photo
               if (images.Count == 1) {
-                setValueIfAbsent(
+                SetValueIfAbsent(
   subProperties,
   "photo",
-  getUValue(images[0]));
+  GetUValue(images[0]));
               }
             }
           }
@@ -1265,30 +1267,30 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
           if (hasProperties) {
             foreach (var cls in className) {
               if (cls.StartsWith("p-", StringComparison.Ordinal)) { // property
-                CBORObject clone = copyJson(obj);
-                clone.Add("value", getPValue(root));
-                accumulateValue(properties, cls.Substring(2), clone);
+                CBORObject clone = CopyJson(obj);
+                clone.Add("value", GetPValue(root));
+                AccumulateValue(properties, cls.Substring(2), clone);
               } else if (cls.StartsWith("u-", StringComparison.Ordinal)) {
                 // URL
-                CBORObject clone = copyJson(obj);
-                clone.Add("value", getUValue(root));
-                accumulateValue(properties, cls.Substring(2), clone);
+                CBORObject clone = CopyJson(obj);
+                clone.Add("value", GetUValue(root));
+                AccumulateValue(properties, cls.Substring(2), clone);
               } else if (cls.StartsWith("dt-", StringComparison.Ordinal)) {
                 // date/time
-                CBORObject clone = copyJson(obj);
+                CBORObject clone = CopyJson(obj);
                 {
                   object objectTemp = "value";
-                  object objectTemp2 = getDTValue(
+                  object objectTemp2 = GetDTValue(
                     root,
-                    getLastKnownTime(properties));
+                    GetLastKnownTime(properties));
                   clone.Add(objectTemp, objectTemp2);
                 }
-                accumulateValue(properties, cls.Substring(3), clone);
+                AccumulateValue(properties, cls.Substring(3), clone);
               } else if (cls.StartsWith("e-", StringComparison.Ordinal)) {
                 // date/time
-                CBORObject clone = copyJson(obj);
-                clone.Add("value", getEValue(root));
-                accumulateValue(properties, cls.Substring(2), clone);
+                CBORObject clone = CopyJson(obj);
+                clone.Add("value", GetEValue(root));
+                AccumulateValue(properties, cls.Substring(2), clone);
               }
             }
           } else {
@@ -1299,31 +1301,31 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
       }
       foreach (var child in root.getChildNodes()) {
         if (child is IElement) {
-          propertyWalk((IElement)child, properties, children);
+          PropertyWalk((IElement)child, properties, children);
         }
       }
     }
 
-    private static void relWalk(
+    private static void RelWalk(
       IElement root,
       CBORObject properties) {
-      string[] className = getRelNames(root);
+      string[] className = GetRelNames(root);
       if (className.Length > 0) {
-        string href = getHref(root);
+        string href = GetHref(root);
         if (!StringUtility.isNullOrSpaces(href)) {
           foreach (var cls in className) {
-            accumulateValue(properties, cls, href);
+            AccumulateValue(properties, cls, href);
           }
         }
       }
       foreach (var child in root.getChildNodes()) {
         if (child is IElement) {
-          relWalk((IElement)child, properties);
+          RelWalk((IElement)child, properties);
         }
       }
     }
 
-    private static void setValueIfAbsent(
+    private static void SetValueIfAbsent(
       CBORObject obj,
       string key,
       Object value) {
@@ -1335,19 +1337,19 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
       }
     }
 
-    private static string toDateTimeString(int[] components) {
+    private static string ToDateTimeString(int[] components) {
       var builder = new StringBuilder();
       if (components[0] != Int32.MinValue) { // has a date
                                               // add year
-        append4d(builder, components[0]);
+        Append4d(builder, components[0]);
         builder.Append('-');
         if (components[1] == Int32.MinValue) {
-          append3d(builder, components[2]); // year and day of year
+          Append3d(builder, components[2]); // year and day of year
         } else { // has month
                   // add month and day
-          append2d(builder, components[1]);
+          Append2d(builder, components[1]);
           builder.Append('-');
-          append2d(builder, components[2]);
+          Append2d(builder, components[2]);
         }
         // add T if there is a time
         if (components[3] != Int32.MinValue) {
@@ -1355,29 +1357,29 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
         }
       }
       if (components[3] != Int32.MinValue) {
-        append2d(builder, components[3]);
+        Append2d(builder, components[3]);
         builder.Append(':');
-        append2d(builder, components[4]);
+        Append2d(builder, components[4]);
         builder.Append(':');
-        append2d(builder, components[5]);
+        Append2d(builder, components[5]);
       }
       if (components[6] != Int32.MinValue) {
         if (components[6] == 0 && components[7] == 0) {
           builder.Append('Z');
         } else if (components[6] < 0) { // negative time zone offset
           builder.Append('-');
-          append2d(builder, components[6]);
-          append2d(builder, components[7]);
+          Append2d(builder, components[6]);
+          Append2d(builder, components[7]);
         } else { // positive time zone offset
           builder.Append('+');
-          append2d(builder, components[6]);
-          append2d(builder, components[7]);
+          Append2d(builder, components[6]);
+          Append2d(builder, components[7]);
         }
       }
       return builder.ToString();
     }
 
-    private static string valueOrEmpty(string s) {
+    private static string OrEmpty(string s) {
       return s == null ? String.Empty : s;
     }
 
