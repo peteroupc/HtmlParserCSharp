@@ -62,11 +62,11 @@ internal class Node : INode {
       string tagname = e.getTagName();
       string namespaceURI = e.getNamespaceURI();
       if (HtmlCommon.HTML_NAMESPACE.Equals(namespaceURI,
-  StringComparison.Ordinal) ||
-          HtmlCommon.SVG_NAMESPACE.Equals(namespaceURI,
-  StringComparison.Ordinal) ||
-          HtmlCommon.MATHML_NAMESPACE.Equals(namespaceURI,
-  StringComparison.Ordinal)) {
+             StringComparison.Ordinal) ||
+             HtmlCommon.SVG_NAMESPACE.Equals(namespaceURI,
+             StringComparison.Ordinal) ||
+             HtmlCommon.MATHML_NAMESPACE.Equals(namespaceURI,
+             StringComparison.Ordinal)) {
         tagname = e.getLocalName();
       }
       builder.Append('<');

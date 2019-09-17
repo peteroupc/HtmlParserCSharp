@@ -100,8 +100,7 @@ namespace Com.Upokecenter.Html {
         if (s == null) {
           nodes.Add(e);
         } else if (HtmlCommon.HTML_NAMESPACE.Equals(e.getNamespaceURI(),
-  StringComparison.Ordinal) &&
-            e.getLocalName().Equals(valueSLowercase,
+  StringComparison.Ordinal) && e.getLocalName().Equals(valueSLowercase,
   StringComparison.Ordinal)) {
           nodes.Add(e);
         } else if (e.getLocalName().Equals(s, StringComparison.Ordinal)) {
@@ -128,8 +127,7 @@ namespace Com.Upokecenter.Html {
           localName.Equals(attr.getLocalName(), StringComparison.Ordinal)) &&
             (_namespace == null ? attr.getNamespaceURI() == null :
               _namespace.Equals(attr.getNamespaceURI(),
-  StringComparison.Ordinal)))
-          return attr.getValue();
+  StringComparison.Ordinal))) return attr.getValue();
       }
       return null;
     }

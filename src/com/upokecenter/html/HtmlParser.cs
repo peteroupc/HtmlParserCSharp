@@ -1013,8 +1013,7 @@ valueName.Equals("var", StringComparison.Ordinal)) {
             this.PopCurrentNode();
             IElement node = this.GetCurrentNode();
             if (node.getNamespaceURI().Equals(HtmlCommon.HTML_NAMESPACE,
-  StringComparison.Ordinal) ||
-                this.IsMathMLTextIntegrationPoint(node) ||
+  StringComparison.Ordinal) || this.IsMathMLTextIntegrationPoint(node) ||
                 this.IsHtmlIntegrationPoint(node)) {
               break;
             }
@@ -1946,8 +1945,7 @@ valueName.Equals("th", StringComparison.Ordinal)) {
               } else if ("frameset".Equals(valueName,
   StringComparison.Ordinal)) {
                 this.ParseError();
-                if (!this.framesetOk ||
-                  this.openElements.Count <= 1 ||
+                if (!this.framesetOk || this.openElements.Count <= 1 ||
                     !HtmlCommon.isHtmlElement(this.openElements[1], "body")) {
                   return false;
                 }
@@ -2220,8 +2218,7 @@ InsertionMode.InTable ||
                          this.insertionMode == InsertionMode.InCell) ?
                          InsertionMode.InSelectInTable : InsertionMode.InSelect;
                        } else if ("option".Equals(valueName,
-  StringComparison.Ordinal) || "optgroup"
-                    .Equals(valueName)) {
+  StringComparison.Ordinal) || "optgroup" .Equals(valueName)) {
                 if (this.GetCurrentNode().getLocalName().Equals(
                   "option",
                   StringComparison.Ordinal)) {
@@ -3517,8 +3514,8 @@ valueName.Equals("textarea", StringComparison.Ordinal)) {
                 return this.ApplyInsertionMode(token, null);
               } else if (valueName.Equals("script",
   StringComparison.Ordinal) || valueName.Equals(
-         "template",
-  StringComparison.Ordinal)) {
+    "template",
+    StringComparison.Ordinal)) {
                 return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InHead);
@@ -4600,8 +4597,8 @@ this.currentEndTag.getName().Equals(this.lastStartTag.getName(),
 (
                           valueName.Equals("foreignObject",
   StringComparison.Ordinal) || valueName.Equals(
-                          "desc",
-  StringComparison.Ordinal) ||
+    "desc",
+    StringComparison.Ordinal) ||
 valueName.Equals("title", StringComparison.Ordinal));
     }
 
@@ -5272,7 +5269,7 @@ HtmlCommon.isHtmlElement(context, "noframes")) {
                     return 0xfffd;
                   } else if (c11 < 0) {
                     return TOKEN_EOF;
-              } else {
+                  } else {
                 return c11;
               }
               break;
@@ -5389,8 +5386,7 @@ TokenizerState.ScriptDataEndTagOpen) ?
                   ch == 0x2f || ch == 0x3e) {
                 string bufferString = this.tempBuilder.ToString();
                 this.state = bufferString.Equals("script",
-  StringComparison.Ordinal) ?
-                  TokenizerState.ScriptDataDoubleEscaped :
+  StringComparison.Ordinal) ? TokenizerState.ScriptDataDoubleEscaped :
                   TokenizerState.ScriptDataEscaped;
                 return ch;
               } else if (ch >= 'A' && ch <= 'Z') {
@@ -5428,8 +5424,7 @@ TokenizerState.ScriptDataEndTagOpen) ?
                   ch == 0x2f || ch == 0x3e) {
                 string bufferString = this.tempBuilder.ToString();
                 this.state = bufferString.Equals("script",
-  StringComparison.Ordinal) ?
-                  TokenizerState.ScriptDataEscaped :
+  StringComparison.Ordinal) ? TokenizerState.ScriptDataEscaped :
                   TokenizerState.ScriptDataDoubleEscaped;
                 return ch;
               } else if (ch >= 'A' && ch <= 'Z') {

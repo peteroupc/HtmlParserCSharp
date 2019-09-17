@@ -446,8 +446,8 @@ baseurl.scheme.Equals(
   "https",
   StringComparison.Ordinal) || baseurl.scheme.Equals("ftp",
   StringComparison.Ordinal) || baseurl.scheme.Equals(
-  "gopher",
-  StringComparison.Ordinal) || baseurl.scheme.Equals("ws",
+    "gopher",
+    StringComparison.Ordinal) || baseurl.scheme.Equals("ws",
   StringComparison.Ordinal) || baseurl.scheme.Equals("wss",
   StringComparison.Ordinal) ||
                 baseurl.scheme.Equals("file", StringComparison.Ordinal))) {
@@ -854,7 +854,7 @@ path.Count == 0 &&
               buffer.Append((char)'.');
             } else if (c == 0x09 || c == 0x0a || c == 0x0d) {
               error = true;
-    } else {
+            } else {
               if ((!IsUrlCodePoint(c) && c != '%') || (c == '%' &&
                   (index + 2 > ending || !IsHexDigit(s[index]) ||
                     !IsHexDigit(s[index + 1])))) {

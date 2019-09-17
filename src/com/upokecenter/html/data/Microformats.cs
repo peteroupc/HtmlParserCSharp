@@ -767,8 +767,7 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
         // the title instead
         return OrEmpty(valueElement.getAttribute("title"));
       } else if (ElementName(valueElement).Equals("img",
-  StringComparison.Ordinal) ||
-            ElementName(valueElement).Equals("area",
+  StringComparison.Ordinal) || ElementName(valueElement).Equals("area",
   StringComparison.Ordinal)) {
         string s = valueElement.getAttribute("alt");
         return (s == null) ? String.Empty : s;
@@ -820,8 +819,7 @@ c.StartsWith("u-", StringComparison.Ordinal)) {
       IElement root,
       CBORObject subProperties) {
       if (DataUtilities.ToLowerCaseAscii(root.getLocalName()).Equals("a",
-  StringComparison.Ordinal) &&
-          root.getAttribute("href") != null) {
+  StringComparison.Ordinal) && root.getAttribute("href") != null) {
         // get the link's URL
         SetValueIfAbsent(subProperties, "url", GetUValue(root));
         IList<IElement> elements = GetChildElements(root);
