@@ -133,13 +133,13 @@ namespace Com.Upokecenter.Html {
   (byte)255, (byte)255, (byte)255, (byte)255,
 }
   };
-
+var vpps = new byte[] {
+  0x25, 0x21, 0x50, 0x53, 0x2d, 0x41,
+  0x64, 0x6f, 0x62, 0x65, 0x2d,
+};
     private static byte[][] valuePatternsPs = new byte[][] {
-    new byte[] {
-      0x25, 0x21, 0x50, 0x53, 0x2d, 0x41,
-      0x64, 0x6f, 0x62, 0x65, 0x2d, ,
-    }, null
-  };
+      vpps, null
+    };
 
     internal static string ExtractCharsetFromMeta(string value) {
       if (value == null) {
