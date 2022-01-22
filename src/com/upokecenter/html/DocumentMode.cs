@@ -1,6 +1,4 @@
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -29,9 +27,9 @@ using System;
 
 namespace Com.Upokecenter.Html {
   internal // / <summary>Not documented yet.</summary>
-enum DocumentMode {
-  NoQuirksMode,
-  LimitedQuirksMode,
-  QuirksMode,
+  enum DocumentMode {
+    NoQuirksMode,
+    LimitedQuirksMode,
+    QuirksMode,
   }
 }

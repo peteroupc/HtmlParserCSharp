@@ -1,6 +1,4 @@
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -28,20 +26,20 @@ THE SOFTWARE.
 using System;
 
 namespace Com.Upokecenter.Html {
-    /// <summary>Represents the HTML "!DOCTYPE" tag.</summary>
-public interface IDocumentType : INode {
+  /// <summary>Represents the HTML "!DOCTYPE" tag.</summary>
+  public interface IDocumentType : INode {
     /// <summary>Gets the name of this document type. For HTML documents,
     /// this should be "Html".</summary>
     /// <returns>The return value is not documented yet.</returns>
-   string GetName();
+    string GetName();
 
     /// <summary>Gets the identifier of this document type.</summary>
     /// <returns>The return value is not documented yet.</returns>
-   string GetPublicId();
+    string GetPublicId();
 
     /// <summary>Gets the system identifier of this document
     /// type.</summary>
     /// <returns>The return value is not documented yet.</returns>
-   string GetSystemId();
-}
+    string GetSystemId();
+  }
 }

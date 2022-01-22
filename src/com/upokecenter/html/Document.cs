@@ -4,8 +4,6 @@ using System.Text;
 using Com.Upokecenter.util;
 using PeterO;
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -32,28 +30,41 @@ THE SOFTWARE.
 
 namespace Com.Upokecenter.Html {
   internal class Document : Node, IDocument {
-    internal DocumentType Doctype { get; set; }
+    internal DocumentType Doctype {
+      get;
+      set;
+    }
 
-    internal string Encoding { get; set; }
+    internal string Encoding {
+      get;
+      set;
+    }
 
     private DocumentMode docmode = DocumentMode.NoQuirksMode;
 
-    internal string DefaultLanguage { get; set; }
-
-    internal string Address { get; set; }
-
-    internal Document() : base(NodeType.DOCUMENT_NODE) {
+    internal string DefaultLanguage {
+      get;
+      set;
     }
 
-    private void CollectElements(INode c, string s, IList<IElement> nodes) {
+    internal string Address {
+      get;
+      set;
+    }
+
+    internal Document() : base (NodeType.DOCUMENT_NODE) {
+    }
+
+    private void CollectElements (INode c, string s, IList<IElement> nodes) {
       if (c.getNodeType() == NodeType.ELEMENT_NODE) {
         var e = (IElement)c;
-        if (s == null || e.getLocalName().Equals(s, StringComparison.Ordinal)) {
-          nodes.Add(e);
+        if (s == null || e.getLocalName().Equals (s,
+  StringComparison.Ordinal)) {
+          nodes.Add (e);
         }
       }
       foreach (var node in c.getChildNodes()) {
-        this.CollectElements(node, s, nodes);
+        this.CollectElements (node, s, nodes);
       }
     }
 
@@ -65,18 +76,18 @@ namespace Com.Upokecenter.Html {
       if (c.getNodeType() == NodeType.ELEMENT_NODE) {
         var e = (IElement)c;
         if (s == null) {
-          nodes.Add(e);
-        } else if (HtmlCommon.HTML_NAMESPACE.Equals(e.getNamespaceURI(),
-    StringComparison.Ordinal) &&
-            e.getLocalName().Equals(valueSLowercase,
-  StringComparison.Ordinal)) {
-          nodes.Add(e);
-        } else if (e.getLocalName().Equals(s, StringComparison.Ordinal)) {
-          nodes.Add(e);
+          nodes.Add (e);
+        } else if (HtmlCommon.HTML_NAMESPACE.Equals (e.getNamespaceURI(),
+            StringComparison.Ordinal) && e.getLocalName().Equals
+(valueSLowercase,
+            StringComparison.Ordinal)) {
+          nodes.Add (e);
+        } else if (e.getLocalName().Equals (s, StringComparison.Ordinal)) {
+          nodes.Add (e);
         }
       }
       foreach (var node in c.getChildNodes()) {
-        this.CollectElements(node, s, nodes);
+        this.CollectElements (node, s, nodes);
       }
     }
 
@@ -97,16 +108,16 @@ namespace Com.Upokecenter.Html {
       return null;
     }
 
-    public IElement getElementById(string id) {
+    public IElement getElementById (string id) {
       if (id == null) {
         throw new ArgumentException();
       }
       foreach (var node in this.getChildNodes()) {
         if (node is IElement) {
-          if (id.Equals(((IElement)node).getId(), StringComparison.Ordinal)) {
+          if (id.Equals (((IElement)node).getId(), StringComparison.Ordinal)) {
             return (IElement)node;
           }
-          IElement element = ((IElement)node).getElementById(id);
+          IElement element = ((IElement)node).getElementById (id);
           if (element != null) {
             return element;
           }
@@ -115,22 +126,22 @@ namespace Com.Upokecenter.Html {
       return null;
     }
 
-    public IList<IElement> getElementsByTagName(string tagName) {
+    public IList<IElement> getElementsByTagName (string tagName) {
       if (tagName == null) {
         throw new ArgumentException();
       }
-      if (tagName.Equals("*", StringComparison.Ordinal)) {
+      if (tagName.Equals ("*", StringComparison.Ordinal)) {
         tagName = null;
       }
       IList<IElement> ret = new List<IElement>();
       if (this.IsHtmlDocument()) {
         this.CollectElementsHtml(
-    this,
-    tagName,
-    DataUtilities.ToLowerCaseAscii(tagName),
-    ret);
+          this,
+          tagName,
+          DataUtilities.ToLowerCaseAscii (tagName),
+          ret);
       } else {
-        this.CollectElements(this, tagName, ret);
+        this.CollectElements (this, tagName, ret);
       }
       return ret;
     }
@@ -160,7 +171,7 @@ namespace Com.Upokecenter.Html {
       return true;
     }
 
-    internal void SetMode(DocumentMode mode) {
+    internal void SetMode (DocumentMode mode) {
       this.docmode = mode;
     }
 
@@ -169,26 +180,26 @@ namespace Com.Upokecenter.Html {
     }
 
     internal override string ToDebugString() {
-      return ToDebugString(this.getChildNodes());
+      return ToDebugString (this.getChildNodes());
     }
 
-    internal static string ToDebugString(IList<INode> nodes) {
+    internal static string ToDebugString (IList<INode> nodes) {
       var builder = new StringBuilder();
       foreach (var node in nodes) {
         string str = ((Node)node).ToDebugString();
         if (str == null) {
           continue;
         }
-        string[] strarray = StringUtility.splitAt(str, "\n");
+        string[] strarray = StringUtility.splitAt (str, "\n");
         int len = strarray.Length;
         if (len > 0 && strarray[len - 1].Length == 0) {
           --len; // ignore trailing empty _string
         }
         for (int i = 0; i < len; ++i) {
           string el = strarray[i];
-          builder.Append("| ");
-          builder.Append(el.Replace("~~~~", "\n"));
-          builder.Append("\n");
+          builder.Append ("| ");
+          builder.Append (el.Replace ("~~~~", "\n"));
+          builder.Append ("\n");
         }
       }
       return builder.ToString();

@@ -1,6 +1,4 @@
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -28,10 +26,10 @@ THE SOFTWARE.
 using System;
 
 namespace Com.Upokecenter.Html {
-    /// <summary>Represents a comment on an HTML document.</summary>
-public interface IComment : INode {
+  /// <summary>Represents a comment on an HTML document.</summary>
+  public interface IComment : INode {
     /// <summary>Gets the comment's text.</summary>
     /// <returns>The return value is not documented yet.</returns>
-   string GetData();
-}
+    string GetData();
+  }
 }

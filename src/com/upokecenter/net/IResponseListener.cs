@@ -1,6 +1,4 @@
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -28,8 +26,8 @@ using System;
 using System.IO;
 
 namespace Com.Upokecenter.Net {
-    /// <summary>Not documented yet.</summary>
-    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+  /// <summary>Not documented yet.</summary>
+  /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
   public interface IResponseListener<T> {
     /// <summary>Processes the Web response on a background thread. Please
     /// note: For the response to be cacheable, the entire stream must be
@@ -40,9 +38,9 @@ namespace Com.Upokecenter.Net {
     /// close the stream. @param headers Contains the headers returned by
     /// the response. @.</summary>
     /// <returns>The return value is not documented yet.</returns>
-   T ProcessResponse(
-     string url,
-     Stream stream,
-     IHttpHeaders headers);
-}
+    T ProcessResponse(
+      string url,
+      Stream stream,
+      IHttpHeaders headers);
+  }
 }

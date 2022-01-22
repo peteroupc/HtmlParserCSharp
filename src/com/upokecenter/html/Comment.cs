@@ -1,6 +1,4 @@
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -28,30 +26,31 @@ THE SOFTWARE.
 using System;
 
 namespace Com.Upokecenter.Html {
-internal class Comment : Node, IComment {
-  private string valueData;
+  internal class Comment : Node, IComment {
+    private string valueData;
 
-  internal Comment() : base(NodeType.COMMENT_NODE) {
-  }
+    internal Comment() : base (NodeType.COMMENT_NODE) {
+    }
 
-  public string getData() {
-    return this.valueData;
-  }
+    public string getData() {
+      return this.valueData;
+    }
 
-  public override string getNodeName() {
-    return "#comment";
-  }
+    public override string getNodeName() {
+      return "#comment";
+    }
 
-  public override string getTextContent() {
-    return null;
-  }
+    public override string getTextContent() {
+      return null;
+    }
 
-  internal void SetData(string valueData) {
-    this.valueData = valueData;
-  }
+    internal void SetData (string valueData) {
+      this.valueData = valueData;
+    }
 
-  internal override string toDebugString() {
-    return "<!-- " + this.getData().ToString().Replace("\n", "~~~~") + " -->\n";
+    internal override string toDebugString() {
+      return "<!-- " + this.getData().ToString().Replace ("\n",
+          "~~~~") + " -->\n";
+    }
   }
-}
 }

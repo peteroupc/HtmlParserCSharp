@@ -1,6 +1,4 @@
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -27,17 +25,17 @@ THE SOFTWARE.
 using System;
 
 namespace Com.Upokecenter.Net {
-    /// <summary>Not documented yet.</summary>
-    /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
-public interface IDownloadEventListener<T> : IResponseListener<T> {
+  /// <summary>Not documented yet.</summary>
+  /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
+  public interface IDownloadEventListener<T> : IResponseListener<T> {
     /// <summary>Not documented yet.</summary>
     /// <param name='url'>The parameter <paramref name='url'/> is a text
     /// string.</param>
-   void OnConnected(string url);
+    void OnConnected (string url);
 
     /// <summary>Not documented yet.</summary>
     /// <param name='url'>The parameter <paramref name='url'/> is a text
     /// string.</param>
-   void OnConnecting(string url);
-}
+    void OnConnecting (string url);
+  }
 }

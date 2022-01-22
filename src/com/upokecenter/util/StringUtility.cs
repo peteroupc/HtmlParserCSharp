@@ -1,18 +1,18 @@
 /*
 Written in 2013 by Peter Occil.
-Any copyright is dedicated to the Public Domain.
-http://creativecommons.org/publicdomain/zero/1.0/
+Any copyright to this work is released to the Public Domain.
+In case this is not possible, this work is also
+licensed under Creative Commons Zero (CC0):
+https://creativecommons.org/publicdomain/zero/1.0/
 
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 */
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Com.Upokecenter.Util {
-    /// <summary>Contains utility methods for working with
-    /// strings.</summary>
+  /// <summary>Contains utility methods for working with
+  /// strings.</summary>
   public static class StringUtility {
     private static readonly string[] ValueEmptyStringArray = new string[0];
 
@@ -20,7 +20,7 @@ namespace Com.Upokecenter.Util {
     /// <param name='s'>The parameter <paramref name='s'/> is a text
     /// string.</param>
     /// <returns>Either <c>true</c> or <c>false</c>.</returns>
-    public static bool IsNullOrSpaces(string s) {
+    public static bool IsNullOrSpaces (string s) {
       if (s == null) {
         return true;
       }
@@ -51,14 +51,14 @@ namespace Com.Upokecenter.Util {
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='delimiter'/> is null.</exception>
     /// <exception cref='ArgumentException'>Delimiter is empty.</exception>
-    public static string[] SplitAt(string str, string delimiter) {
+    public static string[] SplitAt (string str, string delimiter) {
       if (delimiter == null) {
         throw new ArgumentNullException(nameof(delimiter));
       }
       if (delimiter.Length == 0) {
         throw new ArgumentException("delimiter is empty.");
       }
-      if (String.IsNullOrEmpty(str)) {
+      if (String.IsNullOrEmpty (str)) {
         return new[] { String.Empty };
       }
       var index = 0;
@@ -66,7 +66,7 @@ namespace Com.Upokecenter.Util {
       List<string> strings = null;
       int delimLength = delimiter.Length;
       while (true) {
-        int index2 = str.IndexOf(delimiter, index, StringComparison.Ordinal);
+        int index2 = str.IndexOf (delimiter, index, StringComparison.Ordinal);
         if (index2 < 0) {
           if (first) {
             var strret = new string[1];
@@ -74,13 +74,13 @@ namespace Com.Upokecenter.Util {
             return strret;
           }
           strings = strings ?? new List<string>();
-          strings.Add(str.Substring(index));
+          strings.Add (str.Substring (index));
           break;
         } else {
           first = false;
-          string newstr = str.Substring(index, index2 - index);
+          string newstr = str.Substring (index, index2 - index);
           strings = strings ?? new List<string>();
-          strings.Add(newstr);
+          strings.Add (newstr);
           index = index2 + delimLength;
         }
       }
@@ -95,7 +95,7 @@ namespace Com.Upokecenter.Util {
     /// <param name='s'>A string. Can be null.</param>
     /// <returns>An array of all items separated by spaces. If string is
     /// null or empty, returns an empty array.</returns>
-    public static string[] SplitAtSpTabCrLf(string s) {
+    public static string[] SplitAtSpTabCrLf (string s) {
       if (s == null || s.Length == 0) {
         return ValueEmptyStringArray;
       }
@@ -118,7 +118,7 @@ namespace Com.Upokecenter.Util {
         if (c == 0x09 || c == 0x0a || c == 0x0d || c == 0x20) {
           if (lastIndex >= 0) {
             strings = strings ?? new List<string>();
-            strings.Add(s.Substring(lastIndex, index - lastIndex));
+            strings.Add (s.Substring (lastIndex, index - lastIndex));
             lastIndex = -1;
           }
         } else {
@@ -130,9 +130,9 @@ namespace Com.Upokecenter.Util {
       }
       if (lastIndex >= 0) {
         if (strings == null) {
-          return new string[] { s.Substring(lastIndex, index - lastIndex) };
+          return new string[] { s.Substring (lastIndex, index - lastIndex) };
         }
-        strings.Add(s.Substring(lastIndex, index - lastIndex));
+        strings.Add (s.Substring (lastIndex, index - lastIndex));
       }
       return strings.ToArray();
     }
@@ -144,7 +144,7 @@ namespace Com.Upokecenter.Util {
     /// <param name='s'>A string. Can be null.</param>
     /// <returns>An array of all items separated by spaces. If string is
     /// null or empty, returns an empty array.</returns>
-    public static string[] SplitAtSpTabCrLfFf(string s) {
+    public static string[] SplitAtSpTabCrLfFf (string s) {
       if (s == null || s.Length == 0) {
         return ValueEmptyStringArray;
       }
@@ -167,7 +167,7 @@ namespace Com.Upokecenter.Util {
         if (c == 0x09 || c == 0x0a || c == 0x0c || c == 0x0d || c == 0x20) {
           if (lastIndex >= 0) {
             strings = strings ?? new List<string>();
-            strings.Add(s.Substring(lastIndex, index - lastIndex));
+            strings.Add (s.Substring (lastIndex, index - lastIndex));
             lastIndex = -1;
           }
         } else {
@@ -179,9 +179,9 @@ namespace Com.Upokecenter.Util {
       }
       if (lastIndex >= 0) {
         if (strings == null) {
-          return new string[] { s.Substring(lastIndex, index - lastIndex) };
+          return new string[] { s.Substring (lastIndex, index - lastIndex) };
         }
-        strings.Add(s.Substring(lastIndex, index - lastIndex));
+        strings.Add (s.Substring (lastIndex, index - lastIndex));
       }
       return strings.ToArray();
     }

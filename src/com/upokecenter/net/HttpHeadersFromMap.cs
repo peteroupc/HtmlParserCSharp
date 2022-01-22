@@ -1,6 +1,4 @@
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -37,26 +35,26 @@ namespace com.upokecenter.net {
     private string valueUrlString;
 
     public HttpHeadersFromMap(
-  string valueUrlString,
-  string valueRequestMethod,
-  IDictionary<string, IList<string>> valueMap) {
+      string valueUrlString,
+      string valueRequestMethod,
+      IDictionary<string, IList<string>> valueMap) {
       this.valueMap = valueMap;
       this.valueUrlString = valueUrlString;
       this.valueRequestMethod = valueRequestMethod;
       this.valueList = new List<string>();
       var keyset = new List<string>();
       foreach (var s in this.valueMap.Keys) {
-        if (String.IsNullOrEmpty(s)) {
+        if (String.IsNullOrEmpty (s)) {
           // Add status line (also has the side
           // effect that it will appear first in the valueList)
           IList<string> v = this.valueMap[s];
           if (v != null && v.Count > 0) {
-            this.valueList.Add(v[0]);
+            this.valueList.Add (v[0]);
           } else {
-            this.valueList.Add("HTTP/1.1 200 OK");
+            this.valueList.Add ("HTTP/1.1 200 OK");
           }
         } else {
-          keyset.Add(s);
+          keyset.Add (s);
         }
       }
       keyset.Sort();
@@ -65,14 +63,14 @@ namespace com.upokecenter.net {
         IList<string> v = this.valueMap[s];
         if (v != null && v.Count > 0) {
           foreach (var ss in v) {
-            this.valueList.Add(s);
-            this.valueList.Add(ss);
+            this.valueList.Add (s);
+            this.valueList.Add (ss);
           }
         }
       }
     }
 
-    public string getHeaderField(int index) {
+    public string getHeaderField (int index) {
       if (index == 0) {
         return this.valueList[0];
       }
@@ -80,42 +78,42 @@ namespace com.upokecenter.net {
         return null;
       }
       index = ((index - 1) * 2) + 1 + 1;
-return (index < 0 || index >= this.valueList.Count) ? null :
-  this.valueList[index + 1];
+      return (index < 0 || index >= this.valueList.Count) ? null :
+        this.valueList[index + 1];
     }
 
-    public string getHeaderField(string name) {
+    public string getHeaderField (string name) {
       if (name == null) {
         return this.valueList[0];
       }
-      name = DataUtilities.ToLowerCaseAscii(name);
+      name = DataUtilities.ToLowerCaseAscii (name);
       string last = null;
       for (int i = 1; i < this.valueList.Count; i += 2) {
         string key = this.valueList[i];
-        if (name.Equals(key)) {
+        if (name.Equals (key)) {
           last = this.valueList[i + 1];
         }
       }
       return last;
     }
 
-    public long getHeaderFieldDate(string field, long defaultValue) {
+    public long getHeaderFieldDate (string field, long defaultValue) {
       return 0;
       // TODO
-// return HeaderParser.parseHttpDate(getHeaderField(field), defaultValue);
+      // return HeaderParser.parseHttpDate(getHeaderField(field), defaultValue);
     }
 
-    public string getHeaderFieldKey(int index) {
+    public string getHeaderFieldKey (int index) {
       if (index == 0 || index < 0) {
         return null;
       }
       index = ((index - 1) * 2) + 1;
-    return (index < 0 || index >= this.valueList.Count) ? null :
+      return (index < 0 || index >= this.valueList.Count) ? null :
         this.valueList[index];
     }
 
     public IDictionary<string, IList<string>> getHeaderFields() {
-      return PeterO.Support.Collections.UnmodifiableMap(this.valueMap);
+      return PeterO.Support.Collections.UnmodifiableMap (this.valueMap);
     }
 
     public string getRequestMethod() {
@@ -123,7 +121,7 @@ return (index < 0 || index >= this.valueList.Count) ? null :
     }
 
     public int getResponseCode() {
-      string status = this.getHeaderField(null);
+      string status = this.getHeaderField (null);
       return -1;
       // TODO
       // return (status == null) ? (-1) :

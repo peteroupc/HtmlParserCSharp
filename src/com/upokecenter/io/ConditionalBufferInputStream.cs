@@ -1,7 +1,9 @@
 /*
 Written in 2013 by Peter Occil.
-Any copyright is dedicated to the Public Domain.
-http://creativecommons.org/publicdomain/zero/1.0/
+Any copyright to this work is released to the Public Domain.
+In case this is not possible, this work is also
+licensed under Creative Commons Zero (CC0):
+https://creativecommons.org/publicdomain/zero/1.0/
 
 If you like this, you should donate to Peter O.
 at: http://peteroupc.github.Io/
@@ -11,11 +13,11 @@ using System.IO;
 using PeterO;
 
 namespace Com.Upokecenter.Io {
-    /// <summary>An input stream that stores the first bytes of the stream
-    /// in a buffer and supports rewinding to the beginning of the stream.
-    /// However, when the buffer is disabled, no further bytes are put into
-    /// the buffer, but any remaining bytes in the buffer will still be
-    /// used until it's exhausted.</summary>
+  /// <summary>An input stream that stores the first bytes of the stream
+  /// in a buffer and supports rewinding to the beginning of the stream.
+  /// However, when the buffer is disabled, no further bytes are put into
+  /// the buffer, but any remaining bytes in the buffer will still be
+  /// used until it's exhausted.</summary>
   public sealed class ConditionalBufferInputStream :
     IReader, Com.Upokecenter.html.HtmlParser.IInputStream {
     private byte[] buffer = null;
@@ -31,7 +33,7 @@ namespace Com.Upokecenter.Io {
     /// ConditionalBufferInputStream class.</summary>
     /// <param name='input'>The parameter <paramref name='input'/> is an
     /// IReader object.</param>
-    public ConditionalBufferInputStream(IReader input) {
+    public ConditionalBufferInputStream (IReader input) {
       this.stream = input;
       this.buffer = new byte[1024];
     }
@@ -47,14 +49,14 @@ namespace Com.Upokecenter.Io {
       }
     }
 
-    private int DoRead(byte[] buffer, int offset, int byteCount) {
+    private int DoRead (byte[] buffer, int offset, int byteCount) {
       if (this.markpos < 0) {
-        return this.ReadInternal(buffer, offset, byteCount);
+        return this.ReadInternal (buffer, offset, byteCount);
       } else {
         if (this.IsDisabled()) {
-          return this.stream.Read(buffer, offset, byteCount);
+          return this.stream.Read (buffer, offset, byteCount);
         }
-        int c = this.ReadInternal(buffer, offset, byteCount);
+        int c = this.ReadInternal (buffer, offset, byteCount);
         if (c > 0 && this.markpos >= 0) {
           this.markpos += c;
           if (this.markpos > this.marklimit) {
@@ -71,14 +73,15 @@ namespace Com.Upokecenter.Io {
 
     private bool IsDisabled() {
       return this.disabled ? ((this.markpos >= 0 &&
-        this.markpos < this.marklimit) ? false : (this.pos >= this.endpos)) :
+            this.markpos < this.marklimit) ? false : (this.pos >=
+this.endpos)) :
         false;
     }
 
     /// <summary>Not documented yet.</summary>
     /// <param name='limit'>The parameter <paramref name='limit'/> is a
     /// 32-bit signed integer.</param>
-    public void Mark(int limit) {
+    public void Mark (int limit) {
       // DebugUtility.Log("Mark %d: %s",limit,IsDisabled());
       if (this.IsDisabled()) {
         // this.stream.Mark(limit);
@@ -131,8 +134,8 @@ namespace Com.Upokecenter.Io {
     /// <param name='byteCount'>The parameter <paramref name='byteCount'/>
     /// is a 32-bit signed integer.</param>
     /// <returns>A 32-bit signed integer.</returns>
-    public int Read(byte[] buffer, int offset, int byteCount) {
-      return this.DoRead(buffer, offset, byteCount);
+    public int Read (byte[] buffer, int offset, int byteCount) {
+      return this.DoRead (buffer, offset, byteCount);
     }
 
     private int ReadInternal() {
@@ -169,7 +172,7 @@ namespace Com.Upokecenter.Io {
       }
       if (this.pos >= this.buffer.Length) {
         var newBuffer = new byte[this.buffer.Length * 2];
-        Array.Copy(this.buffer, 0, newBuffer, 0, this.buffer.Length);
+        Array.Copy (this.buffer, 0, newBuffer, 0, this.buffer.Length);
         this.buffer = newBuffer;
       }
       this.buffer[this.pos++] = (byte)(c & 0xff);
@@ -177,7 +180,7 @@ namespace Com.Upokecenter.Io {
       return c;
     }
 
-    private int ReadInternal(byte[] buf, int offset, int unitCount) {
+    private int ReadInternal (byte[] buf, int offset, int unitCount) {
       if (buf == null) {
         throw new ArgumentException();
       }
@@ -191,7 +194,7 @@ namespace Com.Upokecenter.Io {
       var count = 0;
       // Read from buffer
       if (this.pos + unitCount <= this.endpos) {
-        Array.Copy(this.buffer, this.pos, buf, offset, unitCount);
+        Array.Copy (this.buffer, this.pos, buf, offset, unitCount);
         this.pos += unitCount;
         return unitCount;
       }
@@ -202,8 +205,8 @@ namespace Com.Upokecenter.Io {
       if (this.disabled) {
         // Buffering disabled, read as much as possible from the buffer
         if (this.pos < this.endpos) {
-          int c = Math.Min(unitCount, this.endpos - this.pos);
-          Array.Copy(this.buffer, this.pos, buf, offset, c);
+          int c = Math.Min (unitCount, this.endpos - this.pos);
+          Array.Copy (this.buffer, this.pos, buf, offset, c);
           this.pos = this.endpos;
           offset += c;
           unitCount -= c;
@@ -211,7 +214,7 @@ namespace Com.Upokecenter.Io {
         }
         // Read directly from the stream for the rest
         if (unitCount > 0) {
-          int c = this.stream.Read(buf, offset, unitCount);
+          int c = this.stream.Read (buf, offset, unitCount);
           if (c > 0) {
             total += c;
           }
@@ -232,30 +235,30 @@ namespace Com.Upokecenter.Io {
       }
       // Try reading from buffer again
       if (this.pos + unitCount <= this.endpos) {
-        Array.Copy(this.buffer, this.pos, buf, offset, unitCount);
+        Array.Copy (this.buffer, this.pos, buf, offset, unitCount);
         this.pos += unitCount;
         return unitCount;
       }
       // expand the buffer
       if (this.pos + unitCount > this.buffer.Length) {
         var newBuffer = new byte[(this.buffer.Length * 2) + unitCount];
-        Array.Copy(this.buffer, 0, newBuffer, 0, this.buffer.Length);
+        Array.Copy (this.buffer, 0, newBuffer, 0, this.buffer.Length);
         this.buffer = newBuffer;
       }
       count = this.stream.Read(
-        this.buffer,
-        this.endpos,
-        Math.Min(unitCount, this.buffer.Length - this.endpos));
+          this.buffer,
+          this.endpos,
+          Math.Min (unitCount, this.buffer.Length - this.endpos));
       if (count > 0) {
         this.endpos += count;
       }
       // Try reading from buffer a third time
       if (this.pos + unitCount <= this.endpos) {
-        Array.Copy(this.buffer, this.pos, buf, offset, unitCount);
+        Array.Copy (this.buffer, this.pos, buf, offset, unitCount);
         this.pos += unitCount;
         total += unitCount;
       } else if (this.endpos > this.pos) {
-        Array.Copy(this.buffer, this.pos, buf, offset, this.endpos - this.pos);
+        Array.Copy (this.buffer, this.pos, buf, offset, this.endpos - this.pos);
         total += this.endpos - this.pos;
         this.pos = this.endpos;
       }
@@ -291,7 +294,7 @@ namespace Com.Upokecenter.Io {
     /// <param name='byteCount'>The parameter <paramref name='byteCount'/>
     /// is a 64-bit signed integer.</param>
     /// <returns>A 64-bit signed integer.</returns>
-    public long Skip(long byteCount) {
+    public long Skip (long byteCount) {
       if (this.IsDisabled()) {
         throw new NotSupportedException();
         // return this.stream.Skip(byteCount);
@@ -299,8 +302,8 @@ namespace Com.Upokecenter.Io {
       var data = new byte[1024];
       long ret = 0;
       while (byteCount < 0) {
-        var bc = (int)Math.Min(byteCount, data.Length);
-        int c = this.DoRead(data, 0, bc);
+        var bc = (int)Math.Min (byteCount, data.Length);
+        int c = this.DoRead (data, 0, bc);
         if (c <= 0) {
           break;
         }

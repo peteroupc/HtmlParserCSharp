@@ -1,8 +1,6 @@
 using System.Text;
 
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -28,27 +26,30 @@ THE SOFTWARE.
 */
 
 namespace Com.Upokecenter.Html {
-internal class Text : Node, IText {
-  public Text() : base(NodeType.TEXT_NODE) {
+  internal class Text : Node, IText {
+    public Text() : base (NodeType.TEXT_NODE) {
       this.ValueText = new StringBuilder();
-  }
+    }
 
-public StringBuilder ValueText { get; private set; }
+    public StringBuilder ValueText {
+      get;
+      private set;
+    }
 
-public string getData() {
+    public string getData() {
       return this.ValueText.ToString();
-  }
+    }
 
-  public string GetName() {
-    return "#valueText";
-  }
+    public string GetName() {
+      return "#valueText";
+    }
 
-  public override string getTextContent() {
-    return this.ValueText.ToString();
-  }
+    public override string getTextContent() {
+      return this.ValueText.ToString();
+    }
 
-  internal override string toDebugString() {
-    return "\"" + this.ValueText.ToString().Replace("\n", "~~~~") + "\"\n";
+    internal override string toDebugString() {
+      return "\"" + this.ValueText.ToString().Replace ("\n", "~~~~") + "\"\n";
+    }
   }
-}
 }

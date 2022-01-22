@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-    /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
+/*
 
 Licensed under the Expat License.
 
@@ -29,12 +27,12 @@ THE SOFTWARE.
 */
 
 namespace Com.Upokecenter.Html {
-/// <summary>* Represents an HTML document.</summary>
-public interface IDocument : INode {
+  /// <summary>* Represents an HTML document.</summary>
+  public interface IDocument : INode {
     /// <summary>Gets the character encoding used in this
     /// document.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  string GetCharset();
+    string GetCharset();
 
     /// <summary>Gets the document type of this document, if any.</summary>
     /// <returns>The return value is not documented yet.</returns>
@@ -48,7 +46,7 @@ public interface IDocument : INode {
     /// <param name='id'>The parameter <paramref name='id'/> is a text
     /// string.</param>
     /// <returns>The return value is not documented yet.</returns>
-  IElement GetElementById(string id);
+    IElement GetElementById (string id);
 
     /// <summary>Gets all descendents, both direct and indirect, that have
     /// the specified tag name, using a basic case-insensitive comparison.
@@ -59,10 +57,10 @@ public interface IDocument : INode {
     /// <param name='_string'>The parameter <paramref name='_string'/> is a
     /// text string.</param>
     /// <returns>The return value is not documented yet.</returns>
-  IList<IElement> GetElementsByTagName(string _string);
+    IList<IElement> GetElementsByTagName (string _string);
 
     /// <summary>Gets the document's address.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  string GetURL();
-}
+    string GetURL();
+  }
 }

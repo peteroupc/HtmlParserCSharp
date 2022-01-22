@@ -3,7 +3,7 @@ using System;
 namespace Com.Upokecenter.Util {
   // C# version of DateTimeUtility
 
-    /// <summary>Not documented yet.</summary>
+  /// <summary>Not documented yet.</summary>
   public static class DateTimeUtility {
     /// <summary>Not documented yet.</summary>
     /// <returns>An array of 32-bit unsigned integers.</returns>
@@ -38,5 +38,5 @@ namespace Com.Upokecenter.Util {
       }
       return ret;
     }
-}
+  }
 }

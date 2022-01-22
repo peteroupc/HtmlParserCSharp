@@ -1,6 +1,4 @@
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -29,53 +27,53 @@ using System;
 using System.Collections.Generic;
 
 namespace Com.Upokecenter.Html {
-    /// <summary>Represents a node in the document object model (DOM). All
-    /// DOM objects implement this interface.</summary>
-public interface INode {
+  /// <summary>Represents a node in the document object model (DOM). All
+  /// DOM objects implement this interface.</summary>
+  public interface INode {
     /// <summary>Returns the _base URL of this node. URLs on this node are
     /// resolved relative to this URL.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  string GetBaseURI();
+    string GetBaseURI();
 
     /// <summary>Gets the direct children of this node.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  IList<INode> GetChildNodes();
+    IList<INode> GetChildNodes();
 
     /// <summary>Gets the language of this node. Not defined in the DOM
     /// specification.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  string GetLanguage();
+    string GetLanguage();
 
     /// <summary>Gets the name of this node. For HTML elements, this will
     /// be the same as the tag name.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  string GetNodeName();
+    string GetNodeName();
 
     /// <summary>Returns the type of node represented by this
     /// object.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  int GetNodeType();
+    int GetNodeType();
 
     /// <summary>Gets the document that owns this node.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  IDocument GetOwnerDocument();
+    IDocument GetOwnerDocument();
 
     /// <summary>Gets the parent node of this node.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  INode GetParentNode();
+    INode GetParentNode();
 
     /// <summary>Gets all the text found within this element.</summary>
     /// <returns>The return value is not documented yet.</returns>
-  string GetTextContent();
+    string GetTextContent();
 
     /// <summary>Not documented yet.</summary>
     /// <param name='node'>The parameter <paramref name='node'/> is
     /// a.Upokecenter.Html.INode object.</param>
-    void AppendChild(INode node);
+    void AppendChild (INode node);
 
     /// <summary>Not documented yet.</summary>
     /// <param name='node'>The parameter <paramref name='node'/> is
     /// a.Upokecenter.Html.INode object.</param>
-    void RemoveChild(INode node);
-}
+    void RemoveChild (INode node);
+  }
 }

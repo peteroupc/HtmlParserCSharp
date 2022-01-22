@@ -1,8 +1,6 @@
 using System.Text;
 
-  /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
+/*
 
 Licensed under the Expat License.
 
@@ -28,19 +26,28 @@ THE SOFTWARE.
 */
 
 namespace Com.Upokecenter.Html {
-internal sealed class DocumentType : Node, IDocumentType {
-    public DocumentType(string name, string pub, string sys)
-    : base(NodeType.DOCUMENT_TYPE_NODE) {
+  internal sealed class DocumentType : Node, IDocumentType {
+    public DocumentType (string name, string pub, string sys):
+      base (NodeType.DOCUMENT_TYPE_NODE) {
       this.Name = name;
       this.PublicId = pub;
       this.SystemId = sys;
     }
 
-    public string SystemId { get; private set; }
+    public string SystemId {
+      get;
+      private set;
+    }
 
-    public string PublicId { get; private set; }
+    public string PublicId {
+      get;
+      private set;
+    }
 
-    public string Name { get; private set; }
+    public string Name {
+      get;
+      private set;
+    }
 
     public override sealed string getNodeName() {
       return this.getName();
@@ -64,15 +71,15 @@ internal sealed class DocumentType : Node, IDocumentType {
 
     internal override sealed string toDebugString() {
       var builder = new StringBuilder();
-      builder.Append("<!DOCTYPE " + this.Name);
+      builder.Append ("<!DOCTYPE " + this.Name);
       if ((this.PublicId != null && this.PublicId.Length > 0) ||
-          (this.SystemId != null && this.SystemId.Length > 0)) {
-        builder.Append(this.PublicId != null && this.PublicId.Length >
-          0 ? " \"" + this.PublicId.Replace("\n", "~~~~") + "\"" : " \"\"");
-        builder.Append(this.SystemId != null && this.SystemId.Length >
-          0 ? " \"" + this.SystemId.Replace("\n", "~~~~") + "\"" : " \"\"");
+        (this.SystemId != null && this.SystemId.Length > 0)) {
+        builder.Append (this.PublicId != null && this.PublicId.Length >
+          0 ? " \"" + this.PublicId.Replace ("\n", "~~~~") + "\"" : " \"\"");
+        builder.Append (this.SystemId != null && this.SystemId.Length >
+          0 ? " \"" + this.SystemId.Replace ("\n", "~~~~") + "\"" : " \"\"");
       }
-      builder.Append(">\n");
+      builder.Append (">\n");
       return builder.ToString();
     }
   }

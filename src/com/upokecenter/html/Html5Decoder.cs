@@ -1,6 +1,4 @@
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -36,20 +34,20 @@ namespace Com.Upokecenter.Html {
     private bool valueHavecr = false;
     private bool valueIserror = false;
 
-    public Html5Decoder(ICharacterDecoder valueDecoder) {
+    public Html5Decoder (ICharacterDecoder valueDecoder) {
       if (valueDecoder == null) {
         throw new ArgumentNullException(nameof(valueDecoder));
       }
       this.valueDecoder = valueDecoder;
     }
 
-    public int ReadChar(IByteReader byteReader) {
+    public int ReadChar (IByteReader byteReader) {
       if (byteReader == null) {
         throw new ArgumentNullException(nameof(byteReader));
       }
 
       while (true) {
-        int c = this.valueDecoder.ReadChar(byteReader);
+        int c = this.valueDecoder.ReadChar (byteReader);
         // DebugUtility.Log("c=" + ((char)c) + ",cc=" + cc);
         if (!this.valueHavebom && !this.valueHavecr && c >= 0x20 && c <= 0x7e) {
           return c;
@@ -75,8 +73,8 @@ namespace Com.Upokecenter.Html {
           this.valueHavebom &= c == 0xfeff;
         }
         if (c < 0x09 || (c >= 0x0e && c <= 0x1f) || (c >= 0x7f && c <= 0x9f) ||
-        (c & 0xfffe) == 0xfffe || c > 0x10ffff || c == 0x0b || (c >= 0xfdd0 &&
-              c <= 0xfdef)) {
+          (c & 0xfffe) == 0xfffe || c > 0x10ffff || c == 0x0b || (c >= 0xfdd0 &&
+            c <= 0xfdef)) {
           // control character or noncharacter
           this.valueIserror = true;
         }
@@ -84,7 +82,7 @@ namespace Com.Upokecenter.Html {
       }
     }
 
-    public int Read(IByteReader stream, int[] buffer, int offset, int length) {
+    public int Read (IByteReader stream, int[] buffer, int offset, int length) {
       if (buffer == null) {
         throw new ArgumentNullException(nameof(buffer));
       }
@@ -113,7 +111,7 @@ namespace Com.Upokecenter.Html {
       }
       var count = 0;
       while (length > 0) {
-        int c = this.valueDecoder.ReadChar(stream);
+        int c = this.valueDecoder.ReadChar (stream);
         // DebugUtility.Log("read c=" + ((char)c) + ",cc=" + cc);
         if (!this.valueHavebom && !this.valueHavecr && c >= 0x20 && c <= 0x7e) {
           buffer[offset] = c;
@@ -143,8 +141,8 @@ namespace Com.Upokecenter.Html {
           this.valueHavebom = false;
         }
         if (c < 0x09 || (c >= 0x0e && c <= 0x1f) || (c >= 0x7f && c <= 0x9f) ||
-        (c & 0xfffe) == 0xfffe || c > 0x10ffff || c == 0x0b || (c >= 0xfdd0 &&
-              c <= 0xfdef)) {
+          (c & 0xfffe) == 0xfffe || c > 0x10ffff || c == 0x0b || (c >= 0xfdd0 &&
+            c <= 0xfdef)) {
           // control character or noncharacter
           this.valueIserror = true;
         }

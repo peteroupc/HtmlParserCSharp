@@ -1,6 +1,4 @@
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -28,7 +26,7 @@ using System;
 using System.IO;
 
 namespace Com.Upokecenter.Net {
-    /// <summary>Not documented yet.</summary>
-public class NoConnectionException : IOException {
-}
+  /// <summary>Not documented yet.</summary>
+  public class NoConnectionException : IOException {
+  }
 }

@@ -1,6 +1,4 @@
 /*
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
 
 Licensed under the Expat License.
 
@@ -28,46 +26,46 @@ THE SOFTWARE.
 using System;
 
 namespace Com.Upokecenter.Html {
-sealed class EncodingConfidence {
-  private int valueConfidence;
-  private string valueEncoding;
-  public const int Irrelevant = 0;
-  public const int Tentative = 1;
-  public const int Certain = 2;
-  public static readonly EncodingConfidence UTF16BE =
+  sealed class EncodingConfidence {
+    private int valueConfidence;
+    private string valueEncoding;
+    public const int Irrelevant = 0;
+    public const int Tentative = 1;
+    public const int Certain = 2;
+    public static readonly EncodingConfidence UTF16BE =
       new EncodingConfidence("utf-16be", Certain);
 
-  public static readonly EncodingConfidence UTF16LE =
+    public static readonly EncodingConfidence UTF16LE =
       new EncodingConfidence("utf-16le", Certain);
 
-  public static readonly EncodingConfidence UTF8 =
+    public static readonly EncodingConfidence UTF8 =
       new EncodingConfidence("utf-8", Certain);
 
-  public static readonly EncodingConfidence UTF8_TENTATIVE =
+    public static readonly EncodingConfidence UTF8_TENTATIVE =
       new EncodingConfidence("utf-8", Tentative);
 
-  public EncodingConfidence(string e) {
-    this.valueEncoding = e;
-    this.valueConfidence = Tentative;
-  }
+    public EncodingConfidence (string e) {
+      this.valueEncoding = e;
+      this.valueConfidence = Tentative;
+    }
 
-  public EncodingConfidence(string e, int c) {
-    this.valueEncoding = e;
-    this.valueConfidence = c;
-  }
+    public EncodingConfidence (string e, int c) {
+      this.valueEncoding = e;
+      this.valueConfidence = c;
+    }
 
-  public int GetConfidence() {
-    return this.valueConfidence;
-  }
+    public int GetConfidence() {
+      return this.valueConfidence;
+    }
 
-  public string GetEncoding() {
-    return this.valueEncoding;
-  }
+    public string GetEncoding() {
+      return this.valueEncoding;
+    }
 
-  public override sealed string ToString() {
-    return "EncodingConfidence [this.valueConfidence=" +
-      this.valueConfidence + ", valueEncoding=" +
+    public override sealed string ToString() {
+      return "EncodingConfidence [this.valueConfidence=" +
+        this.valueConfidence + ", valueEncoding=" +
         this.valueEncoding + "]";
+    }
   }
-}
 }

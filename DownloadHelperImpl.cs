@@ -1,9 +1,10 @@
 /*
-Written by Peter O. in 2013.
-Any copyright is dedicated to the Public Domain.
-http://creativecommons.org/publicdomain/zero/1.0/
-If you like this, you should donate to Peter O.
-at: http://peteroupc.github.io/
+Written by Peter O.
+Any copyright to this work is released to the Public Domain.
+In case this is not possible, this work is also
+licensed under Creative Commons Zero (CC0):
+https://creativecommons.org/publicdomain/zero/1.0/
+
  */
 using System;
 using System.IO;
@@ -11,43 +12,43 @@ using System.Net;
 
 namespace com.upokecenter.net {
   internal static class DownloadHelperImpl {
-    public static Object newCacheResponse(PeterO.Support.InputStream stream,
+    public static Object newCacheResponse (PeterO.Support.InputStream stream,
       IHttpHeaders headers) {
       return new Object[] { stream, headers};
     }
 
-    public static Object newResponseCache(PeterO.Support.File name) {
+    public static Object newResponseCache (PeterO.Support.File name) {
       // Not Implemented Yet
       return null;
     }
 
-    public static T downloadUrl<T>(
+    public static T downloadUrl<T> (
       String urlString,
       IResponseListener<T> callback,
       bool handleErrorResponses) {
- bool isEventHandler=(callback != null && callback is
-        IDownloadEventListener<T>);
+      bool isEventHandler = (callback != null && callback is
+          IDownloadEventListener<T>);
       if (isEventHandler && callback != null) {
-        ((IDownloadEventListener<T>)callback).onConnecting(urlString);
+        ((IDownloadEventListener<T>)callback).onConnecting (urlString);
       }
       //
       // Other URLs
       //
       Stream stream = null;
-      String requestMethod="GET";
+      String requestMethod = "GET";
       var calledConnecting = false;
-        if (isEventHandler && callback != null && !calledConnecting) {
-          ((IDownloadEventListener<T>)callback).onConnecting(urlString);
-          calledConnecting = true;
-        }
-        WebRequest request = WebRequest.Create(urlString);
-        request.Timeout = 10000;
-        if (request is HttpWebRequest) {
- request.Method = requestMethod;
-}
+      if (isEventHandler && callback != null && !calledConnecting) {
+        ((IDownloadEventListener<T>)callback).onConnecting (urlString);
+        calledConnecting = true;
+      }
+      WebRequest request = WebRequest.Create (urlString);
+      request.Timeout = 10000;
+      if (request is HttpWebRequest) {
+        request.Method = requestMethod;
+      }
       using (WebResponse response = request.GetResponse()) {
         if (isEventHandler && callback != null) {
-          ((IDownloadEventListener<T>)callback).onConnected(urlString);
+          ((IDownloadEventListener<T>)callback).onConnected (urlString);
         }
         IHttpHeaders headers = new HttpHeaders(response);
         stream = response.GetResponseStream();
@@ -58,10 +59,10 @@ namespace com.upokecenter.net {
           }
         }
         using (Stream stream = response.GetResponseStream()) {
-          T ret = (callback == null) ? default(T) : callback.processResponse(
-            urlString,
-            (PeterO.Support.InputStream)stream,
-            headers);
+          T ret = (callback == null) ? default (T) : callback.processResponse(
+              urlString,
+              (PeterO.Support.InputStream)stream,
+              headers);
           return ret;
         }
       }
