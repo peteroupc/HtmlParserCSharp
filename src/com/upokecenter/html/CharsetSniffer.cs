@@ -143,7 +143,7 @@ namespace Com.Upokecenter.Html {
       if (value == null) {
         return value;
       }
-      // We assume value is lower-case here
+      // We assume value is lowercase here
       var index = 0;
       int length = value.Length;
       var c = (char)0;

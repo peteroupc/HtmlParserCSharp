@@ -349,7 +349,7 @@
 <doc name="M:com.upokecenter.html.IDocument.getElementsByTagName(System.String)">
 
             <summary>Gets all descendents, both direct and indirect, that have
-            the specified tag name, using a basic case-insensitive comparison.  (Two strings are equal in such a comparison, if they match after converting the basic upper-case letters A to Z (U+0041 to U+005A) in both strings to basic lower-case letters.)
+            the specified tag name, using a basic case-insensitive comparison.  (Two strings are equal in such a comparison, if they match after converting the basic uppercase letters A to Z (U+0041 to U+005A) in both strings to basic lowercase letters.)
             @param string A tag name.</summary>
             <param name='_string'>The parameter <paramref name='_string'/> is a
             text string.</param>
@@ -428,7 +428,7 @@
 <doc name="M:com.upokecenter.html.IElement.getElementsByTagName(System.String)">
 
             <summary>Gets all descendents, both direct and indirect, that have
-            the specified tag name, using a basic case-insensitive comparison.  (Two strings are equal in such a comparison, if they match after converting the basic upper-case letters A to Z (U+0041 to U+005A) in both strings to basic lower-case letters.)</summary>
+            the specified tag name, using a basic case-insensitive comparison.  (Two strings are equal in such a comparison, if they match after converting the basic uppercase letters A to Z (U+0041 to U+005A) in both strings to basic lowercase letters.)</summary>
             <param name='tagName'>A tag name.</param>
             <returns>The return value is not documented yet.</returns>
 
@@ -903,7 +903,7 @@
 
             <summary>Processes the data on the UI thread after it's downloaded.
             @param url URL of the data. @param value Data processed by
-            'processResponse'. @param exception If this value is non-null, an
+            'processResponse'. @param exception If this value is nonnull, an
             error has occurred and this exception contains further information
             on the error, and 'value' will be null.</summary>
 
@@ -1068,7 +1068,7 @@
 </doc>
 <doc name="T:com.upokecenter.util.StringUtility">
 
-            <summary>Contains utility methods for working with
+            <summary>Contains auxiliary methods for working with
             strings.</summary>
 
 </doc>
@@ -1144,7 +1144,7 @@
 </doc>
 <doc name="T:com.upokecenter.util.SunriseSunset">
 
-            <summary>Contains utility methods for calculating sunrise and
+            <summary>Contains auxiliary methods for calculating sunrise and
             sunset.</summary>
 
 </doc>
@@ -1185,7 +1185,7 @@
 
 </doc>
 <doc name="T:com.upokecenter.util.URIUtility">
-<summary>Contains utility methods for processing Uniform Resource Identifiers
+<summary>Contains auxiliary methods for processing Uniform Resource Identifiers
       (URIs) and Internationalized Resource Identifiers (IRIs) under RFC3986 and
       RFC3987, respectively. In the following documentation, URIs and IRIs
       include URI references and IRI references, for convenience.
@@ -1286,8 +1286,7 @@
             not allowed.</summary>
 </doc>
 <doc name="M:com.upokecenter.util.URIUtility.PercentDecode(System.String)">
-<summary>Decodes percent-encoding (of the form "%XX" where X is a hexadecimal
-      digit) in the given string. Successive percent-encoded bytes are assumed
+<summary>Decodes percent-encoding (of the form "%XX" where X is a hexadecimal (base-16) digit) in the given string. Successive percent-encoded bytes are assumed
       to form characters in UTF-8.
     </summary>
     <param name='str'>A string that may contain percent encoding. May be null.
@@ -1296,8 +1295,7 @@
     </returns>
 </doc>
 <doc name="M:com.upokecenter.util.URIUtility.PercentDecode(System.String,System.Int32,System.Int32)">
-<summary>Decodes percent-encoding (of the form "%XX" where X is a hexadecimal
-      digit) in the given portion of a string. Successive percent-encoded bytes
+<summary>Decodes percent-encoding (of the form "%XX" where X is a hexadecimal (base-16) digit) in the given portion of a string. Successive percent-encoded bytes
       are assumed to form characters in UTF-8.
     </summary>
     <param name='str'>A string a portion of which may contain percent encoding. May be null.

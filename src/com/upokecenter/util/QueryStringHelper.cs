@@ -1,6 +1,7 @@
 // Written by Peter O.
 // Any copyright to this work is released to the Public Domain.
-// https://creativecommons.org/publicdomain/zero/1.0/
+// In case this is not possible, this work is also
+// licensed under the Unlicense: https://unlicense.org/
 //
 //
 //
@@ -312,7 +313,7 @@ namespace com.upokecenter.util{
         // with no gaps.
         if (IsList (value)) {
           IList<Object> newList = ConvertToList (value);
-          dict.Add (key, newList);
+          dict[key] = newList;
           ConvertLists (newList);
         } else if (value != null) {
           // Convert the dictionary's descendents

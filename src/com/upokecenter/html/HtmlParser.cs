@@ -1556,7 +1556,7 @@ this.IsMathMLTextIntegrationPoint (node) ||
                   // HTML5 requires us to use this algorithm
                   // to Parse the Content-Language, rather than
                   // use HTTP parsing (with HeaderParser.getLanguages)
-                  // NOTE: this pragma is non-conforming
+                  // NOTE: this pragma is nonconforming
                   value = valueElement.GetAttribute ("content");
                   if (!String.IsNullOrEmpty (value) && value.IndexOf (',') <
                     0) {

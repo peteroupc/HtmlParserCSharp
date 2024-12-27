@@ -31,7 +31,7 @@ namespace Com.Upokecenter.Net {
   public interface IOnFinishedListener<T> {
     /// <summary>Processes the data on the UI thread after it's downloaded.
     /// @param url URL of the data. @param value Data processed by
-    /// 'processResponse'. @param exception If this value is non-null, an
+    /// 'processResponse'. @param exception If this value is nonnull, an
     /// error has occurred and this exception contains further information
     /// on the error, and 'value' will be null.</summary>
     void OnFinished (string url, T value, IOException exception);

@@ -6,7 +6,7 @@ released to the public domain by Paul Schlyter, December 1992
 */
 // Converted to Java and C# by Peter O., 2013.
 namespace Com.Upokecenter.Util {
-  /// <summary>Contains utility methods for calculating sunrise and
+  /// <summary>Contains auxiliary methods for calculating sunrise and
   /// sunset.</summary>
   public sealed class SunriseSunset {
     /// <summary>A rough time of day.</summary>
@@ -52,13 +52,13 @@ namespace Com.Upokecenter.Util {
     // Set to -35/60 degrees for rise/set, -6 degrees
     // for civil, -12 degrees for nautical and -18
     // degrees for astronomical twilight.
-    // upper_limb: non-zero -> upper limb, zero -> center
-    // Set to non-zero (e.g. 1) when computing day length
+    // upper_limb: nonzero -> upper limb, zero -> center
+    // Set to nonzero (for example 1) when computing day length
     // and to zero when computing day + twilight length.
     // **
     {
       double d, // Days since 2000 Jan 0.0 (negative before)
-             obl_ecl, // Obliquity (inclination) of Earth's axis
+             obl_ecl, // Obliquity (inclination) of Earth's-axis
              sr, // Solar distance, astronomical units
              slon, // True solar longitude
              sin_sdecl, // Sine of Sun's declination
@@ -69,7 +69,7 @@ namespace Com.Upokecenter.Util {
       // Compute d of 12h local mean solar time
       d = Days_since_2000_Jan_0 (year, month, day) + 0.5 - (lon / 360.0);
 
-      // Compute obliquity of ecliptic (inclination of Earth's axis)
+      // Compute obliquity of ecliptic (inclination of Earth's-axis)
       double me7 = 3.563e-7;
       obl_ecl = 23.4393 - (me7 * d);
       // Compute Sun's position
@@ -126,8 +126,8 @@ namespace Com.Upokecenter.Util {
       // Set to -35/60 degrees for rise/set, -6 degrees
       // for civil, -12 degrees for nautical and -18
       // degrees for astronomical twilight.
-      // upper_limb: non-zero -> upper limb, zero -> center
-      // Set to non-zero (e.g. 1) when computing rise/set
+      // upper_limb: nonzero -> upper limb, zero -> center
+      // Set to nonzero (for example 1) when computing rise/set
       // times, and to zero when computing start/end of
       // twilight.
       // rise = where to store the rise time
@@ -269,7 +269,7 @@ namespace Com.Upokecenter.Util {
     }
     /*
      * This function computes GMST0, the Greenwich Mean Sidereal Time
-    // at 0h UT (i.e. the sidereal time at the Greenwhich meridian at
+    // at 0h UT (that is, the sidereal time at the Greenwhich meridian at
     // 0h UT). GMST is then the sidereal time at Greenwich at any
     // time of the day. I've generalized GMST0 as well, and define it
     // as: GMST0 = GMST - UT -- this allows GMST0 to be computed at
@@ -327,7 +327,7 @@ namespace Com.Upokecenter.Util {
       x = lon_r[1] * Math.Cos (valueDEGRAD * lon);
       y = lon_r[1] * Math.Sin (valueDEGRAD * lon);
 
-      // Compute obliquity of ecliptic (inclination of Earth's axis)
+      // Compute obliquity of ecliptic (inclination of Earth's-axis)
       double me7 = 3.563e-7;
       obl_ecl = 23.4393 - (me7 * d);
 
@@ -351,7 +351,7 @@ namespace Com.Upokecenter.Util {
              // Note: Sun's mean longitude = valueM + w
              e, // Eccentricity of Earth's orbit
              valueE, // Eccentric anomaly
-             x, y, // x, y coordinates in orbit
+             x, y, // x, y-coordinates in orbit
              v; // True anomaly
 
       // Compute mean elements

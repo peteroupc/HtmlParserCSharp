@@ -56,8 +56,8 @@ namespace Com.Upokecenter.Html {
     /// <summary>Gets all descendents, both direct and indirect, that have
     /// the specified tag name, using a basic case-insensitive comparison.
     /// (Two strings are equal in such a comparison, if they match after
-    /// converting the basic upper-case letters A to Z (U+0041 to U+005A)
-    /// in both strings to basic lower-case letters.).</summary>
+    /// converting the basic uppercase letters A to Z (U+0041 to U+005A) in
+    /// both strings to basic lowercase letters.).</summary>
     /// <param name='tagName'>A tag name.</param>
     /// <returns>The return value is not documented yet.</returns>
     IList<IElement> GetElementsByTagName (string tagName);

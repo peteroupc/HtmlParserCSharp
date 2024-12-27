@@ -2,8 +2,7 @@
 Written in 2013 by Peter Occil.
 Any copyright to this work is released to the Public Domain.
 In case this is not possible, this work is also
-licensed under Creative Commons Zero (CC0):
-https://creativecommons.org/publicdomain/zero/1.0/
+licensed under the Unlicense: https://unlicense.org/
 
 */
 using System;
@@ -11,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Com.Upokecenter.Util {
-  /// <summary>Contains utility methods for working with
+  /// <summary>Contains auxiliary methods for working with
   /// strings.</summary>
   public static class StringUtility {
     private static readonly string[] ValueEmptyStringArray = new string[0];

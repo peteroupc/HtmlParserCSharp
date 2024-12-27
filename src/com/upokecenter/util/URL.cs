@@ -2,8 +2,7 @@
 Written in 2013 by Peter Occil.
 Any copyright to this work is released to the Public Domain.
 In case this is not possible, this work is also
-licensed under Creative Commons Zero (CC0):
-https://creativecommons.org/publicdomain/zero/1.0/
+licensed under the Unlicense: https://unlicense.org/
 
 */
 using System;
@@ -696,7 +695,7 @@ namespace Com.Upokecenter.Util {
           case ParseState.Port:
             if (c >= '0' && c <= '9') {
               if (c != '0') {
-                portstate = 2; // first non-zero found
+                portstate = 2; // first nonzero found
               } else if (portstate == 0) {
                 portstate = 1; // have a port number
               }
