@@ -53,7 +53,7 @@ namespace Com.Upokecenter.Html {
       (HtmlDocument.resolveURL(node, href, null));
     }
 
-    /// <summary>Utility method for converting a relative URL to an
+    /// <summary>An auxiliary method for converting a relative URL to an
     /// absolute one, using the _base URI and the encoding of the given
     /// node. @param node An HTML node, usually an IDocument or IElement
     /// @param href A relative or absolute URL. @return An absolute
