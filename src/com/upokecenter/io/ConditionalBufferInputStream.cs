@@ -277,7 +277,7 @@ this.endpos)) :
     }
 
     /// <summary>Resets the stream to the beginning of the input. This will
-    /// invalidate the Mark placed on the stream, if any. @ if
+    /// invalidate the Mark placed on the stream, if any. Throws if
     /// disableBuffer() was already called.</summary>
     public void rewind() {
       if (this.disabled) {
