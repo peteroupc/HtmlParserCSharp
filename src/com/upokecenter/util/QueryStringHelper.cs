@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace com.upokecenter.util {
+namespace com.upokecenter.util{
   public sealed class QueryStringHelper {
     private QueryStringHelper() {
     }
