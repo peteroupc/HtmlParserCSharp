@@ -44,20 +44,20 @@ namespace Com.Upokecenter.Html {
 
     internal static Element FromToken(
       INameAndAttributes token,
-      string _namespace) {
+      string namespaceValue) {
       var ret = new Element();
       ret.name = token.GetName();
       ret.attributes = new List<Attr>();
       foreach (var attribute in token.GetAttributes()) {
         ret.attributes.Add(new Attr(attribute));
       }
-      ret._namespace = _namespace;
+      ret.namespaceValue = namespaceValue;
       return ret;
     }
 
     private string name;
 
-    private string _namespace;
+    private string namespaceValue;
 
     private string prefix = null;
 
@@ -121,12 +121,12 @@ namespace Com.Upokecenter.Html {
       return null;
     }
 
-    public string GetAttributeNS(string _namespace, string localName) {
+    public string GetAttributeNS(string namespaceValue, string localName) {
       foreach (var attr in this.GetAttributes()) {
         if ((localName == null ? attr.GetLocalName() == null :
           localName.Equals(attr.GetLocalName(), StringComparison.Ordinal)) &&
-          (_namespace == null ? attr.GetNamespaceURI() == null :
-          _namespace.Equals(attr.GetNamespaceURI(),
+          (namespaceValue == null ? attr.GetNamespaceURI() == null :
+          namespaceValue.Equals(attr.GetNamespaceURI(),
           StringComparison.Ordinal))) {
           return attr.GetValue();
         }
@@ -205,7 +205,7 @@ namespace Com.Upokecenter.Html {
     }
 
     public string GetNamespaceURI() {
-      return this._namespace;
+      return this.namespaceValue;
     }
 
     public override sealed string GetNodeName() {
@@ -222,7 +222,7 @@ namespace Com.Upokecenter.Html {
         tagName = this.prefix + ":" + this.name;
       }
       return ((this.GetOwnerDocument() is Document) &&
-        HtmlCommon.HTML_NAMESPACE.Equals(this._namespace,
+        HtmlCommon.HTML_NAMESPACE.Equals(this.namespaceValue,
           StringComparison.Ordinal)) ?
         DataUtilities.ToUpperCaseAscii(tagName) : tagName;
     }
@@ -246,21 +246,21 @@ namespace Com.Upokecenter.Html {
       }
     }
 
-    internal void SetAttribute(string _string, string value) {
+    internal void SetAttribute(string stringValue, string value) {
       foreach (var attr in this.GetAttributes()) {
-        if (attr.GetName().Equals(_string, StringComparison.Ordinal)) {
+        if (attr.GetName().Equals(stringValue, StringComparison.Ordinal)) {
           ((Attr)attr).SetValue(value);
         }
       }
-      this.attributes.Add(new Attr(_string, value));
+      this.attributes.Add(new Attr(stringValue, value));
     }
 
     internal void SetLocalName(string name) {
       this.name = name;
     }
 
-    internal void SetNamespace(string _namespace) {
-      this._namespace = _namespace;
+    internal void SetNamespace(string namespaceValue) {
+      this.namespaceValue = namespaceValue;
     }
 
     public void SetPrefix(string prefix) {
@@ -270,11 +270,11 @@ namespace Com.Upokecenter.Html {
     internal override sealed string ToDebugString() {
       var builder = new StringBuilder();
       string extra = String.Empty;
-      if (HtmlCommon.MATHML_NAMESPACE.Equals(this._namespace,
+      if (HtmlCommon.MATHML_NAMESPACE.Equals(this.namespaceValue,
         StringComparison.Ordinal)) {
         extra = "math ";
       }
-      if (HtmlCommon.SVG_NAMESPACE.Equals(this._namespace,
+      if (HtmlCommon.SVG_NAMESPACE.Equals(this.namespaceValue,
         StringComparison.Ordinal)) {
         extra = "svg ";
       }

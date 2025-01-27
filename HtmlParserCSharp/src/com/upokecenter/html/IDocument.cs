@@ -53,31 +53,35 @@ namespace Com.Upokecenter.Html {
     /// (Two strings are equal in such a comparison, if they match after
     /// converting the basic uppercase letters A to Z (U+0041 to U+005A) in
     /// both strings to basic lowercase letters.).</summary>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <missing-param name='_string'/>
-    /// <param name='_string'>A tag name.</param>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <missing-param name='stringValue'/>
+    /// <param name='stringValue'>A tag name.</param>
     /// <returns>The return value is not documented yet.</returns>
     /// <param name='tagName'>The parameter <paramref name='tagName'/> is
     /// not documented yet.</param>

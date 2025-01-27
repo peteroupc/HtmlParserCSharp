@@ -35,10 +35,11 @@ namespace Com.Upokecenter.Html {
     string GetAttribute(string name);
 
     /// <summary>Gets an attribute of this element, with the specified
-    /// _namespace name and local name. @param _namespace the attribute's
-    /// _namespace name. @param name the attribute's local name.</summary>
+    /// namespaceValue name and local name. @param namespaceValue the
+    /// attribute's namespaceValue name. @param name the attribute's local
+    /// name.</summary>
     /// <returns>The return value is not documented yet.</returns>
-    string GetAttributeNS(string _namespace, string name);
+    string GetAttributeNS(string namespaceValue, string name);
 
     /// <summary>Gets a list of all attributes declared on this
     /// element.</summary>
@@ -72,11 +73,11 @@ namespace Com.Upokecenter.Html {
     string GetInnerHTML();
 
     /// <summary>Gets the element's local name. For elements with no
-    /// _namespace, this will equal the element's tag name.</summary>
+    /// namespaceValue, this will equal the element's tag name.</summary>
     /// <returns>The return value is not documented yet.</returns>
     string GetLocalName();
 
-    /// <summary>Gets the _namespace name of this element. For HTML
+    /// <summary>Gets the namespaceValue name of this element. For HTML
     /// elements, it will equal "http://www.w3.org/1999/xhtml".</summary>
     /// <returns>The return value is not documented yet.</returns>
     string GetNamespaceURI();

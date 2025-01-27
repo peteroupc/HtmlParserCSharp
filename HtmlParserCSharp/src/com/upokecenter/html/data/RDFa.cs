@@ -484,7 +484,7 @@ namespace Com.Upokecenter.Html.Data {
         "http://www.w3.org/1999/xhtml/vocab#");
       this.context.ValueIriMap.Add(
         "xml",
-        "http://www.w3.org/XML/1998/_namespace");
+        "http://www.w3.org/XML/1998/namespaceValue");
       this.context.ValueIriMap.Add("xsd", "http://www.w3.org/2001/XMLSchema#");
       IElement docElement = document.GetDocumentElement();
       if (docElement != null && IsHtmlElement(docElement, "Html")) {

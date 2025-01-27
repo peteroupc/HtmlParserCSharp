@@ -174,9 +174,9 @@ namespace Com.Upokecenter.Html {
         return HtmlParser.TOKEN_START_TAG;
       }
 
-      public void SetName(string _string) {
+      public void SetName(string stringValue) {
         this.builder.Clear();
-        this.builder.Append(_string);
+        this.builder.Append(stringValue);
       }
     }
 
@@ -280,14 +280,14 @@ namespace Com.Upokecenter.Html {
         return null;
       }
 
-      public string GetAttributeNS(string valueName, string _namespace) {
+      public string GetAttributeNS(string valueName, string namespaceValue) {
         if (this.Attributes == null) {
           return null;
         }
         int size = this.Attributes.Count;
         for (int i = 0; i < size; ++i) {
           Attr a = this.Attributes[i];
-          if (a.IsAttribute(valueName, _namespace)) {
+          if (a.IsAttribute(valueName, namespaceValue)) {
             return a.GetValue();
           }
         }
@@ -1061,9 +1061,9 @@ namespace Com.Upokecenter.Html {
             this.openElements.Count == 1) ?
           this.context : this.GetCurrentNode(); // adjusted current node
 
-        string _namespace = adjustedCurrentNode.GetNamespaceURI();
+        string namespaceValue = adjustedCurrentNode.GetNamespaceURI();
         var mathml = false;
-        if (HtmlCommon.SVG_NAMESPACE.Equals(_namespace,
+        if (HtmlCommon.SVG_NAMESPACE.Equals(namespaceValue,
           StringComparison.Ordinal)) {
           if (valueName.Equals("altglyph", StringComparison.Ordinal)) {
             tag.SetName("altGlyph");
@@ -1161,15 +1161,15 @@ namespace Com.Upokecenter.Html {
             tag.SetName("textPath");
           }
           this.AdjustSvgAttributes(tag);
-        } else if (HtmlCommon.MATHML_NAMESPACE.Equals(_namespace,
+        } else if (HtmlCommon.MATHML_NAMESPACE.Equals(namespaceValue,
           StringComparison.Ordinal)) {
           this.AdjustMathMLAttributes(tag);
           mathml = true;
         }
         this.AdjustForeignAttributes(tag);
         // Console.WriteLine("openel " + (Implode(openElements)));
-        // Console.WriteLine("Inserting " + tag + ", " + _namespace);
-        Element e = this.InsertForeignElement(tag, _namespace);
+        // Console.WriteLine("Inserting " + tag + ", " + namespaceValue);
+        Element e = this.InsertForeignElement(tag, namespaceValue);
         if (mathml && tag.GetName().Equals("annotation-xml",
           StringComparison.Ordinal)) {
           string encoding = tag.GetAttribute("encoding");
@@ -4060,10 +4060,10 @@ namespace Com.Upokecenter.Html {
       }
     }
 
-    private void GenerateImpliedEndTagsExcept(string _string) {
+    private void GenerateImpliedEndTagsExcept(string stringValue) {
       while (true) {
         IElement node = this.GetCurrentNode();
-        if (HtmlCommon.IsHtmlElement(node, _string)) {
+        if (HtmlCommon.IsHtmlElement(node, stringValue)) {
           break;
         }
         if (HtmlCommon.IsHtmlElement(node, "dd") ||
@@ -4215,9 +4215,9 @@ namespace Com.Upokecenter.Html {
       }
       for (int i = this.openElements.Count - 1; i >= 0; --i) {
         IElement e = this.openElements[i];
-        string _namespace = e.GetNamespaceURI();
+        string namespaceValue = e.GetNamespaceURI();
         string thisName = e.GetLocalName();
-        if (HtmlCommon.HTML_NAMESPACE.Equals(_namespace,
+        if (HtmlCommon.HTML_NAMESPACE.Equals(namespaceValue,
           StringComparison.Ordinal)) {
           if (thisName.Equals(valueName, StringComparison.Ordinal)) {
             return true;
@@ -4235,7 +4235,7 @@ namespace Com.Upokecenter.Html {
             return false;
           }
         }
-        if (HtmlCommon.MATHML_NAMESPACE.Equals(_namespace,
+        if (HtmlCommon.MATHML_NAMESPACE.Equals(namespaceValue,
           StringComparison.Ordinal)) {
           if (thisName.Equals("mi", StringComparison.Ordinal) ||
             thisName.Equals("mo", StringComparison.Ordinal) ||
@@ -4246,7 +4246,7 @@ namespace Com.Upokecenter.Html {
             return false;
           }
         }
-        if (HtmlCommon.SVG_NAMESPACE.Equals(_namespace,
+        if (HtmlCommon.SVG_NAMESPACE.Equals(namespaceValue,
           StringComparison.Ordinal)) {
           if (thisName.Equals("foreignObject", StringComparison.Ordinal) ||
             thisName.Equals("desc", StringComparison.Ordinal) ||
@@ -4475,15 +4475,15 @@ namespace Com.Upokecenter.Html {
     }
 
     private Element InsertForeignElement(StartTagToken tag,
-      string _namespace) {
-      Element valueElement = Element.FromToken(tag, _namespace);
+      string namespaceValue) {
+      Element valueElement = Element.FromToken(tag, namespaceValue);
       string xmlns = valueElement.GetAttributeNS(
           HtmlCommon.XMLNS_NAMESPACE,
           "xmlns");
       string xlink = valueElement.GetAttributeNS(
           HtmlCommon.XMLNS_NAMESPACE,
           "xlink");
-      if (xmlns != null && !xmlns.Equals(_namespace,
+      if (xmlns != null && !xmlns.Equals(namespaceValue,
         StringComparison.Ordinal)) {
         this.ParseError();
       }
@@ -6808,10 +6808,10 @@ namespace Com.Upokecenter.Html {
             var match = true;
             for (int j = 0; j < myAttribs.Count; ++j) {
               string name1 = myAttribs[j].GetName();
-              string _namespace = myAttribs[j].GetNamespaceURI();
+              string namespaceValue = myAttribs[j].GetNamespaceURI();
               string value = myAttribs[j].GetValue();
               string otherValue = fe.Element.GetAttributeNS(
-                  _namespace,
+                  namespaceValue,
                   name1);
               if (otherValue == null || !otherValue.Equals(value,
                 StringComparison.Ordinal)) {

@@ -696,7 +696,8 @@ namespace Com.Upokecenter.Html.Data {
     /// tries to find the URL from the element's attributes, if possible;
     /// otherwise from the element's text.</summary>
     /// <param name='e'>An HTML element.</param>
-    /// <returns>A URL, or the empty _string if none was found.</returns>
+    /// <returns>A URL, or the empty stringValue if none was
+    /// found.</returns>
     private static string GetUValue(IElement e) {
       string url = GetHref(e);
       if (String.IsNullOrEmpty(url)) {

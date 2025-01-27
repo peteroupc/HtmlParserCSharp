@@ -21,7 +21,7 @@ namespace Com.Upokecenter.Html {
 
     /// <summary>* Gets the absolute URL from an HTML element. @param node
     /// A HTML element containing a URL @return an absolute URL of the
-    /// element's SRC, DATA, or HREF, or an empty _string if none
+    /// element's SRC, DATA, or HREF, or an empty stringValue if none
     /// exists.</summary>
     /// <param name='node'>The parameter <paramref name='node'/> is not
     /// documented yet.</param>

@@ -15,8 +15,8 @@ namespace Com.Upokecenter.Html.Data {
           String.Empty : arg0.GetNamespaceURI();
         string namespace2 = String.IsNullOrEmpty(arg1.GetPrefix()) ?
           String.Empty : arg1.GetNamespaceURI();
-        // compare _namespace URIs (attributes without a valuePrefix
-        // are considered to have no _namespace URI)
+        // compare namespaceValue URIs (attributes without a valuePrefix
+        // are considered to have no namespaceValue URI)
         int cmp = DataUtilities.CodePointCompare(namespace1, namespace2);
         if (cmp == 0) {
           // then compare their local names
@@ -260,7 +260,7 @@ namespace Com.Upokecenter.Html.Data {
             (valueName.StartsWith("xmlns:", StringComparison.Ordinal) &&
 
             valueName.Length > 6))) {
-            // non-_namespace node
+            // non-namespaceValue node
             attrs.Add(attr);
           }
         }
@@ -345,7 +345,7 @@ namespace Com.Upokecenter.Html.Data {
     private static void CheckNamespacePrefix(string valuePrefix,
       string nsvalue) {
       if (valuePrefix.Equals("xmlns", StringComparison.Ordinal)) {
-        throw new ArgumentException("'xmlns' _namespace declared");
+        throw new ArgumentException("'xmlns' namespaceValue declared");
       }
       if (valuePrefix.Equals("xml", StringComparison.Ordinal) &&
         !"http://www.w3.org/XML/1998/namespace"
