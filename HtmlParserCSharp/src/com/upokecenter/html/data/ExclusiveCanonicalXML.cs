@@ -260,7 +260,7 @@ namespace Com.Upokecenter.Html.Data {
             (valueName.StartsWith("xmlns:", StringComparison.Ordinal) &&
 
             valueName.Length > 6))) {
-            // non-namespaceValue node
+            // nonnamespaceValue node
             attrs.Add(attr);
           }
         }

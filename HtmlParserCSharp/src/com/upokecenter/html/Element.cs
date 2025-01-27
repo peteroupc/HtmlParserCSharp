@@ -295,10 +295,10 @@ namespace Com.Upokecenter.Html {
             attributeName = "xml ";
           }
           attributeName += attribute.GetLocalName();
-          builder.Append("\u0020" + attributeName + "=\"" +
+          builder.Append("\u0020\u0020" + attributeName + "=\"" +
             attribute.GetValue().ToString().Replace("\n", "~~~~") + "\"\n");
         } else {
-          builder.Append("\u0020" + attribute.GetName().ToString() +
+          builder.Append("\u0020\u0020" + attribute.GetName().ToString() +
             "=\"" +
             attribute.GetValue().ToString().Replace("\n", "~~~~") + "\"\n");
         }

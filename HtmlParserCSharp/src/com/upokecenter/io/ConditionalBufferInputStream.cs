@@ -15,7 +15,7 @@ namespace Com.Upokecenter.Io {
   /// However, when the buffer is disabled, no further bytes are put into
   /// the buffer, but any remaining bytes in the buffer will still be
   /// used until it's exhausted.</summary>
-  public sealed class ConditionalBufferInputStream {
+  public sealed class ConditionalBufferInputStream : PeterO.IByteReader {
     private byte[] buffer = null;
     private int pos = 0;
     private int endpos = 0;
