@@ -9,7 +9,7 @@ using System;
 using System.IO;
 using System.Net;
 
-namespace com.upokecenter.net {
+namespace Com.Upokecenter.Net {
   internal static class DownloadHelperImpl {
     public static Object newCacheResponse (PeterO.Support.InputStream stream,
       IHttpHeaders headers) {
@@ -59,9 +59,9 @@ namespace com.upokecenter.net {
         }
         using (Stream stream = response.GetResponseStream()) {
           T ret = (callback == null) ? default (T) : callback.processResponse(
-              urlString,
-              (PeterO.Support.InputStream)stream,
-              headers);
+            urlString,
+            (PeterO.Support.InputStream)stream,
+            headers);
           return ret;
         }
       }
