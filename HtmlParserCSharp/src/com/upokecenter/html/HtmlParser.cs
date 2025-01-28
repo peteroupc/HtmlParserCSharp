@@ -128,8 +128,8 @@ namespace Com.Upokecenter.Html {
       }
 
       public override sealed string ToString() {
-        return "FormattingElement [this.ValueMarker=" + this.ValueMarker +
-          ", this.valueToken=" + this.Token + "]\n";
+        return "FormattingElement [" + "ValueMarker" + "=" + this.ValueMarker +
+          ", Token" + "=" + this.Token + "]\n";
       }
     }
 
@@ -957,7 +957,7 @@ namespace Com.Upokecenter.Html {
       }
     }
 
-    private bool ApplyEndTag(string valueName, InsertionMode? insMode) {
+    private bool ApplyEndTag(string valueName, InsertionMode insMode) {
       return this.ApplyInsertionMode(
           this.GetArtificialToken(TOKEN_END_TAG, valueName),
           insMode);
@@ -1055,7 +1055,7 @@ namespace Com.Upokecenter.Html {
               break;
             }
           }
-          return this.ApplyInsertionMode(valueToken, null);
+          return this.ApplyThisInsertionMode(valueToken);
         }
         IElement adjustedCurrentNode = (this.context != null &&
             this.openElements.Count == 1) ?
@@ -1187,7 +1187,7 @@ namespace Com.Upokecenter.Html {
             this.GetCurrentNode().GetNamespaceURI()
             .Equals(HtmlCommon.SVG_NAMESPACE)) {
             tag.AckSelfClosing();
-            this.ApplyEndTag("script", null);
+            this.ApplyEndTag("script", this.insertionMode);
           } else {
             this.PopCurrentNode();
             tag.AckSelfClosing();
@@ -1215,7 +1215,7 @@ namespace Com.Upokecenter.Html {
               HtmlCommon.HTML_NAMESPACE.Equals(node.GetNamespaceURI(),
               StringComparison.Ordinal)) {
               this.noforeign = true;
-              return this.ApplyInsertionMode(valueToken, null);
+              return this.ApplyThisInsertionMode(valueToken);
             }
             string nodeName =
               DataUtilities.ToLowerCaseAscii(node.GetLocalName());
@@ -1233,7 +1233,7 @@ namespace Com.Upokecenter.Html {
         return false;
       } else {
         return (valueToken == TOKEN_EOF) ?
-          this.ApplyInsertionMode(valueToken, null) :
+          this.ApplyThisInsertionMode(valueToken) :
           true;
       }
       throw new InvalidOperationException();
@@ -1256,7 +1256,11 @@ namespace Com.Upokecenter.Html {
     private const string Xhtml11 =
       "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
 
-    private bool ApplyInsertionMode(int token, InsertionMode? insMode) {
+    private bool ApplyThisInsertionMode(int token) {
+      return this.ApplyInsertionMode(token, this.insertionMode);
+    }
+
+    private bool ApplyInsertionMode(int token, InsertionMode insMode) {
       /*Console.WriteLine("[[" + String.Format("{0:X8}" , token) + " " +
         this.GetToken(token) + " " + (insMode == null ? this.insertionMode :
          insMode) + " " + this.IsForeignContext(token) + "(" +
@@ -1267,7 +1271,6 @@ namespace Com.Upokecenter.Html {
         return this.ApplyForeignContext(token);
       }
       this.noforeign = false;
-      insMode = insMode ?? this.insertionMode;
       switch (insMode) {
         case InsertionMode.Initial: {
           if (token == 0x09 || token == 0x0a ||
@@ -1277,12 +1280,13 @@ namespace Com.Upokecenter.Html {
           }
           if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
             var doctype = (DocTypeToken)this.GetToken(token);
-            string doctypeName = (doctype.Name == null) ? String.Empty :
-              doctype.Name.ToString();
-            string doctypePublic = (doctype.ValuePublicID == null) ? null :
-              doctype.ValuePublicID.ToString();
-            string doctypeSystem = (doctype.ValueSystemID == null) ? null :
-              doctype.ValueSystemID.ToString();
+            string doctypeName = doctype.Name;
+            string doctypePublic = doctype.ValuePublicID;
+            string doctypeSystem = doctype.ValueSystemID;
+            doctypeName = (doctypeName == null) ? String.Empty :
+              doctypeName.ToString();
+            doctypePublic = doctypePublic?.ToString();
+            doctypeSystem = doctypeSystem?.ToString();
             bool matchesHtml = "html".Equals(doctypeName,
                 StringComparison.Ordinal);
             bool hasSystemId = doctype.ValueSystemID != null;
@@ -1398,7 +1402,7 @@ namespace Com.Upokecenter.Html {
             this.valueDocument.SetMode(DocumentMode.QuirksMode);
           }
           this.insertionMode = InsertionMode.BeforeHtml;
-          return this.ApplyInsertionMode(token, null);
+          return this.ApplyThisInsertionMode(token);
         }
         case InsertionMode.BeforeHtml: {
           if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
@@ -1439,7 +1443,7 @@ namespace Com.Upokecenter.Html {
           this.valueDocument.AppendChild(valueElement);
           this.openElements.Add(valueElement);
           this.insertionMode = InsertionMode.BeforeHead;
-          return this.ApplyInsertionMode(token, null);
+          return this.ApplyThisInsertionMode(token);
         }
         case InsertionMode.BeforeHead: {
           if (token == 0x09 || token == 0x0a ||
@@ -1475,14 +1479,14 @@ namespace Com.Upokecenter.Html {
               "body".Equals(valueName, StringComparison.Ordinal) ||
               "html".Equals(valueName, StringComparison.Ordinal)) {
               this.ApplyStartTag("head", insMode);
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else {
               this.ParseError();
               return false;
             }
           }
           this.ApplyStartTag("head", insMode);
-          return this.ApplyInsertionMode(token, null);
+          return this.ApplyThisInsertionMode(token);
         }
         case InsertionMode.InHead: {
           if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
@@ -1611,7 +1615,7 @@ namespace Com.Upokecenter.Html {
               return false;
             } else {
               this.ApplyEndTag("head", insMode);
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             }
           } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
             var tag = (TagToken)this.GetToken(token);
@@ -1646,10 +1650,10 @@ namespace Com.Upokecenter.Html {
               return false;
             }
             this.ApplyEndTag("head", insMode);
-            return this.ApplyInsertionMode(token, null);
+            return this.ApplyThisInsertionMode(token);
           } else {
             this.ApplyEndTag("head", insMode);
-            return this.ApplyInsertionMode(token, null);
+            return this.ApplyThisInsertionMode(token);
           }
         }
         case InsertionMode.AfterHead: {
@@ -1662,7 +1666,7 @@ namespace Com.Upokecenter.Html {
             } else {
               this.ApplyStartTag("body", insMode);
               this.framesetOk = true;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             }
           } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
             this.ParseError();
@@ -1704,7 +1708,7 @@ namespace Com.Upokecenter.Html {
             } else {
               this.ApplyStartTag("body", insMode);
               this.framesetOk = true;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             }
           } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
             var tag = (EndTagToken)this.GetToken(token);
@@ -1714,7 +1718,7 @@ namespace Com.Upokecenter.Html {
               valueName.Equals("br", StringComparison.Ordinal)) {
               this.ApplyStartTag("body", insMode);
               this.framesetOk = true;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else if (valueName.Equals("template",
               StringComparison.Ordinal)) {
               return this.ApplyInsertionMode(token, InsertionMode.InHead);
@@ -1729,7 +1733,7 @@ namespace Com.Upokecenter.Html {
           } else if (token == TOKEN_EOF) {
             this.ApplyStartTag("body", insMode);
             this.framesetOk = true;
-            return this.ApplyInsertionMode(token, null);
+            return this.ApplyThisInsertionMode(token);
           }
           return true;
         }
@@ -1768,7 +1772,7 @@ namespace Com.Upokecenter.Html {
             this.ParseError();
             this.openElements.RemoveAt(this.openElements.Count - 1);
             this.insertionMode = this.originalInsertionMode;
-            return this.ApplyInsertionMode(token, null);
+            return this.ApplyThisInsertionMode(token);
           } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
             this.openElements.RemoveAt(this.openElements.Count - 1);
             this.insertionMode = this.originalInsertionMode;
@@ -1820,7 +1824,7 @@ namespace Com.Upokecenter.Html {
             }
             this.templateModes.Add(newMode);
             this.insertionMode = newMode;
-            return this.ApplyInsertionMode(token, null);
+            return this.ApplyThisInsertionMode(token);
           }
           if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
             var tag = (EndTagToken)this.GetToken(token);
@@ -1847,7 +1851,7 @@ namespace Com.Upokecenter.Html {
               this.templateModes.RemoveAt(this.templateModes.Count - 1);
             }
             this.ResetInsertionMode();
-            return this.ApplyInsertionMode(token, null);
+            return this.ApplyThisInsertionMode(token);
           }
           return false;
         }
@@ -2111,7 +2115,7 @@ namespace Com.Upokecenter.Html {
               if (this.HasHtmlElementInScope("button")) {
                 this.ParseError();
                 this.ApplyEndTag("button", insMode);
-                return this.ApplyInsertionMode(token, null);
+                return this.ApplyThisInsertionMode(token);
               }
               this.ReconstructFormatting();
               this.AddHtmlElement(tag);
@@ -2206,7 +2210,7 @@ namespace Com.Upokecenter.Html {
             } else if ("image".Equals(valueName, StringComparison.Ordinal)) {
               this.ParseError();
               tag.SetName("img");
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else if ("textarea".Equals(valueName,
               StringComparison.Ordinal)) {
               this.AddHtmlElement(tag);
@@ -2619,7 +2623,7 @@ namespace Com.Upokecenter.Html {
               }
             } else if (valueName.Equals("html", StringComparison.Ordinal)) {
               return this.ApplyEndTag("body", insMode) ?
-                this.ApplyInsertionMode(token, null) : false;
+                this.ApplyThisInsertionMode(token) : false;
             } else if ("address".Equals(valueName,
               StringComparison.Ordinal) ||
               "article".Equals(valueName, StringComparison.Ordinal) ||
@@ -2685,7 +2689,7 @@ namespace Com.Upokecenter.Html {
               if (!this.HasHtmlElementInButtonScope(valueName)) {
                 this.ParseError();
                 this.ApplyStartTag("p", insMode);
-                return this.ApplyInsertionMode(token, null);
+                return this.ApplyThisInsertionMode(token);
               }
               this.GenerateImpliedEndTagsExcept(valueName);
               if (!this.GetCurrentNode().GetLocalName().Equals(valueName,
@@ -2782,7 +2786,7 @@ namespace Com.Upokecenter.Html {
               this.ParseError();
               this.PopCurrentNode();
               this.insertionMode = InsertionMode.InHead;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             }
           } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
             this.ParseError();
@@ -2817,7 +2821,7 @@ namespace Com.Upokecenter.Html {
               this.ParseError();
               this.PopCurrentNode();
               this.insertionMode = InsertionMode.InHead;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             }
           } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
             var tag = (EndTagToken)this.GetToken(token);
@@ -2829,7 +2833,7 @@ namespace Com.Upokecenter.Html {
               this.ParseError();
               this.PopCurrentNode();
               this.insertionMode = InsertionMode.InHead;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else {
               this.ParseError();
               return true;
@@ -2842,7 +2846,7 @@ namespace Com.Upokecenter.Html {
             this.ParseError();
             this.PopCurrentNode();
             this.insertionMode = InsertionMode.InHead;
-            return this.ApplyInsertionMode(token, null);
+            return this.ApplyThisInsertionMode(token);
           }
           return true;
         }
@@ -2859,7 +2863,7 @@ namespace Com.Upokecenter.Html {
                 this.pendingTableCharacters.Length);
               this.originalInsertionMode = this.insertionMode;
               this.insertionMode = InsertionMode.InTableText;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else {
               // NOTE: Foster parenting rules don't apply here, since
               // the current node isn't table, tbody, tfoot, thead, or
@@ -2878,7 +2882,7 @@ namespace Com.Upokecenter.Html {
             if (valueName.Equals("table", StringComparison.Ordinal)) {
               this.ParseError();
               return this.ApplyEndTag("table", insMode) ?
-                this.ApplyInsertionMode(token, null) : false;
+                this.ApplyThisInsertionMode(token) : false;
             } else if (valueName.Equals("caption",
               StringComparison.Ordinal)) {
               while (true) {
@@ -2911,7 +2915,7 @@ namespace Com.Upokecenter.Html {
               return true;
             } else if (valueName.Equals("col", StringComparison.Ordinal)) {
               this.ApplyStartTag("colgroup", insMode);
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else if (valueName.Equals("tbody", StringComparison.Ordinal) ||
               valueName.Equals(
                 "tfoot",
@@ -2932,7 +2936,7 @@ namespace Com.Upokecenter.Html {
               valueName.Equals("th", StringComparison.Ordinal) ||
               valueName.Equals("tr", StringComparison.Ordinal)) {
               this.ApplyStartTag("tbody", insMode);
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else if (valueName.Equals("style", StringComparison.Ordinal) ||
               valueName.Equals("script", StringComparison.Ordinal) ||
               valueName.Equals("template", StringComparison.Ordinal)) {
@@ -3053,7 +3057,7 @@ namespace Com.Upokecenter.Html {
                 this.pendingTableCharacters.ToString());
             }
             this.insertionMode = this.originalInsertionMode;
-            return this.ApplyInsertionMode(token, null);
+            return this.ApplyThisInsertionMode(token);
           }
           return true;
         }
@@ -3082,7 +3086,7 @@ namespace Com.Upokecenter.Html {
               this.PopUntilHtmlElementPopped("caption");
               this.ClearFormattingToMarker();
               this.insertionMode = InsertionMode.InTable;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else {
               return this.ApplyInsertionMode(
                   token,
@@ -3106,7 +3110,7 @@ namespace Com.Upokecenter.Html {
               this.ClearFormattingToMarker();
               this.insertionMode = InsertionMode.InTable;
               if (valueName.Equals("table", StringComparison.Ordinal)) {
-                return this.ApplyInsertionMode(token, null);
+                return this.ApplyThisInsertionMode(token);
               }
             } else if (valueName.Equals("body", StringComparison.Ordinal) ||
               valueName.Equals("col", StringComparison.Ordinal) ||
@@ -3192,7 +3196,7 @@ namespace Com.Upokecenter.Html {
           }
           this.PopCurrentNode();
           this.insertionMode = InsertionMode.InTable;
-          return this.ApplyInsertionMode(token, null);
+          return this.ApplyThisInsertionMode(token);
         }
         case InsertionMode.InTableBody: {
           if ((token & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
@@ -3216,7 +3220,7 @@ namespace Com.Upokecenter.Html {
               valueName.Equals("td", StringComparison.Ordinal)) {
               this.ParseError();
               this.ApplyStartTag("tr", insMode);
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else if (valueName.Equals("caption",
               StringComparison.Ordinal) ||
               valueName.Equals("col", StringComparison.Ordinal) ||
@@ -3245,7 +3249,7 @@ namespace Com.Upokecenter.Html {
               this.ApplyEndTag(
                 this.GetCurrentNode().GetLocalName(),
                 insMode);
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else {
               return this.ApplyInsertionMode(
                   token,
@@ -3297,7 +3301,7 @@ namespace Com.Upokecenter.Html {
               this.ApplyEndTag(
                 this.GetCurrentNode().GetLocalName(),
                 insMode);
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else if (valueName.Equals("body", StringComparison.Ordinal) ||
               valueName.Equals("caption", StringComparison.Ordinal) ||
               valueName.Equals("col", StringComparison.Ordinal) ||
@@ -3350,7 +3354,7 @@ namespace Com.Upokecenter.Html {
               valueName.Equals("thead", StringComparison.Ordinal) ||
               valueName.Equals("tr", StringComparison.Ordinal)) {
               if (this.ApplyEndTag("tr", insMode)) {
-                return this.ApplyInsertionMode(token, null);
+                return this.ApplyThisInsertionMode(token);
               }
             } else {
               this.ApplyInsertionMode(token, InsertionMode.InTable);
@@ -3380,7 +3384,7 @@ namespace Com.Upokecenter.Html {
                 return false;
               }
               this.ApplyEndTag("tr", insMode);
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else if (valueName.Equals("caption",
               StringComparison.Ordinal) ||
               valueName.Equals("col", StringComparison.Ordinal) ||
@@ -3425,7 +3429,7 @@ namespace Com.Upokecenter.Html {
               this.ApplyEndTag(
                 this.HasHtmlElementInTableScope("td") ? "td" : "th",
                 insMode);
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else {
               this.ApplyInsertionMode(token, InsertionMode.InBody);
             }
@@ -3468,7 +3472,7 @@ namespace Com.Upokecenter.Html {
               this.ApplyEndTag(
                 this.HasHtmlElementInTableScope("td") ? "td" : "th",
                 insMode);
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else {
               this.ApplyInsertionMode(token, InsertionMode.InBody);
             }
@@ -3530,7 +3534,7 @@ namespace Com.Upokecenter.Html {
                 return false;
               }
               this.ApplyEndTag("select", insMode);
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             } else if (valueName.Equals("script",
               StringComparison.Ordinal) || valueName.Equals(
                 "template",
@@ -3620,7 +3624,7 @@ namespace Com.Upokecenter.Html {
               this.ParseError();
               this.PopUntilHtmlElementPopped("select");
               this.ResetInsertionMode();
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             }
             return this.ApplyInsertionMode(
                 token,
@@ -3641,7 +3645,7 @@ namespace Com.Upokecenter.Html {
                 return false;
               }
               this.ApplyEndTag("select", insMode);
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             }
             return this.ApplyInsertionMode(
                 token,
@@ -3664,7 +3668,7 @@ namespace Com.Upokecenter.Html {
             } else {
               this.ParseError();
               this.insertionMode = InsertionMode.InBody;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             }
           } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
             this.ParseError();
@@ -3677,7 +3681,7 @@ namespace Com.Upokecenter.Html {
             } else {
               this.ParseError();
               this.insertionMode = InsertionMode.InBody;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             }
           } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
             var tag = (EndTagToken)this.GetToken(token);
@@ -3691,7 +3695,7 @@ namespace Com.Upokecenter.Html {
             } else {
               this.ParseError();
               this.insertionMode = InsertionMode.InBody;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             }
           } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
             this.AddCommentNodeToFirst(token);
@@ -3811,7 +3815,7 @@ namespace Com.Upokecenter.Html {
             } else {
               this.ParseError();
               this.insertionMode = InsertionMode.InBody;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             }
           } else if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
             this.ApplyInsertionMode(token, InsertionMode.InBody);
@@ -3823,12 +3827,12 @@ namespace Com.Upokecenter.Html {
             } else {
               this.ParseError();
               this.insertionMode = InsertionMode.InBody;
-              return this.ApplyInsertionMode(token, null);
+              return this.ApplyThisInsertionMode(token);
             }
           } else if ((token & TOKEN_TYPE_MASK) == TOKEN_END_TAG) {
             this.ParseError();
             this.insertionMode = InsertionMode.InBody;
-            return this.ApplyInsertionMode(token, null);
+            return this.ApplyThisInsertionMode(token);
           } else if ((token & TOKEN_TYPE_MASK) == TOKEN_COMMENT) {
             this.AddCommentNodeToDocument(token);
           } else if (token == TOKEN_EOF) {
@@ -3871,7 +3875,7 @@ namespace Com.Upokecenter.Html {
       }
     }
 
-    private bool ApplyStartTag(string valueName, InsertionMode? insMode) {
+    private bool ApplyStartTag(string valueName, InsertionMode insMode) {
       return this.ApplyInsertionMode(
           this.GetArtificialToken(TOKEN_START_TAG, valueName),
           insMode);
@@ -4750,7 +4754,7 @@ namespace Com.Upokecenter.Html {
     public IDocument Parse() {
       while (true) {
         int valueToken = this.ParserRead();
-        this.ApplyInsertionMode(valueToken, null);
+        this.ApplyThisInsertionMode(valueToken);
         if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_START_TAG) {
           var tag = (StartTagToken)this.GetToken(valueToken);
           // Console.WriteLine(tag);
@@ -5162,11 +5166,15 @@ namespace Com.Upokecenter.Html {
         }
         if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
           var tag = (DocTypeToken)this.GetToken(valueToken);
+          string doctypeName = tag.Name;
+          string doctypePublic = tag.ValuePublicID;
+          string doctypeSystem = tag.ValueSystemID;
+          doctypeName = (doctypeName == null) ? String.Empty :
+            doctypeName.ToString();
+          doctypePublic = doctypePublic?.ToString();
+          doctypeSystem = doctypeSystem?.ToString();
           ret.Add(new string[] {
-            "DOCTYPE",
-            (tag.Name == null ? null : tag.Name.ToString()),
-            (tag.ValuePublicID == null ? null : tag.ValuePublicID.ToString()),
-            (tag.ValueSystemID == null ? null : tag.ValueSystemID.ToString()),
+            "DOCTYPE", doctypeName, doctypePublic, doctypeSystem,
             tag.ForceQuirks ? "false" : "true",
           });
           continue;

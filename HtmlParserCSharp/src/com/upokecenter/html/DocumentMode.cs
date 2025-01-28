@@ -26,8 +26,8 @@ THE SOFTWARE.
 using System;
 
 namespace Com.Upokecenter.Html {
-  internal // / <summary>Not documented yet.</summary>
-  enum DocumentMode {
+  /// <summary>Not documented yet.</summary>
+  internal enum DocumentMode {
     NoQuirksMode,
     LimitedQuirksMode,
     QuirksMode,

@@ -19,13 +19,11 @@ namespace Com.Upokecenter.Html {
     }
     }
 
-    /// <summary>* Gets the absolute URL from an HTML element. @param node
-    /// A HTML element containing a URL @return an absolute URL of the
-    /// element's SRC, DATA, or HREF, or an empty stringValue if none
-    /// exists.</summary>
-    /// <param name='node'>The parameter <paramref name='node'/> is not
-    /// documented yet.</param>
-    /// <returns>A string object.</returns>
+    // <summary>Gets the absolute URL from an HTML element.</summary>
+    // <param name='node'>A HTML element containing a URL</param>
+    // <returns>An absolute URL of the
+    // element's SRC, DATA, or HREF, or an empty stringValue if none
+    // exists.</returns>
     public static string getHref(IElement node) {
     string name = node.GetTagName();
     string href="";
@@ -53,16 +51,12 @@ namespace Com.Upokecenter.Html {
       (HtmlDocument.resolveURL(node, href, null));
     }
 
-    /// <summary>An auxiliary method for converting a relative URL to an
-    /// absolute one, using the _base URI and the encoding of the specified
-    /// node. @param node An HTML node, usually an IDocument or IElement
-    /// @param href A relative or absolute URL. @return An absolute
-    /// URL.</summary>
-    /// <param name='node'>The parameter <paramref name='node'/> is not
-    /// documented yet.</param>
-    /// <param name='href'>The parameter <paramref name='href'/> is not
-    /// documented yet.</param>
-    /// <returns>A string object.</returns>
+    // <summary>An auxiliary method for converting a relative URL to an
+    // absolute one, using the _base URI and the encoding of the specified
+    // node.</summary>
+    // <param name='node'>An HTML node, usually an IDocument or IElement.</param>
+    // <param name='href'>A relative or absolute URL.</param>
+    // <returns>An absolute URL.</returns>
     public static string getHref(INode node, string href) {
     return (href==null || href.Length==0) ? ("") :
 
@@ -196,7 +190,7 @@ namespace Com.Upokecenter.Html {
     }
 
     /// <summary>Parses an HTML document from an input stream, using
-    /// "about:blank" as its address. @ if an I/O error occurs.</summary>
+    /// "about:blank" as its address.</summary>
     /// <param name='stream'>An input stream.</param>
     /// <returns>An IDocument object.</returns>
     public static IDocument ParseStream(IReader stream) {

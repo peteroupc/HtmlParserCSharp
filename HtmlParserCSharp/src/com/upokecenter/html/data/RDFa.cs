@@ -101,9 +101,9 @@ namespace Com.Upokecenter.Html.Data {
       }
 
       public override string ToString() {
-        return "IncompleteTriple [this.TripleList=" +
-          this.TripleList + ", ValuePredicate=" +
-          this.ValuePredicate + ", this.ValueDirection=" +
+        return "IncompleteTriple [TripleList" +
+          "=" + this.TripleList + ", " + "ValuePredicate=" +
+          this.ValuePredicate + ", ValueDirection=" +
           this.ValueDirection + "]";
       }
     }
@@ -402,7 +402,6 @@ namespace Com.Upokecenter.Html.Data {
 
     /// <param name='document'>The parameter <paramref name='document'/> is
     /// an IDocument object.</param>
-    /// <summary>Initializes a new instance of the RDFa class.</summary>
     /// <summary>Initializes a new instance of the RDFa class.</summary>
     public RDFa(IDocument document) {
       this.document = document;
