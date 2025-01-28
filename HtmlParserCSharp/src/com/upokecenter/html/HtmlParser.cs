@@ -457,6 +457,8 @@ namespace Com.Upokecenter.Html {
     private const int TOKEN_CHARACTER = 0x00000000;
     private const int TOKEN_INDEX_MASK = 0x0fffffff;
 
+    private bool checkErrorVar = false;
+
     private void AddToken(IToken token) {
       if (this.tokens.Count > TOKEN_INDEX_MASK) {
         throw new InvalidOperationException();
@@ -465,62 +467,62 @@ namespace Com.Upokecenter.Html {
     }
 
     private static string[] quirksModePublicIdPrefixes = new string[] {
-      "+//silmaril//dtd Html pro v0r11 19970101//",
-      "-//advasoft ltd//dtd Html 3.0 aswedit + extensions//",
-      "-//as//dtd Html 3.0 aswedit + extensions//",
-      "-//ietf//dtd Html 2.0 level 1//",
-      "-//ietf//dtd Html 2.0 level 2//",
-      "-//ietf//dtd Html 2.0 strict level 1//",
-      "-//ietf//dtd Html 2.0 strict level 2//",
-      "-//ietf//dtd Html 2.0 strict//",
-      "-//ietf//dtd Html 2.0//",
-      "-//ietf//dtd Html 2.1e//",
-      "-//ietf//dtd Html 3.0//",
-      "-//ietf//dtd Html 3.2 final//",
-      "-//ietf//dtd Html 3.2//",
-      "-//ietf//dtd Html 3//",
-      "-//ietf//dtd Html level 0//",
-      "-//ietf//dtd Html level 1//",
-      "-//ietf//dtd Html level 2//",
-      "-//ietf//dtd Html level 3//",
-      "-//ietf//dtd Html strict level 0//",
-      "-//ietf//dtd Html strict level 1//",
-      "-//ietf//dtd Html strict level 2//",
-      "-//ietf//dtd Html strict level 3//",
-      "-//ietf//dtd Html strict//",
-      "-//ietf//dtd Html//",
+      "+//silmaril//dtd html pro v0r11 19970101//",
+      "-//advasoft ltd//dtd html 3.0 aswedit + extensions//",
+      "-//as//dtd html 3.0 aswedit + extensions//",
+      "-//ietf//dtd html 2.0 level 1//",
+      "-//ietf//dtd html 2.0 level 2//",
+      "-//ietf//dtd html 2.0 strict level 1//",
+      "-//ietf//dtd html 2.0 strict level 2//",
+      "-//ietf//dtd html 2.0 strict//",
+      "-//ietf//dtd html 2.0//",
+      "-//ietf//dtd html 2.1e//",
+      "-//ietf//dtd html 3.0//",
+      "-//ietf//dtd html 3.2 final//",
+      "-//ietf//dtd html 3.2//",
+      "-//ietf//dtd html 3//",
+      "-//ietf//dtd html level 0//",
+      "-//ietf//dtd html level 1//",
+      "-//ietf//dtd html level 2//",
+      "-//ietf//dtd html level 3//",
+      "-//ietf//dtd html strict level 0//",
+      "-//ietf//dtd html strict level 1//",
+      "-//ietf//dtd html strict level 2//",
+      "-//ietf//dtd html strict level 3//",
+      "-//ietf//dtd html strict//",
+      "-//ietf//dtd html//",
       "-//metrius//dtd metrius presentational//",
-      "-//microsoft//dtd internet explorer 2.0 Html strict//",
-      "-//microsoft//dtd internet explorer 2.0 Html//",
+      "-//microsoft//dtd internet explorer 2.0 html strict//",
+      "-//microsoft//dtd internet explorer 2.0 html//",
       "-//microsoft//dtd internet explorer 2.0 tables//",
-      "-//microsoft//dtd internet explorer 3.0 Html strict//",
-      "-//microsoft//dtd internet explorer 3.0 Html//",
+      "-//microsoft//dtd internet explorer 3.0 html strict//",
+      "-//microsoft//dtd internet explorer 3.0 html//",
       "-//microsoft//dtd internet explorer 3.0 tables//",
-      "-//netscape comm. corp.//dtd Html//",
-      "-//netscape comm. corp.//dtd strict Html//",
-      "-//o'reilly and associates//dtd Html 2.0//",
-      "-//o'reilly and associates//dtd Html extended 1.0//",
-      "-//o'reilly and associates//dtd Html extended relaxed 1.0//",
+      "-//netscape comm. corp.//dtd html//",
+      "-//netscape comm. corp.//dtd strict html//",
+      "-//o'reilly and associates//dtd html 2.0//",
+      "-//o'reilly and associates//dtd html extended 1.0//",
+      "-//o'reilly and associates//dtd html extended relaxed 1.0//",
       "-//softquad software//dtd hotmetal pro 6.0::" +
       "19990601::extensions to Html 4.0//",
-      "-//softquad//dtd hotmetal pro 4.0::19971010::extensions to Html 4.0//",
-      "-//spyglass//dtd Html 2.0 extended//",
-      "-//sq//dtd Html 2.0 hotmetal + extensions//",
-      "-//sun microsystems corp.//dtd hotjava Html//",
-      "-//sun microsystems corp.//dtd hotjava strict Html//",
-      "-//w3c//dtd Html 3 1995-03-24//",
-      "-//w3c//dtd Html 3.2 draft//",
-      "-//w3c//dtd Html 3.2 final//",
-      "-//w3c//dtd Html 3.2//",
-      "-//w3c//dtd Html 3.2s draft//",
-      "-//w3c//dtd Html 4.0 frameset//",
-      "-//w3c//dtd Html 4.0 transitional//",
-      "-//w3c//dtd Html experimental 19960712//",
-      "-//w3c//dtd Html experimental 970421//",
-      "-//w3c//dtd w3 Html//",
-      "-//w3o//dtd w3 Html 3.0//",
-      "-//webtechs//dtd mozilla Html 2.0//",
-      "-//webtechs//dtd mozilla Html//",
+      "-//softquad//dtd hotmetal pro 4.0::19971010::extensions to html 4.0//",
+      "-//spyglass//dtd html 2.0 extended//",
+      "-//sq//dtd html 2.0 hotmetal + extensions//",
+      "-//sun microsystems corp.//dtd hotjava html//",
+      "-//sun microsystems corp.//dtd hotjava strict html//",
+      "-//w3c//dtd html 3 1995-03-24//",
+      "-//w3c//dtd html 3.2 draft//",
+      "-//w3c//dtd html 3.2 final//",
+      "-//w3c//dtd html 3.2//",
+      "-//w3c//dtd html 3.2s draft//",
+      "-//w3c//dtd html 4.0 frameset//",
+      "-//w3c//dtd html 4.0 transitional//",
+      "-//w3c//dtd html experimental 19960712//",
+      "-//w3c//dtd html experimental 970421//",
+      "-//w3c//dtd w3 html//",
+      "-//w3o//dtd w3 html 3.0//",
+      "-//webtechs//dtd mozilla html 2.0//",
+      "-//webtechs//dtd mozilla html//",
     };
 
     private ConditionalBufferInputStream inputStream;
@@ -1287,8 +1289,8 @@ namespace Com.Upokecenter.Html {
             if (!matchesHtml || doctypePublic != null ||
               (doctypeSystem != null && !"about:legacy-compat"
                 .Equals(doctypeSystem))) {
-              string h4public = "-//W3C//DTD HTML 4.0//EN";
-              string html401public = "-//W3C//DTD HTML 4.01//EN";
+              string h4public = "-//W3C//dtd html 4.0//EN";
+              string html401public = "-//W3C//dtd html 4.01//EN";
               string xhtmlstrictpublic = "-//W3C//DTD XHTML 1.0 Strict//EN";
               string html4system = "http://www.w3.org/TR/REC-html40/strict.dtd";
               string html401system = "http://www.w3.org/TR/html4/strict.dtd";
@@ -1330,9 +1332,9 @@ namespace Com.Upokecenter.Html {
                   DataUtilities.ToLowerCaseAscii(doctypePublic);
                 if ("html".Equals(doctypePublicLC,
                   StringComparison.Ordinal) ||
-                  "-//w3o//dtd w3 Html strict 3.0//en//"
+                  "-//w3o//dtd w3 html strict 3.0//en//"
                   .Equals(doctypePublicLC) ||
-                  "-/w3c/dtd Html 4.0 transitional/en".Equals(
+                  "-/w3c/dtd html 4.0 transitional/en".Equals(
                     doctypePublicLC,
                     StringComparison.Ordinal)) {
                   this.valueDocument.SetMode(DocumentMode.QuirksMode);
@@ -1351,14 +1353,14 @@ namespace Com.Upokecenter.Html {
               if (this.valueDocument.GetMode() != DocumentMode.QuirksMode) {
                 doctypePublicLC = doctypePublicLC ??
                   DataUtilities.ToLowerCaseAscii(doctypePublic);
-                if ("http://www.ibm.Com/data/dtd/v11/ibmxhtml1-transitional.dtd"
+                if ("http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd"
                   .Equals(
                     DataUtilities.ToLowerCaseAscii(doctypeSystem)) ||
                   (!hasSystemId && doctypePublicLC.StartsWith(
-                  "-//w3c//dtd Html 4.01 frameset//",
+                  "-//w3c//dtd html 4.01 frameset//",
                   StringComparison.Ordinal)) || (!hasSystemId &&
                     doctypePublicLC.StartsWith(
-                      "-//w3c//dtd Html 4.01 transitional//",
+                      "-//w3c//dtd html 4.01 transitional//",
                       StringComparison.Ordinal))) {
                   this.valueDocument.SetMode(DocumentMode.QuirksMode);
                 }
@@ -1373,10 +1375,10 @@ namespace Com.Upokecenter.Html {
                     "-//w3c//dtd xhtml 1.0 transitional//",
                     StringComparison.Ordinal) || (hasSystemId &&
                     doctypePublicLC.StartsWith(
-                      "-//w3c//dtd Html 4.01 frameset//",
+                      "-//w3c//dtd html 4.01 frameset//",
                       StringComparison.Ordinal)) || (hasSystemId &&
                     doctypePublicLC.StartsWith(
-                      "-//w3c//dtd Html 4.01 transitional//",
+                      "-//w3c//dtd html 4.01 transitional//",
                       StringComparison.Ordinal))) {
                   this.valueDocument.SetMode(DocumentMode.LimitedQuirksMode);
                 }
@@ -4541,8 +4543,6 @@ namespace Com.Upokecenter.Html {
       return this.currentEndTag.GetName().Equals(this.lastStartTag.GetName(),
         StringComparison.Ordinal);
     }
-
-    private bool checkErrorVar;
 
     public HtmlParser CheckError(bool ce) {
       this.checkErrorVar = ce;

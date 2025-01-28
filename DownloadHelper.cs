@@ -51,7 +51,7 @@ namespace Com.Upokecenter.Net {
     }
 
     /// <summary>* Connects to a URL to download data from that URL. @param
-    /// urlString a URL _string. All schemes (protocols) supported by
+    /// urlString a URL stringValue. All schemes (protocols) supported by
     /// Java's URLConnection are supported. Data URLs are also supported.
     /// @param callback an _object to call back on, particularly when the
     /// data is ready to be downloaded. Can be null. If the _object also
@@ -72,7 +72,7 @@ namespace Com.Upokecenter.Net {
     }
 
     /// <summary>* Connects to a URL to download data from that URL. @param
-    /// urlString a URL _string. All schemes (protocols) supported by
+    /// urlString a URL stringValue. All schemes (protocols) supported by
     /// Java's URLConnection are supported. Data URLs are also supported.
     /// @param callback an _object to call back on, particularly when the
     /// data is ready to be downloaded. Can be null. If the _object also

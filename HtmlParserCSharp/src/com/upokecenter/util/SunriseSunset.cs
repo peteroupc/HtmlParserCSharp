@@ -212,15 +212,29 @@ namespace Com.Upokecenter.Util {
 
     // The "workhorse" function
 
-    /// <summary>Gets a value indicating whether it's currently day or
-    /// night at the specified geographic location.</summary>
+    /// <summary>Gets a value indicating whether it's day or night at the
+    /// specified time and geographic location.</summary>
     /// <param name='lat'>A geographic latitude, in degrees. South
     /// coordinates are negative.</param>
     /// <param name='lon'>A geographic longitude, in degrees. West
     /// coordinates are negative.</param>
+    /// <param name='components'>A component indicating the time in
+    /// universal coordinated time, or UTC. A seven-number array indicating
+    /// the year, month, day, hour, minute, second, and milliseconds, in
+    /// that order.</param>
     /// <returns>A day state value.</returns>
-    public static DayState GetCurrentDayState(double lat, double lon) {
-      int[] components = DateTimeUtility.GetCurrentGmtDateComponents();
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='components'/> is null.</exception>
+    /// <exception cref='ArgumentException'>components has length less than
+    /// 7..</exception>
+    public static DayState GetDayState(double lat, double lon, int[]
+      components) {
+      if (components == null) {
+        throw new ArgumentNullException(nameof(components));
+      }
+      if (components.Length < 7) {
+        throw new ArgumentException("components has length less than 7");
+      }
       var trise = new double[1];
       var tset = new double[1];
       double hours = components[3]; // hour

@@ -197,7 +197,7 @@ namespace Com.Upokecenter.Html {
         string[] strarray = StringUtility.SplitAt(str, "\n");
         int len = strarray.Length;
         if (len > 0 && strarray[len - 1].Length == 0) {
-          --len; // ignore trailing empty _string
+          --len; // ignore trailing empty stringValue
         }
         for (int i = 0; i < len; ++i) {
           string el = strarray[i];

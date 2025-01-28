@@ -183,10 +183,10 @@ namespace Com.Upokecenter.Html {
         }
         getCurrentNode().AppendChild (element);
         for (int i = 0; i < arg3.Length; ++i) {
-          string _namespace = arg3.GetUri (i);
+          string namespaceValue = arg3.GetUri (i);
           var attr = new Attr();
           attr.setName (arg3.GetQName (i)); // Sets prefix and local name
-          attr.setNamespace (_namespace);
+          attr.setNamespace (namespaceValue);
           attr.setValue (arg3.GetValue (i));
           element.addAttribute (attr);
           if ("xml:base".Equals (arg3.GetQName (i))) {
@@ -396,11 +396,11 @@ namespace Com.Upokecenter.Html {
     private string encoding;
 
     private string[] contentLang;
-    public XhtmlParser (PeterO.Support.InputStream s, string _string):
-      this (s, _string, null, null) {
+    public XhtmlParser (PeterO.Support.InputStream s, string stringValue):
+      this (s, stringValue, null, null) {
     }
-    public XhtmlParser (PeterO.Support.InputStream s, string _string, string
-      charset) : this (s, _string, charset, null) {
+    public XhtmlParser (PeterO.Support.InputStream s, string stringValue, string
+      charset) : this (s, stringValue, charset, null) {
     }
 
     public XhtmlParser (PeterO.Support.InputStream source, string address,

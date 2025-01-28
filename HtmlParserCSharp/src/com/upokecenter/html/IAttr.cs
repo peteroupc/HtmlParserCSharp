@@ -5,7 +5,7 @@ namespace Com.Upokecenter.Html {
   /// element.</summary>
   public interface IAttr {
     /// <summary>Gets the attribute name's local name (the part after the
-    /// colon, if it's bound to a _namespace).</summary>
+    /// colon, if it's bound to a namespaceValue).</summary>
     /// <returns>The return value is not documented yet.</returns>
     string GetLocalName();
 
@@ -13,13 +13,13 @@ namespace Com.Upokecenter.Html {
     /// <returns>The return value is not documented yet.</returns>
     string GetName();
 
-    /// <summary>Gets the attribute's _namespace URI, if it's bound to a
-    /// _namespace.</summary>
+    /// <summary>Gets the attribute's namespaceValue URI, if it's bound to
+    /// a namespaceValue.</summary>
     /// <returns>The return value is not documented yet.</returns>
     string GetNamespaceURI();
 
     /// <summary>Gets the attribute name's prefix (the part before the
-    /// colon, if it's bound to a _namespace).</summary>
+    /// colon, if it's bound to a namespaceValue).</summary>
     /// <returns>The return value is not documented yet.</returns>
     string GetPrefix();
 
