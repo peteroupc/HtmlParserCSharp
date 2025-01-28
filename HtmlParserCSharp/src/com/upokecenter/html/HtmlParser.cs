@@ -296,7 +296,7 @@ namespace Com.Upokecenter.Html {
 
       public IList<Attr> GetAttributes() {
         if (this.Attributes == null) {
-          return new Attr[0];
+          return new Attr[] { };
         } else {
           return this.Attributes;
         }
@@ -592,7 +592,7 @@ namespace Com.Upokecenter.Html {
       }
       if (address != null && address.Length > 0) {
         URL url = URL.Parse(address);
-        if (url == null || url.GetScheme().Length == 0) {
+        if (url == null || String.IsNullOrEmpty(url.GetScheme())) {
           throw new ArgumentException();
         }
       }
@@ -682,7 +682,8 @@ namespace Com.Upokecenter.Html {
     }
 
     private bool HasHtmlOpenElement(string name) {
-      foreach (var e in this.openElements) {
+      IList<IElement> oe = this.openElements;
+      foreach (var e in oe) {
         if (HtmlCommon.IsHtmlElement(e, name)) {
           return true;
         }
@@ -1280,13 +1281,13 @@ namespace Com.Upokecenter.Html {
           }
           if ((token & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
             var doctype = (DocTypeToken)this.GetToken(token);
-            string doctypeName = doctype.Name;
-            string doctypePublic = doctype.ValuePublicID;
-            string doctypeSystem = doctype.ValueSystemID;
-            doctypeName = (doctypeName == null) ? String.Empty :
-              doctypeName.ToString();
-            doctypePublic = doctypePublic?.ToString();
-            doctypeSystem = doctypeSystem?.ToString();
+            StringBuilder doctypeNameBuilder = doctype.Name;
+            StringBuilder doctypePublicBuilder = doctype.ValuePublicID;
+            StringBuilder doctypeSystemBuilder = doctype.ValueSystemID;
+            string doctypeName = (doctypeNameBuilder == null) ? String.Empty :
+              doctypeNameBuilder.ToString();
+            string doctypePublic = doctypePublicBuilder?.ToString();
+            string doctypeSystem = doctypeSystemBuilder?.ToString();
             bool matchesHtml = "html".Equals(doctypeName,
                 StringComparison.Ordinal);
             bool hasSystemId = doctype.ValueSystemID != null;

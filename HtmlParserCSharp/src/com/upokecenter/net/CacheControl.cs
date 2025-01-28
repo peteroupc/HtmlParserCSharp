@@ -28,6 +28,7 @@ using System.Globalization;
 using System.IO;
 using Com.Upokecenter.Util;
 using PeterO;
+using PeterO.Cbor;
 
 namespace Com.Upokecenter.Net {
   internal class CacheControl {
@@ -122,7 +123,7 @@ namespace Com.Upokecenter.Net {
     private class CacheControlSerializer {
       public CacheControl ReadObjectFromStream(Stream stream) {
         try {
-          PeterO.Cbor.CBORObject jsonobj = PeterO.Cbor.CBORObject.ReadJSON(
+          CBORObject jsonobj = CBORObject.ReadJSON(
               stream);
           var cc = new CacheControl();
           cc.cacheability = jsonobj["cacheability"].AsInt32();
@@ -152,7 +153,7 @@ namespace Com.Upokecenter.Net {
                 cc.requestMethod);
           }
           cc.headers = new List<string>();
-          PeterO.Cbor.CBORObject jsonarr = jsonobj["headers"];
+          CBORObject jsonarr = jsonobj["headers"];
           for (int i = 0; i < jsonarr.Count; ++i) {
             string str = jsonarr[i].AsString();
             if (str != null && (i % 2) != 0) {
@@ -184,25 +185,21 @@ namespace Com.Upokecenter.Net {
         }
       }
       public void WriteObjectToStream(CacheControl o, Stream stream) {
-        PeterO.Cbor.CBORObject jsonobj = PeterO.Cbor.CBORObject.NewMap();
+        CBORObject jsonobj = CBORObject.NewMap();
         jsonobj.Set("cacheability", o.cacheability);
         jsonobj.Set("noStore", o.noStore);
         jsonobj.Set("noTransform", o.noTransform);
         jsonobj.Set("mustRevalidate", o.mustRevalidate);
-        jsonobj.Set("requestTime",
-          Convert.ToString(o.requestTime, CultureInfo.InvariantCulture));
-        jsonobj.Set("responseTime",
-          Convert.ToString(o.responseTime, CultureInfo.InvariantCulture));
-        jsonobj.Set("maxAge",
-          Convert.ToString(o.maxAge, CultureInfo.InvariantCulture));
-        jsonobj.Set("date", Convert.ToString(o.date,
-          CultureInfo.InvariantCulture));
+        jsonobj.Set("requestTime", o.requestTime+"");
+        jsonobj.Set("responseTime", o.responseTime+"");
+        jsonobj.Set("maxAge",o.maxAge+"");
+        jsonobj.Set("date", o.date+"");
         jsonobj.Set("uri", o.uri);
         jsonobj.Set("requestMethod", o.requestMethod);
         jsonobj.Set("code", o.code);
         jsonobj.Set("age", Convert.ToString(o.age,
           CultureInfo.InvariantCulture));
-        PeterO.Cbor.CBORObject jsonarr = PeterO.Cbor.CBORObject.NewArray();
+        CBORObject jsonarr = CBORObject.NewArray();
         foreach (var header in o.headers) {
           jsonarr.Add(header);
         }

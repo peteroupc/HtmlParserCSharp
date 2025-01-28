@@ -49,6 +49,7 @@ namespace Com.Upokecenter.Html.Data {
         "h-card",
         "h-adr",
       };
+
       complexLegacyMap.Add(
         "location",
         strarr);

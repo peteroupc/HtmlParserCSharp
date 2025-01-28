@@ -34,7 +34,7 @@ namespace Com.Upokecenter.Html {
       public int Compare(IAttr arg0, IAttr arg1) {
         string a = arg0.GetName();
         string b = arg1.GetName();
-        return String.Compare(a, b, StringComparison.Ordinal);
+        return String.CompareOrdinal(a, b);
       }
     }
 
@@ -135,7 +135,12 @@ namespace Com.Upokecenter.Html {
     }
 
     public IList<IAttr> GetAttributes() {
-      return new List<IAttr>(this.attributes);
+      var attrs = new List<IAttr>();
+      IList<Attr> thisattrs = this.attributes;
+      foreach (var attr in thisattrs) {
+        attrs.Add(attr);
+      }
+      return attrs;
     }
 
     public IElement GetElementById(string id) {
@@ -270,27 +275,31 @@ namespace Com.Upokecenter.Html {
     internal override sealed string ToDebugString() {
       var builder = new StringBuilder();
       string extra = String.Empty;
-      if (HtmlCommon.MATHML_NAMESPACE.Equals(this.namespaceValue,
-        StringComparison.Ordinal)) {
-        extra = "math ";
-      }
-      if (HtmlCommon.SVG_NAMESPACE.Equals(this.namespaceValue,
-        StringComparison.Ordinal)) {
-        extra = "svg ";
+      string ns = this.namespaceValue;
+      if (!String.IsNullOrEmpty(ns)) {
+        if (ns.Equals(HtmlCommon.MATHML_NAMESPACE,
+          StringComparison.Ordinal)) {
+          extra = "math ";
+        }
+        if (ns.Equals(HtmlCommon.SVG_NAMESPACE,
+          StringComparison.Ordinal)) {
+          extra = "svg ";
+        }
       }
       builder.Append("<" + extra + this.name.ToString() + ">\n");
-      var attribs = new List<IAttr>(this.GetAttributes());
+      IList<IAttr> attribs = this.GetAttributes();
       attribs.Sort(new AttributeNameComparator());
       foreach (var attribute in attribs) {
         // Console.WriteLine("%s %s"
         // , attribute.Getspace(), attribute.GetLocalName());
-        if (attribute.GetNamespaceURI() != null) {
+        string nsuri = attribute.GetNamespaceURI();
+        if (nsuri != null) {
           string attributeName = String.Empty;
-          if (HtmlCommon.XLINK_NAMESPACE.Equals(attribute.GetNamespaceURI(),
+          if (HtmlCommon.XLINK_NAMESPACE.Equals(nsuri,
             StringComparison.Ordinal)) {
             attributeName = "xlink ";
           }
-          if (HtmlCommon.XML_NAMESPACE.Equals(attribute.GetNamespaceURI(),
+          if (HtmlCommon.XML_NAMESPACE.Equals(nsuri,
             StringComparison.Ordinal)) {
             attributeName = "xml ";
           }
@@ -314,7 +323,7 @@ namespace Com.Upokecenter.Html {
         }
         string[] strarray = StringUtility.SplitAt(str, "\n");
         int len = strarray.Length;
-        if (len > 0 && strarray[len - 1].Length == 0) {
+        if (len > 0 && String.IsNullOrEmpty(strarray[len - 1])) {
           --len; // ignore trailing empty string
         }
         for (int i = 0; i < len; ++i) {

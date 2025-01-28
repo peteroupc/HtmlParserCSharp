@@ -138,10 +138,11 @@ namespace Com.Upokecenter.Html {
             "textarea".Equals(localName, StringComparison.Ordinal) ||
             "listing".Equals(localName, StringComparison.Ordinal)) {
             foreach (var node in e.GetChildNodes()) {
-              if (node.GetNodeType() == NodeType.TEXT_NODE &&
-                ((IText)node).GetData().Length > 0 &&
-                ((IText)node).GetData()[0] == '\n') {
-                builder.Append('\n');
+              if (node.GetNodeType() == NodeType.TEXT_NODE) {
+                string nodeData = ((IText)node).GetData();
+                if (nodeData.Length > 0 && nodeData[0] == '\n') {
+                  builder.Append('\n');
+                }
               }
             }
           }
@@ -224,7 +225,11 @@ namespace Com.Upokecenter.Html {
     }
 
     public IList<INode> GetChildNodes() {
-      return new List<INode>(this.childNodes);
+      var cn = new List<INode>();
+      for (var i = 0; i < this.childNodes.Count; ++i) {
+        cn.Add(this.childNodes[i]);
+      }
+      return cn;
     }
 
     internal IList<INode> GetChildNodesInternal() {
@@ -292,7 +297,8 @@ namespace Com.Upokecenter.Html {
 
     public void RemoveChild(INode node) {
       ((Node)node).parentNode = null;
-      this.childNodes.Remove(node);
+      IList<INode> cn = this.childNodes;
+      cn.Remove(node);
     }
 
     internal void SetBaseURI(string value) {

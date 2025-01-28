@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Com.Upokecenter.Html;
 using Com.Upokecenter.Util;
 using PeterO;
 using PeterO.Rdf;
@@ -1190,7 +1191,8 @@ namespace Com.Upokecenter.Html.Data {
       }
       // Step 12
       if (!skipElement && newSubject != null) {
-        foreach (var triple in this.context.ValueIncompleteTriples) {
+        IList<RDFTriple> triples = this.context.ValueIncompleteTriples;
+        foreach (var triple in triples) {
           if (triple.ValueDirection == ChainingDirection.None) {
             IList<RDFTerm> TripleList = triple.TripleList;
             TripleList.Add(newSubject);

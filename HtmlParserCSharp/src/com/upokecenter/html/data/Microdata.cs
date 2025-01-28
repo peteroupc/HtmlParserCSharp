@@ -85,13 +85,16 @@ namespace Com.Upokecenter.Html.Data {
     /// <param name='document'>The parameter <paramref name='document'/> is
     /// a.Upokecenter.Html.IDocument object.</param>
     /// <returns>The return value is not documented yet.</returns>
-    public static PeterO.Cbor.CBORObject GetMicrodataJSON(IDocument document) {
+    /// <exception cref='ArgumentNullException'>The parameter <paramref
+    /// name='document'/> is null.</exception>
+    public static CBORObject GetMicrodataJSON(IDocument document) {
       if (document == null) {
         throw new ArgumentNullException(nameof(document));
       }
-      PeterO.Cbor.CBORObject result = PeterO.Cbor.CBORObject.NewMap();
+      CBORObject result = CBORObject.NewMap();
       var items = CBORObject.NewArray();
-      foreach (var node in document.GetElementsByTagName("*")) {
+      IList<IElement> tagNameEl=document.GetElementsByTagName("*");
+      foreach (var node in tagNameEl) {
         if (node.GetAttribute("itemscope") != null &&
           node.GetAttribute("itemprop") == null) {
           IList<IElement> memory = new List<IElement>();
@@ -102,12 +105,12 @@ namespace Com.Upokecenter.Html.Data {
       return result;
     }
 
-    private static PeterO.Cbor.CBORObject GetMicrodataObject(
+    private static CBORObject GetMicrodataObject(
       IElement item,
       IList<IElement> memory) {
       string[] itemtypes = StringUtility.SplitAtSpTabCrLfFf(item.GetAttribute(
         "itemtype"));
-      PeterO.Cbor.CBORObject result = PeterO.Cbor.CBORObject.NewMap();
+      CBORObject result = CBORObject.NewMap();
       memory.Add(item);
       if (itemtypes.Length > 0) {
         var array = CBORObject.NewArray();
@@ -124,8 +127,9 @@ namespace Com.Upokecenter.Html.Data {
             item.GetBaseURI());
         result.Add("id", globalid);
       }
-      PeterO.Cbor.CBORObject properties = PeterO.Cbor.CBORObject.NewMap();
-      foreach (var valueElement in GetMicrodataProperties(item)) {
+      CBORObject properties = CBORObject.NewMap();
+      IList<IElement> mdprop = GetMicrodataProperties(item);
+      foreach (var valueElement in mdprop) {
         string[] names = StringUtility.SplitAtSpTabCrLfFf(
             valueElement.GetAttribute(
               "itemprop"));

@@ -652,21 +652,22 @@ namespace Com.Upokecenter.Html {
       }
     }
 
-    public static int GetHtmlEntity(string value) {
-      if (value.Length < 2 || value.Length > HtmlEntities.Entities[0].Length) {
+    public static int GetHtmlEntity(string strValue) {
+      string[] ents = HtmlEntities.Entities;
+      if (strValue.Length < 2 || strValue.Length > ents[0].Length) {
         return Int32.MaxValue;
       }
-      value += ";";
-      int len = value.Length;
-      for (int i = 0; i < HtmlEntities.Entities.Length; ++i) {
-        string e = HtmlEntities.Entities[i];
+      strValue += ";";
+      int len = strValue.Length;
+      for (int i = 0; i < ents.Length; ++i) {
+        string e = ents[i];
         if (e.Length < len) {
           break;
         }
         if (e.Length != len) {
           continue;
         }
-        if (e.Equals(value, StringComparison.Ordinal)) {
+        if (e.Equals(strValue, StringComparison.Ordinal)) {
           return valueEntityValues[i];
         }
       }
@@ -677,10 +678,11 @@ namespace Com.Upokecenter.Html {
       if (index > -1) {
         throw new ArgumentException("index more than -1 (" + index + ")");
       }
+      int[] edoubles = HtmlEntities.EntityDoubles;
       index = Math.Abs(index + 1) * 2;
       return new int[] {
-        HtmlEntities.EntityDoubles[index],
-        HtmlEntities.EntityDoubles[index + 1],
+        edoubles[index],
+        edoubles[index + 1],
       };
     }
 

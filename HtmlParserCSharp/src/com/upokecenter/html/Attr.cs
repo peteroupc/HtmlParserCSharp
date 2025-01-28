@@ -18,12 +18,12 @@ namespace Com.Upokecenter.Html {
       this.value = new StringBuilder();
     }
 
-    public Attr(Attr attr) {
+    public Attr(IAttr attr) {
       this.valueNameString = attr.GetName();
       this.valueString = attr.GetValue();
-      this.valuePrefix = attr.valuePrefix;
-      this.valueLocalName = attr.valueLocalName;
-      this.value_namespace = attr.value_namespace;
+      this.valuePrefix = attr.GetPrefix();
+      this.valueLocalName = attr.GetLocalName();
+      this.value_namespace = attr.GetNamespaceURI();
     }
 
     public Attr(char ch) {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Com.Upokecenter.Html;
 using Com.Upokecenter.Util;
 using PeterO;
 using PeterO.Rdf;
@@ -708,7 +709,8 @@ namespace Com.Upokecenter.Html.Data {
       }
       // Step 10
       if (!skipElement && newSubject != null) {
-        foreach (var triple in this.context.ValueIncompleteTriples) {
+        IList<IncompleteTriple> triples = this.context.ValueIncompleteTriples;
+        foreach (var triple in triples) {
           if (triple.ValueDirection == RDFa.ChainingDirection.Forward) {
             this.outputGraph.Add(new RDFTriple(
               this.context.ValueParentSubject,
@@ -724,7 +726,8 @@ namespace Com.Upokecenter.Html.Data {
       }
       // Step 13
       if (recurse) {
-        foreach (var childNode in node.GetChildNodes()) {
+        IList<IElement> childNodes = node.GetChildNodes();
+        foreach (var childNode in childNodes) {
           IElement childElement;
           RDFa.EvalContext oldContext = this.context;
           if (childNode is IElement) {

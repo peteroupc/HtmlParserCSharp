@@ -1132,7 +1132,7 @@ namespace Com.Upokecenter.Util {
     /// <exception cref='ArgumentException'>Code point out of
     /// range.</exception>
     public static byte[] EncodeToBytesHtml(
-      PeterO.Text.ICharacterInput input,
+      ICharacterInput input,
       ICharacterEncoder encoder) {
       if (encoder == null) {
         throw new ArgumentNullException(nameof(encoder));
