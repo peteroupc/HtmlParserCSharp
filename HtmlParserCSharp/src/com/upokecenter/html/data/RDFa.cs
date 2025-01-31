@@ -1191,7 +1191,7 @@ namespace Com.Upokecenter.Html.Data {
       }
       // Step 12
       if (!skipElement && newSubject != null) {
-        IList<RDFTriple> triples = this.context.ValueIncompleteTriples;
+        IList<IncompleteTriple> triples = this.context.ValueIncompleteTriples;
         foreach (var triple in triples) {
           if (triple.ValueDirection == ChainingDirection.None) {
             IList<RDFTerm> TripleList = triple.TripleList;

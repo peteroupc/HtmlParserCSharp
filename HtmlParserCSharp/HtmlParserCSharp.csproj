@@ -19,7 +19,8 @@
   <ItemGroup>
     <Folder Include='PeterO\'/>
     <Folder Remove='HtmlParserCSharpTest\'/>
-  <PackageReference Include='StyleCop.Analyzers' PrivateAssets='All' Version='1.2.0-beta.354'/><AdditionalFiles Include='stylecop.json'/>
+  <PackageReference Include='StyleCop.Analyzers' PrivateAssets='All' Version='1.2.0-beta.354'/>
+<AdditionalFiles Include='stylecop.json'/>
 <PackageReference Include='PeterO.Encoding' Version='0.6.0'/>
 <PackageReference Include='PeterO.Cbor' Version='4.5.2'/>
 <AdditionalFiles Include='rules.ruleset'/><PackageReference Include='PeterO.URIUtility' Version='1.0.0'/>

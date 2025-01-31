@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Com.Upokecenter.Util;
+using PeterO;
 
 namespace Com.Upokecenter.Html {
   internal static class HtmlCommon {
@@ -39,6 +40,12 @@ namespace Com.Upokecenter.Html {
         StringComparison.Ordinal);
     }
 
+    public static string ResolveURLUtf8(INode node, string url, string _base) {
+      _base = _base ?? node.GetBaseURI();
+      // TODO: Use URL specification's version instead of RFC 3986
+      return URIUtility.RelativeResolve(url, _base);
+    }
+
     public static string ResolveURL(INode node, string url, string _base) {
       string encoding = (node is IDocument) ? ((IDocument)node).GetCharset() :
         node.GetOwnerDocument().GetCharset();
@@ -47,8 +54,8 @@ namespace Com.Upokecenter.Html {
         encoding = "utf-8";
       }
       _base = _base ?? node.GetBaseURI();
-      URL resolved = URL.Parse(url, URL.Parse(_base), encoding, true);
-      return (resolved == null) ? _base : resolved.ToString();
+      // TODO: Use URL specification's version instead of RFC 3986
+      return URIUtility.RelativeResolve(url, _base);
     }
   }
 }

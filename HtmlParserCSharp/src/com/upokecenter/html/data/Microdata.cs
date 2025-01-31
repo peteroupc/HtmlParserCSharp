@@ -93,7 +93,7 @@ namespace Com.Upokecenter.Html.Data {
       }
       CBORObject result = CBORObject.NewMap();
       var items = CBORObject.NewArray();
-      IList<IElement> tagNameEl=document.GetElementsByTagName("*");
+      IList<IElement> tagNameEl = document.GetElementsByTagName("*");
       foreach (var node in tagNameEl) {
         if (node.GetAttribute("itemscope") != null &&
           node.GetAttribute("itemprop") == null) {

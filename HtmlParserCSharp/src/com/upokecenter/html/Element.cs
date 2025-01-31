@@ -134,13 +134,17 @@ namespace Com.Upokecenter.Html {
       return null;
     }
 
-    public IList<IAttr> GetAttributes() {
+    private List<IAttr> GetAttributesList() {
       var attrs = new List<IAttr>();
       IList<Attr> thisattrs = this.attributes;
       foreach (var attr in thisattrs) {
         attrs.Add(attr);
       }
       return attrs;
+    }
+
+    public IList<IAttr> GetAttributes() {
+      return this.GetAttributesList();
     }
 
     public IElement GetElementById(string id) {
@@ -287,7 +291,7 @@ namespace Com.Upokecenter.Html {
         }
       }
       builder.Append("<" + extra + this.name.ToString() + ">\n");
-      IList<IAttr> attribs = this.GetAttributes();
+      List<IAttr> attribs = this.GetAttributesList();
       attribs.Sort(new AttributeNameComparator());
       foreach (var attribute in attribs) {
         // Console.WriteLine("%s %s"

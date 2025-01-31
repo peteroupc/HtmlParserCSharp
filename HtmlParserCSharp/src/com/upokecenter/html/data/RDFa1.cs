@@ -709,7 +709,8 @@ namespace Com.Upokecenter.Html.Data {
       }
       // Step 10
       if (!skipElement && newSubject != null) {
-        IList<IncompleteTriple> triples = this.context.ValueIncompleteTriples;
+        IList < RDFa.IncompleteTriple > triples =
+          this.context.ValueIncompleteTriples;
         foreach (var triple in triples) {
           if (triple.ValueDirection == RDFa.ChainingDirection.Forward) {
             this.outputGraph.Add(new RDFTriple(
@@ -726,7 +727,7 @@ namespace Com.Upokecenter.Html.Data {
       }
       // Step 13
       if (recurse) {
-        IList<IElement> childNodes = node.GetChildNodes();
+        IList<INode> childNodes = node.GetChildNodes();
         foreach (var childNode in childNodes) {
           IElement childElement;
           RDFa.EvalContext oldContext = this.context;

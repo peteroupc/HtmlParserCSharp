@@ -591,10 +591,11 @@ namespace Com.Upokecenter.Html {
         throw new ArgumentException();
       }
       if (address != null && address.Length > 0) {
-        URL url = URL.Parse(address);
-        if (url == null || String.IsNullOrEmpty(url.GetScheme())) {
-          throw new ArgumentException();
-        }
+        /* URL url = URL.Parse(address);
+                if (url == null || String.IsNullOrEmpty(url.GetScheme())) {
+                  throw new ArgumentException();
+                }
+        */
       }
       // TODO: Use a more sophisticated language parser here
       this.contentLanguage = new string[] { contentLanguage };
@@ -5167,13 +5168,13 @@ namespace Com.Upokecenter.Html {
         }
         if ((valueToken & TOKEN_TYPE_MASK) == TOKEN_DOCTYPE) {
           var tag = (DocTypeToken)this.GetToken(valueToken);
-          string doctypeName = tag.Name;
-          string doctypePublic = tag.ValuePublicID;
-          string doctypeSystem = tag.ValueSystemID;
-          doctypeName = (doctypeName == null) ? String.Empty :
-            doctypeName.ToString();
-          doctypePublic = doctypePublic?.ToString();
-          doctypeSystem = doctypeSystem?.ToString();
+          StringBuilder doctypeNameBuilder = tag.Name;
+          StringBuilder doctypePublicBuilder = tag.ValuePublicID;
+          StringBuilder doctypeSystemBuilder = tag.ValueSystemID;
+          string doctypeName = (doctypeNameBuilder == null) ? String.Empty :
+            doctypeNameBuilder.ToString();
+          string doctypePublic = doctypePublicBuilder?.ToString();
+          string doctypeSystem = doctypeSystemBuilder?.ToString();
           ret.Add(new string[] {
             "DOCTYPE", doctypeName, doctypePublic, doctypeSystem,
             tag.ForceQuirks ? "false" : "true",

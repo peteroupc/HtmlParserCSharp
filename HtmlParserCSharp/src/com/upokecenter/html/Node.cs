@@ -218,8 +218,8 @@ namespace Com.Upokecenter.Html {
         if (parent == null) {
           return this.baseURI;
         } else {
-          URL ret = URL.Parse(this.baseURI, URL.Parse(parent.GetBaseURI()));
-          return (ret == null) ? parent.GetBaseURI() : ret.ToString();
+          string ret = HtmlCommon.ResolveURLUtf8(parent, this.baseURI, null);
+          return (ret == null) ? parent.GetBaseURI() : ret;
         }
       }
     }
@@ -306,8 +306,7 @@ namespace Com.Upokecenter.Html {
       if (parent == null) {
         this.baseURI = value;
       } else {
-        string val = URL.Parse(value, URL.Parse(
-          parent.GetBaseURI())).ToString();
+        string val = HtmlCommon.ResolveURLUtf8(parent, value, null);
         this.baseURI = (val == null) ? parent.GetBaseURI() : val.ToString();
       }
     }

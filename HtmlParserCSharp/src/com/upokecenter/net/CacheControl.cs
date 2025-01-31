@@ -190,10 +190,10 @@ namespace Com.Upokecenter.Net {
         jsonobj.Set("noStore", o.noStore);
         jsonobj.Set("noTransform", o.noTransform);
         jsonobj.Set("mustRevalidate", o.mustRevalidate);
-        jsonobj.Set("requestTime", o.requestTime+"");
-        jsonobj.Set("responseTime", o.responseTime+"");
-        jsonobj.Set("maxAge",o.maxAge+"");
-        jsonobj.Set("date", o.date+"");
+        jsonobj.Set("requestTime", o.requestTime + String.Empty);
+        jsonobj.Set("responseTime", o.responseTime + String.Empty);
+        jsonobj.Set("maxAge", o.maxAge + String.Empty);
+        jsonobj.Set("date", o.date + String.Empty);
         jsonobj.Set("uri", o.uri);
         jsonobj.Set("requestMethod", o.requestMethod);
         jsonobj.Set("code", o.code);
