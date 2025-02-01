@@ -2,7 +2,7 @@ using System;
 
 namespace Com.Upokecenter.Html {
   internal sealed class HtmlEntities {
-    private static readonly string[] ValueEntities = new
+    private static readonly string[] entries = new
     string[] { "CounterClockwiseContourIntegral;",
       "ClockwiseContourIntegral;", "DoubleLongLeftRightArrow;",
       "NotNestedGreaterGreater;", "DiacriticalDoubleAcute;",
@@ -613,7 +613,7 @@ namespace Com.Upokecenter.Html {
       8472, 8768, 958, 165, 62, 60, 62, 60,
     };
 
-    private static readonly int[] ValueEntityDoubles = new int[] {
+    private static readonly int[] entityDoubles = new int[] {
       10914, 824,
       10878, 824,
       8807, 824, 10704, 824, 10703, 824, 8811, 824, 10877, 824, 10913, 824,
@@ -634,27 +634,22 @@ namespace Com.Upokecenter.Html {
       8402, 8807, 824, 8806, 824,
     };
 
-    internal static string[] Entities {
-      get {
-        return ValueEntities;
-      }
+    internal static string[] GetEntities() {
+      return entities;
     }
 
-    internal static int[] EntityDoubles {
-      get {
-        return ValueEntityDoubles;
-      }
+    internal static int[] GetEntityDoubles() {
+      return entityDoubles;
     }
 
-    internal static int[] EntityValues {
-      get {
-        return valueEntityValues;
-      }
+    internal static int[] GetEntityValues() {
+      return valueEntityValues;
     }
 
     public static int GetHtmlEntity(string strValue) {
-      string[] ents = HtmlEntities.Entities;
-      if (strValue.Length < 2 || strValue.Length > ents[0].Length) {
+      string[] ents = GetEntities();
+      string firstEnt = ents[0];
+      if (strValue.Length < 2 || strValue.Length > firstEnt.Length) {
         return Int32.MaxValue;
       }
       strValue += ";";
@@ -678,7 +673,7 @@ namespace Com.Upokecenter.Html {
       if (index > -1) {
         throw new ArgumentException("index more than -1 (" + index + ")");
       }
-      int[] edoubles = HtmlEntities.EntityDoubles;
+      int[] edoubles = HtmlEntities.GetEntityDoubles();
       index = Math.Abs(index + 1) * 2;
       return new int[] {
         edoubles[index],

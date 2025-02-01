@@ -43,18 +43,18 @@ namespace Com.Upokecenter.Net {
       this.valueRequestMethod = valueRequestMethod;
       this.valueList = new List<string>();
       var keyset = new List<string>();
-      foreach (var s in this.valueMap.Keys) {
-        if (String.IsNullOrEmpty(s)) {
+      foreach (var str in this.valueMap.Keys) {
+        if (String.IsNullOrEmpty(str)) {
           // Add status line (also has the side
           // effect that it will appear first in the valueList)
-          IList<string> v = this.valueMap[s];
+          IList<string> v = this.valueMap[str];
           if (v != null && v.Count > 0) {
             this.valueList.Add(v[0]);
           } else {
             this.valueList.Add("HTTP/1.1 200 OK");
           }
         } else {
-          keyset.Add(s);
+          keyset.Add(str);
         }
       }
       keyset.Sort();

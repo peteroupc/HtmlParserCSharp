@@ -44,7 +44,7 @@ namespace Com.Upokecenter.Html {
         this.CommentValue = new StringBuilder();
       }
 
-      public void Append(string str) {
+      public void AppendStr(string str) {
         this.CommentValue.Append(str);
       }
 
@@ -229,7 +229,7 @@ namespace Com.Upokecenter.Html {
         return a;
       }
 
-      public void Append(int ch) {
+      public void AppendUChar(int ch) {
         if (ch < 0x10000) {
           this.builder.Append((char)ch);
         } else {
@@ -296,7 +296,7 @@ namespace Com.Upokecenter.Html {
 
       public IList<Attr> GetAttributes() {
         if (this.Attributes == null) {
-          return new Attr[] { };
+          return new List<Attr>();
         } else {
           return this.Attributes;
         }
@@ -2577,8 +2577,11 @@ namespace Com.Upokecenter.Html {
                   commonAncestor.AppendChild(lastNode);
                 }
                 Element e2 = Element.FromToken(formatting.Token);
-                foreach (var child in new
-                  List<INode>(furthestBlock.GetChildNodes())) {
+                var fbch = new List<INode>();
+                foreach (var child in furthestBlock.GetChildNodes()) {
+                  fbch.Add(child);
+                }
+                foreach (var child in fbch) {
                   furthestBlock.RemoveChild((Node)child);
                   // NOTE: Because 'e' can only be a formatting
                   // element, the foster parenting rule doesn't
@@ -4740,7 +4743,7 @@ namespace Com.Upokecenter.Html {
         string str = node.ToDebugString();
         string[] strarray = StringUtility.SplitAt(str, "\n");
         int len = strarray.Length;
-        if (len > 0 && strarray[len - 1].Length == 0) {
+        if (len > 0 && String.IsNullOrEmpty(strarray[len - 1])) {
           --len; // ignore trailing empty string
         }
         for (int i = 0; i < len; ++i) {
@@ -4936,8 +4939,9 @@ namespace Com.Upokecenter.Html {
           this.charInput.SetMarkPosition(markStart + 1);
         }
         var count = 0;
-        for (int index = 0; index < HtmlEntities.Entities.Length; ++index) {
-          string entity = HtmlEntities.Entities[index];
+        for (int index = 0; index < HtmlEntities.GetEntities().Length;
+          ++index) {
+          string entity = HtmlEntities.GetEntities()[index];
           if (entity[0] == c1) {
             if (data == null) {
               // Read the rest of the character reference
@@ -4994,7 +4998,7 @@ namespace Com.Upokecenter.Html {
                   this.ParseError();
                 }
               }
-              return HtmlEntities.EntityValues[index];
+              return HtmlEntities.GetEntityValues()[index];
             }
           }
         }
@@ -5244,9 +5248,9 @@ namespace Com.Upokecenter.Html {
             if (charref < 0) {
               // more than one character in this reference
               int index = Math.Abs(charref + 1);
-              this.tokenQueue.Add(HtmlEntities.EntityDoubles[(index * 2) +
+              this.tokenQueue.Add(HtmlEntities.GetEntityDoubles()[(index * 2) +
                 1]);
-              return HtmlEntities.EntityDoubles[index * 2];
+              return HtmlEntities.GetEntityDoubles()[index * 2];
             }
             return charref;
           }
@@ -5256,9 +5260,9 @@ namespace Com.Upokecenter.Html {
             if (charref < 0) {
               // more than one character in this reference
               int index = Math.Abs(charref + 1);
-              this.tokenQueue.Add(HtmlEntities.EntityDoubles[(index * 2) +
+              this.tokenQueue.Add(HtmlEntities.GetEntityDoubles()[(index * 2) +
                 1]);
-              return HtmlEntities.EntityDoubles[index * 2];
+              return HtmlEntities.GetEntityDoubles()[index * 2];
             }
             return charref;
           }
@@ -5784,7 +5788,7 @@ namespace Com.Upokecenter.Html {
               this.state = TokenizerState.Data;
               return this.EmitCurrentTag();
             } else if (ch >= 'A' && ch <= 'Z') {
-              this.currentTag.Append(ch + 0x20);
+              this.currentTag.AppendUChar(ch + 0x20);
               if (ch + 0x20 <= 0xffff) {
                 this.tempBuilder.Append((char)(ch + 0x20));
               } else if (ch + 0x20 <= 0x10ffff) {
@@ -5794,7 +5798,7 @@ namespace Com.Upokecenter.Html {
                   0x3ff) | 0xdc00));
               }
             } else if (ch >= 'a' && ch <= 'z') {
-              this.currentTag.Append(ch);
+              this.currentTag.AppendUChar(ch);
               if (ch <= 0xffff) {
                 this.tempBuilder.Append((char)ch);
               } else if (ch <= 0x10ffff) {
@@ -6199,7 +6203,7 @@ namespace Com.Upokecenter.Html {
               this.state = TokenizerState.CommentEnd;
             } else if (ch == 0) {
               this.ParseError();
-              this.lastComment.Append("-\ufffd");
+              this.lastComment.AppendStr("-\ufffd");
               this.state = TokenizerState.Comment;
             } else if (ch < 0) {
               this.ParseError();
@@ -6223,7 +6227,7 @@ namespace Com.Upokecenter.Html {
               return ret;
             } else if (ch == 0) {
               this.ParseError();
-              this.lastComment.Append("--\ufffd");
+              this.lastComment.AppendStr("--\ufffd");
               this.state = TokenizerState.Comment;
             } else if (ch == 0x21) { // --!>
               this.ParseError();
@@ -6255,10 +6259,10 @@ namespace Com.Upokecenter.Html {
               return ret;
             } else if (ch == 0) {
               this.ParseError();
-              this.lastComment.Append("--!\ufffd");
+              this.lastComment.AppendStr("--!\ufffd");
               this.state = TokenizerState.Comment;
             } else if (ch == 0x2d) {
-              this.lastComment.Append("--!");
+              this.lastComment.AppendStr("--!");
               this.state = TokenizerState.CommentEndDash;
             } else if (ch < 0) {
               this.ParseError();
@@ -6268,7 +6272,7 @@ namespace Com.Upokecenter.Html {
               return ret;
             } else {
               this.ParseError();
-              this.lastComment.Append("--!");
+              this.lastComment.AppendStr("--!");
               this.lastComment.AppendChar(ch);
               this.state = TokenizerState.Comment;
             }
@@ -6288,10 +6292,10 @@ namespace Com.Upokecenter.Html {
               int index = Math.Abs(ch + 1);
 
               this.currentAttribute.AppendToValue(
-                HtmlEntities.EntityDoubles[index
+                HtmlEntities.GetEntityDoubles()[index
                   * 2]);
               this.currentAttribute.AppendToValue(
-                HtmlEntities.EntityDoubles[(index * 2) + 1]);
+                HtmlEntities.GetEntityDoubles()[(index * 2) + 1]);
             } else {
               this.currentAttribute.AppendToValue(ch);
             }
@@ -6316,7 +6320,7 @@ namespace Com.Upokecenter.Html {
               this.ParseError();
               this.state = TokenizerState.Data;
             } else {
-              this.currentTag.Append(ch);
+              this.currentTag.AppendUChar(ch);
             }
             break;
           }
@@ -6991,8 +6995,8 @@ namespace Com.Upokecenter.Html {
         if (charref < 0) {
           // more than one character in this reference
           int index = Math.Abs(charref + 1);
-          this.tokenQueue.Add(HtmlEntities.EntityDoubles[index * 2]);
-          this.tokenQueue.Add(HtmlEntities.EntityDoubles[(index * 2) + 1]);
+          this.tokenQueue.Add(HtmlEntities.GetEntityDoubles()[index * 2]);
+          this.tokenQueue.Add(HtmlEntities.GetEntityDoubles()[(index * 2) + 1]);
         } else if (charref == 0x0a) {
           return; // ignore the valueToken
         } else {
@@ -7007,11 +7011,12 @@ namespace Com.Upokecenter.Html {
     private void StopParsing() {
       this.done = true;
       if (String.IsNullOrEmpty(this.valueDocument.DefaultLanguage)) {
-        if (this.contentLanguage.Length == 1) {
+        string[] contLang = this.contentLanguage;
+        if (contLang.Length == 1) {
           // set the fallback language if there is
           // only one language defined and no meta valueElement
           // defines the language
-          this.valueDocument.DefaultLanguage = this.contentLanguage[0];
+          this.valueDocument.DefaultLanguage = contLang[0];
         }
       }
       this.valueDocument.Encoding = this.encoding.GetEncoding();
