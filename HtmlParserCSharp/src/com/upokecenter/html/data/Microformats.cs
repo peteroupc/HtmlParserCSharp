@@ -1173,11 +1173,11 @@ namespace Com.Upokecenter.Html.Data {
       IElement root,
       CBORObject properties,
       CBORObject children) {
-      string[] className = GetClassNames(root);
-      if (className.Length > 0) {
+      string[] classNameArray = GetClassNames(root);
+      if (classNameArray.Length > 0) {
         IList<string> types = new List<string>();
         var hasProperties = false;
-        foreach (var cls in className) {
+        foreach (var cls in classNameArray) {
           if (cls.StartsWith("p-", StringComparison.Ordinal) && properties !=
             null) {
             hasProperties = true;
@@ -1197,7 +1197,7 @@ namespace Com.Upokecenter.Html.Data {
         if (types.Count == 0 && hasProperties) {
           // has properties and isn't a microformat
           // root
-          foreach (var cls in className) {
+          foreach (var cls in classNameArray) {
             if (cls.StartsWith("p-", StringComparison.Ordinal)) {
               string value = GetPValue(root);
               if (!StringUtility.IsNullOrSpaces(value)) {
@@ -1276,7 +1276,7 @@ namespace Com.Upokecenter.Html.Data {
           }
           obj.Add("properties", subProperties);
           if (hasProperties) {
-            foreach (var cls in className) {
+            foreach (var cls in classNameArray) {
               if (cls.StartsWith("p-", StringComparison.Ordinal)) { // property
                 CBORObject clone = CopyJson(obj);
                 clone.Add("value", GetPValue(root));
@@ -1320,11 +1320,11 @@ namespace Com.Upokecenter.Html.Data {
     private static void RelWalk(
       IElement root,
       CBORObject properties) {
-      string[] className = GetRelNames(root);
-      if (className.Length > 0) {
+      string[] classNameArray = GetRelNames(root);
+      if (classNameArray.Length > 0) {
         string href = GetHref(root);
         if (!StringUtility.IsNullOrSpaces(href)) {
-          foreach (var cls in className) {
+          foreach (var cls in classNameArray) {
             AccumulateValue(properties, cls, href);
           }
         }

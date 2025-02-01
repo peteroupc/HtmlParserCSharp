@@ -438,7 +438,7 @@ namespace Com.Upokecenter.Html.Data {
       this.context.ValueIriMap.Add("dc", "http://purl.org/dc/terms/");
       this.context.ValueIriMap.Add("dcterms", "http://purl.org/dc/terms/");
       this.context.ValueIriMap.Add("dc11", "http://purl.org/dc/elements/1.1/");
-      this.context.ValueIriMap.Add("foaf", "http://xmlns.Com/foaf/0.1/");
+      this.context.ValueIriMap.Add("foaf", "http://xmlns.com/foaf/0.1/");
       this.context.ValueIriMap.Add("gr", "http://purl.org/goodrelations/v1#");
       this.context.ValueIriMap.Add(
         "ical",
@@ -471,7 +471,7 @@ namespace Com.Upokecenter.Html.Data {
       this.context.ValueIriMap.Add(
         "skosxl",
         "http://www.w3.org/2008/05/skos-xl#");
-      this.context.ValueIriMap.Add("v", "http://rdf.Data-vocabulary.org/#");
+      this.context.ValueIriMap.Add("v", "http://rdf.data-vocabulary.org/#");
       this.context.ValueIriMap.Add("vcard",
         "http://www.w3.org/2006/vcard/ns#");
       this.context.ValueIriMap.Add("void", "http://rdfs.org/ns/void#");
@@ -528,10 +528,7 @@ namespace Com.Upokecenter.Html.Data {
       // "//" can never begin a valid CURIE reference, so it can
       // be used to guarantee that generated blank nodes will never
       // conflict with those stated explicitly
-      string blankNodeString = "//" +
-        Convert.ToString(
-          this.blankNode,
-          System.Globalization.CultureInfo.InvariantCulture);
+      string blankNodeString = "//" + RDFa1.IntToString(this.blankNode);
       ++this.blankNode;
       RDFTerm term = RDFTerm.FromBlankNode(blankNodeString);
       this.bnodeLabels.Add(blankNodeString, term);

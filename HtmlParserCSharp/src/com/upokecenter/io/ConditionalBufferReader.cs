@@ -15,7 +15,7 @@ namespace Com.Upokecenter.Io {
   /// However, when the buffer is disabled, no further bytes are put into
   /// the buffer, but any remaining bytes in the buffer will still be
   /// used until it's exhausted.</summary>
-  public sealed class ConditionalBufferInputStream : IByteReader {
+  public sealed class ConditionalBufferReader : IByteReader {
     private byte[] buffer = null;
     private int pos = 0;
     private int endpos = 0;
@@ -25,11 +25,11 @@ namespace Com.Upokecenter.Io {
     private long marklimit = 0;
     private IReader reader = null;
 
-    /// <summary>Initializes a new instance of the
-    /// ConditionalBufferInputStream class.</summary>
+    /// <summary>Initializes a new instance of the ConditionalBufferReader
+    /// class.</summary>
     /// <param name='input'>The parameter <paramref name='input'/> is an
     /// IReader object.</param>
-    public ConditionalBufferInputStream(IReader input) {
+    public ConditionalBufferReader(IReader input) {
       this.reader = input;
       this.buffer = new byte[1024];
     }
@@ -269,7 +269,7 @@ namespace Com.Upokecenter.Io {
         // return;
       }
       if (this.markpos < 0) {
-        throw new IOException();
+        throw new InvalidOperationException();
       }
       this.pos = this.posAtMark;
     }
@@ -279,7 +279,7 @@ namespace Com.Upokecenter.Io {
     /// DisableBuffer() was already called.</summary>
     public void Rewind() {
       if (this.disabled) {
-        throw new IOException();
+        throw new InvalidOperationException();
       }
       this.pos = 0;
       this.markpos = -1;

@@ -1,8 +1,8 @@
 using System;
 
 namespace Com.Upokecenter.Html {
-  internal sealed class HtmlEntities {
-    private static readonly string[] entries = new
+  internal static class HtmlEntities {
+    private static readonly string[] entities = new
     string[] { "CounterClockwiseContourIntegral;",
       "ClockwiseContourIntegral;", "DoubleLongLeftRightArrow;",
       "NotNestedGreaterGreater;", "DiacriticalDoubleAcute;",
@@ -679,9 +679,6 @@ namespace Com.Upokecenter.Html {
         edoubles[index],
         edoubles[index + 1],
       };
-    }
-
-    private HtmlEntities() {
     }
   }
 }

@@ -8,6 +8,43 @@ using PeterO.Rdf;
 
 namespace Com.Upokecenter.Html.Data {
   internal class RDFa1 : IRDFParser {
+    public static string IntToString(int value) {
+      string digits = "0123456789";
+      if (value == Int32.MinValue) {
+        return "-2147483648";
+      }
+      if (value == 0) {
+        return "0";
+      }
+      bool neg = value < 0;
+      var chars = new char[12];
+      var count = 11;
+      if (neg) {
+        value = -value;
+      }
+      while (value > 43698) {
+        int intdivvalue = value / 10;
+        char digit = digits[(int)(value - (intdivvalue * 10))];
+        chars[count--] = digit;
+        value = intdivvalue;
+      }
+      while (value > 9) {
+        int intdivvalue = (value * 26215) >> 18;
+        char digit = digits[(int)(value - (intdivvalue * 10))];
+        chars[count--] = digit;
+        value = intdivvalue;
+      }
+      if (value != 0) {
+        chars[count--] = digits[(int)value];
+      }
+      if (neg) {
+        chars[count] = '-';
+      } else {
+        ++count;
+      }
+      return new String(chars, count, 12 - count);
+    }
+
     private static string GetTextNodeText(INode node) {
       var builder = new StringBuilder();
       foreach (var child in node.GetChildNodes()) {
@@ -177,9 +214,7 @@ namespace Com.Upokecenter.Html.Data {
       // so it can
       // be used to guarantee that generated blank nodes will never
       // conflict with those stated explicitly
-      string blankNodeString = "b:" + Convert.ToString(
-          this.blankNode,
-          System.Globalization.CultureInfo.InvariantCulture);
+      string blankNodeString = "b:" + IntToString(this.blankNode);
       ++this.blankNode;
       RDFTerm term = RDFTerm.FromBlankNode(blankNodeString);
       this.bnodeLabels.Add(blankNodeString, term);

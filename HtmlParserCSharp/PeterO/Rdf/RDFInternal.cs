@@ -1,16 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using PeterO.Rdf;
+using PeterO;
+/*
+Written in 2013 by Peter Occil.
+Any copyright to this work is released to the Public Domain.
+In case this is not possible, this work is also
+licensed under the Unlicense: https://unlicense.org/
 
-namespace Com.Upokecenter.Html.Data {
-  internal sealed class RDFInternal {
-    /// <summary>Replaces certain blank nodes with blank nodes whose names
-    /// meet the N-Triples requirements.</summary>
-    /// <param name='triples'>A set of RDF triples.</param>
-    /// <param name='bnodeLabels'>A mapping of blank node names already
-    /// allocated. This method will modify this object as needed to
-    /// allocate new blank nodes.</param>
+*/
+namespace PeterO.Rdf {
+  internal static class RDFInternal {
+    /// <summary>Not documented yet.</summary>
+    /// <param name='triples'>The parameter <paramref name='triples'/> is
+    /// a.Collections.Generic.ISet{PeterO.Rdf.RDFTriple} object.</param>
+    /// <param name='bnodeLabels'>The parameter <paramref
+    /// name='bnodeLabels'/> is a.Collections.Generic.IDictionary
+    /// {System.String object.</param>
     internal static void ReplaceBlankNodes(
       ISet<RDFTriple> triples,
       IDictionary<string, RDFTerm> bnodeLabels) {
@@ -21,7 +27,7 @@ namespace Com.Upokecenter.Html.Data {
       Dictionary<string, RDFTerm>();
       IList<RDFTriple[]> changedTriples = new List<RDFTriple[]>();
       var nodeindex = new int[] { 0 };
-      foreach (var triple in triples) {
+      foreach (RDFTriple triple in triples) {
         var changed = false;
         RDFTerm subj = triple.GetSubject();
         if (subj.GetKind() == RDFTerm.BLANK) {
@@ -30,8 +36,9 @@ namespace Com.Upokecenter.Html.Data {
               oldname,
               nodeindex,
               bnodeLabels);
-          if (!newname.Equals(oldname)) {
-            RDFTerm newNode = newBlankNodes[oldname];
+          if (!newname.Equals(oldname, StringComparison.Ordinal)) {
+            RDFTerm newNode = newBlankNodes.ContainsKey(oldname) ?
+              newBlankNodes[oldname] : null;
             if (newNode == null) {
               newNode = RDFTerm.FromBlankNode(newname);
               bnodeLabels.Add(newname, newNode);
@@ -48,8 +55,9 @@ namespace Com.Upokecenter.Html.Data {
               oldname,
               nodeindex,
               bnodeLabels);
-          if (!newname.Equals(oldname)) {
-            RDFTerm newNode = newBlankNodes[oldname];
+          if (!newname.Equals(oldname, StringComparison.Ordinal)) {
+            RDFTerm newNode = newBlankNodes.ContainsKey(oldname) ?
+              newBlankNodes[oldname] : null;
             if (newNode == null) {
               newNode = RDFTerm.FromBlankNode(newname);
               bnodeLabels.Add(newname, newNode);
@@ -67,48 +75,10 @@ namespace Com.Upokecenter.Html.Data {
           changedTriples.Add(newTriple);
         }
       }
-      foreach (var triple2 in changedTriples) {
-        RDFTriple[] t2 = triple2;
-        triples.Remove(t2[0]);
-        triples.Add(t2[1]);
+      foreach (RDFTriple[] triple in changedTriples) {
+        triples.Remove(triple[0]);
+        triples.Add(triple[1]);
       }
-    }
-
-    public static string IntToString(int value) {
-      string digits = "0123456789";
-      if (value == Int32.MinValue) {
-        return "-2147483648";
-      }
-      if (value == 0) {
-        return "0";
-      }
-      bool neg = value < 0;
-      var chars = new char[12];
-      var count = 11;
-      if (neg) {
-        value = -value;
-      }
-      while (value > 43698) {
-        int intdivvalue = value / 10;
-        char digit = digits[(int)(value - (intdivvalue * 10))];
-        chars[count--] = digit;
-        value = intdivvalue;
-      }
-      while (value > 9) {
-        int intdivvalue = (value * 26215) >> 18;
-        char digit = digits[(int)(value - (intdivvalue * 10))];
-        chars[count--] = digit;
-        value = intdivvalue;
-      }
-      if (value != 0) {
-        chars[count--] = digits[(int)value];
-      }
-      if (neg) {
-        chars[count] = '-';
-      } else {
-        ++count;
-      }
-      return new String(chars, count, 12 - count);
     }
 
     private static string SuggestBlankNodeName(
@@ -136,15 +106,14 @@ namespace Com.Upokecenter.Html.Data {
       while (true) {
         // Generate a new blank node label,
         // and ensure it's unique
-        node = "b" + IntToString(nodeindex[0]);
+        node = "b" + Convert.ToString(
+            (int)nodeindex[0],
+            CultureInfo.InvariantCulture);
         if (!bnodeLabels.ContainsKey(node)) {
           return node;
         }
         ++nodeindex[0];
       }
-    }
-
-    private RDFInternal() {
     }
   }
 }

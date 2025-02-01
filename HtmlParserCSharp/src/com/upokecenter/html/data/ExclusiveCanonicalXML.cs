@@ -162,7 +162,7 @@ namespace Com.Upokecenter.Html.Data {
         valueNsRendered = namespaceStack[namespaceStack.Count - 1];
         var copied = false;
         builder.Append('<');
-        if (e.GetPrefix() != null && e.GetPrefix().Length > 0) {
+        if (!String.IsNullOrEmpty(e.GetPrefix())) {
           builder.Append(e.GetPrefix());
           builder.Append(':');
         }
@@ -206,7 +206,8 @@ namespace Com.Upokecenter.Html.Data {
         attrs.Sort(ValueAttrNamespaceComparer);
         foreach (var attr in attrs) {
           string valuePrefix = attr.GetLocalName();
-          if (attr.GetPrefix().Length == 0) {
+          if (attr.GetPrefix() != null &&
+            String.IsNullOrEmpty(attr.GetPrefix())) {
             valuePrefix = String.Empty;
           }
           string value = attr.GetValue();
@@ -284,7 +285,7 @@ namespace Com.Upokecenter.Html.Data {
         }
         namespaceStack.RemoveAt(namespaceStack.Count - 1);
         builder.Append("</");
-        if (e.GetPrefix() != null && e.GetPrefix().Length > 0) {
+        if (!String.IsNullOrEmpty(e.GetPrefix())) {
           builder.Append(e.GetPrefix());
           builder.Append(':');
         }

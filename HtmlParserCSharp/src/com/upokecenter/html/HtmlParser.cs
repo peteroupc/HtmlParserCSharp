@@ -525,7 +525,7 @@ namespace Com.Upokecenter.Html {
       "-//webtechs//dtd mozilla html//",
     };
 
-    private ConditionalBufferInputStream inputStream;
+    private ConditionalBufferReader inputReader;
     private IMarkableCharacterInput charInput = null;
     private EncodingConfidence encoding = null;
 
@@ -601,17 +601,17 @@ namespace Com.Upokecenter.Html {
       this.contentLanguage = new string[] { contentLanguage };
       this.address = address;
       this.Initialize();
-      this.inputStream = new ConditionalBufferInputStream(source); // TODO: ???
+      this.inputReader = new ConditionalBufferReader(source); // TODO: ???
       this.encoding = new EncodingConfidence(
         charset,
         EncodingConfidence.Certain);
       // TODO: Use the following below
-      // this.encoding = CharsetSniffer.sniffEncoding(this.inputStream,
+      // this.encoding = CharsetSniffer.sniffEncoding(this.inputReader,
       // charset);
-      this.inputStream.Rewind();
+      this.inputReader.Rewind();
       ICharacterEncoding henc = new Html5Encoding(this.encoding);
       this.charInput = new StackableCharacterInput(
-        Encodings.GetDecoderInput(henc, this.inputStream));
+        Encodings.GetDecoderInput(henc, this.inputReader));
     }
 
     private void AddCommentNodeToCurrentNode(int valueToken) {
@@ -1238,7 +1238,6 @@ namespace Com.Upokecenter.Html {
           this.ApplyThisInsertionMode(valueToken) :
           true;
       }
-      throw new InvalidOperationException();
     }
 
     private const string XhtmlStrict =
@@ -1536,7 +1535,7 @@ namespace Com.Upokecenter.Html {
                   "utf-16le".Equals(charset)) */ this.ChangeEncoding(charset);
                   if (this.encoding.GetConfidence() ==
                     EncodingConfidence.Certain) {
-                    this.inputStream.DisableBuffer();
+                    this.inputReader.DisableBuffer();
                   }
                   return true;
                 }
@@ -1552,7 +1551,7 @@ namespace Com.Upokecenter.Html {
                       this.ChangeEncoding(charset);
                       if (this.encoding.GetConfidence() ==
                         EncodingConfidence.Certain) {
-                        this.inputStream.DisableBuffer();
+                        this.inputReader.DisableBuffer();
                       }
                       return true;
                     }
@@ -1576,7 +1575,7 @@ namespace Com.Upokecenter.Html {
                 }
               }
               if (this.encoding.GetConfidence() == EncodingConfidence.Certain) {
-                this.inputStream.DisableBuffer();
+                this.inputReader.DisableBuffer();
               }
               return true;
             } else if ("title".Equals(valueName, StringComparison.Ordinal)) {
@@ -3907,14 +3906,14 @@ namespace Com.Upokecenter.Html {
       // Reinitialize all parser state
       this.Initialize();
       // Rewind the input stream and set the new encoding
-      this.inputStream.Rewind();
+      this.inputReader.Rewind();
       this.encoding = new EncodingConfidence(
         charset,
         EncodingConfidence.Certain);
       ICharacterEncoding henc = new Html5Encoding(this.encoding);
       // TODO
       // this.charInput = new StackableCharacterInput(
-      // Encodings.GetDecoderInput(henc, this.inputStream));
+      // Encodings.GetDecoderInput(henc, this.inputReader));
     }
 
     private void ClearFormattingToMarker() {
