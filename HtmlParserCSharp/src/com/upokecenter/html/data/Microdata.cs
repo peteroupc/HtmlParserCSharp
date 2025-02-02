@@ -82,8 +82,7 @@ namespace Com.Upokecenter.Html.Data {
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <param name='document'>The parameter <paramref name='document'/> is
-    /// a.Upokecenter.Html.IDocument object.</param>
+    /// <param name='document'>A document object.</param>
     /// <returns>The return value is not documented yet.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref
     /// name='document'/> is null.</exception>
@@ -98,7 +97,10 @@ namespace Com.Upokecenter.Html.Data {
         if (node.GetAttribute("itemscope") != null &&
           node.GetAttribute("itemprop") == null) {
           IList<IElement> memory = new List<IElement>();
-          items.Add(GetMicrodataObject(node, memory));
+          CBORObject mdobject = GetMicrodataObject(node, memory);
+          if (mdobject != null) {
+            items.Add(mdobject);
+          }
         }
       }
       result.Add("items", items);
@@ -112,6 +114,9 @@ namespace Com.Upokecenter.Html.Data {
         "itemtype"));
       CBORObject result = CBORObject.NewMap();
       memory.Add(item);
+      if (itemtypes.Length == 0) {
+        return null;
+      }
       if (itemtypes.Length > 0) {
         var array = CBORObject.NewArray();
         foreach (var itemtype in itemtypes) {
@@ -137,8 +142,8 @@ namespace Com.Upokecenter.Html.Data {
         if (valueElement.GetAttribute("itemscope") != null) {
           obj = memory.Contains(valueElement) ? (object)"ERROR" :
             (object)GetMicrodataObject(valueElement, new
-
             List<IElement>(memory));
+          obj = obj ?? ((object)"ERROR");
         } else {
           obj = GetPropertyValue(valueElement);
         }
