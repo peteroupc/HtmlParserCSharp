@@ -65,57 +65,57 @@ namespace Com.Upokecenter.Html {
         (byte)0xdf, (byte)0xdf, (byte)0xdf,
       },
       new byte[] { 0x3c, 0x48, 0x54, 0x4d, 0x4c }, new byte[] {
-        (byte)255,
-        (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-      },
+  (byte)255,
+  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+},
       new byte[] { 0x3c, 0x48, 0x45, 0x41, 0x44 }, new byte[] {
-        (byte)255,
-        (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-      },
+  (byte)255,
+  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+},
       new byte[] { 0x3c, 0x53, 0x43, 0x52, 0x49, 0x50, 0x54 }, new byte[] {
-        (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-        (byte)0xdf,
-      },
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+  (byte)0xdf,
+},
       new byte[] { 0x3c, 0x49, 0x46, 0x52, 0x41, 0x4d, 0x45 }, new byte[] {
-        (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-        (byte)0xdf,
-      },
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+  (byte)0xdf,
+},
       new byte[] { 0x3c, 0x48, 0x31 }, new byte[] {
-        (byte)255, (byte)0xdf,
-        (byte)255,
-      },
+  (byte)255, (byte)0xdf,
+  (byte)255,
+},
       new byte[] { 0x3c, 0x44, 0x49, 0x56 }, new byte[] {
-        (byte)255,
-        (byte)0xdf, (byte)0xdf, (byte)0xdf,
-      },
+  (byte)255,
+  (byte)0xdf, (byte)0xdf, (byte)0xdf,
+},
       new byte[] { 0x3c, 0x46, 0x4f, 0x4e, 0x54 }, new byte[] {
-        (byte)255,
-        (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-      },
+  (byte)255,
+  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+},
       new byte[] { 0x3c, 0x54, 0x41, 0x42, 0x4c, 0x45 }, new byte[] {
-        (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-      },
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+},
       new byte[] { 0x3c, 0x41 }, new byte[] { (byte)255, (byte)0xdf },
       new byte[] { 0x3c, 0x53, 0x54, 0x59, 0x4c, 0x45 }, new byte[] {
-        (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-      },
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+},
       new byte[] { 0x3c, 0x54, 0x49, 0x54, 0x4c, 0x45 }, new byte[] {
-        (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-      },
+  (byte)255, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+},
       new byte[] { 0x3c, 0x42 }, new byte[] { (byte)255, (byte)0xdf },
       new byte[] { 0x3c, 0x42, 0x4f, 0x44, 0x59 }, new byte[] {
-        (byte)255,
-        (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
-      },
+  (byte)255,
+  (byte)0xdf, (byte)0xdf, (byte)0xdf, (byte)0xdf,
+},
       new byte[] { 0x3c, 0x42, 0x52 }, new byte[] {
-        (byte)255, (byte)0xdf,
-        (byte)0xdf,
-      },
+  (byte)255, (byte)0xdf,
+  (byte)0xdf,
+},
       new byte[] { 0x3c, 0x50 }, new byte[] { (byte)255, (byte)0xdf },
       new byte[] { 0x3c, 0x21, 0x2d, 0x2d }, new byte[] {
-        (byte)255,
-        (byte)255, (byte)255, (byte)255,
-      },
+  (byte)255,
+  (byte)255, (byte)255, (byte)255,
+},
     };
 
     private static byte[] VpFiveByte = new byte[] {
@@ -317,8 +317,8 @@ namespace Com.Upokecenter.Html {
         string url = headers.GetUrl();
         if (url != null && url.Length >= 5 &&
           (url[0] == 'h' || url[0] == 'H') && (url[1] == 't' || url[0] == 'T'
-    ) && (url[2] == 't' || url[0] == 'T') && (url[3] == 'p' || url[0] == 'P'
-    ) && (url[4] == ':')) {
+) && (url[2] == 't' || url[0] == 'T') && (url[3] == 'p' || url[0] == 'P'
+) && (url[4] == ':')) {
           return SniffTextOrBinary(input);
         }
       }
@@ -636,7 +636,7 @@ namespace Com.Upokecenter.Html {
           0,
           count) && MatchesPattern(
       new byte[] {
-      (byte)0x41, (byte)0x49, (byte)0x46,
+        (byte)0x41, (byte)0x49, (byte)0x46,
         (byte)0x46,
       },
       header,

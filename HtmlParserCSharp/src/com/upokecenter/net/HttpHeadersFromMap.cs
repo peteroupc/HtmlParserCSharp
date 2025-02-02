@@ -29,7 +29,7 @@ using PeterO;
 
 namespace Com.Upokecenter.Net {
   internal class HttpHeadersFromMap : IHttpHeaders {
-    private IDictionary<string, IList<string >> valueMap;
+    private IDictionary<string, IList<string>> valueMap;
     private IList<string> valueList;
     private string valueRequestMethod;
     private string valueUrlString;
@@ -37,7 +37,7 @@ namespace Com.Upokecenter.Net {
     public HttpHeadersFromMap(
       string valueUrlString,
       string valueRequestMethod,
-      IDictionary<string, IList<string >> valueMap) {
+      IDictionary<string, IList<string>> valueMap) {
       this.valueMap = valueMap;
       this.valueUrlString = valueUrlString;
       this.valueRequestMethod = valueRequestMethod;
@@ -112,7 +112,7 @@ namespace Com.Upokecenter.Net {
         this.valueList[index];
     }
 
-    public IDictionary<string, IList<string >> GetHeaderFields() {
+    public IDictionary<string, IList<string>> GetHeaderFields() {
       // TODO: Make unmodifiable
       return this.valueMap;
       // return PeterO.Support.Collections.UnmodifiableMap(this.valueMap);
@@ -124,7 +124,7 @@ namespace Com.Upokecenter.Net {
 
     public int GetResponseCode() {
       string status = this.GetHeaderField(null);
-      return - 1;
+      return -1;
       // TODO
       // return (status == null) ? (-1) :
       // (HeaderParser.GetResponseCode(status));

@@ -481,16 +481,16 @@ namespace Com.Upokecenter.Html.Data {
             MatchDateTimePattern(
               (string)result,
               new string[] { "%Y-%M-%d", "%Y-%D" },
-          new string[] {
-          "%H:%m:%s", "%H:%m",
-          "%H:%m:%s%Z:%z",
-          "%H:%m:%s%Z%z", "%H:%m:%s%G",
-          "%H:%m%Z:%z", "%H:%m%Z%z", "%H:%m%G",
-        },
-        components,
-        true,
-        true,
-        true)) {
+              new string[] {
+                "%H:%m:%s", "%H:%m",
+                "%H:%m:%s%Z:%z",
+                "%H:%m:%s%Z%z", "%H:%m:%s%G",
+                "%H:%m%Z:%z", "%H:%m%Z%z", "%H:%m%G",
+              },
+              components,
+              true,
+              true,
+              true)) {
             // reset the time components
             components[3] = Int32.MinValue;
             components[4] = Int32.MinValue;
@@ -837,8 +837,8 @@ namespace Com.Upokecenter.Html.Data {
         IList<IElement> elements = GetChildElements(root);
         if (elements.Count == 1 &&
           DataUtilities.ToLowerCaseAscii(elements[0].GetLocalName()).Equals(
-          "img",
-          StringComparison.Ordinal)) {
+            "img",
+            StringComparison.Ordinal)) {
           // try to get the ALT/TITLE
           // from the image
           string valuePValue = GetPValue(elements[0]);

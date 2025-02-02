@@ -97,7 +97,7 @@ namespace Com.Upokecenter.Html.Data {
         throw new ArgumentNullException(nameof(node));
       }
       var builder = new StringBuilder();
-      IList<IDictionary<string, string >> stack = new
+      IList<IDictionary<string, string>> stack = new
       List<IDictionary<string, string>>();
       prefixList = prefixList ?? (new Dictionary<string, string>());
       foreach (var valuePrefix in prefixList.Keys) {
@@ -136,7 +136,7 @@ namespace Com.Upokecenter.Html.Data {
     private static void Canonicalize(
       INode node,
       StringBuilder builder,
-      IList<IDictionary<string, string >> namespaceStack,
+      IList<IDictionary<string, string>> namespaceStack,
       IDictionary<string, string> prefixList,
       bool addPrefixes,
       bool withComments) {

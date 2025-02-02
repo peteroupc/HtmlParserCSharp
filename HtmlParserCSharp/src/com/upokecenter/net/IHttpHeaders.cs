@@ -52,7 +52,7 @@ namespace Com.Upokecenter.Net {
 
     /// <summary>Not documented yet.</summary>
     /// <returns>The return value is not documented yet.</returns>
-    IDictionary<string, IList<string >> GetHeaderFields();
+    IDictionary<string, IList<string>> GetHeaderFields();
 
     /// <summary>Not documented yet.</summary>
     /// <returns>The return value is not documented yet.</returns>

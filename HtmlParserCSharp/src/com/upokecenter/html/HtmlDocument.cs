@@ -141,7 +141,6 @@ namespace Com.Upokecenter.Html {
     }
 
     /// <summary>Not documented yet.</summary>
-    /// <summary>Not documented yet.</summary>
     /// <param name='nodes'>Not documented yet.</param>
     /// <returns>The return value is not documented yet.</returns>
     /// <exception cref='ArgumentNullException'>The parameter <paramref

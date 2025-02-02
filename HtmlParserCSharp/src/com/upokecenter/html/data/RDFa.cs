@@ -46,7 +46,7 @@ namespace Com.Upokecenter.Html.Data {
         set;
       }
 
-      public IDictionary<string, IList<RDFTerm >> ValueListMap {
+      public IDictionary<string, IList<RDFTerm>> ValueListMap {
         get;
         set;
       }
@@ -166,7 +166,7 @@ namespace Com.Upokecenter.Html.Data {
     private static bool IsTermChar(int c) {
       return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
         c == '_' || c == '.' || c == '-' || c == '/' || (c >= '0' && c <= '9'
-        ) || c == 0xb7 || (c >= 0xc0 && c <= 0xd6) ||
+) || c == 0xb7 || (c >= 0xc0 && c <= 0xd6) ||
         (c >= 0xd8 && c <= 0xf6) || (c >= 0xf8 && c <= 0x2ff) ||
         (c >= 0x300 && c <= 0x37d) || (c >= 0x37f && c <= 0x1fff) ||
         (c >= 0x200c && c <= 0x200d) || (c >= 0x203f && c <= 0x2040) ||
@@ -558,11 +558,9 @@ namespace Com.Upokecenter.Html.Data {
         string prefixName = DataUtilities.ToLowerCaseAscii(
             attribute.Substring(
               refIndex,
-              (refIndex + prefix) - (refIndex)));
-        refIndex += prefix + 1;
-        refLength -= prefix + 1;
-        prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
-          ValueOrDefault(prefixMapping, prefixName, null);
+              (refIndex + prefix) - (refIndex))); refIndex += prefix + 1;
+refLength -= prefix + 1; prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
+ValueOrDefault(prefixMapping, prefixName, null);
         if (prefixIri == null || "_".Equals(prefixName)) {
           return null;
         }
@@ -600,11 +598,9 @@ namespace Com.Upokecenter.Html.Data {
         prefixName = DataUtilities.ToLowerCaseAscii(
             attribute.Substring(
               refIndex,
-              (refIndex + prefix) - (refIndex)));
-        refIndex += prefix + 1;
-        refLength -= prefix + 1;
-        prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
-          ValueOrDefault(prefixMapping, prefixName, null);
+              (refIndex + prefix) - (refIndex))); refIndex += prefix + 1;
+refLength -= prefix + 1; prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
+ValueOrDefault(prefixMapping, prefixName, null);
         if (prefixIri == null && !blank.Equals(prefixName)) {
           return null;
         }
@@ -751,7 +747,7 @@ namespace Com.Upokecenter.Html.Data {
         new Dictionary<string, string>(this.context.ValueIriMap);
       IDictionary<string, string> namespacesLocal =
         new Dictionary<string, string>(this.context.ValueNamespaces);
-      IDictionary<string, IList<RDFTerm >> mapLocalOfLists =
+      IDictionary<string, IList<RDFTerm>> mapLocalOfLists =
         this.context.ValueListMap;
       IDictionary<string, string> termMapLocal =
         new Dictionary<string, string>(this.context.ValueTermMap);

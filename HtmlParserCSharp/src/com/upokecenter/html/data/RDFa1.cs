@@ -237,11 +237,8 @@ namespace Com.Upokecenter.Html.Data {
         string prefixName = DataUtilities.ToLowerCaseAscii(
             attribute.Substring(
               refIndex,
-              (refIndex + prefix) - (refIndex)));
-        refIndex += prefix + 1;
-        refLength -= prefix + 1;
-        prefixIri = prefixMapping[prefixName];
-        prefixIri =
+              (refIndex + prefix) - (refIndex))); refIndex += prefix + 1;
+refLength -= prefix + 1; prefixIri = prefixMapping[prefixName]; prefixIri =
           (prefix == 0) ? RDFA_DEFAULT_PREFIX : prefixMapping[prefixName];
         if (prefixIri == null || "_".Equals(prefixName)) {
           return null;
@@ -288,11 +285,9 @@ namespace Com.Upokecenter.Html.Data {
         prefixName = DataUtilities.ToLowerCaseAscii(
             attribute.Substring(
               refIndex,
-              (refIndex + prefix) - (refIndex)));
-        refIndex += prefix + 1;
-        refLength -= prefix + 1;
-        prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
-          prefixMapping[prefixName];
+              (refIndex + prefix) - (refIndex))); refIndex += prefix + 1;
+refLength -= prefix + 1; prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
+prefixMapping[prefixName];
         if (prefixIri == null && !blank.Equals(prefixName)) {
           return null;
         }
@@ -469,7 +464,7 @@ namespace Com.Upokecenter.Html.Data {
     }
 
     private void Process(IElement node, bool root) {
-      IList < RDFa.IncompleteTriple > incompleteTriplesLocal = new
+      IList<RDFa.IncompleteTriple> incompleteTriplesLocal = new
       List<RDFa.IncompleteTriple>();
       string localLanguage = this.context.ValueLanguage;
       RDFTerm newSubject = null;
@@ -744,7 +739,7 @@ namespace Com.Upokecenter.Html.Data {
       }
       // Step 10
       if (!skipElement && newSubject != null) {
-        IList < RDFa.IncompleteTriple > triples =
+        IList<RDFa.IncompleteTriple> triples =
           this.context.ValueIncompleteTriples;
         foreach (var triple in triples) {
           if (triple.ValueDirection == RDFa.ChainingDirection.Forward) {

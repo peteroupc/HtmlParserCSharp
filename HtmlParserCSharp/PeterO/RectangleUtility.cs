@@ -3,7 +3,7 @@ using System;
 // TODO: Write or find a tool to convert this code
 // (or pseudocode therefor) to various programming
 // languages, such as Java, Python, Ruby, PHP,
-// and Rust, without artificial intelligence.
+  // and Rust, without artificial intelligence.
 // This code is simple enough for such a tool.
 namespace PeterO {
   /// <summary>Helper functions for rectangles. In this class, a

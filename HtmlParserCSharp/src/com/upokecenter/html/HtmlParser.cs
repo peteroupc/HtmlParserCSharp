@@ -595,8 +595,7 @@ namespace Com.Upokecenter.Html {
                 if (url == null || String.IsNullOrEmpty(url.GetScheme())) {
                   throw new ArgumentException();
                 }
-        */
-      }
+        */ }
       // TODO: Use a more sophisticated language parser here
       this.contentLanguage = new string[] { contentLanguage };
       this.address = address;
@@ -1362,8 +1361,8 @@ namespace Com.Upokecenter.Html {
                   .Equals(
                     DataUtilities.ToLowerCaseAscii(doctypeSystem)) ||
                   (!hasSystemId && doctypePublicLC.StartsWith(
-                  "-//w3c//dtd html 4.01 frameset//",
-                  StringComparison.Ordinal)) || (!hasSystemId &&
+                    "-//w3c//dtd html 4.01 frameset//",
+                    StringComparison.Ordinal)) || (!hasSystemId &&
                     doctypePublicLC.StartsWith(
                       "-//w3c//dtd html 4.01 transitional//",
                       StringComparison.Ordinal))) {
@@ -2020,7 +2019,7 @@ namespace Com.Upokecenter.Html {
               "section".Equals(valueName, StringComparison.Ordinal) ||
               "summary".Equals(valueName, StringComparison.Ordinal) ||
               "ul".Equals(valueName, StringComparison.Ordinal)
-            ) {
+) {
               this.CloseParagraph();
               this.AddHtmlElement(tag);
               return true;
@@ -2183,7 +2182,7 @@ namespace Com.Upokecenter.Html {
               "img".Equals(valueName, StringComparison.Ordinal) ||
               "keygen".Equals(valueName, StringComparison.Ordinal) ||
               "wbr".Equals(valueName, StringComparison.Ordinal)
-            ) {
+) {
               this.ReconstructFormatting();
               this.AddHtmlElementNoPush(tag);
               tag.AckSelfClosing();
@@ -2200,7 +2199,7 @@ namespace Com.Upokecenter.Html {
             } else if ("param".Equals(valueName, StringComparison.Ordinal) ||
               "source".Equals(valueName) ||
               "track".Equals(valueName, StringComparison.Ordinal)
-            ) {
+) {
               this.AddHtmlElementNoPush(tag);
               tag.AckSelfClosing();
             } else if ("hr".Equals(valueName, StringComparison.Ordinal)) {
@@ -2268,8 +2267,8 @@ namespace Com.Upokecenter.Html {
                   "ruby",
                   StringComparison.Ordinal) &&
                   !this.GetCurrentNode().GetLocalName().Equals(
-                  "rtc",
-                  StringComparison.Ordinal)) {
+                    "rtc",
+                    StringComparison.Ordinal)) {
                   this.ParseError();
                 }
               }
@@ -2328,7 +2327,7 @@ namespace Com.Upokecenter.Html {
               "th".Equals(valueName, StringComparison.Ordinal) ||
               "thead".Equals(valueName, StringComparison.Ordinal) ||
               "tr".Equals(valueName, StringComparison.Ordinal)
-            ) {
+) {
               this.ParseError();
               return false;
             } else {
@@ -2562,7 +2561,7 @@ namespace Com.Upokecenter.Html {
                   HtmlCommon.IsHtmlElement(commonAncestor, "tbody") ||
                   HtmlCommon.IsHtmlElement(commonAncestor, "thead") ||
                   HtmlCommon.IsHtmlElement(commonAncestor, "tfoot")
-                ) {
+) {
                   if (lastNode.GetParentNode() != null) {
                     ((Node)lastNode.GetParentNode()).RemoveChild(
                       (Node)lastNode);
@@ -2803,15 +2802,15 @@ namespace Com.Upokecenter.Html {
                   token,
                   InsertionMode.InBody);
             } else if (valueName.Equals("basefont",
-              StringComparison.Ordinal) ||
-              valueName.Equals(
-                "bgsound",
-                StringComparison.Ordinal) ||
-              valueName.Equals("link", StringComparison.Ordinal) ||
-              valueName.Equals("meta", StringComparison.Ordinal) ||
-              valueName.Equals("noframes", StringComparison.Ordinal) ||
-              valueName.Equals("style", StringComparison.Ordinal)
-            ) {
+   StringComparison.Ordinal) ||
+   valueName.Equals(
+     "bgsound",
+     StringComparison.Ordinal) ||
+   valueName.Equals("link", StringComparison.Ordinal) ||
+   valueName.Equals("meta", StringComparison.Ordinal) ||
+   valueName.Equals("noframes", StringComparison.Ordinal) ||
+   valueName.Equals("style", StringComparison.Ordinal)
+) {
               return this.ApplyInsertionMode(
                   token,
                   InsertionMode.InHead);
@@ -3235,7 +3234,7 @@ namespace Com.Upokecenter.Html {
               if (!this.HasHtmlElementInTableScope("tbody") &&
                 !this.HasHtmlElementInTableScope("thead") &&
                 !this.HasHtmlElementInTableScope("tfoot")
-              ) {
+) {
                 this.ParseError();
                 return false;
               }
@@ -3287,7 +3286,7 @@ namespace Com.Upokecenter.Html {
               if (!this.HasHtmlElementInTableScope("tbody") &&
                 !this.HasHtmlElementInTableScope("thead") &&
                 !this.HasHtmlElementInTableScope("tfoot")
-              ) {
+) {
                 this.ParseError();
                 return false;
               }
@@ -3348,15 +3347,15 @@ namespace Com.Upokecenter.Html {
                 tag,
                 this.AddHtmlElement(tag));
             } else if (valueName.Equals("caption",
-              StringComparison.Ordinal) ||
-              valueName.Equals(
-                "col",
-                StringComparison.Ordinal) ||
-              valueName.Equals("colgroup", StringComparison.Ordinal) ||
-              valueName.Equals("tbody", StringComparison.Ordinal) ||
-              valueName.Equals("tfoot", StringComparison.Ordinal) ||
-              valueName.Equals("thead", StringComparison.Ordinal) ||
-              valueName.Equals("tr", StringComparison.Ordinal)) {
+   StringComparison.Ordinal) ||
+   valueName.Equals(
+     "col",
+     StringComparison.Ordinal) ||
+   valueName.Equals("colgroup", StringComparison.Ordinal) ||
+   valueName.Equals("tbody", StringComparison.Ordinal) ||
+   valueName.Equals("tfoot", StringComparison.Ordinal) ||
+   valueName.Equals("thead", StringComparison.Ordinal) ||
+   valueName.Equals("tr", StringComparison.Ordinal)) {
               if (this.ApplyEndTag("tr", insMode)) {
                 return this.ApplyThisInsertionMode(token);
               }
@@ -3874,8 +3873,7 @@ namespace Com.Upokecenter.Html {
           }
           return true;
         }
-        default:
-          throw new InvalidOperationException();
+        default: throw new InvalidOperationException();
       }
     }
 
@@ -4075,19 +4073,19 @@ namespace Com.Upokecenter.Html {
           break;
         }
         if (HtmlCommon.IsHtmlElement(node, "dd") ||
-          HtmlCommon.IsHtmlElement(node, "dt") ||
-          HtmlCommon.IsHtmlElement(node, "li") ||
-          HtmlCommon.IsHtmlElement(node, "rb") ||
-          HtmlCommon.IsHtmlElement(node, "rtc") ||
-          HtmlCommon.IsHtmlElement(node, "option") ||
-          HtmlCommon.IsHtmlElement(node, "optgroup") ||
-          HtmlCommon.IsHtmlElement(
-            node,
-            "p") ||
-          HtmlCommon.IsHtmlElement(
-            node,
-            "rp") ||
-          HtmlCommon.IsHtmlElement(node, "rt")) {
+                 HtmlCommon.IsHtmlElement(node, "dt") ||
+                 HtmlCommon.IsHtmlElement(node, "li") ||
+                 HtmlCommon.IsHtmlElement(node, "rb") ||
+                 HtmlCommon.IsHtmlElement(node, "rtc") ||
+                 HtmlCommon.IsHtmlElement(node, "option") ||
+                 HtmlCommon.IsHtmlElement(node, "optgroup") ||
+                 HtmlCommon.IsHtmlElement(
+                 node,
+                 "p") ||
+                 HtmlCommon.IsHtmlElement(
+                 node,
+                 "rp") ||
+                 HtmlCommon.IsHtmlElement(node, "rt")) {
           this.PopCurrentNode();
         } else {
           break;
@@ -4273,29 +4271,29 @@ namespace Com.Upokecenter.Html {
           return true;
         }
         if (HtmlCommon.IsHtmlElement(e, "applet") ||
-          HtmlCommon.IsHtmlElement(e, "caption") ||
-          HtmlCommon.IsHtmlElement(e, "html") ||
-          HtmlCommon.IsHtmlElement(e, "table") ||
-          HtmlCommon.IsHtmlElement(e, "td") ||
-          HtmlCommon.IsHtmlElement(e, "th") ||
-          HtmlCommon.IsHtmlElement(e, "ol") ||
-          HtmlCommon.IsHtmlElement(e, "ul") ||
-          HtmlCommon.IsHtmlElement(e, "marquee") ||
-          HtmlCommon.IsHtmlElement(e, "object") ||
-          HtmlCommon.IsMathMLElement(e, "mi") ||
-          HtmlCommon.IsMathMLElement(e, "mo") ||
-          HtmlCommon.IsMathMLElement(e, "mn") ||
-          HtmlCommon.IsMathMLElement(e, "ms") ||
-          HtmlCommon.IsMathMLElement(e, "mtext") ||
-          HtmlCommon.IsMathMLElement(e, "annotation-xml") ||
-          HtmlCommon.IsSvgElement(e, "foreignObject") ||
-          HtmlCommon.IsSvgElement(
-            e,
-            "desc") ||
-          HtmlCommon.IsSvgElement(
-            e,
-            "title")
-        ) {
+                 HtmlCommon.IsHtmlElement(e, "caption") ||
+                 HtmlCommon.IsHtmlElement(e, "html") ||
+                 HtmlCommon.IsHtmlElement(e, "table") ||
+                 HtmlCommon.IsHtmlElement(e, "td") ||
+                 HtmlCommon.IsHtmlElement(e, "th") ||
+                 HtmlCommon.IsHtmlElement(e, "ol") ||
+                 HtmlCommon.IsHtmlElement(e, "ul") ||
+                 HtmlCommon.IsHtmlElement(e, "marquee") ||
+                 HtmlCommon.IsHtmlElement(e, "object") ||
+                 HtmlCommon.IsMathMLElement(e, "mi") ||
+                 HtmlCommon.IsMathMLElement(e, "mo") ||
+                 HtmlCommon.IsMathMLElement(e, "mn") ||
+                 HtmlCommon.IsMathMLElement(e, "ms") ||
+                 HtmlCommon.IsMathMLElement(e, "mtext") ||
+                 HtmlCommon.IsMathMLElement(e, "annotation-xml") ||
+                 HtmlCommon.IsSvgElement(e, "foreignObject") ||
+                 HtmlCommon.IsSvgElement(
+                 e,
+                 "desc") ||
+                 HtmlCommon.IsSvgElement(
+                 e,
+                 "title")
+                 ) {
           return false;
         }
       }
@@ -4309,27 +4307,27 @@ namespace Com.Upokecenter.Html {
           return true;
         }
         if (HtmlCommon.IsHtmlElement(e, "applet") ||
-          HtmlCommon.IsHtmlElement(e, "caption") ||
-          HtmlCommon.IsHtmlElement(e, "html") ||
-          HtmlCommon.IsHtmlElement(e, "table") ||
-          HtmlCommon.IsHtmlElement(e, "td") ||
-          HtmlCommon.IsHtmlElement(e, "th") ||
-          HtmlCommon.IsHtmlElement(e, "marquee") ||
-          HtmlCommon.IsHtmlElement(e, "object") ||
-          HtmlCommon.IsMathMLElement(e, "mi") ||
-          HtmlCommon.IsMathMLElement(e, "mo") ||
-          HtmlCommon.IsMathMLElement(e, "mn") ||
-          HtmlCommon.IsMathMLElement(e, "ms") ||
-          HtmlCommon.IsMathMLElement(e, "mtext") ||
-          HtmlCommon.IsMathMLElement(e, "annotation-xml") ||
-          HtmlCommon.IsSvgElement(e, "foreignObject") ||
-          HtmlCommon.IsSvgElement(
-            e,
-            "desc") ||
-          HtmlCommon.IsSvgElement(
-            e,
-            "title")
-        ) {
+                 HtmlCommon.IsHtmlElement(e, "caption") ||
+                 HtmlCommon.IsHtmlElement(e, "html") ||
+                 HtmlCommon.IsHtmlElement(e, "table") ||
+                 HtmlCommon.IsHtmlElement(e, "td") ||
+                 HtmlCommon.IsHtmlElement(e, "th") ||
+                 HtmlCommon.IsHtmlElement(e, "marquee") ||
+                 HtmlCommon.IsHtmlElement(e, "object") ||
+                 HtmlCommon.IsMathMLElement(e, "mi") ||
+                 HtmlCommon.IsMathMLElement(e, "mo") ||
+                 HtmlCommon.IsMathMLElement(e, "mn") ||
+                 HtmlCommon.IsMathMLElement(e, "ms") ||
+                 HtmlCommon.IsMathMLElement(e, "mtext") ||
+                 HtmlCommon.IsMathMLElement(e, "annotation-xml") ||
+                 HtmlCommon.IsSvgElement(e, "foreignObject") ||
+                 HtmlCommon.IsSvgElement(
+                 e,
+                 "desc") ||
+                 HtmlCommon.IsSvgElement(
+                 e,
+                 "title")
+                 ) {
           return false;
         }
       }
@@ -4343,27 +4341,27 @@ namespace Com.Upokecenter.Html {
           return true;
         }
         if (HtmlCommon.IsHtmlElement(e, "applet") ||
-          HtmlCommon.IsHtmlElement(e, "caption") ||
-          HtmlCommon.IsHtmlElement(e, "html") ||
-          HtmlCommon.IsHtmlElement(e, "table") ||
-          HtmlCommon.IsHtmlElement(e, "td") ||
-          HtmlCommon.IsHtmlElement(e, "th") ||
-          HtmlCommon.IsHtmlElement(e, "marquee") ||
-          HtmlCommon.IsHtmlElement(e, "object") ||
-          HtmlCommon.IsMathMLElement(e, "mi") ||
-          HtmlCommon.IsMathMLElement(e, "mo") ||
-          HtmlCommon.IsMathMLElement(e, "mn") ||
-          HtmlCommon.IsMathMLElement(e, "ms") ||
-          HtmlCommon.IsMathMLElement(e, "mtext") ||
-          HtmlCommon.IsMathMLElement(e, "annotation-xml") ||
-          HtmlCommon.IsSvgElement(e, "foreignObject") ||
-          HtmlCommon.IsSvgElement(
-            e,
-            "desc") ||
-          HtmlCommon.IsSvgElement(
-            e,
-            "title")
-        ) {
+                 HtmlCommon.IsHtmlElement(e, "caption") ||
+                 HtmlCommon.IsHtmlElement(e, "html") ||
+                 HtmlCommon.IsHtmlElement(e, "table") ||
+                 HtmlCommon.IsHtmlElement(e, "td") ||
+                 HtmlCommon.IsHtmlElement(e, "th") ||
+                 HtmlCommon.IsHtmlElement(e, "marquee") ||
+                 HtmlCommon.IsHtmlElement(e, "object") ||
+                 HtmlCommon.IsMathMLElement(e, "mi") ||
+                 HtmlCommon.IsMathMLElement(e, "mo") ||
+                 HtmlCommon.IsMathMLElement(e, "mn") ||
+                 HtmlCommon.IsMathMLElement(e, "ms") ||
+                 HtmlCommon.IsMathMLElement(e, "mtext") ||
+                 HtmlCommon.IsMathMLElement(e, "annotation-xml") ||
+                 HtmlCommon.IsSvgElement(e, "foreignObject") ||
+                 HtmlCommon.IsSvgElement(
+                 e,
+                 "desc") ||
+                 HtmlCommon.IsSvgElement(
+                 e,
+                 "title")
+                 ) {
           return false;
         }
       }
@@ -4620,8 +4618,8 @@ namespace Com.Upokecenter.Html {
         StringComparison.Ordinal) && (
           valueName.Equals("foreignObject",
             StringComparison.Ordinal) || valueName.Equals(
-            "desc",
-            StringComparison.Ordinal) ||
+              "desc",
+              StringComparison.Ordinal) ||
           valueName.Equals("title", StringComparison.Ordinal));
     }
 
@@ -5009,7 +5007,7 @@ namespace Com.Upokecenter.Html {
             this.ParseError();
             break;
           } else if (!((ch2 >= 'A' && ch2 <= 'Z') || (ch2 >= 'a' && ch2 <= 'z'
-            ) || (ch2 >= '0' && ch2 <= '9'))) {
+) || (ch2 >= '0' && ch2 <= '9'))) {
             break;
           }
         }
@@ -6485,12 +6483,12 @@ namespace Com.Upokecenter.Html {
               int pos = this.charInput.SetSoftMark();
               if (ch == 'P' || ch == 'p') {
                 if (((ch2 = this.charInput.ReadChar()) == 'u' || ch2 == 'U'
-                  ) && ((ch2 = this.charInput.ReadChar()) == 'b' || ch2 ==
+) && ((ch2 = this.charInput.ReadChar()) == 'b' || ch2 ==
                     'B') &&
                   ((ch2 = this.charInput.ReadChar()) == 'l' || ch2 == 'L') &&
                   ((ch2 = this.charInput.ReadChar()) == 'i' || ch2 == 'I') &&
                   ((ch2 = this.charInput.ReadChar()) == 'c' || ch2 == 'C')
-                ) {
+) {
                   this.state = TokenizerState.AfterDocTypePublic;
                 } else {
                   this.ParseError();
@@ -6500,12 +6498,12 @@ namespace Com.Upokecenter.Html {
                 }
               } else if (ch == 'S' || ch == 's') {
                 if (((ch2 = this.charInput.ReadChar()) == 'y' || ch2 == 'Y'
-                  ) && ((ch2 = this.charInput.ReadChar()) == 's' || ch2 ==
+) && ((ch2 = this.charInput.ReadChar()) == 's' || ch2 ==
                     'S') &&
                   ((ch2 = this.charInput.ReadChar()) == 't' || ch2 == 'T') &&
                   ((ch2 = this.charInput.ReadChar()) == 'e' || ch2 == 'E') &&
                   ((ch2 = this.charInput.ReadChar()) == 'm' || ch2 == 'M')
-                ) {
+) {
                   this.state = TokenizerState.AfterDocTypeSystem;
                 } else {
                   this.ParseError();

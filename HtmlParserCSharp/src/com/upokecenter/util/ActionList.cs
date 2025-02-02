@@ -13,7 +13,7 @@ namespace Com.Upokecenter.Util {
   /// integer index.</summary>
   /// <typeparam name='T'>Type parameter not documented yet.</typeparam>
   public sealed class ActionList<T> {
-    private IList<IBoundAction<T >> actions;
+    private IList<IBoundAction<T>> actions;
     private IList<Object> boundObjects;
     private IList<T[]> postponeCall;
     private Object syncRoot = new Object();
