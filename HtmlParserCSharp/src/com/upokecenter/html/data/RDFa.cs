@@ -109,6 +109,16 @@ namespace Com.Upokecenter.Html.Data {
       }
     }
 
+    private static TValue ValueOrDefault<TKey, TValue>(
+      IDictionary<TKey, TValue> dict,
+      TKey key,
+      TValue defValue) {
+      if (dict == null) {
+        throw new ArgumentNullException(nameof(dict));
+      }
+      return dict.ContainsKey(key) ? dict[key] : defValue;
+    }
+
     private static readonly string RDFA_DEFAULT_PREFIX =
       "http://www.w3.org/1999/xhtml/vocab#";
 
@@ -221,7 +231,7 @@ namespace Com.Upokecenter.Html.Data {
       IDictionary<string, T> map,
       string key) {
       if (key == null) {
-        return map[null];
+        return ValueOrDefault(map, null, default(T));
       }
       key = DataUtilities.ToLowerCaseAscii(key);
       foreach (var k in map.Keys) {
@@ -551,9 +561,8 @@ namespace Com.Upokecenter.Html.Data {
               (refIndex + prefix) - (refIndex)));
         refIndex += prefix + 1;
         refLength -= prefix + 1;
-        prefixIri = prefixMapping[prefixName];
-        prefixIri =
-          (prefix == 0) ? RDFA_DEFAULT_PREFIX : prefixMapping[prefixName];
+        prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
+          ValueOrDefault(prefixMapping, prefixName, null);
         if (prefixIri == null || "_".Equals(prefixName)) {
           return null;
         }
@@ -595,7 +604,7 @@ namespace Com.Upokecenter.Html.Data {
         refIndex += prefix + 1;
         refLength -= prefix + 1;
         prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
-          prefixMapping[prefixName];
+          ValueOrDefault(prefixMapping, prefixName, null);
         if (prefixIri == null && !blank.Equals(prefixName)) {
           return null;
         }
@@ -649,7 +658,7 @@ namespace Com.Upokecenter.Html.Data {
 
     private RDFTerm GetdBlankNode(string str) {
       RDFTerm term = RDFTerm.FromBlankNode(str);
-      this.bnodeLabels.Add(str, term);
+      this.bnodeLabels[str] = term;
       return term;
     }
 
@@ -695,7 +704,7 @@ namespace Com.Upokecenter.Html.Data {
           return this.RelativeResolve(DefaultVocab +
               attribute).GetValue();
         } else if (termMapping.ContainsKey(attribute)) {
-          return termMapping[attribute];
+          return ValueOrDefault(termMapping, attribute, null);
         } else {
           string value = GetueCaseInsensitive(termMapping, attribute);
           return value;
@@ -742,7 +751,7 @@ namespace Com.Upokecenter.Html.Data {
         new Dictionary<string, string>(this.context.ValueIriMap);
       IDictionary<string, string> namespacesLocal =
         new Dictionary<string, string>(this.context.ValueNamespaces);
-      IDictionary<string, IList<RDFTerm >> listMapLocal =
+      IDictionary<string, IList<RDFTerm >> mapLocalOfLists =
         this.context.ValueListMap;
       IDictionary<string, string> termMapLocal =
         new Dictionary<string, string>(this.context.ValueTermMap);
@@ -763,16 +772,16 @@ namespace Com.Upokecenter.Html.Data {
         // Console.WriteLine(attrib);
         if (name.Equals("xmlns")) {
           // Console.WriteLine("xmlns %s",attrib.GetValue());
-          iriMapLocal.Add(String.Empty, attrib.GetValue());
-          namespacesLocal.Add(String.Empty, attrib.GetValue());
+          iriMapLocal[String.Empty] = attrib.GetValue();
+          namespacesLocal[String.Empty] = attrib.GetValue();
         } else if (name.StartsWith("xmlns:", StringComparison.Ordinal) &&
           name.Length > 6) {
           string prefix = name.Substring(6);
           // Console.WriteLine("xmlns %s %s",prefix,attrib.GetValue());
           if (!"_".Equals(prefix)) {
-            iriMapLocal.Add(prefix, attrib.GetValue());
+            iriMapLocal[prefix] = attrib.GetValue();
           }
-          namespacesLocal.Add(prefix, attrib.GetValue());
+          namespacesLocal[prefix] = attrib.GetValue();
         }
       }
       attr = node.GetAttribute("vocab");
@@ -798,7 +807,7 @@ namespace Com.Upokecenter.Html.Data {
           // Add prefix and IRI to the map, unless the prefix
           // is "_"
           if (!"_".Equals(prefixList[i])) {
-            iriMapLocal.Add(prefixList[i], prefixList[i + 1]);
+            iriMapLocal[prefixList[i]] = prefixList[i + 1];
           }
         }
       }
@@ -985,12 +994,12 @@ namespace Com.Upokecenter.Html.Data {
                 termMapLocal,
                 localDefaultVocab);
             if (iri != null) {
-              if (!listMapLocal.ContainsKey(iri)) {
+              if (!mapLocalOfLists.ContainsKey(iri)) {
                 IList<RDFTerm> newList = new List<RDFTerm>();
                 newList.Add(currentObject);
-                listMapLocal.Add(iri, newList);
+                mapLocalOfLists[iri] = newList;
               } else {
-                IList<RDFTerm> existingList = listMapLocal[iri];
+                IList<RDFTerm> existingList = mapLocalOfLists[iri];
                 existingList.Add(currentObject);
               }
             }
@@ -1050,13 +1059,13 @@ namespace Com.Upokecenter.Html.Data {
             }
             var inc = new IncompleteTriple();
             if (inlist) {
-              if (!listMapLocal.ContainsKey(iri)) {
+              if (!mapLocalOfLists.ContainsKey(iri)) {
                 IList<RDFTerm> newList = new List<RDFTerm>();
-                listMapLocal.Add(iri, newList);
+                mapLocalOfLists[iri] = newList;
                 // NOTE: Should not be a Copy
                 inc.TripleList = newList;
               } else {
-                IList<RDFTerm> existingList = listMapLocal[iri];
+                IList<RDFTerm> existingList = mapLocalOfLists[iri];
                 inc.TripleList = existingList;
               }
               inc.ValueDirection = ChainingDirection.None;
@@ -1164,12 +1173,12 @@ namespace Com.Upokecenter.Html.Data {
           }
           // Console.WriteLine("curprop: %s",currentProperty);
           if (node.GetAttribute("inlist") != null) {
-            if (!listMapLocal.ContainsKey(iri)) {
+            if (!mapLocalOfLists.ContainsKey(iri)) {
               IList<RDFTerm> newList = new List<RDFTerm>();
               newList.Add(currentProperty);
-              listMapLocal.Add(iri, newList);
+              mapLocalOfLists[iri] = newList;
             } else {
-              IList<RDFTerm> existingList = listMapLocal[iri];
+              IList<RDFTerm> existingList = mapLocalOfLists[iri];
               existingList.Add(currentProperty);
             }
           } else {
@@ -1227,7 +1236,7 @@ namespace Com.Upokecenter.Html.Data {
             ec.ValueNamespaces = namespacesLocal;
             ec.ValueIriMap = iriMapLocal;
             ec.ValueIncompleteTriples = incompleteTriplesLocal;
-            ec.ValueListMap = listMapLocal;
+            ec.ValueListMap = mapLocalOfLists;
             ec.ValueTermMap = termMapLocal;
             ec.ValueParentSubject = (newSubject == null) ?
               oldContext.ValueParentSubject : newSubject;
@@ -1243,9 +1252,9 @@ namespace Com.Upokecenter.Html.Data {
         this.context = oldContext;
       }
       // Step 14
-      foreach (var iri in listMapLocal.Keys) {
+      foreach (var iri in mapLocalOfLists.Keys) {
         if (!this.context.ValueListMap.ContainsKey(iri)) {
-          IList<RDFTerm> TripleList = listMapLocal[iri];
+          IList<RDFTerm> TripleList = mapLocalOfLists[iri];
           if (TripleList.Count == 0) {
             this.outputGraph.Add(new RDFTriple(
               newSubject == null ? newSubject : this.context.ValueParentSubject,

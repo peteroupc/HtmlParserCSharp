@@ -5,6 +5,22 @@ using PeterO.Rdf;
 
 namespace Com.Upokecenter.Html.Data {
   internal sealed class RDFInternal {
+    private static TValue ValueOrDefault<TKey, TValue>(
+      IDictionary<TKey, TValue> dict,
+      TKey key,
+      TValue defValue) {
+      if (dict == null) {
+        throw new ArgumentNullException(nameof(dict));
+      }
+      return dict.ContainsKey(key) ? dict[key] : defValue;
+    }
+
+    private static TValue ValueOrNull<TKey, TValue>(
+      IDictionary<TKey, TValue> dict,
+      TKey key) {
+      return ValueOrDefault(dict, key, default(TValue));
+    }
+
     /// <summary>Replaces certain blank nodes with blank nodes whose names
     /// meet the N-Triples requirements.</summary>
     /// <param name='triples'>A set of RDF triples.</param>
@@ -31,11 +47,11 @@ namespace Com.Upokecenter.Html.Data {
               nodeindex,
               bnodeLabels);
           if (!newname.Equals(oldname)) {
-            RDFTerm newNode = newBlankNodes[oldname];
+            RDFTerm newNode = ValueOrDefault(newBlankNodes, oldname, null);
             if (newNode == null) {
               newNode = RDFTerm.FromBlankNode(newname);
-              bnodeLabels.Add(newname, newNode);
-              newBlankNodes.Add(oldname, newNode);
+              bnodeLabels[newname] = newNode;
+              newBlankNodes[oldname] = newNode;
             }
             subj = newNode;
             changed = true;
@@ -49,11 +65,11 @@ namespace Com.Upokecenter.Html.Data {
               nodeindex,
               bnodeLabels);
           if (!newname.Equals(oldname)) {
-            RDFTerm newNode = newBlankNodes[oldname];
+            RDFTerm newNode = ValueOrDefault(newBlankNodes, oldname, null);
             if (newNode == null) {
               newNode = RDFTerm.FromBlankNode(newname);
-              bnodeLabels.Add(newname, newNode);
-              newBlankNodes.Add(oldname, newNode);
+              bnodeLabels[newname] = newNode;
+              newBlankNodes[oldname] = newNode;
             }
             obj = newNode;
             changed = true;

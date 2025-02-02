@@ -9,15 +9,6 @@ using PeterO.Cbor;
 namespace Test {
   [TestFixture]
   public class HtmlParserTokenizer {
-    /// <param name='o'>The parameter <paramref name='o'/> is not
-    /// documented yet.</param>
-    /// <param name='key'>The parameter <paramref name='key'/> is not
-    /// documented yet.</param>
-    /// <param name='defValue'>The parameter <paramref name='defValue'/> is
-    /// not documented yet.</param>
-    /// <returns>The return value is not documented yet.</returns>
-    /// <exception cref='ArgumentNullException'>The parameter <paramref
-    /// name='o'/> is null.</exception>
     public static CBORObject VOD(
       CBORObject o,
       string key,
@@ -28,10 +19,6 @@ namespace Test {
       return o.ContainsKey(key) ? o[key] : defValue;
     }
 
-    /// <exception cref='ArgumentNullException'>The parameter <paramref
-    /// name='expected'/> or <paramref name='actual'/> is null.</exception>
-    /// <param name='expected'>Not documented yet.</param>
-    /// <param name='actual'>Not documented yet.</param>
     public void CheckOutput(CBORObject expected, IList<string[]> actual) {
       string actualString = CBORObject.FromObject(actual).ToJSONString();
       if (expected == null) {
@@ -86,9 +73,15 @@ namespace Test {
 
     [Test]
     public void SetUp() {
-      foreach (string f in Directory.GetFiles(
-        "../Debug",
-        "*.test")) {
+      string[] filenames = null;
+      try {
+        filenames = Directory.GetFiles(
+            "../Debug",
+            "*.test");
+      } catch (IOException) {
+        Assert.Ignore();
+      }
+      foreach (string f in filenames) {
         using (
           var fs = new FileStream(
           f,
