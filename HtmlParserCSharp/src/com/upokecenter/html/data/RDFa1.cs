@@ -239,7 +239,7 @@ namespace Com.Upokecenter.Html.Data {
               refIndex,
               (refIndex + prefix) - (refIndex))); refIndex += prefix + 1;
 refLength -= prefix + 1; prefixIri = prefixMapping[prefixName]; prefixIri =
-          (prefix == 0) ? RDFA_DEFAULT_PREFIX : prefixMapping[prefixName];
+(prefix == 0) ? RDFA_DEFAULT_PREFIX : prefixMapping[prefixName];
         if (prefixIri == null || "_".Equals(prefixName)) {
           return null;
         }

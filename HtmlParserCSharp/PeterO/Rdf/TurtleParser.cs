@@ -791,10 +791,10 @@ namespace PeterO.Rdf {
       } else if (ch == '(') {
         return this.ReadCollection();
       } else if (ch == ':') { // prefixed name with current prefix
-        string scope = this.namespaces[String.Empty];
-        if (scope == null) {
+        if (!this.namespaces.ContainsKey(String.Empty)) {
           throw new ParserException();
         }
+        string scope = this.namespaces[String.Empty];
         return TurtleObject.FromTerm(
             RDFTerm.FromIRI(scope + this.ReadOptionalLocalName()));
       } else if (IsNameStartChar(ch)) { // prefix
@@ -1158,7 +1158,7 @@ namespace PeterO.Rdf {
         throw new ParserException();
       }
       string iri = this.ReadIriReference();
-      this.namespaces.Add(prefix, iri);
+      this.namespaces[prefix] = iri;
       if (!sparql) {
         this.SkipWhitespace();
         if (this.input.ReadChar() != '.') {

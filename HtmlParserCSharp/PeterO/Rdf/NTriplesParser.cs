@@ -129,8 +129,11 @@ namespace PeterO.Rdf {
     private string ReadBlankNodeLabel() {
       var ilist = new StringBuilder();
       int startChar = this.input.ReadChar();
+      // NOTE: Blank nodes starting with a digit are now
+      // allowed under N-Triples
       if (!((startChar >= 'A' && startChar <= 'Z') ||
-        (startChar >= 'a' && startChar <= 'z'))) {
+          (startChar >= 'a' && startChar <= 'z') ||
+          (startChar >= '0' && startChar <= '9'))) {
         throw new ParserException();
       }
       if (startChar <= 0xffff) {
@@ -287,12 +290,13 @@ namespace PeterO.Rdf {
           throw new ParserException();
         }
         string label = this.ReadBlankNodeLabel();
-        RDFTerm term = this.bnodeLabels[label];
-        if (term == null) {
-          term = RDFTerm.FromBlankNode(label);
+        if (!this.bnodeLabels.ContainsKey(label)) {
+          RDFTerm term = RDFTerm.FromBlankNode(label);
           this.bnodeLabels.Add(label, term);
+          return term;
+        } else {
+          return this.bnodeLabels[label];
         }
-        return term;
       } else {
         throw new ParserException();
       }
@@ -332,13 +336,6 @@ namespace PeterO.Rdf {
     private RDFTriple ReadTriples() {
       int mark = this.input.SetHardMark();
       int ch = this.input.ReadChar();
-      #if DEBUG
-      if (!(ch >= 0)) {
-        {
-          throw new InvalidOperationException("ch>= 0");
-        }
-      }
-      #endif
       this.input.SetMarkPosition(mark);
       RDFTerm subject = this.ReadObject(false);
       if (!this.SkipWhitespace()) {
