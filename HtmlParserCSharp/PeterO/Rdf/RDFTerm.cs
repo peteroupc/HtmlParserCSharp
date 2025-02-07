@@ -153,12 +153,12 @@ namespace PeterO.Rdf {
     /// <summary>Object for false.</summary>
     public static readonly RDFTerm FALSE = FromTypedString(
         "false",
-        "http://www.w3.org/2001/XMLSchema#bool");
+        "http://www.w3.org/2001/XMLSchema#boolean");
 
     /// <summary>Object for true.</summary>
     public static readonly RDFTerm TRUE = FromTypedString(
         "true",
-        "http://www.w3.org/2001/XMLSchema#bool");
+        "http://www.w3.org/2001/XMLSchema#boolean");
 
     /// <summary>Not documented yet.</summary>
     /// <param name='name'>The parameter <paramref name='name'/> is a text
@@ -267,9 +267,9 @@ namespace PeterO.Rdf {
         return false;
       }
       if (this.value == null) {
-        return other.value != null;
+        return other.value == null;
       } else {
-        return !this.value.Equals(other.value, StringComparison.Ordinal);
+        return this.value.Equals(other.value, StringComparison.Ordinal);
       }
     }
 

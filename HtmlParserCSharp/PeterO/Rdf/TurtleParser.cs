@@ -1028,10 +1028,10 @@ namespace PeterO.Rdf {
         this.SkipWhitespace();
         return predicate;
       } else if (ch == ':') { // prefixed name with current prefix
-        string scope = this.namespaces[String.Empty];
-        if (scope == null) {
+        if (!this.namespaces.ContainsKey(String.Empty)) {
           throw new ParserException();
         }
+        string scope = this.namespaces[String.Empty];
         predicate = RDFTerm.FromIRI(scope + this.ReadOptionalLocalName());
         this.SkipWhitespace();
         return predicate;

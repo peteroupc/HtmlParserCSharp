@@ -92,9 +92,9 @@ namespace PeterO.Rdf {
         return false;
       }
       if (this.subject == null) {
-        return other.subject != null;
+        return other.subject == null;
       } else {
-        return !this.subject.Equals(other.subject);
+        return this.subject.Equals(other.subject);
       }
     }
 
