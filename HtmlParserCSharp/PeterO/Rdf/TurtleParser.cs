@@ -21,6 +21,18 @@ namespace PeterO.Rdf {
       public const int COLLECTION = 1;
       public const int PROPERTIES = 2;
 
+      public override string ToString() {
+         switch (this.Kind) {
+           case TurtleObject.SIMPLE:
+              return this.Term.ToString();
+           case TurtleObject.COLLECTION:
+           return "TurtleObject.COLLECTION";
+           case TurtleObject.PROPERTIES:
+           return "TurtleObject.PROPERTIES";
+           default: return String.Empty;
+         }
+      }
+
       public static TurtleObject FromTerm(RDFTerm term) {
         var tobj = new TurtleObject();
         tobj.Term = term;
@@ -72,6 +84,9 @@ namespace PeterO.Rdf {
       public TurtleObject Obj {
         get;
         set;
+      }
+      public override string ToString() {
+         return "[Pred: "+this.Pred+", Obj: " + this.Obj + "]";
       }
     }
 
@@ -486,7 +501,7 @@ namespace PeterO.Rdf {
       }
     }
 
-    private TurtleObject ReadBlankNodePropertyList() {
+    private TurtleObject ReadBlankNodePropertyListOrAnon() {
       TurtleObject obj = TurtleObject.NewPropertyList();
       var havePredObject = false;
       while (true) {
@@ -521,7 +536,8 @@ namespace PeterO.Rdf {
       if (this.input.ReadChar() != ']') {
         throw new ParserException();
       }
-      return obj;
+      return (!havePredObject) ?
+TurtleObject.FromTerm(this.AllocateBlankNode()) : obj;
     }
 
     private TurtleObject ReadCollection() {
@@ -787,7 +803,7 @@ namespace PeterO.Rdf {
         }
         return TurtleObject.FromTerm(term);
       } else if (ch == '[') {
-        return this.ReadBlankNodePropertyList();
+        return this.ReadBlankNodePropertyListOrAnon();
       } else if (ch == '(') {
         return this.ReadCollection();
       } else if (ch == ':') { // prefixed name with current prefix
