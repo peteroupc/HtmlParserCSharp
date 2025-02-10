@@ -210,7 +210,10 @@ namespace PeterO.Rdf {
       if (languageTag.Length == 0) {
         throw new ArgumentException("languageTag is empty.");
       }
-      return new RDFTerm(LANGSTRING, languageTag, str);
+      return new RDFTerm(
+        LANGSTRING,
+        DataUtilities.ToLowerCaseAscii(languageTag),
+      str);
     }
 
     /// <summary>Not documented yet.</summary>

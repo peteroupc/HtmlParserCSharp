@@ -86,7 +86,7 @@ namespace PeterO.Rdf {
         set;
       }
       public override string ToString() {
-         return "[Pred: "+this.Pred+", Obj: " + this.Obj + "]";
+         return "[Pred: " + this.Pred + ", Obj: " + this.Obj + "]";
       }
     }
 
