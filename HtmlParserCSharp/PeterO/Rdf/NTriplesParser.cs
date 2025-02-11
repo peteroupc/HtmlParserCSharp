@@ -132,14 +132,14 @@ namespace PeterO.Rdf {
 
     private static bool IsPnCharsU(int ch) {
        return IsPnCharsBase(ch) || ch == '_' || (ch >= '0' && ch <= '9') ||
-             ch == '-' || ch == 0xb7 || ch == 0x203f | | ch==0x2040 || (ch >=
-0x300 &&
-ch <= 0x36f);
+             ch == '-' || ch == 0xb7 || ch == 0x203f || ch == 0x2040 ||
+            (ch >= 0x300 && ch <= 0x36f);
     }
 
     private static bool IsBlankNodeInterior(int ch) {
        return IsPnCharsBase(ch) || ch == '_' || (ch >= '0' && ch <= '9') ||
-             ch == '.' || ch == '-' || ch == 0xb7 || ch==0x203f || ch==0x2040 ||
+             ch == '.' || ch == '-' || ch == 0xb7 || ch == 0x203f ||
+ch == 0x2040 ||
 (ch >= 0x300 && ch <= 0x36f);
     }
 
