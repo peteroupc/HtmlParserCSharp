@@ -102,12 +102,60 @@ public static class RDFHelper {
             get;
             set;
         }
-        public List<RDFTerm> Mappings {
+        public IList<RDFTerm> Mappings {
             get;
             private set;
         }
+        public IList<int> Perm {
+            get; private set;
+        }
+        // NOTE: For another implementation of a permutation
+        // iterator, see the documentation for Python's
+        // 'itertools' module.
+        public void FirstMapping() {
+            int count = this.Mappings.Count;
+            for (var i = 0; i < count; ++i) {
+              if (this.Perm.Count < count) {
+                this.Perm.Add(0);
+              }
+              this.Perm[i] = i;
+            }
+        }
+        public bool NextMapping() {
+            // http://www.nayuki.io/page/next-lexicographical-permutation-algorithm
+            int count = this.Mappings.Count;
+            for (var i = count - 1; i >= 0; --i) {
+              if (i < count - 1 && this.Perm[i] < this.Perm[i + 1]) {
+                 int pv = this.Perm[i];
+                 int minv = count;
+                 var minpos = 0;
+                 for (var j = i + 1; j < count; ++j) {
+                   if (this.Perm[j] == pv + 1) {
+                       minpos = j;
+                       break;
+                    } else if (this.Perm[j] > pv && this.Perm[j] < minv) {
+                      minv = this.Perm[j];
+                      minpos = j;
+                    }
+                 }
+                 int tmp = this.Perm[i];
+                 this.Perm[i] = this.Perm[minpos];
+                 this.Perm[minpos] = tmp;
+                 int sz = count - (i + 1);
+                 for (var k = 0; k < (sz >> 1); k += 1) {
+                         tmp = this.Perm[i + 1 + k];
+                         this.Perm[i + 1 + k] = this.Perm[count - 1 - k];
+                         this.Perm[count - 1 - k] = tmp;
+                  }
+                  return true;
+               }
+            }
+            // No more permutations
+            return false;
+        }
         public NonUniqueMapping() {
             this.Mappings = new List<RDFTerm>();
+            this.Perm = new List<int>();
             this.Index = 0;
         }
         public NonUniqueMapping AddTerm(RDFTerm term) {
@@ -170,6 +218,8 @@ public static class RDFHelper {
         return BlankNodeHash(term, triplesByTerm, hashes, stack);
     }
 
+    // See Jeremy J. Carroll,
+    // "Matching RDF Graphs", 2001.
     private static int BlankNodeHash(
       RDFTerm term,
       IDictionary<RDFTerm, IList<RDFTriple>> triplesByTerm,
@@ -179,6 +229,9 @@ public static class RDFHelper {
           return term.GetHashCode();
         } else if (stack.Contains(term)) {
             // Avoid cycles
+            return hashes[term];
+        } else if (false && stack.Count > 9) {
+            // Avoid deep recursion
             return hashes[term];
         }
         // TODO: Rewrite to nonrecursive version
@@ -230,25 +283,17 @@ public static class RDFHelper {
           rdfobj.GetKind() == RDFTerm.BLANK ? CanonicalBlank : rdfobj);
     }
 
-    private class IntAndTerm {
-        public int Num {
-            get;
-            set;
-        }
-        public RDFTerm Term {
-            get;
-            set;
-        }
-    }
-
     /// <summary>Returns whether two RDF graphs are isomorphic; that is,
-    /// they match apart from their blank node, and there is a one-to-one
+    /// they match apart from their blank nodes, and there is a one-to-one
     /// mapping from one graph's blank nodes to the other's such that the
     /// graphs match exactly when one graph's blank nodes are replaced with
     /// the other's.</summary>
-    /// <returns>The return value is not documented yet.</returns>
-    /// <param name='triples1'>Not documented yet.</param>
-    /// <param name='triples2'>Not documented yet.</param>
+    /// <returns>Either 'true' if the graphs are isomorphic, or 'false'
+    /// otherwise.</returns>
+    /// <param name='triples1'>A set of RDF triples making up the first RDF
+    /// graph.</param>
+    /// <param name='triples2'>A set of RDF triples making up the second
+    /// RDF graph.</param>
     public static bool AreIsomorphic(
         ISet<RDFTriple> triples1,
         ISet<RDFTriple> triples2) {
@@ -339,7 +384,7 @@ public static class RDFHelper {
             if (blank1.GetSubject().GetKind() != RDFTerm.BLANK) {
               return false;
             }
-              subjectBlank = true;
+            subjectBlank = true;
             } else {
                 if (!blank1.GetSubject().Equals(blank2.GetSubject())) {
                   return false;
@@ -541,6 +586,7 @@ public static class RDFHelper {
         if (hashClassCounts1.Count != hashClassCounts2.Count) {
           return false;
         }
+        // Console.WriteLine("maxClassSize=" + (maxClassSize1));
         {
             var uniqueMapping = new Dictionary<RDFTerm, RDFTerm>();
             var nonUniqueMappings1 = new List<NonUniqueMapping>();
@@ -561,7 +607,8 @@ public static class RDFHelper {
                 }
                 if (iat1.Mappings.Count > 1) {
                   nonUniqueMappings1.Add(iat1);
-                nonUniqueMappings2.Add(iat2);
+                  nonUniqueMappings2.Add(iat2);
+                  iat2.FirstMapping();
                 }
             }
             while (true) {
@@ -585,8 +632,33 @@ public static class RDFHelper {
                     }
                 }
                 if (failed) {
-                    // TODO: Choose next mapping to try
-                    throw new NotImplementedException();
+                    // Choose a new mapping to try
+                    var newMapping = false;
+                    for (var k = 0; k < nonUniqueMappings2.Count; ++k) {
+                      var numap1 = nonUniqueMappings1[k];
+                      var numap2 = nonUniqueMappings2[k];
+                      if (numap2.NextMapping()) {
+                         newMapping = true;
+                         for (var i = 0; i < numap2.Perm.Count; ++i) {
+                           int pi = numap2.Perm[i];
+                           RDFTerm term1 = numap1.Mappings[i];
+                           RDFTerm term2 = numap2.Mappings[pi];
+                           uniqueMapping[term1] = term2;
+                         }
+                         break;
+                      } else {
+                        numap2.FirstMapping();
+                        for (var i = 0; i < numap2.Perm.Count; ++i) {
+                           int pi = numap2.Perm[i];
+                           RDFTerm term1 = numap1.Mappings[i];
+                           RDFTerm term2 = numap2.Mappings[pi];
+                           uniqueMapping[term1] = term2;
+                        }
+                      }
+                    }
+                    if (!newMapping) {
+                      return false;
+                    }
                 } else {
                     break;
                 }
