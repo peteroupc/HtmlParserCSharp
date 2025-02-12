@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace PeterO.Rdf {
-  /// <summary>Not documented yet.</summary>
- public static class RDFHelper {
+/// <summary>Not documented yet.</summary>
+public static class RDFHelper {
     private static readonly RDFTerm CanonicalBlank = RDFTerm.FromBlankNode("_");
 
     private static string BlankValue(RDFTriple triple) {
@@ -24,8 +24,7 @@ namespace PeterO.Rdf {
         bool objBlank = rdfobj.GetKind() == RDFTerm.BLANK;
         return (subjBlank != objBlank) || (subjBlank && objBlank &&
 
-                                           rdfsubj.GetValue()
-.Equals(rdfobj.GetValue()));
+                rdfsubj.GetValue().Equals(rdfobj.GetValue()));
     }
 
     private class TermComparer: IComparer<RDFTerm>
@@ -81,17 +80,17 @@ namespace PeterO.Rdf {
                 } else {
                     int cmp;
                     cmp = TermComparer.CompareRDFTerm(x.GetSubject(),
-  y.GetSubject());
+                                                      y.GetSubject());
                     if (cmp != 0) {
                       return cmp;
                     }
                     cmp = TermComparer.CompareRDFTerm(x.GetPredicate(),
-  y.GetPredicate());
+                                                      y.GetPredicate());
                     if (cmp != 0) {
                       return cmp;
                     }
                     cmp = TermComparer.CompareRDFTerm(x.GetObject(),
-  y.GetObject());
+                                                      y.GetObject());
                     return cmp;
                 }
             }
@@ -99,16 +98,22 @@ namespace PeterO.Rdf {
     }
 
     private class NonUniqueMapping {
-       public int Index { get; set; }
-       public List<RDFTerm> Mappings { get; private set; }
-       public NonUniqueMapping() {
-         this.Mappings = new List<RDFTerm>();
-         this.Index = 0;
-       }
-       public NonUniqueMapping AddTerm(RDFTerm term) {
-          this.Mappings.Add(term);
-          return this;
-       }
+        public int Index {
+            get;
+            set;
+        }
+        public List<RDFTerm> Mappings {
+            get;
+            private set;
+        }
+        public NonUniqueMapping() {
+            this.Mappings = new List<RDFTerm>();
+            this.Index = 0;
+        }
+        public NonUniqueMapping AddTerm(RDFTerm term) {
+            this.Mappings.Add(term);
+            return this;
+        }
     }
 
     private class ListAndHash<T> {
@@ -149,7 +154,7 @@ namespace PeterO.Rdf {
                 for (var i = 0; i < this.list.Count; ++i) {
                     this.hash = unchecked(this.hash * 23);
                     this.hash = unchecked(this.hash +
-this.list[i].GetHashCode());
+                                          this.list[i].GetHashCode());
                 }
                 this.dirty = false;
             }
@@ -193,17 +198,17 @@ this.list[i].GetHashCode());
                 if (!subjectBlank || !triple.GetSubject().Equals(term)) {
                     h = unchecked(
                             h + 23 * BlankNodeHash(triple.GetSubject(),
-  triplesByTerm,
-  hashes,
-  stack));
+                                                   triplesByTerm,
+                                                   hashes,
+                                                   stack));
                 }
                 h = unchecked(h + (29 * triple.GetPredicate().GetHashCode()));
                 if (!objectBlank || !triple.GetObject().Equals(term)) {
                     h = unchecked(
                             h + 31 * BlankNodeHash(triple.GetObject(),
-  triplesByTerm,
-  hashes,
-  stack));
+                                                   triplesByTerm,
+                                                   hashes,
+                                                   stack));
                 }
                 hash = unchecked(hash + h);
             }
@@ -236,14 +241,14 @@ this.list[i].GetHashCode());
         }
     }
 
-  /// <summary>Returns whether two RDF graphs are isomorphic; that is,
-  /// they match apart from their blank node, and there is a one-to-one
-  /// mapping from one graph's blank nodes to the other's such that the
-  /// graphs match exactly when one graph's blank nodes are replaced with
-  /// the other's.</summary>
-  /// <returns>The return value is not documented yet.</returns>
-  /// <param name='triples1'>Not documented yet.</param>
-  /// <param name='triples2'>Not documented yet.</param>
+    /// <summary>Returns whether two RDF graphs are isomorphic; that is,
+    /// they match apart from their blank node, and there is a one-to-one
+    /// mapping from one graph's blank nodes to the other's such that the
+    /// graphs match exactly when one graph's blank nodes are replaced with
+    /// the other's.</summary>
+    /// <returns>The return value is not documented yet.</returns>
+    /// <param name='triples1'>Not documented yet.</param>
+    /// <param name='triples2'>Not documented yet.</param>
     public static bool AreIsomorphic(
         ISet<RDFTriple> triples1,
         ISet<RDFTriple> triples2) {
@@ -263,7 +268,7 @@ this.list[i].GetHashCode());
                     rdfobj.GetKind() == RDFTerm.BLANK) {
               if (uniqueBlank1 && rdfsubj.GetKind() == RDFTerm.BLANK) {
                     if (blankName1 != null &&
-!rdfsubj.GetValue().Equals(blankName1)) {
+                            !rdfsubj.GetValue().Equals(blankName1)) {
                       uniqueBlank1 = false;
                     } else {
                         blankName1 = rdfsubj.GetValue();
@@ -271,7 +276,7 @@ this.list[i].GetHashCode());
                 }
                 if (uniqueBlank1 && rdfobj.GetKind() == RDFTerm.BLANK) {
                   if (blankName1 != null &&
-!rdfobj.GetValue().Equals(blankName1)) {
+                            !rdfobj.GetValue().Equals(blankName1)) {
                     uniqueBlank1 = false;
                   } else {
                         blankName1 = rdfobj.GetValue();
@@ -291,7 +296,7 @@ this.list[i].GetHashCode());
                     rdfobj.GetKind() == RDFTerm.BLANK) {
               if (uniqueBlank2 && rdfsubj.GetKind() == RDFTerm.BLANK) {
                     if (blankName2 != null &&
-!rdfsubj.GetValue().Equals(blankName2)) {
+                            !rdfsubj.GetValue().Equals(blankName2)) {
                       uniqueBlank2 = false;
                     } else {
                         blankName2 = rdfsubj.GetValue();
@@ -299,7 +304,7 @@ this.list[i].GetHashCode());
                 }
                 if (uniqueBlank2 && rdfobj.GetKind() == RDFTerm.BLANK) {
                   if (blankName2 != null &&
-!rdfobj.GetValue().Equals(blankName2)) {
+                            !rdfobj.GetValue().Equals(blankName2)) {
                     uniqueBlank2 = false;
                   } else {
                         blankName2 = rdfobj.GetValue();
@@ -334,7 +339,7 @@ this.list[i].GetHashCode());
             if (blank1.GetSubject().GetKind() != RDFTerm.BLANK) {
               return false;
             }
-            subjectBlank = true;
+              subjectBlank = true;
             } else {
                 if (!blank1.GetSubject().Equals(blank2.GetSubject())) {
                   return false;
@@ -373,21 +378,21 @@ this.list[i].GetHashCode());
             }
             return true;
         }
-  // Nontrivial cases: More than one triple with a blank node, and
-  // more than one unique blank node.
+        // Nontrivial cases: More than one triple with a blank node, and
+        // more than one unique blank node.
         var simpleBlanks1 = new Dictionary<string, ListAndHash<RDFTriple>>();
         var simpleBlanks2 = new Dictionary<string, ListAndHash<RDFTriple>>();
         var complexBlankCount1 = 0;
         var complexBlankCount2 = 0;
         foreach (var blank2 in blanks2) {
           if (IsSimpleBlank(blank2)) {
-              if (complexBlankCount1 == 0 && complexBlankCount2 == 0) {
-                string bv = BlankValue(blank2);
-                if (!simpleBlanks2.ContainsKey(bv)) {
-                  simpleBlanks2[bv] = new ListAndHash<RDFTriple>();
+                if (complexBlankCount1 == 0 && complexBlankCount2 == 0) {
+                    string bv = BlankValue(blank2);
+                    if (!simpleBlanks2.ContainsKey(bv)) {
+                      simpleBlanks2[bv] = new ListAndHash<RDFTriple>();
+                    }
+                    simpleBlanks2[bv].Add(CanonicalTriple(blank2));
                 }
-                simpleBlanks2[bv].Add(CanonicalTriple(blank2));
-              }
             } else {
                 // Complex blank
                 ++complexBlankCount2;
@@ -395,13 +400,13 @@ this.list[i].GetHashCode());
         }
         foreach (var blank1 in blanks1) {
           if (IsSimpleBlank(blank1)) {
-              if (complexBlankCount1 == 0 && complexBlankCount2 == 0) {
-                string bv = BlankValue(blank1);
-                if (!simpleBlanks1.ContainsKey(bv)) {
-                  simpleBlanks1[bv] = new ListAndHash<RDFTriple>();
+                if (complexBlankCount1 == 0 && complexBlankCount2 == 0) {
+                    string bv = BlankValue(blank1);
+                    if (!simpleBlanks1.ContainsKey(bv)) {
+                      simpleBlanks1[bv] = new ListAndHash<RDFTriple>();
+                    }
+                    simpleBlanks1[bv].Add(CanonicalTriple(blank1));
                 }
-                simpleBlanks1[bv].Add(CanonicalTriple(blank1));
-              }
             } else {
                 // Complex blank
                 ++complexBlankCount1;
@@ -449,15 +454,15 @@ this.list[i].GetHashCode());
             var hasTerm = false;
             if (subject.GetKind() == RDFTerm.BLANK) {
               if (!triplesByTerm1.ContainsKey(subject)) {
-                  triplesByTerm1[subject] = new List<RDFTriple> { blank1 };
+                    triplesByTerm1[subject] = new List<RDFTriple> { blank1 };
                 } else {
-                  triplesByTerm1[subject].Add(blank1);
+                    triplesByTerm1[subject].Add(blank1);
                 }
                 hasTerm = subject.Equals(rdfObject);
             }
             if (rdfObject.GetKind() == RDFTerm.BLANK) {
               if (!triplesByTerm1.ContainsKey(rdfObject)) {
-                  triplesByTerm1[rdfObject] = new List<RDFTriple> { blank1 };
+                    triplesByTerm1[rdfObject] = new List<RDFTriple> { blank1 };
                 } else if (!hasTerm) {
                   triplesByTerm1[rdfObject].Add(blank1);
                 }
@@ -469,15 +474,15 @@ this.list[i].GetHashCode());
             var hasTerm = false;
             if (subject.GetKind() == RDFTerm.BLANK) {
               if (!triplesByTerm2.ContainsKey(subject)) {
-                  triplesByTerm2[subject] = new List<RDFTriple> { blank2 };
+                    triplesByTerm2[subject] = new List<RDFTriple> { blank2 };
                 } else {
-                  triplesByTerm2[subject].Add(blank2);
+                    triplesByTerm2[subject].Add(blank2);
                 }
                 hasTerm = subject.Equals(rdfObject);
             }
             if (rdfObject.GetKind() == RDFTerm.BLANK) {
               if (!triplesByTerm2.ContainsKey(rdfObject)) {
-                  triplesByTerm2[rdfObject] = new List<RDFTriple> { blank2 };
+                    triplesByTerm2[rdfObject] = new List<RDFTriple> { blank2 };
                 } else if (!hasTerm) {
                   triplesByTerm2[rdfObject].Add(blank2);
                 }
@@ -510,7 +515,7 @@ this.list[i].GetHashCode());
                 hashClassCounts1[h].AddTerm(b);
             }
             maxClassSize1 = Math.Max(maxClassSize1,
-  hashClassCounts1[h].Mappings.Count);
+                                     hashClassCounts1[h].Mappings.Count);
             // Console.WriteLine(String.Empty + b + "=" + h +":
             // "+DateTime.Now.Ticks/10000000.0);
         }
@@ -526,7 +531,7 @@ this.list[i].GetHashCode());
                 hashClassCounts2[h].AddTerm(b);
             }
             maxClassSize2 = Math.Max(maxClassSize2,
-  hashClassCounts2[h].Mappings.Count);
+                                     hashClassCounts2[h].Mappings.Count);
             // Console.WriteLine(String.Empty + b + "=" + h +":
             // "+DateTime.Now.Ticks/10000000.0);
         }
@@ -549,43 +554,45 @@ this.list[i].GetHashCode());
               if (iat1.Mappings.Count != iat2.Mappings.Count) {
                 return false;
               }
-              RDFTerm term1 = iat1.Mappings[0];
-              RDFTerm term2 = iat2.Mappings[0];
-              uniqueMapping[term1] = term2;
-              if (iat1.Mappings.Count > 1) {
-                nonUniqueMappings1.Add(iat1);
+              for (var i = 0; i < iat1.Mappings.Count; ++i) {
+                    RDFTerm term1 = iat1.Mappings[i];
+                    RDFTerm term2 = iat2.Mappings[i];
+                    uniqueMapping[term1] = term2;
+                }
+                if (iat1.Mappings.Count > 1) {
+                  nonUniqueMappings1.Add(iat1);
                 nonUniqueMappings2.Add(iat2);
-              }
+                }
             }
             while (true) {
-              var failed = false;
-              foreach (var blank in blanks1) {
-                RDFTerm rdfSubj = blank.GetSubject();
-                RDFTerm rdfObj = blank.GetObject();
-                if (rdfSubj.GetKind() == RDFTerm.BLANK) {
-                  rdfSubj = uniqueMapping[rdfSubj];
+                var failed = false;
+                foreach (var blank in blanks1) {
+                    RDFTerm rdfSubj = blank.GetSubject();
+                    RDFTerm rdfObj = blank.GetObject();
+                    if (rdfSubj.GetKind() == RDFTerm.BLANK) {
+                      rdfSubj = uniqueMapping[rdfSubj];
+                    }
+                    if (rdfObj.GetKind() == RDFTerm.BLANK) {
+                      rdfObj = uniqueMapping[rdfObj];
+                    }
+                    var triple = new RDFTriple(
+                        rdfSubj,
+                        blank.GetPredicate(),
+                        rdfObj);
+                    if (!blanks2.Contains(triple)) {
+                        failed = true;
+                        break;
+                    }
                 }
-                if (rdfObj.GetKind() == RDFTerm.BLANK) {
-                  rdfObj = uniqueMapping[rdfObj];
+                if (failed) {
+                    // TODO: Choose next mapping to try
+                    throw new NotImplementedException();
+                } else {
+                    break;
                 }
-                var triple = new RDFTriple(
-                  rdfSubj,
-                  blank.GetPredicate(),
-                rdfObj);
-                if (!blanks2.Contains(triple)) {
-                  failed = true;
-                  break;
-                }
-            }
-            if (failed) {
-               // TODO: Choose next mapping to try
-               throw new NotImplementedException();
-            } else {
-               break;
-            }
             }
             return true;
         }
     }
- }
+}
 }
