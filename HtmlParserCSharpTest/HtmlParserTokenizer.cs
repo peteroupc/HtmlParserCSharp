@@ -84,8 +84,8 @@ namespace Test {
       foreach (string f in filenames) {
         using (
           var fs = new FileStream(
-          f,
-          FileMode.Open)) {
+            f,
+            FileMode.Open)) {
           Console.WriteLine(f);
           CBORObject o = CBORObject.ReadJSON(fs);
           o = o["tests"];

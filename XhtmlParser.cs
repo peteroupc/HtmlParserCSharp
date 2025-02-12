@@ -156,15 +156,15 @@ namespace Com.Upokecenter.Html {
         doctype.systemId = sysid;
         document.AppendChild (doctype);
         if ("-//W3C//DTD XHTML 1.0 Transitional//EN".Equals (pubid) ||
-          "-//W3C//DTD XHTML 1.1//EN".Equals (pubid) ||
-          "-//W3C//DTD XHTML 1.0 Strict//EN".Equals (pubid) ||
-          "-//W3C//DTD XHTML 1.0 Frameset//EN".Equals (pubid) ||
-          "-//W3C//DTD XHTML Basic 1.0//EN".Equals (pubid) ||
-          "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN".Equals (pubid) ||
-          "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
-          .Equals (pubid) ||
-          "-//W3C//DTD MathML 2.0//EN".Equals (pubid) ||
-          "-//WAPFORUM//DTD XHTML Mobile 1.0//EN".Equals (pubid)) {
+                 "-//W3C//DTD XHTML 1.1//EN".Equals (pubid) ||
+                 "-//W3C//DTD XHTML 1.0 Strict//EN".Equals (pubid) ||
+                 "-//W3C//DTD XHTML 1.0 Frameset//EN".Equals (pubid) ||
+                 "-//W3C//DTD XHTML Basic 1.0//EN".Equals (pubid) ||
+                 "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN".Equals (pubid) ||
+                 "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
+                 .Equals (pubid) ||
+                 "-//W3C//DTD MathML 2.0//EN".Equals (pubid) ||
+                 "-//WAPFORUM//DTD XHTML Mobile 1.0//EN".Equals (pubid)) {
           useEntities = true;
         }
       }

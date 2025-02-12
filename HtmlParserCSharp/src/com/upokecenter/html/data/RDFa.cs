@@ -559,7 +559,8 @@ namespace Com.Upokecenter.Html.Data {
             attribute.Substring(
               refIndex,
               (refIndex + prefix) - (refIndex))); refIndex += prefix + 1;
-refLength -= prefix + 1; prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
+ refLength -= prefix + 1;
+ prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
 ValueOrDefault(prefixMapping, prefixName, null);
         if (prefixIri == null || "_".Equals(prefixName)) {
           return null;
@@ -599,7 +600,8 @@ ValueOrDefault(prefixMapping, prefixName, null);
             attribute.Substring(
               refIndex,
               (refIndex + prefix) - (refIndex))); refIndex += prefix + 1;
-refLength -= prefix + 1; prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
+ refLength -= prefix + 1;
+ prefixIri = (prefix == 0) ? RDFA_DEFAULT_PREFIX :
 ValueOrDefault(prefixMapping, prefixName, null);
         if (prefixIri == null && !blank.Equals(prefixName)) {
           return null;
