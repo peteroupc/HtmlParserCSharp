@@ -222,6 +222,9 @@ namespace PeterO.Rdf {
       RDFTerm pred,
       TurtleObject obj,
       ISet<RDFTriple> triples) {
+      if (obj == null) {
+        throw new ArgumentNullException(nameof(obj));
+      }
       if (obj.Kind == TurtleObject.SIMPLE) {
         EmitRDFTriple(subj, pred, obj.Term, triples);
       } else if (obj.Kind == TurtleObject.PROPERTIES) {
@@ -553,7 +556,13 @@ TurtleObject.FromTerm(this.AllocateBlankNode()) : obj;
             this.input.MoveBack(1);
           }
           TurtleObject subobj = this.ReadObject(true);
+          if (subobj == null) {
+            throw new ParserException();
+          }
           IList<TurtleObject> objects = obj.GetObjects();
+          if (subobj == null) {
+            throw new ArgumentNullException(nameof(subobj));
+          }
           objects.Add(subobj);
         }
       }

@@ -29,23 +29,36 @@ public static class RDFHelper {
 
     private class TermComparer: IComparer<RDFTerm>
     {
+        private static int StringCompare(String x, String y) {
+            if (x == null) {
+              if (y == null) {
+                return 0;
+              } else {
+                    return -1;
+                }
+            } else {
+                if (y == null) {
+                  return 1;
+                } else {
+                    return String.CompareOrdinal(x, y);
+                }
+            }
+        }
         internal static int CompareRDFTerm(RDFTerm x, RDFTerm y) {
             if (x.GetKind() != y.GetKind()) {
               return x.GetKind() < y.GetKind() ? -1 : 1;
             }
             int cmp;
-            cmp = String.Compare(
+            cmp = StringCompare(
                       x.GetValue(),
-                      y.GetValue(),
-                      StringComparison.Ordinal);
+                      y.GetValue());
             if (cmp != 0) {
               return cmp;
             }
 
-            cmp = String.Compare(
+            cmp = StringCompare(
                       x.GetTypeOrLanguage(),
-                      y.GetTypeOrLanguage(),
-                      StringComparison.Ordinal);
+                      y.GetTypeOrLanguage());
             return cmp;
         }
         public int Compare(RDFTerm x, RDFTerm y) {
@@ -501,7 +514,8 @@ public static class RDFHelper {
               if (!triplesByTerm1.ContainsKey(subject)) {
                     triplesByTerm1[subject] = new List<RDFTriple> { blank1 };
                 } else {
-                    triplesByTerm1[subject].Add(blank1);
+                    IList<RDFTriple> triplesList = triplesByTerm1[subject];
+                    triplesList.Add(blank1);
                 }
                 hasTerm = subject.Equals(rdfObject);
             }
@@ -509,7 +523,8 @@ public static class RDFHelper {
               if (!triplesByTerm1.ContainsKey(rdfObject)) {
                     triplesByTerm1[rdfObject] = new List<RDFTriple> { blank1 };
                 } else if (!hasTerm) {
-                  triplesByTerm1[rdfObject].Add(blank1);
+                  IList<RDFTriple> triplesList = triplesByTerm1[rdfObject];
+                  triplesList.Add(blank1);
                 }
             }
         }
@@ -521,7 +536,8 @@ public static class RDFHelper {
               if (!triplesByTerm2.ContainsKey(subject)) {
                     triplesByTerm2[subject] = new List<RDFTriple> { blank2 };
                 } else {
-                    triplesByTerm2[subject].Add(blank2);
+                    IList<RDFTriple> triplesList = triplesByTerm2[subject];
+                    triplesList.Add(blank2);
                 }
                 hasTerm = subject.Equals(rdfObject);
             }
@@ -529,7 +545,8 @@ public static class RDFHelper {
               if (!triplesByTerm2.ContainsKey(rdfObject)) {
                     triplesByTerm2[rdfObject] = new List<RDFTriple> { blank2 };
                 } else if (!hasTerm) {
-                  triplesByTerm2[rdfObject].Add(blank2);
+                  IList<RDFTriple> triplesList = triplesByTerm2[rdfObject];
+                  triplesList.Add(blank2);
                 }
             }
         }
